@@ -1,9 +1,12 @@
 OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
-NAME = dsp_add
+NAME = dsp_add_v2
 
-VERILOG_FILE = \
+IMPL_FILE = \
+$(LIB_DIR)/$(NAME).v \
+
+SIM_FILES = \
 $(LIB_DIR)/dsp_add.v \
 $(LIB_DIR)/dsp_add_v2.v
 
@@ -18,10 +21,10 @@ test: xvlog xelab
 
 .PHONY: impl
 impl: | $(OUT_DIR)
-	vivado -mode batch -source impl/vivado.tcl -tclargs $(NAME) $(VERILOG_FILE) $(UTIL_FILE) $(TIME_FILE) $(DCP_FILE)
+	vivado -mode batch -source impl/vivado.tcl -tclargs $(NAME) $(IMPL_FILE) $(UTIL_FILE) $(TIME_FILE) $(DCP_FILE)
 
 xvlog:
-	xvlog --sv --incr --relax test/test.v $(VERILOG_FILE) $(XILINX_VIVADO)/data/verilog/src/glbl.v
+	xvlog --sv --incr --relax test/test.v $(SIM_FILES) $(XILINX_VIVADO)/data/verilog/src/glbl.v
 
 xelab:
 	xelab --snapshot test --timescale 1ps/1ps -R -L unisims_ver glbl test

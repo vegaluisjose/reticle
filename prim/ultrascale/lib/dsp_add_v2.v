@@ -1,6 +1,6 @@
 module dsp_add_v2 #
 (
-    parameter width = 48
+    parameter width = 24
 )
 (
     input              clock,
