@@ -1,6 +1,7 @@
 module test_dsp_add_8 (
-    input clock,
-    input reset
+    input        clock,
+    input        reset,
+    input [31:0] cycles
 );
     localparam width = 8;
 
@@ -16,7 +17,7 @@ module test_dsp_add_8 (
     dsp_add #(.width(width)) dut (clock, reset, a, b, y);
 
     always @(posedge clock) begin
-        if (~reset) begin
+        if (!reset && (cycles == 32'd0)) begin
             assert (y == y_ref) $display ("[dsp_add] PASS");
                 else $error("[dsp_add] FAIL");
         end
@@ -27,6 +28,7 @@ endmodule
 module test();
     logic clock = 1'b0;
     logic reset;
+    logic [31:0] cycles;
 
     always #10 clock = ~clock;
 
@@ -37,12 +39,23 @@ module test();
         reset = 1'b0;
     end
 
-    // run for 5 cycles
-    initial begin
-        repeat(5)@(negedge clock);
-        $finish;
+    // cycle counter
+    always @(posedge clock) begin
+        if (reset) begin
+            cycles <= 32'd0;
+        end
+        else begin
+            cycles <= cycles + 1'b1;
+        end
     end
 
-    test_dsp_add_8 t0 (clock, reset);
+    // run for 5 cycles
+    always @(posedge clock) begin
+        if (cycles == 32'd5) begin
+            $finish;
+        end
+    end
+
+    test_dsp_add_8 t0 (clock, reset, cycles);
 
 endmodule
