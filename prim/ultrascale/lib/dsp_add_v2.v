@@ -1,4 +1,4 @@
-module dsp_add #
+module dsp_add_v2 #
 (
     parameter width = 48
 )
@@ -7,7 +7,10 @@ module dsp_add #
     input              reset,
     input  [width-1:0] a,
     input  [width-1:0] b,
-    output [width-1:0] y
+    input  [width-1:0] c,
+    input  [width-1:0] d,
+    output [width-1:0] y,
+    output [width-1:0] z
 );
     logic [3:0] dsp_alumode;
     logic [2:0] dsp_carryinsel;
@@ -21,8 +24,8 @@ module dsp_add #
     logic ce;
 
     initial begin
-        assert(width > 0 && width <= 48)
-            else $error("[dsp_add] width:%d configuration not supported", width);
+        assert(width > 0 && width <= 24)
+            else $error("[dsp_add_v2] width:%d configuration not supported", width);
     end
 
     assign dsp_alumode = 4'b0000;
@@ -31,14 +34,17 @@ module dsp_add #
     assign dsp_carryinsel = 3'd0;
     assign ce = 1'b0;
 
-    localparam zero_rem = 48 - width;
+    localparam zero_rem = 24 - width;
 
-    assign dsp_tmp[47:0] = (width == 48)? a : {{zero_rem{1'b0}}, a};
+    assign dsp_tmp[23:0] = (width == 24)? a : {{zero_rem{1'b0}}, a};
+    assign dsp_tmp[47:24] = (width == 24)? c : {{zero_rem{1'b0}}, c};
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
-    assign dsp_c = {{zero_rem{1'b0}}, b};
+    assign dsp_c[23:0] = (width == 24)? b : {{zero_rem{1'b0}}, b};
+    assign dsp_c[47:24] = (width == 24)? d : {{zero_rem{1'b0}}, d};
 
-    assign y = dsp_p[width-1:0];
+    assign y = dsp_p[0 +: width];
+    assign z = dsp_p[24 +: width];
 
     // DSP48E2: 48-bit Multi-Functional Arithmetic Block
     //          Virtex UltraScale+
@@ -54,7 +60,7 @@ module dsp_add #
         .PREADDINSEL("A"),                 // Selects input to pre-adder (A, B)
         .RND(48'h000000000000),            // Rounding Constant
         .USE_MULT("NONE"),                 // Select multiplier usage (DYNAMIC, MULTIPLY, NONE)
-        .USE_SIMD("ONE48"),                // SIMD selection (FOUR12, ONE48, TWO24)
+        .USE_SIMD("TWO24"),                // SIMD selection (FOUR12, ONE48, TWO24)
         .USE_WIDEXOR("FALSE"),             // Use the Wide XOR function (FALSE, TRUE)
         .XORSIMD("XOR24_48_96"),           // Mode of operation for the Wide XOR (XOR12, XOR24_48_96)
         // Pattern Detector Attributes: Pattern Detection Configuration

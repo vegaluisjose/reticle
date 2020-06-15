@@ -2,7 +2,11 @@ OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
 NAME = dsp_add
-VERILOG_FILE = $(LIB_DIR)/$(NAME).v
+
+VERILOG_FILE = \
+$(LIB_DIR)/dsp_add.v \
+$(LIB_DIR)/dsp_add_v2.v
+
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
 DCP_FILE = $(OUT_DIR)/$(NAME).dcp

@@ -1,4 +1,4 @@
-module test_dsp_add_8 (
+module test_dsp_add_width_8 (
     input        clock,
     input        reset,
     input [31:0] cycles
@@ -18,14 +18,14 @@ module test_dsp_add_8 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y == y_ref) $display ("[test_dsp_add_8] PASS");
-                else $error("[test_dsp_add_8] FAIL");
+            assert (y == y_ref) $display ("[test_dsp_add_width_8] PASS");
+                else $error("[test_dsp_add_width_8] FAIL");
         end
     end
 
 endmodule
 
-module test_dsp_add_32 (
+module test_dsp_add_width_32 (
     input        clock,
     input        reset,
     input [31:0] cycles
@@ -45,8 +45,42 @@ module test_dsp_add_32 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y == y_ref) $display ("[test_dsp_add_32] PASS");
-                else $error("[test_dsp_add_32] FAIL");
+            assert (y == y_ref) $display ("[test_dsp_add_width_32] PASS");
+                else $error("[test_dsp_add_width_32] FAIL");
+        end
+    end
+
+endmodule
+
+module test_dsp_add_v2_width_24 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 24;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] c;
+    logic [width-1:0] d;
+    logic [width-1:0] y;
+    logic [width-1:0] z;
+    logic [width-1:0] y_ref;
+    logic [width-1:0] z_ref;
+
+    assign a = -24'd1;
+    assign b = 24'd16;
+    assign c = 24'd23;
+    assign d = 24'd7;
+    assign y_ref = a + b;
+    assign z_ref = c + d;
+
+    dsp_add_v2 #(.width(width)) dut (clock, reset, a, b, c, d, y, z);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref && z == z_ref) $display ("[test_dsp_add_v2_width_24] PASS");
+                else $error("[test_dsp_add_v2_width_24] FAIL");
         end
     end
 
@@ -83,7 +117,8 @@ module test();
         end
     end
 
-    test_dsp_add_8 t0 (clock, reset, cycles);
-    test_dsp_add_32 t1 (clock, reset, cycles);
+    test_dsp_add_width_8 t0 (clock, reset, cycles);
+    test_dsp_add_width_32 t1 (clock, reset, cycles);
+    test_dsp_add_v2_width_24 t2 (clock, reset, cycles);
 
 endmodule
