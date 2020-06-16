@@ -1,16 +1,13 @@
-module dsp_add_v2 #
+module dsp_mul #
 (
-    parameter width = 24
+    parameter width = 8
 )
 (
     input              clock,
     input              reset,
-    input  [width-1:0] a0,
-    input  [width-1:0] b0,
-    input  [width-1:0] a1,
-    input  [width-1:0] b1,
-    output [width-1:0] y0,
-    output [width-1:0] y1
+    input  [width-1:0] a,
+    input  [width-1:0] b,
+    output [width-1:0] y
 );
     logic [3:0] dsp_alumode;
     logic [2:0] dsp_carryinsel;
@@ -20,33 +17,28 @@ module dsp_add_v2 #
     logic [17:0] dsp_b;
     logic [47:0] dsp_c;
     logic [47:0] dsp_p;
-    logic [47:0] dsp_tmp;
     logic ce;
 
     initial begin
-        assert(width > 0 && width <= 24)
-            else $error("[dsp_add_v2] width:%d configuration not supported", width);
+        assert(width > 0 && width <= 36 && width % 2 == 0) // need to figure for odd-bit-width
+            else $error("[dsp_mul] width:%d configuration not supported", width);
     end
 
     assign dsp_alumode = 4'b0000;
     assign dsp_inmode = 5'b00000;
-    assign dsp_opmode = 9'b000110011;
+    assign dsp_opmode = 9'b000000101;
     assign dsp_carryinsel = 3'd0;
     assign ce = 1'b0;
 
-    localparam extend = 24 - width;
+    localparam trunc_width = width >> 1;
+    localparam extend_a = 30 - trunc_width;
+    localparam extend_b = 18 - trunc_width;
 
-    assign dsp_tmp[23:0] = (width == 24)? a0 : {{extend{a0[width-1]}}, a0};
-    assign dsp_tmp[47:24] = (width == 24)? a1 : {{extend{a1[width-1]}}, a1};
+    assign dsp_a = {{extend_a{a[trunc_width-1]}}, a[trunc_width-1:0]};
+    assign dsp_b = (width == 36)? b[trunc_width-1:0] : {{extend_b{b[trunc_width-1]}}, b[trunc_width-1:0]};
+    assign dsp_c = 48'd0;
 
-    assign dsp_b = dsp_tmp[17:0];
-    assign dsp_a = dsp_tmp[47:18];
-
-    assign dsp_c[23:0] = (width == 24)? b0 : {{extend{b0[width-1]}}, b0};
-    assign dsp_c[47:24] = (width == 24)? b1 : {{extend{b1[width-1]}}, b1};
-
-    assign y0 = dsp_p[0 +: width];
-    assign y1 = dsp_p[24 +: width];
+    assign y = dsp_p[width-1:0];
 
     // DSP48E2: 48-bit Multi-Functional Arithmetic Block
     //          Virtex UltraScale+
@@ -61,8 +53,8 @@ module dsp_add_v2 #
         .B_INPUT("DIRECT"),                // Selects B input source, "DIRECT" (B port) or "CASCADE" (BCIN port)
         .PREADDINSEL("A"),                 // Selects input to pre-adder (A, B)
         .RND(48'h000000000000),            // Rounding Constant
-        .USE_MULT("NONE"),                 // Select multiplier usage (DYNAMIC, MULTIPLY, NONE)
-        .USE_SIMD("TWO24"),                // SIMD selection (FOUR12, ONE48, TWO24)
+        .USE_MULT("MULTIPLY"),             // Select multiplier usage (DYNAMIC, MULTIPLY, NONE)
+        .USE_SIMD("ONE48"),                // SIMD selection (FOUR12, ONE48, TWO24)
         .USE_WIDEXOR("FALSE"),             // Use the Wide XOR function (FALSE, TRUE)
         .XORSIMD("XOR24_48_96"),           // Mode of operation for the Wide XOR (XOR12, XOR24_48_96)
         // Pattern Detector Attributes: Pattern Detection Configuration

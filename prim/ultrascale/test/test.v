@@ -180,6 +180,34 @@ module test_dsp_add_v3_width_12 (
 
 endmodule
 
+module test_dsp_mul_width_32 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 32;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = -32'd255;
+    assign b = 32'd3;
+
+    assign y_ref = a * b;
+
+    dsp_mul #(.width(width)) dut (clock, reset, a, b, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display ("[test_dsp_mul_width_32] PASS");
+                else $error("[test_dsp_mul_width_32] FAIL");
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -216,5 +244,6 @@ module test();
     test_dsp_add_v2_width_24 t2 (clock, reset, cycles);
     test_dsp_add_v4_width_12 t3 (clock, reset, cycles);
     test_dsp_add_v3_width_12 t4 (clock, reset, cycles);
+    test_dsp_mul_width_32 t5 (clock, reset, cycles);
 
 endmodule

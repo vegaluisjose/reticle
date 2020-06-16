@@ -31,12 +31,12 @@ module dsp_add #
     assign dsp_carryinsel = 3'd0;
     assign ce = 1'b0;
 
-    localparam zero_rem = 48 - width;
+    localparam extend = 48 - width;
 
-    assign dsp_tmp[47:0] = (width == 48)? a : {{zero_rem{1'b0}}, a};
+    assign dsp_tmp[47:0] = (width == 48)? a : {{extend{a[width-1]}}, a};
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
-    assign dsp_c = {{zero_rem{1'b0}}, b};
+    assign dsp_c = {{extend{b[width-1]}}, b};
 
     assign y = dsp_p[width-1:0];
 
