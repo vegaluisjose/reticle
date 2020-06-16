@@ -1,7 +1,7 @@
 OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
-NAME = dsp_add_v2
+NAME = dsp_add_v4
 
 IMPL_FILE = \
 $(LIB_DIR)/$(NAME).v \
