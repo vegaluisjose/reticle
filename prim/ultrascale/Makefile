@@ -17,17 +17,8 @@ $(LIB_DIR)/dsp_sub_v2.v \
 $(LIB_DIR)/dsp_sub_v4.v \
 $(LIB_DIR)/dsp_sub_v3.v \
 $(LIB_DIR)/dsp_and.v \
-$(LIB_DIR)/dsp_and_v2.v \
-$(LIB_DIR)/dsp_and_v4.v \
-$(LIB_DIR)/dsp_and_v3.v \
 $(LIB_DIR)/dsp_or.v \
-$(LIB_DIR)/dsp_or_v2.v \
-$(LIB_DIR)/dsp_or_v4.v \
-$(LIB_DIR)/dsp_or_v3.v \
-$(LIB_DIR)/dsp_xor.v \
-$(LIB_DIR)/dsp_xor_v2.v \
-$(LIB_DIR)/dsp_xor_v4.v \
-$(LIB_DIR)/dsp_xor_v3.v
+$(LIB_DIR)/dsp_xor.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
