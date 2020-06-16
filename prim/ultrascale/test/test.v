@@ -12,6 +12,7 @@ module test_dsp_add_width_8 (
 
     assign a = -8'd1;
     assign b = 8'd16;
+
     assign y_ref = a + b;
 
     dsp_add #(.width(width)) dut (clock, reset, a, b, y);
@@ -39,6 +40,7 @@ module test_dsp_add_width_32 (
 
     assign a = 32'd1;
     assign b = 32'hffff0001;
+
     assign y_ref = a + b;
 
     dsp_add #(.width(width)) dut (clock, reset, a, b, y);
@@ -72,6 +74,7 @@ module test_dsp_add_v2_width_24 (
     assign b0 = 24'd16;
     assign a1 = 24'd23;
     assign b1 = 24'd7;
+
     assign y0_ref = a0 + b0;
     assign y1_ref = a1 + b1;
 
@@ -81,6 +84,55 @@ module test_dsp_add_v2_width_24 (
         if (!reset && (cycles == 32'd0)) begin
             assert (y0 == y0_ref && y1 == y1_ref) $display ("[test_dsp_add_v2_width_24] PASS");
                 else $error("[test_dsp_add_v2_width_24] FAIL");
+        end
+    end
+
+endmodule
+
+module test_dsp_add_v4_width_12 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 12;
+
+    logic [width-1:0] a0;
+    logic [width-1:0] b0;
+    logic [width-1:0] a1;
+    logic [width-1:0] b1;
+    logic [width-1:0] a2;
+    logic [width-1:0] b2;
+    logic [width-1:0] a3;
+    logic [width-1:0] b3;
+    logic [width-1:0] y0;
+    logic [width-1:0] y1;
+    logic [width-1:0] y2;
+    logic [width-1:0] y3;
+    logic [width-1:0] y0_ref;
+    logic [width-1:0] y1_ref;
+    logic [width-1:0] y2_ref;
+    logic [width-1:0] y3_ref;
+
+    assign a0 = -12'd1;
+    assign b0 = 12'd16;
+    assign a1 = 12'd23;
+    assign b1 = 12'd7;
+    assign a2 = 12'd255;
+    assign b2 = 12'd7;
+    assign a3 = -12'd20;
+    assign b3 = -12'd7;
+
+    assign y0_ref = a0 + b0;
+    assign y1_ref = a1 + b1;
+    assign y2_ref = a2 + b2;
+    assign y3_ref = a3 + b3;
+
+    dsp_add_v4 #(.width(width)) dut (clock, reset, a0, b0, a1, b1, a2, b2, a3, b3, y0, y1, y2, y3);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y0 == y0_ref && y1 == y1_ref && y2 == y2_ref && y3 == y3_ref) $display ("[test_dsp_add_v4_width_12] PASS");
+                else $error("[test_dsp_add_v4_width_12] FAIL");
         end
     end
 
@@ -120,5 +172,6 @@ module test();
     test_dsp_add_width_8 t0 (clock, reset, cycles);
     test_dsp_add_width_32 t1 (clock, reset, cycles);
     test_dsp_add_v2_width_24 t2 (clock, reset, cycles);
+    test_dsp_add_v4_width_12 t3 (clock, reset, cycles);
 
 endmodule
