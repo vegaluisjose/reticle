@@ -5,12 +5,12 @@ module dsp_add_v2 #
 (
     input              clock,
     input              reset,
-    input  [width-1:0] a,
-    input  [width-1:0] b,
-    input  [width-1:0] c,
-    input  [width-1:0] d,
-    output [width-1:0] y,
-    output [width-1:0] z
+    input  [width-1:0] a0,
+    input  [width-1:0] b0,
+    input  [width-1:0] a1,
+    input  [width-1:0] b1,
+    output [width-1:0] y0,
+    output [width-1:0] y1
 );
     logic [3:0] dsp_alumode;
     logic [2:0] dsp_carryinsel;
@@ -36,15 +36,15 @@ module dsp_add_v2 #
 
     localparam zero_rem = 24 - width;
 
-    assign dsp_tmp[23:0] = (width == 24)? a : {{zero_rem{1'b0}}, a};
-    assign dsp_tmp[47:24] = (width == 24)? c : {{zero_rem{1'b0}}, c};
+    assign dsp_tmp[23:0] = (width == 24)? a0 : {{zero_rem{1'b0}}, a0};
+    assign dsp_tmp[47:24] = (width == 24)? a1 : {{zero_rem{1'b0}}, a1};
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
-    assign dsp_c[23:0] = (width == 24)? b : {{zero_rem{1'b0}}, b};
-    assign dsp_c[47:24] = (width == 24)? d : {{zero_rem{1'b0}}, d};
+    assign dsp_c[23:0] = (width == 24)? b0 : {{zero_rem{1'b0}}, b0};
+    assign dsp_c[47:24] = (width == 24)? b1 : {{zero_rem{1'b0}}, b1};
 
-    assign y = dsp_p[0 +: width];
-    assign z = dsp_p[24 +: width];
+    assign y0 = dsp_p[0 +: width];
+    assign y1 = dsp_p[24 +: width];
 
     // DSP48E2: 48-bit Multi-Functional Arithmetic Block
     //          Virtex UltraScale+
