@@ -1,7 +1,7 @@
 OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
-NAME = dsp_add_v4
+NAME = dsp_add_v3
 
 IMPL_FILE = \
 $(LIB_DIR)/$(NAME).v \
@@ -9,7 +9,8 @@ $(LIB_DIR)/$(NAME).v \
 SIM_FILES = \
 $(LIB_DIR)/dsp_add.v \
 $(LIB_DIR)/dsp_add_v2.v \
-$(LIB_DIR)/dsp_add_v4.v
+$(LIB_DIR)/dsp_add_v4.v \
+$(LIB_DIR)/dsp_add_v3.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
