@@ -38,8 +38,10 @@ module dsp_add_v2 #
 
     assign dsp_tmp[23:0] = (width == 24)? a0 : {{zero_rem{1'b0}}, a0};
     assign dsp_tmp[47:24] = (width == 24)? a1 : {{zero_rem{1'b0}}, a1};
+
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
+
     assign dsp_c[23:0] = (width == 24)? b0 : {{zero_rem{1'b0}}, b0};
     assign dsp_c[47:24] = (width == 24)? b1 : {{zero_rem{1'b0}}, b1};
 

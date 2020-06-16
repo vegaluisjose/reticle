@@ -59,27 +59,27 @@ module test_dsp_add_v2_width_24 (
 );
     localparam width = 24;
 
-    logic [width-1:0] a;
-    logic [width-1:0] b;
-    logic [width-1:0] c;
-    logic [width-1:0] d;
-    logic [width-1:0] y;
-    logic [width-1:0] z;
-    logic [width-1:0] y_ref;
-    logic [width-1:0] z_ref;
+    logic [width-1:0] a0;
+    logic [width-1:0] b0;
+    logic [width-1:0] a1;
+    logic [width-1:0] b1;
+    logic [width-1:0] y0;
+    logic [width-1:0] y1;
+    logic [width-1:0] y0_ref;
+    logic [width-1:0] y1_ref;
 
-    assign a = -24'd1;
-    assign b = 24'd16;
-    assign c = 24'd23;
-    assign d = 24'd7;
-    assign y_ref = a + b;
-    assign z_ref = c + d;
+    assign a0 = -24'd1;
+    assign b0 = 24'd16;
+    assign a1 = 24'd23;
+    assign b1 = 24'd7;
+    assign y0_ref = a0 + b0;
+    assign y1_ref = a1 + b1;
 
-    dsp_add_v2 #(.width(width)) dut (clock, reset, a, b, c, d, y, z);
+    dsp_add_v2 #(.width(width)) dut (clock, reset, a0, b0, a1, b1, y0, y1);
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y == y_ref && z == z_ref) $display ("[test_dsp_add_v2_width_24] PASS");
+            assert (y0 == y0_ref && y1 == y1_ref) $display ("[test_dsp_add_v2_width_24] PASS");
                 else $error("[test_dsp_add_v2_width_24] FAIL");
         end
     end
