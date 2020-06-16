@@ -42,18 +42,18 @@ module dsp_add_v4 #
 
     localparam extend = 12 - width;
 
-    assign dsp_tmp[11:0] = (width == 12)? a0 : {{extend{a0[width-1]}}, a0};
-    assign dsp_tmp[23:12] = (width == 12)? a1 : {{extend{a1[width-1]}}, a1};
-    assign dsp_tmp[35:24] = (width == 12)? a2 : {{extend{a2[width-1]}}, a2};
-    assign dsp_tmp[47:36] = (width == 12)? a3 : {{extend{a3[width-1]}}, a3};
+    assign dsp_tmp[11:0] = (width == 12)? b0 : {{extend{b0[width-1]}}, b0};
+    assign dsp_tmp[23:12] = (width == 12)? b1 : {{extend{b1[width-1]}}, b1};
+    assign dsp_tmp[35:24] = (width == 12)? b2 : {{extend{b2[width-1]}}, b2};
+    assign dsp_tmp[47:36] = (width == 12)? b3 : {{extend{b3[width-1]}}, b3};
 
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
 
-    assign dsp_c[11:0] = (width == 12)? b0 : {{extend{b0[width-1]}}, b0};
-    assign dsp_c[23:12] = (width == 12)? b1 : {{extend{b1[width-1]}}, b1};
-    assign dsp_c[35:24] = (width == 12)? b2 : {{extend{b2[width-1]}}, b2};
-    assign dsp_c[47:36] = (width == 12)? b3 : {{extend{b3[width-1]}}, b3};
+    assign dsp_c[11:0] = (width == 12)? a0 : {{extend{a0[width-1]}}, a0};
+    assign dsp_c[23:12] = (width == 12)? a1 : {{extend{a1[width-1]}}, a1};
+    assign dsp_c[35:24] = (width == 12)? a2 : {{extend{a2[width-1]}}, a2};
+    assign dsp_c[47:36] = (width == 12)? a3 : {{extend{a3[width-1]}}, a3};
 
     assign y0 = dsp_p[0 +: width];
     assign y1 = dsp_p[12 +: width];

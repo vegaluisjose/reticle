@@ -36,14 +36,14 @@ module dsp_add_v2 #
 
     localparam extend = 24 - width;
 
-    assign dsp_tmp[23:0] = (width == 24)? a0 : {{extend{a0[width-1]}}, a0};
-    assign dsp_tmp[47:24] = (width == 24)? a1 : {{extend{a1[width-1]}}, a1};
+    assign dsp_tmp[23:0] = (width == 24)? b0 : {{extend{b0[width-1]}}, b0};
+    assign dsp_tmp[47:24] = (width == 24)? b1 : {{extend{b1[width-1]}}, b1};
 
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
 
-    assign dsp_c[23:0] = (width == 24)? b0 : {{extend{b0[width-1]}}, b0};
-    assign dsp_c[47:24] = (width == 24)? b1 : {{extend{b1[width-1]}}, b1};
+    assign dsp_c[23:0] = (width == 24)? a0 : {{extend{a0[width-1]}}, a0};
+    assign dsp_c[47:24] = (width == 24)? a1 : {{extend{a1[width-1]}}, a1};
 
     assign y0 = dsp_p[0 +: width];
     assign y1 = dsp_p[24 +: width];
