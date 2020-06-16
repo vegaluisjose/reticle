@@ -12,7 +12,10 @@ $(LIB_DIR)/dsp_add_v2.v \
 $(LIB_DIR)/dsp_add_v4.v \
 $(LIB_DIR)/dsp_add_v3.v \
 $(LIB_DIR)/dsp_mul.v \
-$(LIB_DIR)/dsp_sub.v
+$(LIB_DIR)/dsp_sub.v \
+$(LIB_DIR)/dsp_sub_v2.v \
+$(LIB_DIR)/dsp_sub_v4.v \
+$(LIB_DIR)/dsp_sub_v3.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
