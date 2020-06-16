@@ -30,12 +30,12 @@ module dsp_mul #
     assign dsp_carryinsel = 3'd0;
     assign ce = 1'b0;
 
-    localparam trunc_width = width >> 1;
+    localparam trunc_width = ((width >> 1) - 1);
     localparam extend_a = 30 - trunc_width;
     localparam extend_b = 18 - trunc_width;
 
-    assign dsp_a = {{extend_a{a[trunc_width-1]}}, a[trunc_width-1:0]};
-    assign dsp_b = (width == 36)? b[trunc_width-1:0] : {{extend_b{b[trunc_width-1]}}, b[trunc_width-1:0]};
+    assign dsp_a = {{extend_a{a[width-1]}}, a[trunc_width-1:0]};
+    assign dsp_b = (width == 36)? {b[width-1:0], b[trunc_width-1:0]} : {{extend_b{b[width-1]}}, b[trunc_width-1:0]};
     assign dsp_c = 48'd0;
 
     assign y = dsp_p[width-1:0];
