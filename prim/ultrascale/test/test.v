@@ -19,8 +19,8 @@ module test_dsp_add_width_8 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y == y_ref) $display ("[test_dsp_add_width_8] PASS");
-                else $error("[test_dsp_add_width_8] FAIL");
+            assert (y == y_ref) $display ("[PASS] test_dsp_add_width_8");
+                else $error("[FAIL] test_dsp_add_width_8");
         end
     end
 
@@ -47,8 +47,8 @@ module test_dsp_add_width_32 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y == y_ref) $display ("[test_dsp_add_width_32] PASS");
-                else $error("[test_dsp_add_width_32] FAIL");
+            assert (y == y_ref) $display ("[PASS] test_dsp_add_width_32");
+                else $error("[FAIL] test_dsp_add_width_32");
         end
     end
 
@@ -82,8 +82,8 @@ module test_dsp_add_v2_width_24 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y0 == y0_ref && y1 == y1_ref) $display ("[test_dsp_add_v2_width_24] PASS");
-                else $error("[test_dsp_add_v2_width_24] FAIL");
+            assert (y0 == y0_ref && y1 == y1_ref) $display ("[PASS] test_dsp_add_v2_width_24");
+                else $error("[FAIL] test_dsp_add_v2_width_24");
         end
     end
 
@@ -131,8 +131,8 @@ module test_dsp_add_v4_width_12 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y0 == y0_ref && y1 == y1_ref && y2 == y2_ref && y3 == y3_ref) $display ("[test_dsp_add_v4_width_12] PASS");
-                else $error("[test_dsp_add_v4_width_12] FAIL");
+            assert (y0 == y0_ref && y1 == y1_ref && y2 == y2_ref && y3 == y3_ref) $display ("[PASS] test_dsp_add_v4_width_12");
+                else $error("[FAIL] test_dsp_add_v4_width_12");
         end
     end
 
@@ -173,8 +173,8 @@ module test_dsp_add_v3_width_12 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y0 == y0_ref && y1 == y1_ref && y2 == y2_ref) $display ("[test_dsp_add_v3_width_12] PASS");
-                else $error("[test_dsp_add_v3_width_12] FAIL");
+            assert (y0 == y0_ref && y1 == y1_ref && y2 == y2_ref) $display ("[PASS] test_dsp_add_v3_width_12");
+                else $error("[FAIL] test_dsp_add_v3_width_12 ");
         end
     end
 
@@ -201,8 +201,36 @@ module test_dsp_mul_width_32 (
 
     always @(posedge clock) begin
         if (!reset && (cycles == 32'd0)) begin
-            assert (y == y_ref) $display ("[test_dsp_mul_width_32] PASS");
-                else $error("[test_dsp_mul_width_32] FAIL");
+            assert (y == y_ref) $display ("[PASS] test_dsp_mul_width_32");
+                else $error("[FAIL] test_dsp_mul_width_32");
+        end
+    end
+
+endmodule
+
+module test_dsp_sub_width_32 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 32;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = 32'd10;
+    assign b = 32'd1;
+
+    assign y_ref = a - b;
+
+    dsp_sub #(.width(width)) dut (clock, reset, a, b, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display ("[PASS] test_dsp_sub_width_32");
+                else $error("[FAIL] test_dsp_sub_width_32");
         end
     end
 
@@ -245,5 +273,6 @@ module test();
     test_dsp_add_v4_width_12 t3 (clock, reset, cycles);
     test_dsp_add_v3_width_12 t4 (clock, reset, cycles);
     test_dsp_mul_width_32 t5 (clock, reset, cycles);
+    test_dsp_sub_width_32 t6 (clock, reset, cycles);
 
 endmodule

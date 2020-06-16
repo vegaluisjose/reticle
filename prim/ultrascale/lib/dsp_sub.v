@@ -1,4 +1,4 @@
-module dsp_add #
+module dsp_sub #
 (
     parameter width = 48
 )
@@ -25,7 +25,7 @@ module dsp_add #
             else $error("[dsp_add] width:%d configuration not supported", width);
     end
 
-    assign dsp_alumode = 4'b0000;
+    assign dsp_alumode = 4'b0011;
     assign dsp_inmode = 5'b00000;
     assign dsp_opmode = 9'b000110011;
     assign dsp_carryinsel = 3'd0;
