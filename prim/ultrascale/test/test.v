@@ -474,6 +474,34 @@ module test_dsp_nor_width_32 (
 
 endmodule
 
+module test_dsp_xnor_width_32 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 32;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = 32'd10;
+    assign b = 32'd1;
+
+    assign y_ref = ~(a ^ b);
+
+    dsp_xnor #(.width(width)) dut (clock, reset, a, b, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display ("[PASS] test_dsp_xnor_width_32");
+                else $error("[FAIL] test_dsp_xnor_width_32");
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -519,5 +547,6 @@ module test();
     test_dsp_or_width_32     t11 (clock, reset, cycles);
     test_dsp_xor_width_32    t12 (clock, reset, cycles);
     test_dsp_nor_width_32    t13 (clock, reset, cycles);
+    test_dsp_xnor_width_32   t14 (clock, reset, cycles);
 
 endmodule
