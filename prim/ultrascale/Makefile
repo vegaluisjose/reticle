@@ -18,7 +18,8 @@ $(LIB_DIR)/dsp_sub_v4.v \
 $(LIB_DIR)/dsp_sub_v3.v \
 $(LIB_DIR)/dsp_and.v \
 $(LIB_DIR)/dsp_or.v \
-$(LIB_DIR)/dsp_xor.v
+$(LIB_DIR)/dsp_xor.v \
+$(LIB_DIR)/dsp_nor.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
