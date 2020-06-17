@@ -33,10 +33,10 @@ module dsp_add #
 
     localparam extend = 48 - width;
 
-    assign dsp_tmp[47:0] = (width == 48)? b : {{extend{a[width-1]}}, b};
+    assign dsp_tmp = (width == 48)? b : {{extend{1'b0}}, b};
     assign dsp_b = dsp_tmp[17:0];
     assign dsp_a = dsp_tmp[47:18];
-    assign dsp_c = {{extend{b[width-1]}}, a};
+    assign dsp_c = (width == 48)? a : {{extend{1'b0}}, a};
 
     assign y = dsp_p[width-1:0];
 

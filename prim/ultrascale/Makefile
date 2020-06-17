@@ -20,7 +20,9 @@ $(LIB_DIR)/dsp_and.v \
 $(LIB_DIR)/dsp_or.v \
 $(LIB_DIR)/dsp_xor.v \
 $(LIB_DIR)/dsp_nor.v \
-$(LIB_DIR)/dsp_xnor.v
+$(LIB_DIR)/dsp_xnor.v \
+$(LIB_DIR)/dsp_nand.v \
+$(LIB_DIR)/dsp_not.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt

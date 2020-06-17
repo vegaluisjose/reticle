@@ -1,4 +1,4 @@
-module dsp_nor #
+module dsp_not #
 (
     parameter width = 48
 )
@@ -6,7 +6,6 @@ module dsp_nor #
     input              clock,
     input              reset,
     input  [width-1:0] a,
-    input  [width-1:0] b,
     output [width-1:0] y
 );
     logic [3:0] dsp_alumode;
@@ -22,21 +21,20 @@ module dsp_nor #
 
     initial begin
         assert(width > 0 && width <= 48)
-            else $error("[dsp_nor] width:%d configuration not supported", width);
+            else $error("[dsp_not] width:%d configuration not supported", width);
     end
 
-    assign dsp_alumode = 4'b1110;
+    assign dsp_alumode = 4'b1101;
     assign dsp_inmode = 5'b00000;
-    assign dsp_opmode = 9'b000111011;
+    assign dsp_opmode = 9'b000110011;
     assign dsp_carryinsel = 3'd0;
     assign ce = 1'b0;
 
     localparam extend = 48 - width;
 
-    assign dsp_tmp = (width == 48)? b : {{extend{b[width-1]}}, b};
-    assign dsp_b = dsp_tmp[17:0];
-    assign dsp_a = dsp_tmp[47:18];
-    assign dsp_c = (width == 48)? a : {{extend{a[width-1]}}, a};
+    assign dsp_b = {18{1'b1}};
+    assign dsp_a = {30{1'b1}};
+    assign dsp_c = {{extend{1'b0}}, a};
 
     assign y = dsp_p[width-1:0];
 
