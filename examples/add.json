@@ -1,0 +1,72 @@
+{
+  "defs": [
+    {
+      "Comp": {
+        "name": "scalar_add",
+        "inputs": [
+          {
+            "Input": {
+              "id": "a",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "b",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "Output": {
+              "id": "y",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          }
+        ],
+        "body": [
+          {
+            "prim": {
+              "Placed": {
+                "op": "Add",
+                "attr": [],
+                "params": [
+                  {
+                    "VarRef": "a"
+                  },
+                  {
+                    "VarRef": "b"
+                  }
+                ],
+                "loc": {
+                  "Loc": [
+                    "Lut",
+                    "Placeholder",
+                    "Placeholder"
+                  ]
+                }
+              }
+            },
+            "outputs": [
+              {
+                "Output": {
+                  "id": "y",
+                  "datatype": {
+                    "UInt": 8
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
