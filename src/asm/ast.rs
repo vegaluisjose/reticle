@@ -9,7 +9,6 @@ pub enum DataType {
 
 #[derive(Clone, Debug)]
 pub enum Expr {
-    placeholder,
     ULit(u64),
     SLit(i64),
     Str(Id),
