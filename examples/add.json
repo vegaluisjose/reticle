@@ -33,37 +33,39 @@
         ],
         "body": [
           {
-            "prim": {
-              "Placed": {
-                "op": "Add",
-                "attr": [],
-                "params": [
-                  {
-                    "VarRef": "a"
-                  },
-                  {
-                    "VarRef": "b"
-                  }
-                ],
-                "loc": {
-                  "Loc": [
-                    "Lut",
-                    "Placeholder",
-                    "Placeholder"
-                  ]
-                }
-              }
-            },
-            "outputs": [
-              {
-                "Output": {
-                  "id": "y",
-                  "datatype": {
-                    "UInt": 8
+            "Comp": {
+              "op": {
+                "Placed": {
+                  "op": "Add",
+                  "attrs": [],
+                  "params": [
+                    {
+                      "VarRef": "a"
+                    },
+                    {
+                      "VarRef": "b"
+                    }
+                  ],
+                  "loc": {
+                    "Loc": [
+                      "Lut",
+                      "Placeholder",
+                      "Placeholder"
+                    ]
                   }
                 }
-              }
-            ]
+              },
+              "outputs": [
+                {
+                  "Output": {
+                    "id": "y",
+                    "datatype": {
+                      "UInt": 8
+                    }
+                  }
+                }
+              ]
+            }
           }
         ]
       }
