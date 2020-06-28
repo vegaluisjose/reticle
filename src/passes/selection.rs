@@ -2,7 +2,6 @@ use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Opcode {
-    Ref,
     Add,
     Mul,
     Reg,
@@ -11,7 +10,6 @@ pub enum Opcode {
 impl fmt::Display for Opcode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Opcode::Ref => write!(f, "ref"),
             Opcode::Add => write!(f, "add"),
             Opcode::Mul => write!(f, "mul"),
             Opcode::Reg => write!(f, "reg"),
@@ -165,15 +163,9 @@ fn instruction_selection(code: &Node, patterns: &Vec<Node>) -> Vec<Node> {
 }
 
 pub fn example() {
-    let input = Node::new_with_attrs(&Opcode::Ref, 8, &Loc::Placeholder, 0);
-    let mut code = Node::new_with_attrs(&Opcode::Add, 8, &Loc::Placeholder, u128::max_value());
-    let mut dsp_add = Node::new_with_attrs(&Opcode::Add, 8, &Loc::Dsp, 1);
-    dsp_add.push_operand(&input);
-    dsp_add.push_operand(&input);
-    code.push_operand(&input);
-    code.push_operand(&input);
+    let code = Node::new_with_attrs(&Opcode::Add, 8, &Loc::Placeholder, u128::max_value());
+    let dsp_add = Node::new_with_attrs(&Opcode::Add, 8, &Loc::Dsp, 1);
     let mut patterns: Vec<Node> = Vec::new();
-    patterns.push(input.clone());
     patterns.push(dsp_add.clone());
     let codegen = instruction_selection(&code, &patterns);
     println!("Before opt");
