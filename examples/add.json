@@ -46,13 +46,7 @@
                       "VarRef": "b"
                     }
                   ],
-                  "loc": {
-                    "Origin": [
-                      "Lut",
-                      "Placeholder",
-                      "Placeholder"
-                    ]
-                  }
+                  "loc": "Placeholder"
                 }
               },
               "outputs": [
