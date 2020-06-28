@@ -1,4 +1,5 @@
 use reticle::lang::ast::*;
+use reticle::passes::selection;
 use serde_json;
 use std::fs;
 
@@ -7,4 +8,5 @@ fn main() {
         .expect("Error: reading the file");
     let prog: Prog = serde_json::from_str(&contents).expect("Error: deserializing");
     println!("{}", prog);
+    selection::example();
 }
