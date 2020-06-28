@@ -15,11 +15,20 @@ pub enum DataType {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum LocType {
+pub enum PlacedType {
     Lut,
     Lum,
     Dsp,
     Ram,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum RelativeOp {
+    Equal,
+    Above,
+    Below,
+    Before,
+    After,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -28,8 +37,8 @@ pub enum Expr {
     ULit(u64),
     SLit(i64),
     VarRef(Id),
-    LocRef(Id),
-    Loc(LocType, Rc<Expr>, Rc<Expr>),
+    Relative(RelativeOp, Id),
+    Origin(PlacedType, Rc<Expr>, Rc<Expr>),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -163,18 +172,36 @@ impl fmt::Display for DataType {
     }
 }
 
-impl PrettyPrinter for LocType {
+impl PrettyPrinter for PlacedType {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            LocType::Lut => RcDoc::text("lut"),
-            LocType::Lum => RcDoc::text("lum"),
-            LocType::Dsp => RcDoc::text("dsp"),
-            LocType::Ram => RcDoc::text("ram"),
+            PlacedType::Lut => RcDoc::text("lut"),
+            PlacedType::Lum => RcDoc::text("lum"),
+            PlacedType::Dsp => RcDoc::text("dsp"),
+            PlacedType::Ram => RcDoc::text("ram"),
         }
     }
 }
 
-impl fmt::Display for LocType {
+impl fmt::Display for PlacedType {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_pretty())
+    }
+}
+
+impl PrettyPrinter for RelativeOp {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            RelativeOp::Equal => RcDoc::text("equal"),
+            RelativeOp::Above => RcDoc::text("above"),
+            RelativeOp::Below => RcDoc::text("below"),
+            RelativeOp::Before => RcDoc::text("before"),
+            RelativeOp::After => RcDoc::text("after"),
+        }
+    }
+}
+
+impl fmt::Display for RelativeOp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }
@@ -187,14 +214,17 @@ impl PrettyPrinter for Expr {
             Expr::ULit(n) => RcDoc::as_string(n),
             Expr::SLit(n) => RcDoc::as_string(n),
             Expr::VarRef(n) => RcDoc::as_string(n),
-            Expr::LocRef(n) => RcDoc::as_string(n),
-            Expr::Loc(ty, x, y) => ty.to_doc()
+            Expr::Relative(op, n) => op.to_doc()
+                .append(RcDoc::text("("))
+                .append(RcDoc::as_string(n))
+                .append(RcDoc::text(")")),
+            Expr::Origin(ty, x, y) => ty.to_doc()
                 .append(RcDoc::text("("))
                 .append(x.to_doc())
                 .append(RcDoc::text(","))
                 .append(RcDoc::space())
                 .append(y.to_doc())
-                .append(RcDoc::text(")"))
+                .append(RcDoc::text(")")),
         }
     }
 }
