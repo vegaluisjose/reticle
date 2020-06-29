@@ -1,0 +1,203 @@
+{
+  "defs": [
+    {
+      "Comp": {
+        "name": "dot_systolic",
+        "inputs": [
+          {
+            "Input": {
+              "id": "a0",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "a1",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "a2",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "b0",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "b1",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "b2",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "c",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "ena",
+              "datatype": {
+                "UInt": 1
+              }
+            }
+          },
+          {
+            "Input": {
+              "id": "enb",
+              "datatype": {
+                "UInt": 1
+              }
+            }
+          }
+        ],
+        "outputs": [
+          {
+            "Output": {
+              "id": "y",
+              "datatype": {
+                "UInt": 8
+              }
+            }
+          }
+        ],
+        "body": [
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "a0"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t0", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "a1"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t1", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "a2"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t2", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "b0"}, {"VarRef": "enb"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t3", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "b1"}, {"VarRef": "enb"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t4", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "b2"}, {"VarRef": "enb"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t5", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Mul", "attrs": [], "params": [{"VarRef": "t0"}, {"VarRef": "t3"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t6", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Mul", "attrs": [], "params": [{"VarRef": "t1"}, {"VarRef": "t4"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t7", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Mul", "attrs": [], "params": [{"VarRef": "t2"}, {"VarRef": "t5"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t8", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t6"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t9", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t7"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t10", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t8"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t11", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Add", "attrs": [], "params": [{"VarRef": "t9"}, {"VarRef": "c"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t12", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t12"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t13", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Add", "attrs": [], "params": [{"VarRef": "t10"}, {"VarRef": "t13"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t14", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t14"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t15", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Add", "attrs": [], "params": [{"VarRef": "t11"}, {"VarRef": "t15"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "t16", "datatype": { "UInt": 8 }}}]
+            }
+          },
+          {
+            "Comp": {
+              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t16"}, {"VarRef": "ena"}], "loc": "Placeholder"}},
+              "outputs": [{"Output": {"id": "y", "datatype": { "UInt": 8 }}}]
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

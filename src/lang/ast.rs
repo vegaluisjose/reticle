@@ -60,6 +60,7 @@ pub enum StdOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum PlacedOp {
+    Reg,
     Add,
     Sub,
     Mul,
@@ -252,7 +253,10 @@ impl fmt::Display for StdOp {
 impl PrettyPrinter for PlacedOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
+            PlacedOp::Reg => RcDoc::text("reg"),
             PlacedOp::Add => RcDoc::text("add"),
+            PlacedOp::Sub => RcDoc::text("sub"),
+            PlacedOp::Mul => RcDoc::text("mul"),
             _ => panic!("WIP"),
         }
     }
