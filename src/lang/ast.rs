@@ -1,8 +1,8 @@
-use serde::{Deserialize, Serialize};
 use crate::util::pretty::{PrettyPrinter, PRETTY_INDENT};
-use std::rc::Rc;
 use pretty::RcDoc;
+use serde::{Deserialize, Serialize};
 use std::fmt;
+use std::rc::Rc;
 
 pub type Id = String;
 
@@ -87,9 +87,7 @@ pub enum PlacedOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum SimOp {
-    Print {
-        params: Vec<Expr>,
-    },
+    Print { params: Vec<Expr> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -109,27 +107,15 @@ pub enum CompOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Port {
-    Input {
-        id: Id,
-        datatype: DataType,
-    },
-    Output {
-        id: Id,
-        datatype: DataType,
-    },
+    Input { id: Id, datatype: DataType },
+    Output { id: Id, datatype: DataType },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Decl {
-    Sim {
-        op: SimOp,
-    },
-    Comp {
-        op: CompOp,
-        outputs: Vec<Port>,
-    }
+    Sim { op: SimOp },
+    Comp { op: CompOp, outputs: Vec<Port> },
 }
-
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Def {
@@ -215,11 +201,13 @@ impl PrettyPrinter for Expr {
             Expr::ULit(n) => RcDoc::as_string(n),
             Expr::SLit(n) => RcDoc::as_string(n),
             Expr::VarRef(n) => RcDoc::as_string(n),
-            Expr::Relative(op, n) => op.to_doc()
+            Expr::Relative(op, n) => op
+                .to_doc()
                 .append(RcDoc::text("("))
                 .append(RcDoc::as_string(n))
                 .append(RcDoc::text(")")),
-            Expr::Origin(ty, x, y) => ty.to_doc()
+            Expr::Origin(ty, x, y) => ty
+                .to_doc()
                 .append(RcDoc::text("("))
                 .append(x.to_doc())
                 .append(RcDoc::text(","))
@@ -280,11 +268,15 @@ impl fmt::Display for SimOp {
     }
 }
 
-
 impl PrettyPrinter for CompOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            CompOp::Placed { op, attrs, params, loc } => {
+            CompOp::Placed {
+                op,
+                attrs,
+                params,
+                loc,
+            } => {
                 let attrs_doc = match attrs.is_empty() {
                     true => RcDoc::nil(),
                     false => RcDoc::text("[")
@@ -324,7 +316,7 @@ impl fmt::Display for CompOp {
 impl PrettyPrinter for Port {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Port::Input { id, datatype } =>  RcDoc::as_string(id)
+            Port::Input { id, datatype } => RcDoc::as_string(id)
                 .append(RcDoc::text(":"))
                 .append(RcDoc::space())
                 .append(datatype.to_doc()),
@@ -348,17 +340,15 @@ impl PrettyPrinter for Decl {
             Decl::Sim { op } => op.to_doc(),
             Decl::Comp { op, outputs } => RcDoc::intersperse(
                 outputs.iter().map(|o| o.to_doc()),
-                RcDoc::text(",").append(RcDoc::space())
+                RcDoc::text(",").append(RcDoc::space()),
             )
             .append(RcDoc::space())
             .append(RcDoc::text("="))
             .append(RcDoc::space())
             .append(op.to_doc()),
-
         }
     }
 }
-
 
 impl fmt::Display for Decl {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -385,14 +375,19 @@ impl PrettyPrinter for Def {
                     .append(body_doc)
                     .append(RcDoc::text("}"))
             }
-            Def::Comp { name, inputs, outputs, body } => {
+            Def::Comp {
+                name,
+                inputs,
+                outputs,
+                body,
+            } => {
                 let inputs_doc = RcDoc::intersperse(
                     inputs.iter().map(|i| i.to_doc()),
-                    RcDoc::text(",").append(RcDoc::space())
+                    RcDoc::text(",").append(RcDoc::space()),
                 );
                 let outputs_doc = RcDoc::intersperse(
                     outputs.iter().map(|o| o.to_doc()),
-                    RcDoc::text(",").append(RcDoc::space())
+                    RcDoc::text(",").append(RcDoc::space()),
                 );
                 let mut body_doc = RcDoc::nil();
                 for decl in body.iter() {
@@ -423,7 +418,6 @@ impl PrettyPrinter for Def {
         }
     }
 }
-
 
 impl fmt::Display for Def {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
