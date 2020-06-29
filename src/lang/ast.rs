@@ -37,7 +37,7 @@ pub enum Expr {
     ULit(u64),
     SLit(i64),
     VarRef(Id),
-    Relative(RelativeOp, Id),
+    Relative(RelativeOp, Rc<Expr>),
     Origin(PlacedType, Rc<Expr>, Rc<Expr>),
 }
 
