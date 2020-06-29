@@ -73,30 +73,10 @@ impl fmt::Display for Node {
     }
 }
 
-pub fn pattern_example() {
+pub fn print_patterns() {
     let mut patterns: Vec<Node> = Vec::new();
     let mut dsp_add = Node::new_with_attrs(
         &ast::PlacedOp::Add,
-        &ast::DataType::UInt(8),
-        4,
-        &ast::Expr::Origin(
-            ast::PlacedType::Dsp,
-            Rc::new(ast::Expr::Placeholder),
-            Rc::new(ast::Expr::Placeholder),
-        ),
-    );
-    let mut dsp_mul = Node::new_with_attrs(
-        &ast::PlacedOp::Mul,
-        &ast::DataType::UInt(8),
-        4,
-        &ast::Expr::Origin(
-            ast::PlacedType::Dsp,
-            Rc::new(ast::Expr::Placeholder),
-            Rc::new(ast::Expr::Placeholder),
-        ),
-    );
-    let mut dsp_reg_mul = Node::new_with_attrs(
-        &ast::PlacedOp::Reg,
         &ast::DataType::UInt(8),
         3,
         &ast::Expr::Origin(
@@ -105,14 +85,49 @@ pub fn pattern_example() {
             Rc::new(ast::Expr::Placeholder),
         ),
     );
-    dsp_reg_mul.push_param(&dsp_mul);
+    let mut lut_add = Node::new_with_attrs(
+        &ast::PlacedOp::Add,
+        &ast::DataType::UInt(8),
+        4,
+        &ast::Expr::Origin(
+            ast::PlacedType::Lut,
+            Rc::new(ast::Expr::Placeholder),
+            Rc::new(ast::Expr::Placeholder),
+        ),
+    );
+    let mut dsp_r_add = Node::new_with_attrs(
+        &ast::PlacedOp::Reg,
+        &ast::DataType::UInt(8),
+        1,
+        &ast::Expr::Origin(
+            ast::PlacedType::Dsp,
+            Rc::new(ast::Expr::Placeholder),
+            Rc::new(ast::Expr::Placeholder),
+        ),
+    );
+    let mut lut_r_add = Node::new_with_attrs(
+        &ast::PlacedOp::Reg,
+        &ast::DataType::UInt(8),
+        1,
+        &ast::Expr::Origin(
+            ast::PlacedType::Lut,
+            Rc::new(ast::Expr::Placeholder),
+            Rc::new(ast::Expr::Placeholder),
+        ),
+    );
+    dsp_r_add.push_param(&dsp_add);
+    lut_r_add.push_param(&lut_add);
+    lut_add.change_name("add");
+    lut_r_add.change_name("r_add");
     dsp_add.change_name("add");
-    dsp_mul.change_name("mul");
-    dsp_reg_mul.change_name("reg_mul");
+    dsp_r_add.change_name("r_add");
+    patterns.push(lut_add);
+    patterns.push(lut_r_add);
     patterns.push(dsp_add);
-    patterns.push(dsp_mul);
-    patterns.push(dsp_reg_mul);
+    patterns.push(dsp_r_add);
+    println!("\n-----patterns-----");
     for pat in patterns.iter() {
         println!("{}", pat);
     }
+    println!("\n");
 }
