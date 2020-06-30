@@ -6,7 +6,7 @@ use std::rc::Rc;
 
 pub type Id = String;
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum DataType {
     Placeholder,
     UInt(u64),
@@ -67,7 +67,7 @@ pub enum StdOp {
     VecFromScalar,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum PlacedOp {
     Reg,
     Add,

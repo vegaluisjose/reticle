@@ -37,7 +37,7 @@ impl Node {
                 attrs: _,
                 inputs: _,
                 loc,
-            } => Node::new_with_attrs(op, cty, u128::max_value(), loc),
+            } => Node::new_with_attrs(op, cty, 100, loc),
             _ => panic!("Error: std ops do not have cost"),
         }
     }
@@ -49,7 +49,66 @@ impl Node {
     pub fn push_input(&mut self, op: &Node) {
         self.inputs.push(op.clone());
     }
+
+    pub fn has_placeholder(&self) -> bool {
+        match self.loc {
+            ast::Expr::Placeholder => true,
+            _ => false,
+        }
+    }
+
+    pub fn postorder(&self) -> Vec<Node> {
+        let mut stack: Vec<Node> = Vec::new();
+        let mut res: Vec<Node> = Vec::new();
+        stack.push(self.clone());
+        while !stack.is_empty() {
+            let node = stack.pop().unwrap();
+            res.push(node.clone());
+            for operand in node.inputs.iter() {
+                stack.push(operand.clone());
+            }
+        }
+        res.reverse();
+        res
+    }
+
+    pub fn estimate(&self) -> u128 {
+        let mut sum = self.cost;
+        for i in self.inputs.iter() {
+            sum += i.estimate();
+        }
+        sum
+    }
 }
+
+impl PartialEq for Node {
+    fn eq(&self, other: &Self) -> bool {
+        if self.op != other.op {
+            false
+        } else if self.ty != other.ty {
+            false
+        } else if self.inputs.len() != other.inputs.len() {
+            false
+        } else {
+            let mut eq = true;
+            for (a, b) in self.inputs.iter().zip(other.inputs.iter()) {
+                if a.op != b.op {
+                    eq = false;
+                    break;
+                } else if a.ty != b.ty {
+                    eq = false;
+                    break;
+                } else if a.inputs.len() != b.inputs.len() {
+                    eq = false;
+                    break;
+                }
+            }
+            eq
+        }
+    }
+}
+
+impl Eq for Node {}
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -57,7 +116,7 @@ impl fmt::Display for Node {
     }
 }
 
-pub fn print_patterns() {
+pub fn get_patterns() -> Vec<Node> {
     let mut patterns: Vec<Node> = Vec::new();
     let mut dsp_add = Node::new_with_attrs(
         &ast::PlacedOp::Add,
@@ -109,11 +168,7 @@ pub fn print_patterns() {
     patterns.push(lut_r_add);
     patterns.push(dsp_add);
     patterns.push(dsp_r_add);
-    println!("\n-----patterns-----");
-    for pat in patterns.iter() {
-        println!("{}", pat);
-    }
-    println!("\n");
+    patterns
 }
 
 pub struct DAG {
@@ -131,16 +186,16 @@ impl DAG {
 
     pub fn from_ast(&mut self, prog: &ast::Prog) {
         assert!(prog.defs.len() == 1, "single def only supported atm");
-        let (comp_def, comp_outputs) = match &prog.defs[0] {
+        let body = match &prog.defs[0] {
             ast::Def::Comp {
                 name: _,
                 inputs: _,
-                outputs,
+                outputs: _,
                 body,
-            } => (body.clone(), outputs.clone()),
+            } => body.clone(),
             _ => panic!("Error Sim component not supported"),
         };
-        for decl in comp_def.iter() {
+        for decl in body.iter() {
             match decl {
                 ast::Decl::Comp { op, outputs } => {
                     assert!(outputs.len() == 1, "Error: single output for now");
@@ -165,4 +220,39 @@ impl DAG {
             }
         }
     }
+
+    pub fn get_root(self) -> Node {
+        match self.root {
+            Some(node) => node,
+            _ => panic!("Error: node has not been built yet"),
+        }
+    }
+}
+
+pub fn opt(code: &Node, patterns: &Vec<Node>) -> Vec<Node> {
+    let mut codegen: Vec<Node> = Vec::new();
+    for instr in code.postorder().iter() {
+        let mut best = u128::max_value();
+        let mut found = false;
+        for pat in patterns.iter() {
+            if instr == pat {
+                if best == u128::max_value() {
+                    best = instr.estimate();
+                }
+                let cost = pat.estimate();
+                if cost < best && instr.has_placeholder() {
+                    if found {
+                        codegen.pop().unwrap();
+                    }
+                    codegen.push(pat.clone());
+                    found = true;
+                    best = cost;
+                }
+            }
+        }
+        if !found {
+            codegen.push(instr.clone());
+        }
+    }
+    codegen
 }
