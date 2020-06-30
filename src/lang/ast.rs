@@ -41,6 +41,15 @@ pub enum Expr {
     Origin(PlacedType, Rc<Expr>, Rc<Expr>),
 }
 
+impl Expr {
+    pub fn get_id(self) -> Id {
+        match self {
+            Expr::VarRef(name) => name.to_string(),
+            _ => panic!("Error: expr is not VarRef"),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum StdOp {
     Identity,
@@ -87,7 +96,7 @@ pub enum PlacedOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum SimOp {
-    Print { params: Vec<Expr> },
+    Print { inputs: Vec<Expr> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -95,14 +104,32 @@ pub enum CompOp {
     Std {
         op: StdOp,
         attrs: Vec<Expr>,
-        params: Vec<Expr>,
+        inputs: Vec<Expr>,
     },
     Placed {
         op: PlacedOp,
         attrs: Vec<Expr>,
-        params: Vec<Expr>,
+        inputs: Vec<Expr>,
         loc: Expr,
     },
+}
+
+impl CompOp {
+    pub fn get_inputs(&self) -> &Vec<Expr> {
+        match self {
+            CompOp::Std {
+                op: _,
+                attrs: _,
+                inputs,
+            } => inputs,
+            CompOp::Placed {
+                op: _,
+                attrs: _,
+                inputs,
+                loc: _,
+            } => inputs,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -274,7 +301,7 @@ impl PrettyPrinter for CompOp {
             CompOp::Placed {
                 op,
                 attrs,
-                params,
+                inputs,
                 loc,
             } => {
                 let attrs_doc = match attrs.is_empty() {
@@ -286,11 +313,11 @@ impl PrettyPrinter for CompOp {
                         ))
                         .append(RcDoc::text("]")),
                 };
-                let params_doc = match params.is_empty() {
+                let params_doc = match inputs.is_empty() {
                     true => panic!("Error: must have at least one param"),
                     false => RcDoc::text("(")
                         .append(RcDoc::intersperse(
-                            params.iter().map(|p| p.to_doc()),
+                            inputs.iter().map(|p| p.to_doc()),
                             RcDoc::text(",").append(RcDoc::space()),
                         ))
                         .append(RcDoc::text(")")),

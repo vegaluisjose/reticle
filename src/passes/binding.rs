@@ -1,13 +1,13 @@
 use crate::lang::ast;
+use std::collections::HashMap;
 use std::fmt;
 use std::rc::Rc;
-use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 pub struct Node {
     name: String,
     op: ast::PlacedOp,
-    params: Vec<Node>,
+    inputs: Vec<Node>,
     ty: ast::DataType,
     cost: u128,
     loc: ast::Expr,
@@ -23,10 +23,22 @@ impl Node {
         Node {
             name: String::new(),
             op: op.clone(),
-            params: Vec::new(),
+            inputs: Vec::new(),
             ty: ty.clone(),
             cost: cost,
             loc: loc.clone(),
+        }
+    }
+
+    pub fn from_compop(cop: &ast::CompOp, cty: &ast::DataType) -> Node {
+        match cop {
+            ast::CompOp::Placed {
+                op,
+                attrs: _,
+                inputs: _,
+                loc,
+            } => Node::new_with_attrs(op, cty, u128::max_value(), loc),
+            _ => panic!("Error: std ops do not have cost"),
         }
     }
 
@@ -34,8 +46,8 @@ impl Node {
         self.name = name.to_string();
     }
 
-    pub fn push_param(&mut self, op: &Node) {
-        self.params.push(op.clone());
+    pub fn push_input(&mut self, op: &Node) {
+        self.inputs.push(op.clone());
     }
 }
 
@@ -87,8 +99,8 @@ pub fn print_patterns() {
             Rc::new(ast::Expr::Placeholder),
         ),
     );
-    dsp_r_add.push_param(&dsp_add);
-    lut_r_add.push_param(&lut_add);
+    dsp_r_add.push_input(&dsp_add);
+    lut_r_add.push_input(&lut_add);
     lut_add.change_name("add");
     lut_r_add.change_name("r_add");
     dsp_add.change_name("add");
@@ -117,7 +129,7 @@ impl DAG {
         }
     }
 
-    pub fn from_ast(&self, prog: &ast::Prog) {
+    pub fn from_ast(&mut self, prog: &ast::Prog) {
         assert!(prog.defs.len() == 1, "single def only supported atm");
         let (comp_def, comp_outputs) = match &prog.defs[0] {
             ast::Def::Comp {
@@ -131,15 +143,25 @@ impl DAG {
         for decl in comp_def.iter() {
             match decl {
                 ast::Decl::Comp { op, outputs } => {
-                    assert!(outputs.len() == 1, "Error single output for now");
+                    assert!(outputs.len() == 1, "Error: single output for now");
                     match &outputs[0] {
-                        ast::Port::Output {id, ..} => {
-                            println!("id: {}", id);
-                        },
+                        ast::Port::Output { id, datatype } => {
+                            if !self.env.contains_key(id) {
+                                let mut node = Node::from_compop(op, datatype);
+                                for i in op.get_inputs().iter() {
+                                    let name = i.clone().get_id();
+                                    if self.env.contains_key(&name) {
+                                        node.push_input(self.env.get(&name).unwrap());
+                                    }
+                                }
+                                self.env.insert(id.to_string(), node.clone());
+                            }
+                            self.root = Some(self.env.get(id).unwrap().clone());
+                        }
                         _ => panic!("Error: should not be input"),
                     }
-                },
-                _ => panic!("Error: Sim decl not supported"),
+                }
+                _ => panic!("Error: sim decl not supported"),
             }
         }
     }

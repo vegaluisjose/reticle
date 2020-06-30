@@ -42,13 +42,13 @@
         "body": [
           {
             "Comp": {
-              "op": {"Placed": {"op": "Add", "attrs": [], "params": [{"VarRef": "a"}, {"VarRef": "b"}], "loc": "Placeholder"}},
+              "op": {"Placed": {"op": "Add", "attrs": [], "inputs": [{"VarRef": "a"}, {"VarRef": "b"}], "loc": "Placeholder"}},
               "outputs": [{"Output": {"id": "t0", "datatype": { "UInt": 8 }}}]
             }
           },
           {
             "Comp": {
-              "op": {"Placed": {"op": "Reg", "attrs": [], "params": [{"VarRef": "t0"}, {"VarRef": "en"}], "loc": "Placeholder"}},
+              "op": {"Placed": {"op": "Reg", "attrs": [], "inputs": [{"VarRef": "t0"}, {"VarRef": "en"}], "loc": "Placeholder"}},
               "outputs": [{"Output": {"id": "y", "datatype": { "UInt": 8 }}}]
             }
           }
