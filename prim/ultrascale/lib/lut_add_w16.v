@@ -11,7 +11,7 @@ module lut_add_w16 #
 );
 
     initial begin
-        assert(width == 8)
+        assert(width == 16)
             else $error("[lut_add_w16] width:%d configuration not supported", width);
     end
 

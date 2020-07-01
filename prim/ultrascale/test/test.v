@@ -640,6 +640,34 @@ module test_lut_add_width_16 (
 
 endmodule
 
+module test_lut_sub_width_16 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 16;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = 16'd1024;
+    assign b = 16'd100;
+
+    assign y_ref = a - b;
+
+    lut_sub_w16 #(.width(width)) dut (clock, reset, a, b, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display ("[PASS] test_lut_sub_width_16");
+                else $error("[FAIL] test_lut_sub_width_16");
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -691,5 +719,6 @@ module test();
     test_lut_add_width_8     t17 (clock, reset, cycles);
     test_lut_sub_width_8     t18 (clock, reset, cycles);
     test_lut_add_width_16    t19 (clock, reset, cycles);
+    test_lut_sub_width_16    t20 (clock, reset, cycles);
 
 endmodule
