@@ -556,6 +556,34 @@ module test_dsp_not_width_32 (
 
 endmodule
 
+module test_lut_add_width_8 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 8;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = 8'd14;
+    assign b = -8'd8;
+
+    assign y_ref = a + b;
+
+    lut_add_w8 #(.width(width)) dut (clock, reset, a, b, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display ("[PASS] test_lut_add_width_8");
+                else $error("[FAIL] test_lut_add_width_8");
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -604,5 +632,6 @@ module test();
     test_dsp_xnor_width_32   t14 (clock, reset, cycles);
     test_dsp_nand_width_32   t15 (clock, reset, cycles);
     test_dsp_not_width_32    t16 (clock, reset, cycles);
+    test_lut_add_width_8     t17 (clock, reset, cycles);
 
 endmodule

@@ -1,7 +1,7 @@
 OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
-NAME = dsp_sub
+NAME = lut_add_w8
 
 IMPL_FILE = \
 $(LIB_DIR)/$(NAME).v \
@@ -22,11 +22,13 @@ $(LIB_DIR)/dsp_xor.v \
 $(LIB_DIR)/dsp_nor.v \
 $(LIB_DIR)/dsp_xnor.v \
 $(LIB_DIR)/dsp_nand.v \
-$(LIB_DIR)/dsp_not.v
+$(LIB_DIR)/dsp_not.v \
+$(LIB_DIR)/lut_add_w8.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
 DCP_FILE = $(OUT_DIR)/$(NAME).dcp
+NETLIST_FILE = $(OUT_DIR)/$(NAME)_netlist.v
 
 default: test
 
@@ -35,7 +37,7 @@ test: xvlog xelab
 
 .PHONY: impl
 impl: | $(OUT_DIR)
-	vivado -mode batch -source impl/vivado.tcl -tclargs $(NAME) $(IMPL_FILE) $(UTIL_FILE) $(TIME_FILE) $(DCP_FILE)
+	vivado -mode batch -source impl/vivado.tcl -tclargs $(NAME) $(IMPL_FILE) $(UTIL_FILE) $(TIME_FILE) $(DCP_FILE) $(NETLIST_FILE)
 
 xvlog:
 	xvlog --sv --incr --relax test/test.v $(SIM_FILES) $(XILINX_VIVADO)/data/verilog/src/glbl.v
