@@ -1,7 +1,7 @@
 OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
-NAME = lut_add_w8
+NAME = lut_sub_w8
 
 IMPL_FILE = \
 $(LIB_DIR)/$(NAME).v \
@@ -23,7 +23,8 @@ $(LIB_DIR)/dsp_nor.v \
 $(LIB_DIR)/dsp_xnor.v \
 $(LIB_DIR)/dsp_nand.v \
 $(LIB_DIR)/dsp_not.v \
-$(LIB_DIR)/lut_add_w8.v
+$(LIB_DIR)/lut_add_w8.v \
+$(LIB_DIR)/lut_sub_w8.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
