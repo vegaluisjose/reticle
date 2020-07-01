@@ -25,8 +25,10 @@ $(LIB_DIR)/dsp_nand.v \
 $(LIB_DIR)/dsp_not.v \
 $(LIB_DIR)/lut_add_w8.v \
 $(LIB_DIR)/lut_sub_w8.v \
+$(LIB_DIR)/lut_add_w16.v \
 $(LIB_DIR)/lut_sub_w16.v \
-$(LIB_DIR)/lut_add_w16.v
+$(LIB_DIR)/lut_add_w32.v \
+$(LIB_DIR)/lut_sub_w32.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt

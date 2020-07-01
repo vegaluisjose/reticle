@@ -18,7 +18,7 @@ module lut_sub_w16 #
     wire zero;
     wire one;
     wire [width-1:0] p;
-    wire [7:0] co;
+    wire [width-1:0] co;
 
     GND GND(.G(zero));
     VCC VCC(.P(one));
@@ -41,7 +41,7 @@ module lut_sub_w16 #
     LUT2 #(.INIT(4'h9)) l7 (.I0(a[7]), .I1(b[7]), .O(p[7]));
 
     (* LOC = "SLICE_X0Y0" *)
-    CARRY8 #(.CARRY_TYPE("SINGLE_CY8")) carry0 (.CI(one), .CI_TOP(zero), .DI(a[7:0]), .S(p[7:0]), .O(y[7:0]), .CO(co));
+    CARRY8 #(.CARRY_TYPE("SINGLE_CY8")) carry0 (.CI(one), .CI_TOP(zero), .DI(a[7:0]), .S(p[7:0]), .O(y[7:0]), .CO(co[7:0]));
 
     (* LOC = "SLICE_X0Y1", BEL = "A6LUT" *)
     LUT2 #(.INIT(4'h9)) l8 (.I0(a[8]), .I1(b[8]), .O(p[8]));
