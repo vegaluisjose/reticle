@@ -1,6 +1,7 @@
 use petgraph::dot::{Config, Dot};
 use petgraph::prelude::Graph;
 use petgraph::visit::DfsPostOrder;
+use petgraph::graph;
 
 #[derive(Clone, Debug)]
 pub enum Op {
@@ -140,8 +141,42 @@ fn pat_0() -> Pattern {
     pat
 }
 
+pub type DAG = Graph::<Node, ()>;
+pub type DAGIx = graph::NodeIndex;
+
+fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
+    let mut root = DfsPostOrder::new(graph, ix);
+    while let Some(idx) = root.next(graph) {
+        let mut pat_iter = patterns.iter();
+        while let Some(pat) = pat_iter.next() {
+            let mut ops = pat.ops.iter();
+            // check if there is a pattern match
+            let mut is_match: bool = true;
+            let mut subgraph = DfsPostOrder::new(graph, idx);
+            while let Some(op) = ops.next() {
+                if let Some(sub_ix) = subgraph.next(graph) {
+                    if let Some(node) = graph.node_weight(sub_ix) {
+                        if node.placed_op != *op {
+                            is_match = false;
+                        }
+                    }
+                } else {
+                    is_match = false;
+                    break;
+                }
+            }
+            if is_match && ops.len() == 0 {
+                // check all nodes in the pattern
+                if let Some(node) = graph.node_weight(idx) {
+                    println!("This node is a candidate: {:?}", node);
+                }
+            }
+        }
+    }
+}
+
 pub fn main() {
-    let mut graph = Graph::<Node, ()>::new();
+    let mut graph = DAG::new();
     let a = graph.add_node(Node::new("a", PlacedOp::new_gen_op(Op::Ref)));
     let b = graph.add_node(Node::new("b", PlacedOp::new_gen_op(Op::Ref)));
     let c = graph.add_node(Node::new("c", PlacedOp::new_gen_op(Op::Ref)));
@@ -155,30 +190,6 @@ pub fn main() {
 
     println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
 
-    let mut root = DfsPostOrder::new(&graph, t1);
-    while let Some(idx) = root.next(&graph) {
-        let p0 = pat_0();
-        let mut pat_ops = p0.ops.iter();
-        // check if there is a pattern match
-        let mut pat_match: bool = true;
-        let mut subgraph = DfsPostOrder::new(&graph, idx);
-        while let Some(pat_op) = pat_ops.next() {
-            if let Some(sub_idx) = subgraph.next(&graph) {
-                if let Some(node) = graph.node_weight(sub_idx) {
-                    if node.placed_op != *pat_op {
-                        pat_match = false;
-                    }
-                }
-            } else {
-                pat_match = false;
-                break;
-            }
-        }
-        if pat_match && pat_ops.len() == 0 {
-            // check all nodes in the pattern
-            if let Some(node) = graph.node_weight(idx) {
-                println!("This node is a candidate: {:?}", node);
-            }
-        }
-    }
+    let patterns = vec![pat_0()];
+    find_matches(&graph, t1, &patterns);
 }
