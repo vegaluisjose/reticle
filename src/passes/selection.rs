@@ -47,7 +47,7 @@ impl PartialEq for Loc {
     }
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug)]
 pub struct PlacedOp {
     op: Op,
     loc: Loc,
@@ -118,12 +118,16 @@ impl Node {
 
 #[derive(Clone, Debug)]
 pub struct Pattern {
+    name: String,
     ops: Vec<PlacedOp>,
 }
 
 impl Pattern {
-    pub fn new() -> Pattern {
-        Pattern { ops: Vec::new() }
+    pub fn new(name: &str) -> Pattern {
+        Pattern {
+            name: name.to_string(),
+            ops: Vec::new(),
+        }
     }
 
     pub fn push_op(&mut self, op: PlacedOp) {
@@ -131,13 +135,29 @@ impl Pattern {
     }
 }
 
-fn pat_0() -> Pattern {
-    let mut pat = Pattern::new();
-    pat.push_op(PlacedOp::new_gen_op(Op::Any));
-    pat.push_op(PlacedOp::new_gen_op(Op::Any));
-    pat.push_op(PlacedOp::new_gen_op(Op::Mul));
-    pat.push_op(PlacedOp::new_gen_op(Op::Any));
-    pat.push_op(PlacedOp::new_gen_op(Op::Add));
+fn pat_dsp_muladd() -> Pattern {
+    let mut pat = Pattern::new("dsp_muladd");
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Mul));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Add));
+    pat
+}
+
+fn pat_dsp_mul() -> Pattern {
+    let mut pat = Pattern::new("dsp_mul");
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Mul));
+    pat
+}
+
+fn pat_dsp_add() -> Pattern {
+    let mut pat = Pattern::new("dsp_add");
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Add));
     pat
 }
 
@@ -153,10 +173,10 @@ fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
             // check if there is a pattern match
             let mut is_match: bool = true;
             let mut subgraph = DfsPostOrder::new(graph, idx);
-            while let Some(op) = ops.next() {
+            while let Some(placed_op) = ops.next() {
                 if let Some(sub_ix) = subgraph.next(graph) {
                     if let Some(node) = graph.node_weight(sub_ix) {
-                        if node.placed_op != *op {
+                        if node.placed_op.op != placed_op.op {
                             is_match = false;
                         }
                     }
@@ -190,6 +210,11 @@ pub fn main() {
 
     println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
 
-    let patterns = vec![pat_0()];
+    let patterns = vec![
+        pat_dsp_add(),
+        pat_dsp_mul(),
+        pat_dsp_muladd(),
+    ];
+
     find_matches(&graph, t1, &patterns);
 }
