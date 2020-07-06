@@ -166,13 +166,13 @@ pub type DAGIx = graph::NodeIndex;
 
 fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
     let mut root = DfsPostOrder::new(graph, ix);
-    while let Some(idx) = root.next(graph) {
+    while let Some(nix) = root.next(graph) {
         let mut pat_iter = patterns.iter();
         while let Some(pat) = pat_iter.next() {
             let mut ops = pat.ops.iter();
             // check if there is a pattern match
             let mut is_match: bool = true;
-            let mut subgraph = DfsPostOrder::new(graph, idx);
+            let mut subgraph = DfsPostOrder::new(graph, nix);
             while let Some(placed_op) = ops.next() {
                 if let Some(sub_ix) = subgraph.next(graph) {
                     if let Some(node) = graph.node_weight(sub_ix) {
@@ -187,7 +187,7 @@ fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
             }
             if is_match && ops.len() == 0 {
                 // check all nodes in the pattern
-                if let Some(node) = graph.node_weight(idx) {
+                if let Some(node) = graph.node_weight(nix) {
                     println!("This node is a candidate: {:?}", node);
                 }
             }
