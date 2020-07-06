@@ -9,6 +9,7 @@ pub type Id = String;
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum DataType {
     Placeholder,
+    Bool,
     UInt(u64),
     SInt(i64),
     Vector(Rc<DataType>, u64),
@@ -169,6 +170,7 @@ impl PrettyPrinter for DataType {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             DataType::Placeholder => RcDoc::text("??"),
+            DataType::Bool => RcDoc::text("bool"),
             DataType::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
             DataType::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),
             DataType::Vector(dtype, len) => dtype
