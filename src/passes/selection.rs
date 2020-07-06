@@ -84,6 +84,20 @@ impl PlacedOp {
             loc: Loc::Any,
         }
     }
+
+    pub fn cost(&self) -> i128 {
+        match (&self.op, &self.loc) {
+            (Op::Add, Loc::Gen) => 3,
+            (Op::Add, Loc::Lut) => 2,
+            (Op::Add, Loc::Dsp) => 1,
+            (Op::Mul, Loc::Gen) => 3,
+            (Op::Mul, Loc::Lut) => 2,
+            (Op::Mul, Loc::Dsp) => 1,
+            (Op::Reg, Loc::Lut) => -1,
+            (Op::Reg, Loc::Dsp) => -2,
+            (_, _) => 0,
+        }
+    }
 }
 
 #[derive(Clone, Debug)]
