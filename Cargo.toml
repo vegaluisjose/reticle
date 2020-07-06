@@ -8,3 +8,4 @@ edition = "2018"
 pretty = "0.10.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 serde_json = "1.0"
+petgraph = "0.5.1"
