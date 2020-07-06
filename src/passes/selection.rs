@@ -1,6 +1,6 @@
+use petgraph::dot::{Config, Dot};
 use petgraph::prelude::Graph;
 use petgraph::visit::DfsPostOrder;
-use petgraph::dot::{Dot, Config};
 
 #[derive(Clone, Debug)]
 pub enum Op {
@@ -52,12 +52,9 @@ pub struct PlacedOp {
     loc: Loc,
 }
 
-impl PlacedOp{
+impl PlacedOp {
     pub fn new(op: Op, loc: Loc) -> PlacedOp {
-        PlacedOp {
-            op: op,
-            loc: loc,
-        }
+        PlacedOp { op: op, loc: loc }
     }
 
     pub fn new_gen_op(op: Op) -> PlacedOp {
@@ -111,9 +108,7 @@ pub struct Pattern {
 
 impl Pattern {
     pub fn new() -> Pattern {
-        Pattern {
-            ops: Vec::new(),
-        }
+        Pattern { ops: Vec::new() }
     }
 
     pub fn push_op(&mut self, op: PlacedOp) {
@@ -165,7 +160,8 @@ pub fn main() {
                 break;
             }
         }
-        if pat_match && pat_ops.len() == 0 { // check all nodes in the pattern
+        if pat_match && pat_ops.len() == 0 {
+            // check all nodes in the pattern
             if let Some(node) = graph.node_weight(idx) {
                 println!("This node is a candidate: {:?}", node);
             }
