@@ -8,7 +8,6 @@ pub type Id = String;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub enum DataType {
-    Placeholder,
     Bool,
     UInt(u64),
     SInt(u64),
@@ -16,7 +15,14 @@ pub enum DataType {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum PlacedType {
+pub enum Expr {
+    Ref(Id),
+    ULit(u64),
+    SLit(i64),
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum LocType {
     Lut,
     Lum,
     Dsp,
@@ -24,7 +30,7 @@ pub enum PlacedType {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum RelativeOp {
+pub enum LocOp {
     Equal,
     Above,
     Below,
@@ -33,22 +39,10 @@ pub enum RelativeOp {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Expr {
-    Placeholder,
-    ULit(u64),
-    SLit(i64),
-    VarRef(Id),
-    Relative(RelativeOp, Rc<Expr>),
-    Origin(PlacedType, Rc<Expr>, Rc<Expr>),
-}
-
-impl Expr {
-    pub fn get_id(self) -> Id {
-        match self {
-            Expr::VarRef(name) => name.to_string(),
-            _ => panic!("Error: expr is not VarRef"),
-        }
-    }
+pub enum Loc {
+    Unknown,
+    Relative(LocOp, Id),
+    Origin(LocType, u64, u64),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -164,12 +158,9 @@ pub struct Prog {
     pub defs: Vec<Def>,
 }
 
-// Pretty printer
-
 impl PrettyPrinter for DataType {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            DataType::Placeholder => RcDoc::text("??"),
             DataType::Bool => RcDoc::text("bool"),
             DataType::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
             DataType::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),
@@ -188,36 +179,63 @@ impl fmt::Display for DataType {
     }
 }
 
-impl PrettyPrinter for PlacedType {
+impl PrettyPrinter for LocType {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            PlacedType::Lut => RcDoc::text("lut"),
-            PlacedType::Lum => RcDoc::text("lum"),
-            PlacedType::Dsp => RcDoc::text("dsp"),
-            PlacedType::Ram => RcDoc::text("ram"),
+            LocType::Lut => RcDoc::text("lut"),
+            LocType::Lum => RcDoc::text("lum"),
+            LocType::Dsp => RcDoc::text("dsp"),
+            LocType::Ram => RcDoc::text("ram"),
         }
     }
 }
 
-impl fmt::Display for PlacedType {
+impl fmt::Display for LocType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }
 }
 
-impl PrettyPrinter for RelativeOp {
+impl PrettyPrinter for LocOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            RelativeOp::Equal => RcDoc::text("equal"),
-            RelativeOp::Above => RcDoc::text("above"),
-            RelativeOp::Below => RcDoc::text("below"),
-            RelativeOp::Before => RcDoc::text("before"),
-            RelativeOp::After => RcDoc::text("after"),
+            LocOp::Equal => RcDoc::text("equal"),
+            LocOp::Above => RcDoc::text("above"),
+            LocOp::Below => RcDoc::text("below"),
+            LocOp::Before => RcDoc::text("before"),
+            LocOp::After => RcDoc::text("after"),
         }
     }
 }
 
-impl fmt::Display for RelativeOp {
+impl fmt::Display for LocOp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_pretty())
+    }
+}
+
+impl PrettyPrinter for Loc {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            Loc::Unknown => RcDoc::text("??"),
+            Loc::Relative(op, n) => op
+                .to_doc()
+                .append(RcDoc::text("("))
+                .append(RcDoc::as_string(n))
+                .append(RcDoc::text(")")),
+            Loc::Origin(ty, x, y) => ty
+                .to_doc()
+                .append(RcDoc::text("("))
+                .append(RcDoc::as_string(x))
+                .append(RcDoc::text(","))
+                .append(RcDoc::space())
+                .append(RcDoc::as_string(y))
+                .append(RcDoc::text(")")),
+        }
+    }
+}
+
+impl fmt::Display for Loc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }
@@ -226,23 +244,9 @@ impl fmt::Display for RelativeOp {
 impl PrettyPrinter for Expr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Expr::Placeholder => RcDoc::text("??"),
             Expr::ULit(n) => RcDoc::as_string(n),
             Expr::SLit(n) => RcDoc::as_string(n),
-            Expr::VarRef(n) => RcDoc::as_string(n),
-            Expr::Relative(op, n) => op
-                .to_doc()
-                .append(RcDoc::text("("))
-                .append(RcDoc::as_string(n))
-                .append(RcDoc::text(")")),
-            Expr::Origin(ty, x, y) => ty
-                .to_doc()
-                .append(RcDoc::text("("))
-                .append(x.to_doc())
-                .append(RcDoc::text(","))
-                .append(RcDoc::space())
-                .append(y.to_doc())
-                .append(RcDoc::text(")")),
+            Expr::Ref(n) => RcDoc::as_string(n),
         }
     }
 }
@@ -250,6 +254,16 @@ impl PrettyPrinter for Expr {
 impl fmt::Display for Expr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
+    }
+}
+
+// helper function
+impl Expr {
+    pub fn get_id(self) -> Id {
+        match self {
+            Expr::Ref(name) => name.to_string(),
+            _ => panic!("Error: expr is not Ref"),
+        }
     }
 }
 
