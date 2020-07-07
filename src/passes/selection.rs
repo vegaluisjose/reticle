@@ -1,7 +1,7 @@
 use petgraph::dot::{Config, Dot};
-use petgraph::prelude::Graph;
-use petgraph::visit::DfsPostOrder;
 use petgraph::graph;
+use petgraph::prelude::Graph;
+use petgraph::visit::{DfsPostOrder, Dfs};
 
 #[derive(Clone, Debug)]
 pub enum Op {
@@ -137,31 +137,31 @@ impl Pattern {
 
 fn pat_dsp_muladd() -> Pattern {
     let mut pat = Pattern::new("dsp_muladd");
-    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
-    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Add));
     pat.push_op(PlacedOp::new_dsp_op(Op::Mul));
     pat.push_op(PlacedOp::new_dsp_op(Op::Any));
-    pat.push_op(PlacedOp::new_dsp_op(Op::Add));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat
 }
 
 fn pat_dsp_mul() -> Pattern {
     let mut pat = Pattern::new("dsp_mul");
-    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
-    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat.push_op(PlacedOp::new_dsp_op(Op::Mul));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat
 }
 
 fn pat_dsp_add() -> Pattern {
     let mut pat = Pattern::new("dsp_add");
-    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
-    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat.push_op(PlacedOp::new_dsp_op(Op::Add));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
+    pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat
 }
 
-pub type DAG = Graph::<Node, ()>;
+pub type DAG = Graph<Node, ()>;
 pub type DAGIx = graph::NodeIndex;
 
 fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
@@ -169,26 +169,32 @@ fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
     while let Some(nix) = root.next(graph) {
         let mut pat_iter = patterns.iter();
         while let Some(pat) = pat_iter.next() {
+            let mut node_cost: i128 = 0;
+            let mut pat_cost: i128 = 0;
             let mut ops = pat.ops.iter();
             // check if there is a pattern match
             let mut is_match: bool = true;
-            let mut subgraph = DfsPostOrder::new(graph, nix);
-            while let Some(placed_op) = ops.next() {
-                if let Some(sub_ix) = subgraph.next(graph) {
-                    if let Some(node) = graph.node_weight(sub_ix) {
+            let mut subgraph = Dfs::new(graph, nix);
+            while let Some(six) = subgraph.next(graph) {
+                if let Some(placed_op) = ops.next() {
+                    if let Some(node) = graph.node_weight(six) {
+                        node_cost += node.placed_op.cost();
+                        pat_cost += placed_op.cost();
                         if node.placed_op.op != placed_op.op {
                             is_match = false;
                         }
                     }
                 } else {
-                    is_match = false;
                     break;
                 }
             }
             if is_match && ops.len() == 0 {
                 // check all nodes in the pattern
                 if let Some(node) = graph.node_weight(nix) {
-                    println!("This node is a candidate: {:?}", node);
+                    println!(
+                        "node-name:{} node-cost:{} pat-name:{} pat-cost:{}",
+                        node.name, node_cost, pat.name, pat_cost
+                    );
                 }
             }
         }
@@ -210,11 +216,7 @@ pub fn main() {
 
     println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
 
-    let patterns = vec![
-        pat_dsp_add(),
-        pat_dsp_mul(),
-        pat_dsp_muladd(),
-    ];
+    let patterns = vec![pat_dsp_add(), pat_dsp_mul(), pat_dsp_muladd()];
 
     find_matches(&graph, t1, &patterns);
 }
