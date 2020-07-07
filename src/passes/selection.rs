@@ -29,7 +29,7 @@ impl fmt::Display for Op {
 #[derive(Clone, Debug, PartialEq)]
 pub enum Loc {
     Any,
-    Gen,
+    Unk,
     Lut,
     Dsp,
     Equal(String),
@@ -39,7 +39,7 @@ impl fmt::Display for Loc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
             Loc::Any => "any".to_string(),
-            Loc::Gen => "gen".to_string(),
+            Loc::Unk => "??".to_string(),
             Loc::Lut => "lut".to_string(),
             Loc::Dsp => "dsp".to_string(),
             Loc::Equal(n) => format!("eq({})", n.to_string()),
@@ -65,10 +65,10 @@ impl PlacedOp {
         PlacedOp { op: op, loc: loc }
     }
 
-    pub fn new_gen_op(op: Op) -> PlacedOp {
+    pub fn new_unk_op(op: Op) -> PlacedOp {
         PlacedOp {
             op: op,
-            loc: Loc::Gen,
+            loc: Loc::Unk,
         }
     }
 
@@ -99,10 +99,10 @@ impl PlacedOp {
 
     pub fn cost(&self) -> i32 {
         match (&self.op, &self.loc) {
-            (Op::Add, Loc::Gen) => 9,
+            (Op::Add, Loc::Unk) => 9,
             (Op::Add, Loc::Lut) => 8,
             (Op::Add, Loc::Dsp) => 2,
-            (Op::Mul, Loc::Gen) => 9,
+            (Op::Mul, Loc::Unk) => 9,
             (Op::Mul, Loc::Lut) => 8,
             (Op::Mul, Loc::Dsp) => 2,
             (Op::Reg, Loc::Lut) => -4,
@@ -270,11 +270,11 @@ fn select(dag: &mut DAG, start: DAGIx, pattern: &Pattern) {
 
 pub fn main() {
     let mut dag = DAG::new();
-    let a = dag.add_node(Node::new("a", PlacedOp::new_gen_op(Op::Ref)));
-    let b = dag.add_node(Node::new("b", PlacedOp::new_gen_op(Op::Ref)));
-    let c = dag.add_node(Node::new("c", PlacedOp::new_gen_op(Op::Ref)));
-    let t0 = dag.add_node(Node::new("t0", PlacedOp::new_gen_op(Op::Mul)));
-    let t1 = dag.add_node(Node::new("t1", PlacedOp::new_gen_op(Op::Add)));
+    let a = dag.add_node(Node::new("a", PlacedOp::new_unk_op(Op::Ref)));
+    let b = dag.add_node(Node::new("b", PlacedOp::new_unk_op(Op::Ref)));
+    let c = dag.add_node(Node::new("c", PlacedOp::new_unk_op(Op::Ref)));
+    let t0 = dag.add_node(Node::new("t0", PlacedOp::new_unk_op(Op::Mul)));
+    let t1 = dag.add_node(Node::new("t1", PlacedOp::new_unk_op(Op::Add)));
 
     dag.add_edge(t0, a, Edge::new());
     dag.add_edge(t0, b, Edge::new());
