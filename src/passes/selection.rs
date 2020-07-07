@@ -166,36 +166,33 @@ fn pat_dsp_add() -> Pattern {
 pub type DAG = Graph<Node, ()>;
 pub type DAGIx = graph::NodeIndex;
 
-fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
+fn select(graph: &DAG, ix: DAGIx, pattern: &Pattern) {
     let mut root = DfsPostOrder::new(graph, ix);
     while let Some(nix) = root.next(graph) {
-        let mut pat_iter = patterns.iter();
-        while let Some(pat) = pat_iter.next() {
-            let mut node_cost: i128 = 0;
-            let mut ops = pat.ops.iter();
-            // check if there is a pattern match
-            let mut is_match: bool = true;
-            let mut subgraph = Dfs::new(graph, nix);
-            while let Some(six) = subgraph.next(graph) {
-                if let Some(placed_op) = ops.next() {
-                    if let Some(node) = graph.node_weight(six) {
-                        node_cost += node.placed_op.cost();
-                        if node.placed_op.op != placed_op.op {
-                            is_match = false;
-                        }
+        let mut node_cost: i128 = 0;
+        let mut ops = pattern.ops.iter();
+        // check if there is a pattern match
+        let mut is_match: bool = true;
+        let mut subgraph = Dfs::new(graph, nix);
+        while let Some(six) = subgraph.next(graph) {
+            if let Some(placed_op) = ops.next() {
+                if let Some(node) = graph.node_weight(six) {
+                    node_cost += node.placed_op.cost();
+                    if node.placed_op.op != placed_op.op {
+                        is_match = false;
                     }
-                } else {
-                    break;
                 }
+            } else {
+                break;
             }
-            if is_match && ops.len() == 0 {
-                // check all nodes in the pattern
-                if let Some(node) = graph.node_weight(nix) {
-                    println!(
-                        "node-name:{} node-cost:{} pat-name:{} pat-cost:{}",
-                        node.name, node_cost, pat.name, pat.cost
-                    );
-                }
+        }
+        if is_match && ops.len() == 0 {
+            // check all nodes in the pattern
+            if let Some(node) = graph.node_weight(nix) {
+                println!(
+                    "node-name:{} node-cost:{} pattern-name:{} pattern-cost:{}",
+                    node.name, node_cost, pattern.name, pattern.cost
+                );
             }
         }
     }
@@ -218,5 +215,7 @@ pub fn main() {
 
     let patterns = vec![pat_dsp_add(), pat_dsp_mul(), pat_dsp_muladd()];
 
-    find_matches(&graph, t1, &patterns);
+    for p in patterns.iter() {
+        select(&graph, t1, p);
+    }
 }
