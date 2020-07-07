@@ -11,7 +11,7 @@ pub enum DataType {
     Placeholder,
     Bool,
     UInt(u64),
-    SInt(i64),
+    SInt(u64),
     Vector(Rc<DataType>, u64),
 }
 
