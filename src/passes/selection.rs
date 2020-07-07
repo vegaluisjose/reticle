@@ -269,24 +269,24 @@ fn select(dag: &mut DAG, start: DAGIx, pattern: &Pattern) {
 }
 
 pub fn main() {
-    let mut graph = DAG::new();
-    let a = graph.add_node(Node::new("a", PlacedOp::new_gen_op(Op::Ref)));
-    let b = graph.add_node(Node::new("b", PlacedOp::new_gen_op(Op::Ref)));
-    let c = graph.add_node(Node::new("c", PlacedOp::new_gen_op(Op::Ref)));
-    let t0 = graph.add_node(Node::new("t0", PlacedOp::new_gen_op(Op::Mul)));
-    let t1 = graph.add_node(Node::new("t1", PlacedOp::new_gen_op(Op::Add)));
+    let mut dag = DAG::new();
+    let a = dag.add_node(Node::new("a", PlacedOp::new_gen_op(Op::Ref)));
+    let b = dag.add_node(Node::new("b", PlacedOp::new_gen_op(Op::Ref)));
+    let c = dag.add_node(Node::new("c", PlacedOp::new_gen_op(Op::Ref)));
+    let t0 = dag.add_node(Node::new("t0", PlacedOp::new_gen_op(Op::Mul)));
+    let t1 = dag.add_node(Node::new("t1", PlacedOp::new_gen_op(Op::Add)));
 
-    graph.add_edge(t0, a, Edge::new());
-    graph.add_edge(t0, b, Edge::new());
-    graph.add_edge(t1, t0, Edge::new());
-    graph.add_edge(t1, c, Edge::new());
+    dag.add_edge(t0, a, Edge::new());
+    dag.add_edge(t0, b, Edge::new());
+    dag.add_edge(t1, t0, Edge::new());
+    dag.add_edge(t1, c, Edge::new());
 
-    println!("{}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
+    println!("{}", Dot::with_config(&dag, &[Config::EdgeNoLabel]));
 
     let patterns = vec![pat_dsp_mul(), pat_dsp_add(), pat_dsp_muladd()];
 
     for p in patterns.iter() {
-        select(&mut graph, t1, p);
-        println!("{}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
+        select(&mut dag, t1, p);
+        println!("{}", Dot::with_config(&dag, &[Config::EdgeNoLabel]));
     }
 }
