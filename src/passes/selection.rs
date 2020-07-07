@@ -193,7 +193,7 @@ fn select(graph: &mut DAG, ix: DAGIx, pattern: &Pattern) {
         if is_match && pattern_ops.len() == 0 && pattern.cost < node_cost {
             if let Some(node) = graph.node_weight_mut(nix) {
                 println!("new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
-                    pattern.name, pattern.cost, node_cost, node.name);
+                    pattern.name, pattern.cost, node.name, node_cost);
             }
             let mut pattern_ops = pattern.ops.iter();
             let mut subgraph = Dfs::new(&*graph, nix);
