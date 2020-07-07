@@ -2,6 +2,7 @@ use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
 use petgraph::visit::{DfsPostOrder, Dfs};
+use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum Op {
@@ -10,6 +11,19 @@ pub enum Op {
     Add,
     Mul,
     Reg,
+}
+
+impl fmt::Display for Op {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Op::Any => "any",
+            Op::Ref => "ref",
+            Op::Add => "add",
+            Op::Mul => "mul",
+            Op::Reg => "reg",
+        };
+        write!(f, "{}", name)
+    }
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -21,10 +35,29 @@ pub enum Loc {
     Equal(String),
 }
 
+impl fmt::Display for Loc {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Loc::Any => "any".to_string(),
+            Loc::Gen => "gen".to_string(),
+            Loc::Lut => "lut".to_string(),
+            Loc::Dsp => "dsp".to_string(),
+            Loc::Equal(n) => format!("eq({})", n.to_string()),
+        };
+        write!(f, "{}", name)
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct PlacedOp {
     op: Op,
     loc: Loc,
+}
+
+impl fmt::Display for PlacedOp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} @{}", self.op, self.loc)
+    }
 }
 
 impl PlacedOp {
@@ -85,6 +118,12 @@ pub struct Node {
     placed_op: PlacedOp,
 }
 
+impl fmt::Display for Node {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} {}", self.name, self.placed_op)
+    }
+}
+
 impl Node {
     pub fn new(name: &str, placed_op: PlacedOp) -> Node {
         Node {
@@ -141,7 +180,21 @@ fn pat_dsp_add() -> Pattern {
     pat
 }
 
-pub type DAG = Graph<Node, ()>;
+// create edge type, so we can output better dot graphs
+#[derive(Clone, Debug)]
+pub struct Edge;
+
+impl Edge {
+    pub fn new() -> Edge { Edge {} }
+}
+
+impl fmt::Display for Edge {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "")
+    }
+}
+
+pub type DAG = Graph<Node, Edge>;
 pub type DAGIx = graph::NodeIndex;
 
 fn estimate_cost(dag: &DAG, start: DAGIx) -> i32 {
@@ -223,17 +276,17 @@ pub fn main() {
     let t0 = graph.add_node(Node::new("t0", PlacedOp::new_gen_op(Op::Mul)));
     let t1 = graph.add_node(Node::new("t1", PlacedOp::new_gen_op(Op::Add)));
 
-    graph.add_edge(t0, a, ());
-    graph.add_edge(t0, b, ());
-    graph.add_edge(t1, t0, ());
-    graph.add_edge(t1, c, ());
+    graph.add_edge(t0, a, Edge::new());
+    graph.add_edge(t0, b, Edge::new());
+    graph.add_edge(t1, t0, Edge::new());
+    graph.add_edge(t1, c, Edge::new());
 
-    println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
+    println!("{}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
 
     let patterns = vec![pat_dsp_mul(), pat_dsp_add(), pat_dsp_muladd()];
 
     for p in patterns.iter() {
         select(&mut graph, t1, p);
-        println!("{:?}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
+        println!("{}", Dot::with_config(&graph, &[Config::EdgeNoLabel]));
     }
 }
