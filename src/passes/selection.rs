@@ -155,49 +155,61 @@ fn estimate_cost(dag: &DAG, start: DAGIx) -> i32 {
     cost
 }
 
-fn select(dag: &mut DAG, ix: DAGIx, pattern: &Pattern) {
-    let mut root = DfsPostOrder::new(&*dag, ix);
-    while let Some(root_ix) = root.next(&*dag) {
-        let mut pattern_ops = pattern.ops.iter();
-        // check if there is a pattern match
-        let mut is_match: bool = true;
-        let mut subgraph = Dfs::new(&*dag, root_ix);
-        while let Some(sub_ix) = subgraph.next(&*dag) {
-            if let Some(pattern_placed_op) = pattern_ops.next() {
-                if let Some(node) = dag.node_weight(sub_ix) {
-                    if pattern_placed_op.op != Op::Any && node.placed_op.op != pattern_placed_op.op {
-                        is_match = false;
+fn is_match(dag: &DAG, start: DAGIx, pattern: &Pattern) -> bool {
+    let mut is_match: bool = true;
+    let mut pattern_ops = pattern.ops.iter();
+    let mut visit = Dfs::new(dag, start);
+    while let Some(ix) = visit.next(dag) {
+        if let Some(pattern_op) = pattern_ops.next() {
+            if let Some(node) = dag.node_weight(ix) {
+                if pattern_op.op != Op::Any && node.placed_op.op != pattern_op.op {
+                    is_match = false;
+                }
+            }
+        } else {
+            break;
+        }
+    }
+    is_match && pattern_ops.len() == 0
+}
+
+fn debug(dag: &DAG, start: DAGIx, cost: i32, pattern: &Pattern) {
+    if let Some(node) = dag.node_weight(start) {
+        println!("new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
+            pattern.name, pattern.cost, node.name, cost);
+    }
+}
+
+fn rewrite(dag: &mut DAG, start: DAGIx, pattern: &Pattern) {
+    let mut is_first: bool = true;
+    let node_id: String = dag.node_weight(start).unwrap().name.to_string();
+    let mut pattern_ops = pattern.ops.iter();
+    let mut visit = Dfs::new(&*dag, start);
+    while let Some(ix) = visit.next(&*dag) {
+        if let Some(pattern_placed_op) = pattern_ops.next() {
+            if let Some(node) = dag.node_weight_mut(ix) {
+                if pattern_placed_op.op != Op::Any {
+                    if is_first {
+                        node.placed_op.loc = pattern_placed_op.loc.clone();
+                        is_first = false;
+                    } else {
+                        node.placed_op.loc = Loc::Equal(node_id.to_string());
                     }
                 }
-            } else {
-                break;
             }
         }
-        if is_match && pattern_ops.len() == 0 {
-            let cost = estimate_cost(&*dag, root_ix);
+    }
+}
+
+fn select(dag: &mut DAG, start: DAGIx, pattern: &Pattern) {
+    let mut root = DfsPostOrder::new(&*dag, start);
+    while let Some(ix) = root.next(&*dag) {
+        let pattern_match = is_match(&*dag, ix, pattern);
+        if pattern_match {
+            let cost = estimate_cost(&*dag, ix);
             if pattern.cost < cost {
-                if let Some(node) = dag.node_weight_mut(root_ix) {
-                    println!("new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
-                        pattern.name, pattern.cost, node.name, cost);
-                }
-                let mut is_first: bool = true;
-                let mut pattern_ops = pattern.ops.iter();
-                let mut subgraph = Dfs::new(&*dag, root_ix);
-                let node_id: String = dag.node_weight(root_ix).unwrap().name.to_string();
-                while let Some(sub_ix) = subgraph.next(&*dag) {
-                    if let Some(pattern_placed_op) = pattern_ops.next() {
-                        if let Some(node) = dag.node_weight_mut(sub_ix) {
-                            if pattern_placed_op.op != Op::Any {
-                                if is_first {
-                                    node.placed_op.loc = pattern_placed_op.loc.clone();
-                                    is_first = false;
-                                } else {
-                                    node.placed_op.loc = Loc::Equal(node_id.to_string());
-                                }
-                            }
-                        }
-                    }
-                }
+                debug(&*dag, ix, cost, pattern);
+                rewrite(dag, ix, pattern);
             }
         }
     }
