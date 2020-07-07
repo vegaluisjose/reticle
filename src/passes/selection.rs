@@ -243,10 +243,10 @@ fn rewrite(dag: &mut DAG, start: DAGIx, pattern: &Pattern) {
             if let Some(node) = dag.node_weight_mut(ix) {
                 if pattern_placed_op.op != Op::Any {
                     if is_first {
-                        node.placed_op.loc = pattern_placed_op.loc.clone();
+                        node.placed_op.set_loc(pattern_placed_op.loc.clone());
                         is_first = false;
                     } else {
-                        node.placed_op.loc = Loc::Equal(node_id.to_string());
+                        node.placed_op.set_loc(Loc::Equal(node_id.to_string()));
                     }
                 }
             }
