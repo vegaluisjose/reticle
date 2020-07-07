@@ -64,7 +64,7 @@ impl PlacedOp {
         self.loc = loc;
     }
 
-    pub fn cost(&self) -> i128 {
+    pub fn cost(&self) -> i32 {
         match (&self.op, &self.loc) {
             (Op::Add, Loc::Gen) => 9,
             (Op::Add, Loc::Lut) => 8,
@@ -97,12 +97,12 @@ impl Node {
 #[derive(Clone, Debug)]
 pub struct Pattern {
     name: String,
-    cost: i128,
+    cost: i32,
     ops: Vec<PlacedOp>,
 }
 
 impl Pattern {
-    pub fn new(name: &str, cost: i128) -> Pattern {
+    pub fn new(name: &str, cost: i32) -> Pattern {
         Pattern {
             name: name.to_string(),
             cost: cost,
@@ -144,18 +144,27 @@ fn pat_dsp_add() -> Pattern {
 pub type DAG = Graph<Node, ()>;
 pub type DAGIx = graph::NodeIndex;
 
-fn select(graph: &mut DAG, ix: DAGIx, pattern: &Pattern) {
-    let mut root = DfsPostOrder::new(&*graph, ix);
-    while let Some(root_ix) = root.next(&*graph) {
-        let mut node_cost: i128 = 0;
+fn estimate_cost(dag: &DAG, start: DAGIx) -> i32 {
+    let mut cost: i32 = 0;
+    let mut visit = Dfs::new(dag, start);
+    while let Some(ix) = visit.next(dag) {
+        if let Some(node) = dag.node_weight(ix) {
+            cost += node.placed_op.cost();
+        }
+    }
+    cost
+}
+
+fn select(dag: &mut DAG, ix: DAGIx, pattern: &Pattern) {
+    let mut root = DfsPostOrder::new(&*dag, ix);
+    while let Some(root_ix) = root.next(&*dag) {
         let mut pattern_ops = pattern.ops.iter();
         // check if there is a pattern match
         let mut is_match: bool = true;
-        let mut subgraph = Dfs::new(&*graph, root_ix);
-        while let Some(sub_ix) = subgraph.next(&*graph) {
+        let mut subgraph = Dfs::new(&*dag, root_ix);
+        while let Some(sub_ix) = subgraph.next(&*dag) {
             if let Some(pattern_placed_op) = pattern_ops.next() {
-                if let Some(node) = graph.node_weight(sub_ix) {
-                    node_cost += node.placed_op.cost();
+                if let Some(node) = dag.node_weight(sub_ix) {
                     if pattern_placed_op.op != Op::Any && node.placed_op.op != pattern_placed_op.op {
                         is_match = false;
                     }
@@ -164,24 +173,27 @@ fn select(graph: &mut DAG, ix: DAGIx, pattern: &Pattern) {
                 break;
             }
         }
-        if is_match && pattern_ops.len() == 0 && pattern.cost < node_cost {
-            if let Some(node) = graph.node_weight_mut(root_ix) {
-                println!("new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
-                    pattern.name, pattern.cost, node.name, node_cost);
-            }
-            let mut is_first: bool = true;
-            let mut pattern_ops = pattern.ops.iter();
-            let mut subgraph = Dfs::new(&*graph, root_ix);
-            let node_id: String = graph.node_weight(root_ix).unwrap().name.to_string();
-            while let Some(sub_ix) = subgraph.next(&*graph) {
-                if let Some(pattern_placed_op) = pattern_ops.next() {
-                    if let Some(node) = graph.node_weight_mut(sub_ix) {
-                        if pattern_placed_op.op != Op::Any {
-                            if is_first {
-                                node.placed_op.loc = pattern_placed_op.loc.clone();
-                                is_first = false;
-                            } else {
-                                node.placed_op.loc = Loc::Equal(node_id.to_string());
+        if is_match && pattern_ops.len() == 0 {
+            let cost = estimate_cost(&*dag, root_ix);
+            if pattern.cost < cost {
+                if let Some(node) = dag.node_weight_mut(root_ix) {
+                    println!("new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
+                        pattern.name, pattern.cost, node.name, cost);
+                }
+                let mut is_first: bool = true;
+                let mut pattern_ops = pattern.ops.iter();
+                let mut subgraph = Dfs::new(&*dag, root_ix);
+                let node_id: String = dag.node_weight(root_ix).unwrap().name.to_string();
+                while let Some(sub_ix) = subgraph.next(&*dag) {
+                    if let Some(pattern_placed_op) = pattern_ops.next() {
+                        if let Some(node) = dag.node_weight_mut(sub_ix) {
+                            if pattern_placed_op.op != Op::Any {
+                                if is_first {
+                                    node.placed_op.loc = pattern_placed_op.loc.clone();
+                                    is_first = false;
+                                } else {
+                                    node.placed_op.loc = Loc::Equal(node_id.to_string());
+                                }
                             }
                         }
                     }
