@@ -88,14 +88,14 @@ impl PlacedOp {
 
     pub fn cost(&self) -> i128 {
         match (&self.op, &self.loc) {
-            (Op::Add, Loc::Gen) => 3,
-            (Op::Add, Loc::Lut) => 2,
-            (Op::Add, Loc::Dsp) => 1,
-            (Op::Mul, Loc::Gen) => 3,
-            (Op::Mul, Loc::Lut) => 2,
-            (Op::Mul, Loc::Dsp) => 1,
-            (Op::Reg, Loc::Lut) => -1,
-            (Op::Reg, Loc::Dsp) => -2,
+            (Op::Add, Loc::Gen) => 9,
+            (Op::Add, Loc::Lut) => 8,
+            (Op::Add, Loc::Dsp) => 2,
+            (Op::Mul, Loc::Gen) => 9,
+            (Op::Mul, Loc::Lut) => 8,
+            (Op::Mul, Loc::Dsp) => 2,
+            (Op::Reg, Loc::Lut) => -4,
+            (Op::Reg, Loc::Dsp) => -1,
             (_, _) => 0,
         }
     }
@@ -119,13 +119,15 @@ impl Node {
 #[derive(Clone, Debug)]
 pub struct Pattern {
     name: String,
+    cost: i128,
     ops: Vec<PlacedOp>,
 }
 
 impl Pattern {
-    pub fn new(name: &str) -> Pattern {
+    pub fn new(name: &str, cost: i128) -> Pattern {
         Pattern {
             name: name.to_string(),
+            cost: cost,
             ops: Vec::new(),
         }
     }
@@ -136,7 +138,7 @@ impl Pattern {
 }
 
 fn pat_dsp_muladd() -> Pattern {
-    let mut pat = Pattern::new("dsp_muladd");
+    let mut pat = Pattern::new("dsp_muladd", 1);
     pat.push_op(PlacedOp::new_dsp_op(Op::Add));
     pat.push_op(PlacedOp::new_dsp_op(Op::Mul));
     pat.push_op(PlacedOp::new_dsp_op(Op::Any));
@@ -146,7 +148,7 @@ fn pat_dsp_muladd() -> Pattern {
 }
 
 fn pat_dsp_mul() -> Pattern {
-    let mut pat = Pattern::new("dsp_mul");
+    let mut pat = Pattern::new("dsp_mul", 4);
     pat.push_op(PlacedOp::new_dsp_op(Op::Mul));
     pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat.push_op(PlacedOp::new_dsp_op(Op::Any));
@@ -154,7 +156,7 @@ fn pat_dsp_mul() -> Pattern {
 }
 
 fn pat_dsp_add() -> Pattern {
-    let mut pat = Pattern::new("dsp_add");
+    let mut pat = Pattern::new("dsp_add", 4);
     pat.push_op(PlacedOp::new_dsp_op(Op::Add));
     pat.push_op(PlacedOp::new_dsp_op(Op::Any));
     pat.push_op(PlacedOp::new_dsp_op(Op::Any));
@@ -170,7 +172,6 @@ fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
         let mut pat_iter = patterns.iter();
         while let Some(pat) = pat_iter.next() {
             let mut node_cost: i128 = 0;
-            let mut pat_cost: i128 = 0;
             let mut ops = pat.ops.iter();
             // check if there is a pattern match
             let mut is_match: bool = true;
@@ -179,7 +180,6 @@ fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
                 if let Some(placed_op) = ops.next() {
                     if let Some(node) = graph.node_weight(six) {
                         node_cost += node.placed_op.cost();
-                        pat_cost += placed_op.cost();
                         if node.placed_op.op != placed_op.op {
                             is_match = false;
                         }
@@ -193,7 +193,7 @@ fn find_matches(graph: &DAG, ix: DAGIx, patterns: &Vec<Pattern>) {
                 if let Some(node) = graph.node_weight(nix) {
                     println!(
                         "node-name:{} node-cost:{} pat-name:{} pat-cost:{}",
-                        node.name, node_cost, pat.name, pat_cost
+                        node.name, node_cost, pat.name, pat.cost
                     );
                 }
             }
