@@ -107,7 +107,7 @@ pub enum Op {
         op: PlacedOp,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
-        loc: Expr,
+        loc: Loc,
     },
 }
 
@@ -522,6 +522,19 @@ impl FromStr for DataType {
     }
 }
 
+impl FromStr for PlacedOp {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input.as_ref() {
+            "reg" => Ok(PlacedOp::Reg),
+            "add" => Ok(PlacedOp::Add),
+            "sub" => Ok(PlacedOp::Sub),
+            "mul" => Ok(PlacedOp::Mul),
+            _  => panic!("WIP"),
+        }
+    }
+}
+
 impl Op {
     pub fn get_params(&self) -> &Vec<Expr> {
         match self {
@@ -536,6 +549,28 @@ impl Op {
                 params,
                 loc: _,
             } => params,
+        }
+    }
+}
+
+impl Decl {
+    pub fn new_instr(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str) -> Decl {
+        let placed_op = Op::Placed {
+            op: PlacedOp::from_str(op).unwrap(),
+            attrs: vec![],
+            params: vec![
+                Expr::Ref(lhs.to_string()),
+                Expr::Ref(rhs.to_string()),
+            ],
+            loc: Loc::Unknown,
+        };
+        let output = Port::Output {
+            id: dst.to_string(),
+            datatype: DataType::from_str(ty).unwrap(),
+        };
+        Decl::Instr {
+            op: placed_op,
+            outputs: vec![output],
         }
     }
 }
@@ -586,5 +621,34 @@ impl Def {
             }
             _ => panic!("Error: sim definition does not support outputs"),
         }
+    }
+
+    pub fn add_decl(&mut self, decl: Decl) {
+        match self {
+            Def::Comp {
+                name: _,
+                inputs: _,
+                outputs: _,
+                body,
+            } => {
+                body.push(decl);
+            }
+            Def::Sim {
+                name: _,
+                body,
+            } => {
+                body.push(decl);
+            }
+        }
+    }
+}
+
+impl Prog {
+    pub fn new() -> Prog {
+        Prog { defs: Vec::new() }
+    }
+
+    pub fn add_def(&mut self, def: Def) {
+        self.defs.push(def);
     }
 }
