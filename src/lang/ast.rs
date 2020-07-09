@@ -43,8 +43,9 @@ pub enum LocOp {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Loc {
     Unknown,
-    Relative(LocOp, Id),
+    Place(LocType),
     Origin(LocType, u64, u64),
+    Relative(LocOp, Id),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -202,10 +203,13 @@ impl PrettyPrinter for Loc {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Loc::Unknown => RcDoc::text("??"),
-            Loc::Relative(op, n) => op
+            Loc::Place(ty) => ty
                 .to_doc()
                 .append(RcDoc::text("("))
-                .append(RcDoc::as_string(n))
+                .append(RcDoc::text("??"))
+                .append(RcDoc::text(","))
+                .append(RcDoc::space())
+                .append(RcDoc::text("??"))
                 .append(RcDoc::text(")")),
             Loc::Origin(ty, x, y) => ty
                 .to_doc()
@@ -214,6 +218,11 @@ impl PrettyPrinter for Loc {
                 .append(RcDoc::text(","))
                 .append(RcDoc::space())
                 .append(RcDoc::as_string(y))
+                .append(RcDoc::text(")")),
+            Loc::Relative(op, n) => op
+                .to_doc()
+                .append(RcDoc::text("("))
+                .append(RcDoc::as_string(n))
                 .append(RcDoc::text(")")),
         }
     }
