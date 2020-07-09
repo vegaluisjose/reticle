@@ -1,10 +1,13 @@
-//use reticle::lang::ast::macros;
-use reticle::lang::ast;
-use reticle::passes::selection;
+use reticle::lang::ast::*;
+use reticle::inputs;
 use std::str::FromStr;
+//use reticle::passes::selection;
 
 fn main() {
-    let x = ast::DataType::from_str("u8").unwrap();
-    println!("{}", x);
-    selection::main();
+    let x = inputs!(
+        "a" => "i8",
+        "b" => "i8"
+    );
+    println!("{:?}", x);
+    //selection::main();
 }
