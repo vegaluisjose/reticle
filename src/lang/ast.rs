@@ -504,12 +504,14 @@ impl FromStr for DataType {
             caps = re_uint.captures(input).unwrap();
             if let Some(w) = caps.get(1) {
                 let width = w.as_str().parse::<u64>().unwrap();
+                assert!(width > 0, "Error: width must be greater than zero");
                 dtype = Ok(DataType::UInt(width));
             }
         } else if re_sint.is_match(input) {
             caps = re_sint.captures(input).unwrap();
             if let Some(w) = caps.get(1) {
                 let width = w.as_str().parse::<u64>().unwrap();
+                assert!(width > 1, "Error: width must be greater than one");
                 dtype = Ok(DataType::SInt(width));
             }
         } else if re_uvec.is_match(input) {
@@ -518,6 +520,8 @@ impl FromStr for DataType {
                 if let Some(l) = caps.get(2) {
                     let width = w.as_str().parse::<u64>().unwrap();
                     let len = l.as_str().parse::<u64>().unwrap();
+                    assert!(width > 0, "Error: width must be greater than zero");
+                    assert!(len > 0, "Error: length must be greater than zero");
                     dtype = Ok(DataType::Vector(Rc::new(DataType::UInt(width)), len));
                 }
             }
@@ -527,6 +531,8 @@ impl FromStr for DataType {
                 if let Some(l) = caps.get(2) {
                     let width = w.as_str().parse::<u64>().unwrap();
                     let len = l.as_str().parse::<u64>().unwrap();
+                    assert!(width > 1, "Error: width must be greater than one");
+                    assert!(len > 0, "Error: length must be greater than zero");
                     dtype = Ok(DataType::Vector(Rc::new(DataType::SInt(width)), len));
                 }
             }
