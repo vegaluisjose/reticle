@@ -1,13 +1,9 @@
 use reticle::lang::ast::*;
-use reticle::inputs;
-use std::str::FromStr;
-//use reticle::passes::selection;
 
 fn main() {
-    let x = inputs!(
-        "a" => "i8",
-        "b" => "i8"
-    );
-    println!("{:?}", x);
-    //selection::main();
+    let mut comp = Def::new_comp("muladd");
+    comp.add_input("a", "i8");
+    comp.add_input("b", "i8");
+    comp.add_output("y", "i8");
+    println!("{}", comp);
 }

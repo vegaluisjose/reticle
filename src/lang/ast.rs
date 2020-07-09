@@ -111,24 +111,6 @@ pub enum CompOp {
     },
 }
 
-impl CompOp {
-    pub fn get_inputs(&self) -> &Vec<Expr> {
-        match self {
-            CompOp::Std {
-                op: _,
-                attrs: _,
-                params,
-            } => params,
-            CompOp::Placed {
-                op: _,
-                attrs: _,
-                params,
-                loc: _,
-            } => params,
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Port {
     Input { id: Id, datatype: DataType },
@@ -538,5 +520,63 @@ impl FromStr for DataType {
             }
         }
         dtype
+    }
+}
+
+impl CompOp {
+    pub fn get_params(&self) -> &Vec<Expr> {
+        match self {
+            CompOp::Std {
+                op: _,
+                attrs: _,
+                params,
+            } => params,
+            CompOp::Placed {
+                op: _,
+                attrs: _,
+                params,
+                loc: _,
+            } => params,
+        }
+    }
+}
+
+
+impl Def {
+    pub fn new_comp(name: &str) -> Def {
+        Def::Comp {
+            name: name.to_string(),
+            inputs: Vec::new(),
+            outputs: Vec::new(),
+            body: Vec::new(),
+        }
+    }
+
+    pub fn add_input(&mut self, name: &str, ty: &str) {
+        match self {
+            Def::Comp {name:_, inputs, outputs:_, body:_, } => {
+                let dtype = DataType::from_str(ty).unwrap();
+                let port = Port::Input {
+                    id:name.to_string(),
+                    datatype: dtype,
+                };
+                inputs.push(port);
+            },
+            _ => panic!("Error: sim definition does not support inputs"),
+        }
+    }
+
+    pub fn add_output(&mut self, name: &str, ty: &str) {
+        match self {
+            Def::Comp {name:_, inputs:_, outputs, body:_, } => {
+                let dtype = DataType::from_str(ty).unwrap();
+                let port = Port::Output {
+                    id:name.to_string(),
+                    datatype: dtype,
+                };
+                outputs.push(port);
+            },
+            _ => panic!("Error: sim definition does not support outputs"),
+        }
     }
 }
