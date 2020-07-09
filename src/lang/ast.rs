@@ -93,7 +93,7 @@ pub enum PlacedOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum SimOp {
-    Print { inputs: Vec<Expr> },
+    Print { params: Vec<Expr> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -101,12 +101,12 @@ pub enum CompOp {
     Std {
         op: StdOp,
         attrs: Vec<Expr>,
-        inputs: Vec<Expr>,
+        params: Vec<Expr>,
     },
     Placed {
         op: PlacedOp,
         attrs: Vec<Expr>,
-        inputs: Vec<Expr>,
+        params: Vec<Expr>,
         loc: Expr,
     },
 }
@@ -117,14 +117,14 @@ impl CompOp {
             CompOp::Std {
                 op: _,
                 attrs: _,
-                inputs,
-            } => inputs,
+                params,
+            } => params,
             CompOp::Placed {
                 op: _,
                 attrs: _,
-                inputs,
+                params,
                 loc: _,
-            } => inputs,
+            } => params,
         }
     }
 }
@@ -309,7 +309,7 @@ impl PrettyPrinter for CompOp {
             CompOp::Placed {
                 op,
                 attrs,
-                inputs,
+                params,
                 loc,
             } => {
                 let attrs_doc = match attrs.is_empty() {
@@ -321,11 +321,11 @@ impl PrettyPrinter for CompOp {
                         ))
                         .append(RcDoc::text("]")),
                 };
-                let params_doc = match inputs.is_empty() {
+                let params_doc = match params.is_empty() {
                     true => panic!("Error: must have at least one param"),
                     false => RcDoc::text("(")
                         .append(RcDoc::intersperse(
-                            inputs.iter().map(|p| p.to_doc()),
+                            params.iter().map(|p| p.to_doc()),
                             RcDoc::text(",").append(RcDoc::space()),
                         ))
                         .append(RcDoc::text(")")),
