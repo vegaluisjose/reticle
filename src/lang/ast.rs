@@ -3,6 +3,8 @@ use pretty::RcDoc;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::rc::Rc;
+use std::str::FromStr;
+use regex::Regex;
 
 pub type Id = String;
 
@@ -257,16 +259,6 @@ impl fmt::Display for Expr {
     }
 }
 
-// helper function
-impl Expr {
-    pub fn get_id(self) -> Id {
-        match self {
-            Expr::Ref(name) => name.to_string(),
-            _ => panic!("Error: expr is not Ref"),
-        }
-    }
-}
-
 impl PrettyPrinter for StdOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
@@ -481,5 +473,64 @@ impl PrettyPrinter for Prog {
 impl fmt::Display for Prog {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
+    }
+}
+
+// helper functions
+
+impl Expr {
+    pub fn get_id(self) -> Id {
+        match self {
+            Expr::Ref(name) => name.to_string(),
+            _ => panic!("Error: expr is not Ref"),
+        }
+    }
+}
+
+impl FromStr for DataType {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let re_bool = Regex::new(r"bool$").unwrap();
+        let re_uint = Regex::new(r"^u([[:alnum:]]+)$").unwrap();
+        let re_sint = Regex::new(r"^i([[:alnum:]]+)$").unwrap();
+        let re_uvec = Regex::new(r"^u([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
+        let re_svec = Regex::new(r"^i([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
+        let mut dtype = Err(());
+        let caps;
+        if re_bool.is_match(input) {
+            dtype = Ok(DataType::Bool);
+
+        } else if re_uint.is_match(input) {
+            caps = re_uint.captures(input).unwrap();
+            if let Some(w) = caps.get(1) {
+                let width = w.as_str().parse::<u64>().unwrap();
+                dtype = Ok(DataType::UInt(width));
+            }
+        } else if re_sint.is_match(input) {
+            caps = re_sint.captures(input).unwrap();
+            if let Some(w) = caps.get(1) {
+                let width = w.as_str().parse::<u64>().unwrap();
+                dtype = Ok(DataType::SInt(width));
+            }
+        } else if re_uvec.is_match(input) {
+            caps = re_uvec.captures(input).unwrap();
+            if let Some(w) = caps.get(1) {
+                if let Some(l) = caps.get(2) {
+                    let width = w.as_str().parse::<u64>().unwrap();
+                    let len = l.as_str().parse::<u64>().unwrap();
+                    dtype = Ok(DataType::Vector(Rc::new(DataType::UInt(width)), len));
+                }
+            }
+        } else if re_svec.is_match(input) {
+            caps = re_svec.captures(input).unwrap();
+            if let Some(w) = caps.get(1) {
+                if let Some(l) = caps.get(2) {
+                    let width = w.as_str().parse::<u64>().unwrap();
+                    let len = l.as_str().parse::<u64>().unwrap();
+                    dtype = Ok(DataType::Vector(Rc::new(DataType::SInt(width)), len));
+                }
+            }
+        }
+        dtype
     }
 }
