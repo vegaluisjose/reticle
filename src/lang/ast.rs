@@ -92,12 +92,12 @@ pub enum PlacedOp {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum SimOp {
+pub enum Dop {
     Print { params: Vec<Expr> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum CompOp {
+pub enum Op {
     Std {
         op: StdOp,
         attrs: Vec<Expr>,
@@ -119,8 +119,8 @@ pub enum Port {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Decl {
-    Sim { op: SimOp },
-    Comp { op: CompOp, outputs: Vec<Port> },
+    Debug { op: Dop }, // need to find a better name for this
+    Instr { op: Op, outputs: Vec<Port> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -273,22 +273,22 @@ impl fmt::Display for PlacedOp {
     }
 }
 
-impl PrettyPrinter for SimOp {
+impl PrettyPrinter for Dop {
     fn to_doc(&self) -> RcDoc<()> {
         panic!("WIP")
     }
 }
 
-impl fmt::Display for SimOp {
+impl fmt::Display for Dop {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }
 }
 
-impl PrettyPrinter for CompOp {
+impl PrettyPrinter for Op {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            CompOp::Placed {
+            Op::Placed {
                 op,
                 attrs,
                 params,
@@ -324,7 +324,7 @@ impl PrettyPrinter for CompOp {
     }
 }
 
-impl fmt::Display for CompOp {
+impl fmt::Display for Op {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }
@@ -354,8 +354,8 @@ impl fmt::Display for Port {
 impl PrettyPrinter for Decl {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Decl::Sim { op } => op.to_doc(),
-            Decl::Comp { op, outputs } => RcDoc::intersperse(
+            Decl::Debug { op } => op.to_doc(),
+            Decl::Instr { op, outputs } => RcDoc::intersperse(
                 outputs.iter().map(|o| o.to_doc()),
                 RcDoc::text(",").append(RcDoc::space()),
             )
@@ -522,15 +522,15 @@ impl FromStr for DataType {
     }
 }
 
-impl CompOp {
+impl Op {
     pub fn get_params(&self) -> &Vec<Expr> {
         match self {
-            CompOp::Std {
+            Op::Std {
                 op: _,
                 attrs: _,
                 params,
             } => params,
-            CompOp::Placed {
+            Op::Placed {
                 op: _,
                 attrs: _,
                 params,
