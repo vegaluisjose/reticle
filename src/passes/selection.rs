@@ -1,7 +1,7 @@
 use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
-use petgraph::visit::{DfsPostOrder, Dfs};
+use petgraph::visit::{Dfs, DfsPostOrder};
 use std::fmt;
 
 #[derive(Clone, Debug, PartialEq)]
@@ -185,7 +185,9 @@ fn pat_dsp_add() -> Pattern {
 pub struct Edge;
 
 impl Edge {
-    pub fn new() -> Edge { Edge {} }
+    pub fn new() -> Edge {
+        Edge {}
+    }
 }
 
 impl fmt::Display for Edge {
@@ -228,8 +230,10 @@ fn is_match(dag: &DAG, start: DAGIx, pattern: &Pattern) -> bool {
 
 fn debug(dag: &DAG, start: DAGIx, cost: i32, pattern: &Pattern) {
     if let Some(node) = dag.node_weight(start) {
-        println!("new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
-            pattern.name, pattern.cost, node.name, cost);
+        println!(
+            "new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
+            pattern.name, pattern.cost, node.name, cost
+        );
     }
 }
 

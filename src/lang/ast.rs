@@ -1,10 +1,10 @@
 use crate::util::pretty::{PrettyPrinter, PRETTY_INDENT};
 use pretty::RcDoc;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 use std::rc::Rc;
 use std::str::FromStr;
-use regex::Regex;
 
 pub type Id = String;
 
@@ -481,7 +481,6 @@ impl FromStr for DataType {
         let caps;
         if re_bool.is_match(input) {
             dtype = Ok(DataType::Bool);
-
         } else if re_uint.is_match(input) {
             caps = re_uint.captures(input).unwrap();
             if let Some(w) = caps.get(1) {
@@ -541,7 +540,6 @@ impl CompOp {
     }
 }
 
-
 impl Def {
     pub fn new_comp(name: &str) -> Def {
         Def::Comp {
@@ -554,28 +552,38 @@ impl Def {
 
     pub fn add_input(&mut self, name: &str, ty: &str) {
         match self {
-            Def::Comp {name:_, inputs, outputs:_, body:_, } => {
+            Def::Comp {
+                name: _,
+                inputs,
+                outputs: _,
+                body: _,
+            } => {
                 let dtype = DataType::from_str(ty).unwrap();
                 let port = Port::Input {
-                    id:name.to_string(),
+                    id: name.to_string(),
                     datatype: dtype,
                 };
                 inputs.push(port);
-            },
+            }
             _ => panic!("Error: sim definition does not support inputs"),
         }
     }
 
     pub fn add_output(&mut self, name: &str, ty: &str) {
         match self {
-            Def::Comp {name:_, inputs:_, outputs, body:_, } => {
+            Def::Comp {
+                name: _,
+                inputs: _,
+                outputs,
+                body: _,
+            } => {
                 let dtype = DataType::from_str(ty).unwrap();
                 let port = Port::Output {
-                    id:name.to_string(),
+                    id: name.to_string(),
                     datatype: dtype,
                 };
                 outputs.push(port);
-            },
+            }
             _ => panic!("Error: sim definition does not support outputs"),
         }
     }
