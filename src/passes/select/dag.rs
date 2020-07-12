@@ -1,5 +1,6 @@
 use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
 use crate::passes::select::instr::*;
+use crate::passes::select::pattern::*;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
@@ -96,5 +97,8 @@ impl DAG {
             }
         }
         println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
+        for pat in patterns().iter() {
+            println!("{:?}", pat);
+        }
     }
 }
