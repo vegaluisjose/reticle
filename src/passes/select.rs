@@ -3,6 +3,7 @@ use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
 use std::collections::HashMap;
+use std::fmt;
 
 pub type Ty = DataType;
 
@@ -14,6 +15,20 @@ pub enum Op {
     Add,
     Sub,
     Mul,
+}
+
+impl fmt::Display for Op {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Op::Any => "any",
+            Op::Ref => "ref",
+            Op::Reg => "reg",
+            Op::Add => "add",
+            Op::Sub => "sub",
+            Op::Mul => "mul",
+        };
+        write!(f, "{}", name)
+    }
 }
 
 impl Op {
@@ -47,10 +62,22 @@ impl Instr {
     }
 }
 
+impl fmt::Display for Instr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}<{}>", self.op, self.ty)
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Node {
     name: String,
     instr: Instr,
+}
+
+impl fmt::Display for Node {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}:{}", self.name, self.instr)
+    }
 }
 
 impl Node {
@@ -69,6 +96,12 @@ pub struct Edge;
 impl Edge {
     pub fn new() -> Edge {
         Edge {}
+    }
+}
+
+impl fmt::Display for Edge {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "")
     }
 }
 
@@ -142,6 +175,6 @@ impl DAG {
                 self.create_edge(&dst.id(), &rhs.id());
             }
         }
-        println!("{:?}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
+        println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
     }
 }
