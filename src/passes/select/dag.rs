@@ -78,10 +78,10 @@ impl DAG {
 
     fn is_match(&self, start: DagIx, pattern: &Pattern) -> bool {
         let mut is_match: bool = true;
-        let mut pat_instrs = pattern.instr.iter();
+        let mut pat_instr = pattern.instr.iter();
         let mut visit = Dfs::new(&self.dag, start);
         while let Some(ix) = visit.next(&self.dag) {
-            if let Some(instr) = pat_instrs.next() {
+            if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.dag.node_weight(ix) {
                     if instr.op != InstrOp::Any && instr.op != node.instr.op {
                         is_match = false;
@@ -91,7 +91,7 @@ impl DAG {
                 break;
             }
         }
-        is_match && pat_instrs.len() == 0
+        is_match && pat_instr.len() == 0
     }
 
     fn estimate_cost(&self, start: DagIx) -> i32 {
@@ -103,6 +103,40 @@ impl DAG {
             }
         }
         cost
+    }
+
+    fn rewrite(&mut self, start: DagIx, pattern: &Pattern) {
+        let mut is_first: bool = true;
+        let node_id: String = self.dag.node_weight(start).unwrap().name.to_string();
+        let mut pat_instr = pattern.instr.iter();
+        let mut visit = Dfs::new(&self.dag, start);
+        while let Some(ix) = visit.next(&self.dag) {
+            if let Some(instr) = pat_instr.next() {
+                if let Some(node) = self.dag.node_weight_mut(ix) {
+                    if instr.op != InstrOp::Any {
+                        if is_first {
+                            node.instr.loc = instr.loc.clone();
+                            is_first = false;
+                        } else {
+                            node.instr.loc = InstrLoc::Ref(node_id.to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fn debug(&self, start: DagIx, cost: i32, pattern: &Pattern) {
+        if let Some(node) = self.dag.node_weight(start) {
+            println!(
+                "new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
+                pattern.name, pattern.cost, node.name, cost
+            );
+        }
+    }
+
+    fn print_dot(&self) {
+        println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
     }
 
     pub fn create_dag_from_prog(&mut self, input: &Prog) {
@@ -132,21 +166,27 @@ impl DAG {
                 self.create_edge(&dst.id(), &rhs.id());
             }
         }
-        println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
+        self.print_dot();
     }
 
     pub fn select(&mut self) {
-        for rid in self.roots.iter() {
+        let roots = self.roots.clone(); // copy here, so I can mutate dag
+        for rid in roots.iter() {
             for pat in patterns().iter() {
                 if let Some(rix) = self.nodes.get(rid) {
                     let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
                     while let Some(ix) = dag_iter.next(&self.dag) {
                         if self.is_match(ix, pat) {
-                            println!("pat:{} current-cost:{}", pat.name, self.estimate_cost(ix));
+                            let cost = self.estimate_cost(ix);
+                            if pat.cost < cost {
+                                self.debug(ix, cost, pat);
+                                self.rewrite(ix, pat);
+                            }
                         }
                     }
                 }
             }
         }
+        self.print_dot();
     }
 }
