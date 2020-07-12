@@ -36,14 +36,14 @@ type DagIx = graph::NodeIndex;
 
 pub struct DAG {
     pub dag: Dag,
-    pub env: HashMap<String, DagIx>,
+    pub nodes: HashMap<String, DagIx>,
 }
 
 impl DAG {
     pub fn new() -> DAG {
         DAG {
             dag: Dag::new(),
-            env: HashMap::new(),
+            nodes: HashMap::new(),
         }
     }
 
@@ -51,7 +51,7 @@ impl DAG {
         let instr_op = InstrOp::from_expr(input);
         let instr = Instr::new(instr_op, ty.clone(), InstrLoc::Any);
         let ix = self.dag.add_node(Node::new(&input.id(), instr));
-        self.env.insert(input.id(), ix);
+        self.nodes.insert(input.id(), ix);
     }
 
     fn create_node_from_placed_op(&mut self, id: &str, input: &PlacedOp, ty: &InstrTy, loc: &Loc) {
@@ -59,12 +59,12 @@ impl DAG {
         let instr_loc = InstrLoc::from_loc(loc);
         let instr = Instr::new(instr_op, ty.clone(), instr_loc);
         let ix = self.dag.add_node(Node::new(id, instr));
-        self.env.insert(id.to_string(), ix);
+        self.nodes.insert(id.to_string(), ix);
     }
 
     fn create_edge(&mut self, from: &str, to: &str) {
-        if let Some(from_ix) = self.env.get(from) {
-            if let Some(to_ix) = self.env.get(to) {
+        if let Some(from_ix) = self.nodes.get(from) {
+            if let Some(to_ix) = self.nodes.get(to) {
                 if let None = self.dag.find_edge(*from_ix, *to_ix) {
                     self.dag.add_edge(*from_ix, *to_ix, Edge::new());
                 }
@@ -83,13 +83,13 @@ impl DAG {
                 let ty = decl.outputs()[0].datatype();
                 let dst = decl.outputs()[0].clone();
                 let loc = decl.loc();
-                if !self.env.contains_key(&lhs.id()) {
+                if !self.nodes.contains_key(&lhs.id()) {
                     self.create_node_from_expr(&lhs, &ty);
                 }
-                if !self.env.contains_key(&rhs.id()) {
+                if !self.nodes.contains_key(&rhs.id()) {
                     self.create_node_from_expr(&rhs, &ty);
                 }
-                if !self.env.contains_key(&dst.id()) {
+                if !self.nodes.contains_key(&dst.id()) {
                     self.create_node_from_placed_op(&dst.id(), decl.placed_op(), &ty, &loc);
                 }
                 self.create_edge(&dst.id(), &lhs.id());
