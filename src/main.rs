@@ -16,4 +16,5 @@ fn main() {
     println!("{}", prog);
     let mut dag = DAG::new();
     dag.create_dag_from_prog(&prog);
+    dag.select();
 }

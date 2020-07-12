@@ -2,7 +2,7 @@ use crate::lang::ast::{DataType, Expr, Id, Loc, PlacedOp};
 
 pub type InstrTy = DataType;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum InstrOp {
     Any,
     Ref,

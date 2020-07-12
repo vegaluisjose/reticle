@@ -4,6 +4,7 @@ use crate::passes::select::pattern::*;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
+use petgraph::visit::{Dfs, DfsPostOrder};
 use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
@@ -74,6 +75,24 @@ impl DAG {
         }
     }
 
+    fn is_match(&self, start: DagIx, pattern: &Pattern) -> bool {
+        let mut is_match: bool = true;
+        let mut pat_instrs = pattern.instrs.iter();
+        let mut visit = Dfs::new(&self.dag, start);
+        while let Some(ix) = visit.next(&self.dag) {
+            if let Some(instr) = pat_instrs.next() {
+                if let Some(node) = self.dag.node_weight(ix) {
+                    if instr.op != InstrOp::Any && instr.op != node.instr.op {
+                        is_match = false;
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        is_match && pat_instrs.len() == 0
+    }
+
     pub fn create_dag_from_prog(&mut self, input: &Prog) {
         assert!(input.defs.len() == 1, "Error: single component prog atm");
         for def in input.defs.iter() {
@@ -102,11 +121,20 @@ impl DAG {
             }
         }
         println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
-        for root in self.roots.iter() {
-            println!("root:{}", root);
+    }
+
+    pub fn select(&mut self) {
+        for rid in self.roots.iter() {
+            for pat in patterns().iter() {
+                if let Some(rix) = self.nodes.get(rid) {
+                    let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
+                    while let Some(ix) = dag_iter.next(&self.dag) {
+                        if self.is_match(ix, pat) {
+                            println!("found a match, {}", pat.name);
+                        }
+                    }
+                }
+            }
         }
-        // for pat in patterns().iter() {
-        //     println!("{:?}", pat);
-        // }
     }
 }
