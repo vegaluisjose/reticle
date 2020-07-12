@@ -72,7 +72,7 @@ impl DAG {
         }
     }
 
-    pub fn from_prog(&mut self, input: &Prog) {
+    pub fn create_dag_from_prog(&mut self, input: &Prog) {
         assert!(input.defs.len() == 1, "Error: single component prog atm");
         for def in input.defs.iter() {
             for decl in def.body().iter() {
