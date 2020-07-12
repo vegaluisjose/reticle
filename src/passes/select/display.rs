@@ -1,4 +1,5 @@
 use crate::passes::select::dag::*;
+use crate::passes::select::instr::*;
 use std::fmt;
 
 impl fmt::Display for InstrOp {
