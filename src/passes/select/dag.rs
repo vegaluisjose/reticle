@@ -17,20 +17,6 @@ pub enum InstrOp {
     Mul,
 }
 
-impl fmt::Display for InstrOp {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let name = match self {
-            InstrOp::Any => "any",
-            InstrOp::Ref => "ref",
-            InstrOp::Reg => "reg",
-            InstrOp::Add => "add",
-            InstrOp::Sub => "sub",
-            InstrOp::Mul => "mul",
-        };
-        write!(f, "{}", name)
-    }
-}
-
 impl InstrOp {
     pub fn from_expr(input: &Expr) -> InstrOp {
         match input {
@@ -74,26 +60,11 @@ impl InstrLoc {
     }
 }
 
-impl fmt::Display for InstrLoc {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let name = match self {
-            InstrLoc::Any => "any",
-            InstrLoc::Unknown => "??",
-            InstrLoc::Lut => "lut",
-            InstrLoc::Lum => "lum",
-            InstrLoc::Dsp => "dsp",
-            InstrLoc::Ram => "ram",
-            InstrLoc::Ref(n) => n,
-        };
-        write!(f, "{}", name)
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct Instr {
-    op: InstrOp,
-    ty: InstrTy,
-    loc: InstrLoc,
+    pub op: InstrOp,
+    pub ty: InstrTy,
+    pub loc: InstrLoc,
 }
 
 impl Instr {
@@ -102,22 +73,10 @@ impl Instr {
     }
 }
 
-impl fmt::Display for Instr {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}<{}> @{}", self.op, self.ty, self.loc)
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct Node {
-    name: String,
-    instr: Instr,
-}
-
-impl fmt::Display for Node {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}: {}", self.name, self.instr)
-    }
+    pub name: String,
+    pub instr: Instr,
 }
 
 impl Node {
@@ -139,25 +98,19 @@ impl Edge {
     }
 }
 
-impl fmt::Display for Edge {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
 #[derive(Clone, Debug)]
 pub struct Pattern {
-    name: String,
-    seq: Vec<Instr>,
-    cost: i32,
+    pub name: String,
+    pub seq: Vec<Instr>,
+    pub cost: i32,
 }
 
 type Dag = Graph<Node, Edge>;
 type DagIx = graph::NodeIndex;
 
 pub struct DAG {
-    dag: Dag,
-    env: HashMap<String, DagIx>,
+    pub dag: Dag,
+    pub env: HashMap<String, DagIx>,
 }
 
 impl DAG {

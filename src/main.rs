@@ -1,5 +1,5 @@
 use reticle::lang::ast::*;
-use reticle::passes::select::DAG;
+use reticle::passes::select::dag::DAG;
 
 fn main() {
     let mut comp = Def::new_comp("muladd");
