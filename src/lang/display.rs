@@ -8,18 +8,6 @@ impl fmt::Display for DataType {
     }
 }
 
-impl fmt::Display for LocType {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_pretty())
-    }
-}
-
-impl fmt::Display for LocOp {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_pretty())
-    }
-}
-
 impl fmt::Display for Loc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())

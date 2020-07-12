@@ -17,51 +17,15 @@ impl PrettyPrint for DataType {
     }
 }
 
-impl PrettyPrint for LocType {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            LocType::Lut => RcDoc::text("lut"),
-            LocType::Lum => RcDoc::text("lum"),
-            LocType::Dsp => RcDoc::text("dsp"),
-            LocType::Ram => RcDoc::text("ram"),
-        }
-    }
-}
-
-impl PrettyPrint for LocOp {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            LocOp::Equal => RcDoc::text("equal"),
-            LocOp::Above => RcDoc::text("above"),
-            LocOp::Below => RcDoc::text("below"),
-            LocOp::Before => RcDoc::text("before"),
-            LocOp::After => RcDoc::text("after"),
-        }
-    }
-}
-
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Loc::Unknown => RcDoc::text("??"),
-            Loc::Place(ty) => ty
-                .to_doc()
-                .append(RcDoc::text("("))
-                .append(RcDoc::text("??"))
-                .append(RcDoc::text(","))
-                .append(RcDoc::space())
-                .append(RcDoc::text("??"))
-                .append(RcDoc::text(")")),
-            Loc::Origin(ty, x, y) => ty
-                .to_doc()
-                .append(RcDoc::text("("))
-                .append(RcDoc::as_string(x))
-                .append(RcDoc::text(","))
-                .append(RcDoc::space())
-                .append(RcDoc::as_string(y))
-                .append(RcDoc::text(")")),
-            Loc::Relative(op, n) => op
-                .to_doc()
+            Loc::Lut => RcDoc::text("lut"),
+            Loc::Lum => RcDoc::text("lum"),
+            Loc::Dsp => RcDoc::text("dsp"),
+            Loc::Ram => RcDoc::text("ram"),
+            Loc::Ref(n) => RcDoc::text("ref")
                 .append(RcDoc::text("("))
                 .append(RcDoc::as_string(n))
                 .append(RcDoc::text(")")),

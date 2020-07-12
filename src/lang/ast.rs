@@ -19,28 +19,13 @@ pub enum Expr {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum LocType {
+pub enum Loc {
+    Unknown,
     Lut,
     Lum,
     Dsp,
     Ram,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum LocOp {
-    Equal,
-    Above,
-    Below,
-    Before,
-    After,
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Loc {
-    Unknown,
-    Place(LocType),
-    Origin(LocType, u64, u64),
-    Relative(LocOp, Id),
+    Ref(Id),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
