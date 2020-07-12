@@ -153,6 +153,30 @@ impl Def {
         }
     }
 
+    pub fn inputs(&self) -> &Vec<Port> {
+        match self {
+            Def::Comp {
+                name: _,
+                inputs,
+                outputs: _,
+                body: _,
+            } => inputs,
+            _ => panic!("Error: sim definition don't support inputs")
+        }
+    }
+
+    pub fn outputs(&self) -> &Vec<Port> {
+        match self {
+            Def::Comp {
+                name: _,
+                inputs: _,
+                outputs,
+                body: _,
+            } => outputs,
+            _ => panic!("Error: sim definition don't support outputs")
+        }
+    }
+
     pub fn add_input(&mut self, name: &str, ty: &str) {
         match self {
             Def::Comp {

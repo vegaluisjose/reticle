@@ -37,6 +37,7 @@ type DagIx = graph::NodeIndex;
 pub struct DAG {
     pub dag: Dag,
     pub nodes: HashMap<String, DagIx>,
+    pub roots: Vec<String>,
 }
 
 impl DAG {
@@ -44,6 +45,7 @@ impl DAG {
         DAG {
             dag: Dag::new(),
             nodes: HashMap::new(),
+            roots: Vec::new(),
         }
     }
 
@@ -75,6 +77,9 @@ impl DAG {
     pub fn create_dag_from_prog(&mut self, input: &Prog) {
         assert!(input.defs.len() == 1, "Error: single component prog atm");
         for def in input.defs.iter() {
+            for port in def.outputs().iter() {
+                self.roots.push(port.id());
+            }
             for decl in def.body().iter() {
                 assert!(decl.outputs().len() == 1, "Error: single output atm");
                 let params = decl.params();
@@ -97,8 +102,11 @@ impl DAG {
             }
         }
         println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
-        for pat in patterns().iter() {
-            println!("{:?}", pat);
+        for root in self.roots.iter() {
+            println!("root:{}", root);
         }
+        // for pat in patterns().iter() {
+        //     println!("{:?}", pat);
+        // }
     }
 }
