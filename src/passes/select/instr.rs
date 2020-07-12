@@ -1,4 +1,4 @@
-use crate::lang::ast::{DataType, Expr, PlacedOp, Loc, Id};
+use crate::lang::ast::{DataType, Expr, Id, Loc, PlacedOp};
 
 pub type InstrTy = DataType;
 
@@ -64,6 +64,10 @@ impl InstrLoc {
 
 impl Instr {
     pub fn new(op: InstrOp, ty: InstrTy, loc: InstrLoc) -> Instr {
-        Instr { op: op, ty: ty, loc: loc }
+        Instr {
+            op: op,
+            ty: ty,
+            loc: loc,
+        }
     }
 }

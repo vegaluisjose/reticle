@@ -1,4 +1,4 @@
-use crate::lang::ast::{Expr, PlacedOp, Prog, Loc};
+use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
 use crate::passes::select::instr::*;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph;
