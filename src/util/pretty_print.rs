@@ -3,7 +3,7 @@ use pretty::RcDoc;
 pub const PRETTY_WIDTH: usize = 100;
 pub const PRETTY_INDENT: isize = 4;
 
-pub trait PrettyPrinter {
+pub trait PrettyPrint {
     fn to_doc(&self) -> RcDoc<()>;
 
     fn to_pretty_with_width(&self, width: usize) -> String {

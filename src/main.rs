@@ -1,4 +1,5 @@
 use reticle::lang::ast::*;
+use reticle::passes::select::DAG;
 
 fn main() {
     let mut comp = Def::new_comp("muladd");
@@ -13,4 +14,6 @@ fn main() {
     let mut prog = Prog::new();
     prog.add_def(comp);
     println!("{}", prog);
+    let mut dag = DAG::new();
+    dag.from_prog(&prog);
 }
