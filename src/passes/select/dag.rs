@@ -1,6 +1,7 @@
 use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
+use crate::passes::select::cost::*;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
@@ -77,7 +78,7 @@ impl DAG {
 
     fn is_match(&self, start: DagIx, pattern: &Pattern) -> bool {
         let mut is_match: bool = true;
-        let mut pat_instrs = pattern.instrs.iter();
+        let mut pat_instrs = pattern.instr.iter();
         let mut visit = Dfs::new(&self.dag, start);
         while let Some(ix) = visit.next(&self.dag) {
             if let Some(instr) = pat_instrs.next() {
@@ -91,6 +92,17 @@ impl DAG {
             }
         }
         is_match && pat_instrs.len() == 0
+    }
+
+    fn estimate_cost(&self, start: DagIx) -> i32 {
+        let mut cost: i32 = 0;
+        let mut visit = Dfs::new(&self.dag, start);
+        while let Some(ix) = visit.next(&self.dag) {
+            if let Some(node) = self.dag.node_weight(ix) {
+                cost += estimate_instr_cost(&node.instr);
+            }
+        }
+        cost
     }
 
     pub fn create_dag_from_prog(&mut self, input: &Prog) {
@@ -130,7 +142,7 @@ impl DAG {
                     let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
                     while let Some(ix) = dag_iter.next(&self.dag) {
                         if self.is_match(ix, pat) {
-                            println!("found a match, {}", pat.name);
+                            println!("pat:{} current-cost:{}", pat.name, self.estimate_cost(ix));
                         }
                     }
                 }

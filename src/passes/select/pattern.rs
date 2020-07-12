@@ -3,7 +3,7 @@ use crate::passes::select::instr::*;
 #[derive(Clone, Debug)]
 pub struct Pattern {
     pub name: String,
-    pub instrs: Vec<Instr>,
+    pub instr: Vec<Instr>,
     pub cost: i32,
 }
 
@@ -11,41 +11,41 @@ pub struct Pattern {
 // from a target-description (td) file
 
 fn dsp_i8_mul_r_add () -> Pattern {
-    let mut instrs: Vec<Instr> = Vec::new();
-    instrs.push(Instr::new(InstrOp::Add, InstrTy::SInt(8), InstrLoc::Dsp));
-    instrs.push(Instr::new(InstrOp::Reg, InstrTy::SInt(8), InstrLoc::Dsp));
-    instrs.push(Instr::new(InstrOp::Mul, InstrTy::SInt(8), InstrLoc::Dsp));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::Bool, InstrLoc::Any));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    let mut instr: Vec<Instr> = Vec::new();
+    instr.push(Instr::new(InstrOp::Add, InstrTy::SInt(8), InstrLoc::Dsp));
+    instr.push(Instr::new(InstrOp::Reg, InstrTy::SInt(8), InstrLoc::Dsp));
+    instr.push(Instr::new(InstrOp::Mul, InstrTy::SInt(8), InstrLoc::Dsp));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::Bool, InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
     Pattern {
         name: "dsp_i8_mul_r_add".to_string(),
-        instrs: instrs,
+        instr: instr,
         cost: 1,
     }
 }
 
 fn dsp_i8_mul () -> Pattern {
-    let mut instrs: Vec<Instr> = Vec::new();
-    instrs.push(Instr::new(InstrOp::Mul, InstrTy::SInt(8), InstrLoc::Dsp));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    let mut instr: Vec<Instr> = Vec::new();
+    instr.push(Instr::new(InstrOp::Mul, InstrTy::SInt(8), InstrLoc::Dsp));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
     Pattern {
         name: "dsp_i8_mul".to_string(),
-        instrs: instrs,
+        instr: instr,
         cost: 4,
     }
 }
 
 fn dsp_i8_add () -> Pattern {
-    let mut instrs: Vec<Instr> = Vec::new();
-    instrs.push(Instr::new(InstrOp::Add, InstrTy::SInt(8), InstrLoc::Dsp));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instrs.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    let mut instr: Vec<Instr> = Vec::new();
+    instr.push(Instr::new(InstrOp::Add, InstrTy::SInt(8), InstrLoc::Dsp));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
     Pattern {
         name: "dsp_i8_add".to_string(),
-        instrs: instrs,
+        instr: instr,
         cost: 4,
     }
 }
