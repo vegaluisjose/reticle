@@ -72,7 +72,6 @@ pub struct DAG {
     pub dag: Dag,
     pub index_map: HashMap<String, DagIx>,
     pub signature_map: HashMap<String, Signature>,
-    pub roots: Vec<String>,
 }
 
 impl DAG {
@@ -81,7 +80,6 @@ impl DAG {
             dag: Dag::new(),
             index_map: HashMap::new(),
             signature_map: HashMap::new(),
-            roots: Vec::new(),
         }
     }
 
@@ -179,9 +177,6 @@ impl DAG {
     pub fn from_prog(&mut self, input: &Prog) {
         assert!(input.defs.len() == 1, "Error: single component prog atm");
         for def in input.defs.iter() {
-            for port in def.outputs().iter() {
-                self.roots.push(port.id());
-            }
             if !self.signature_map.contains_key(&def.name()) {
                 let sig = Signature::new(def.inputs(), def.outputs());
                 self.signature_map.insert(def.name(), sig);
@@ -212,16 +207,18 @@ impl DAG {
     }
 
     pub fn select(&mut self) {
-        let roots = self.roots.clone(); // copy here, so we can mutate dag
-        for rid in roots.iter() {
-            for pat in patterns().iter() {
-                if let Some(rix) = self.index_map.get(rid) {
-                    let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
-                    while let Some(ix) = dag_iter.next(&self.dag) {
-                        if self.is_match(ix, pat) {
-                            let cost = self.estimate_cost(ix);
-                            if pat.cost < cost {
-                                self.rewrite(ix, pat);
+        let sig_map = self.signature_map.clone(); // copy here, and make borrow-checker happy
+        for (_, sig) in sig_map.iter() {
+            for output in sig.outputs.iter() {
+                for pat in patterns().iter() {
+                    if let Some(rix) = self.index_map.get(&output.id()) {
+                        let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
+                        while let Some(ix) = dag_iter.next(&self.dag) {
+                            if self.is_match(ix, pat) {
+                                let cost = self.estimate_cost(ix);
+                                if pat.cost < cost {
+                                    self.rewrite(ix, pat);
+                                }
                             }
                         }
                     }
@@ -231,20 +228,22 @@ impl DAG {
     }
 
     pub fn to_prog(&self) {
-        for rid in self.roots.iter() {
-            if let Some(rix) = self.index_map.get(rid) {
-                let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
-                while let Some(ix) = dag_iter.next(&self.dag) {
-                    if let Some(node) = self.dag.node_weight(ix) {
-                        if node.instr.op != InstrOp::Ref {
-                            let mut children = self.dag.neighbors_directed(ix, Direction::Outgoing);
-                            let mut params: Vec<String> = Vec::new();
-                            while let Some(cix) = children.next() {
-                                if let Some(children_node) = self.dag.node_weight(cix) {
-                                    params.push(children_node.name.to_string());
+        for (_, sig) in self.signature_map.iter() {
+            for output in sig.outputs.iter() {
+                if let Some(oix) = self.index_map.get(&output.id()) {
+                    let mut dag_iter = DfsPostOrder::new(&self.dag, *oix);
+                    while let Some(ix) = dag_iter.next(&self.dag) {
+                        if let Some(node) = self.dag.node_weight(ix) {
+                            if node.instr.op != InstrOp::Ref {
+                                let mut children = self.dag.neighbors_directed(ix, Direction::Outgoing);
+                                let mut params: Vec<String> = Vec::new();
+                                while let Some(cix) = children.next() {
+                                    if let Some(children_node) = self.dag.node_weight(cix) {
+                                        params.push(children_node.name.to_string());
+                                    }
                                 }
+                                println!("{}", node.to_ast_instr(&params));
                             }
-                            println!("{}", node.to_ast_instr(&params));
                         }
                     }
                 }
