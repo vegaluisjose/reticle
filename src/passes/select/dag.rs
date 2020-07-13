@@ -50,12 +50,28 @@ impl Edge {
     }
 }
 
+#[derive(Clone, Debug)]
+pub struct Signature {
+    inputs: Vec<Port>,
+    outputs: Vec<Port>,
+}
+
+impl Signature {
+    pub fn new(inputs: &Vec<Port>, outputs: &Vec<Port>) -> Signature {
+        Signature {
+            inputs: inputs.to_vec(),
+            outputs: outputs.to_vec(),
+        }
+    }
+}
+
 type Dag = Graph<Node, Edge>;
 type DagIx = NodeIndex;
 
 pub struct DAG {
     pub dag: Dag,
-    pub nodes: HashMap<String, DagIx>,
+    pub index_map: HashMap<String, DagIx>,
+    pub signature_map: HashMap<String, Signature>,
     pub roots: Vec<String>,
 }
 
@@ -63,7 +79,8 @@ impl DAG {
     pub fn new() -> DAG {
         DAG {
             dag: Dag::new(),
-            nodes: HashMap::new(),
+            index_map: HashMap::new(),
+            signature_map: HashMap::new(),
             roots: Vec::new(),
         }
     }
@@ -72,7 +89,7 @@ impl DAG {
         let instr_op = InstrOp::from_expr(input);
         let instr = Instr::new(instr_op, ty.clone(), InstrLoc::Any);
         let ix = self.dag.add_node(Node::new(&input.id(), instr));
-        self.nodes.insert(input.id(), ix);
+        self.index_map.insert(input.id(), ix);
     }
 
     fn create_node_from_placed_op(&mut self, id: &str, input: &PlacedOp, ty: &InstrTy, loc: &Loc) {
@@ -80,12 +97,12 @@ impl DAG {
         let instr_loc = InstrLoc::from_loc(loc);
         let instr = Instr::new(instr_op, ty.clone(), instr_loc);
         let ix = self.dag.add_node(Node::new(id, instr));
-        self.nodes.insert(id.to_string(), ix);
+        self.index_map.insert(id.to_string(), ix);
     }
 
     fn create_edge(&mut self, from: &str, to: &str) {
-        if let Some(from_ix) = self.nodes.get(from) {
-            if let Some(to_ix) = self.nodes.get(to) {
+        if let Some(from_ix) = self.index_map.get(from) {
+            if let Some(to_ix) = self.index_map.get(to) {
                 if let None = self.dag.find_edge(*from_ix, *to_ix) {
                     self.dag.add_edge(*from_ix, *to_ix, Edge::new());
                 }
@@ -159,11 +176,17 @@ impl DAG {
         }
     }
 
-    pub fn create_dag_from_prog(&mut self, input: &Prog) {
+    pub fn from_prog(&mut self, input: &Prog) {
         assert!(input.defs.len() == 1, "Error: single component prog atm");
         for def in input.defs.iter() {
             for port in def.outputs().iter() {
                 self.roots.push(port.id());
+            }
+            if !self.signature_map.contains_key(&def.name()) {
+                let sig = Signature::new(def.inputs(), def.outputs());
+                self.signature_map.insert(def.name(), sig);
+            } else {
+                panic!("Error: duplicate component definition");
             }
             for decl in def.body().iter() {
                 assert!(decl.outputs().len() == 1, "Error: single output decl support atm");
@@ -173,13 +196,13 @@ impl DAG {
                 let ty = decl.outputs()[0].datatype();
                 let dst = decl.outputs()[0].clone();
                 let loc = decl.loc();
-                if !self.nodes.contains_key(&lhs.id()) {
+                if !self.index_map.contains_key(&lhs.id()) {
                     self.create_node_from_expr(&lhs, &ty);
                 }
-                if !self.nodes.contains_key(&rhs.id()) {
+                if !self.index_map.contains_key(&rhs.id()) {
                     self.create_node_from_expr(&rhs, &ty);
                 }
-                if !self.nodes.contains_key(&dst.id()) {
+                if !self.index_map.contains_key(&dst.id()) {
                     self.create_node_from_placed_op(&dst.id(), decl.placed_op(), &ty, &loc);
                 }
                 self.create_edge(&dst.id(), &lhs.id());
@@ -192,7 +215,7 @@ impl DAG {
         let roots = self.roots.clone(); // copy here, so we can mutate dag
         for rid in roots.iter() {
             for pat in patterns().iter() {
-                if let Some(rix) = self.nodes.get(rid) {
+                if let Some(rix) = self.index_map.get(rid) {
                     let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
                     while let Some(ix) = dag_iter.next(&self.dag) {
                         if self.is_match(ix, pat) {
@@ -209,7 +232,7 @@ impl DAG {
 
     pub fn to_prog(&self) {
         for rid in self.roots.iter() {
-            if let Some(rix) = self.nodes.get(rid) {
+            if let Some(rix) = self.index_map.get(rid) {
                 let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
                 while let Some(ix) = dag_iter.next(&self.dag) {
                     if let Some(node) = self.dag.node_weight(ix) {

@@ -153,6 +153,18 @@ impl Def {
         }
     }
 
+    pub fn name(&self) -> String {
+        match self {
+            Def::Comp {
+                name,
+                inputs: _,
+                outputs: _,
+                body: _,
+            } => name.to_string(),
+            Def::Sim { name, body: _ } => name.to_string(),
+        }
+    }
+
     pub fn inputs(&self) -> &Vec<Port> {
         match self {
             Def::Comp {

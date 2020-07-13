@@ -15,7 +15,7 @@ fn main() {
     prog.add_def(comp);
     println!("{}", prog);
     let mut dag = DAG::new();
-    dag.create_dag_from_prog(&prog);
+    dag.from_prog(&prog);
     println!("{}", dag);
     dag.select();
     println!("{}", dag);
