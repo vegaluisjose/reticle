@@ -25,7 +25,10 @@ impl PrettyPrint for Loc {
             Loc::Lum => RcDoc::text("lum"),
             Loc::Dsp => RcDoc::text("dsp"),
             Loc::Ram => RcDoc::text("ram"),
-            Loc::Ref(n) => RcDoc::as_string(n),
+            Loc::Ref(n) => RcDoc::text("loc")
+                .append(RcDoc::text("("))
+                .append(RcDoc::as_string(n))
+                .append(RcDoc::text(")")),
         }
     }
 }

@@ -19,13 +19,13 @@ impl fmt::Display for InstrOp {
 impl fmt::Display for InstrLoc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
-            InstrLoc::Any => "any",
-            InstrLoc::Unknown => "??",
-            InstrLoc::Lut => "lut",
-            InstrLoc::Lum => "lum",
-            InstrLoc::Dsp => "dsp",
-            InstrLoc::Ram => "ram",
-            InstrLoc::Ref(n) => n,
+            InstrLoc::Any => "any".to_string(),
+            InstrLoc::Unknown => "??".to_string(),
+            InstrLoc::Lut => "lut".to_string(),
+            InstrLoc::Lum => "lum".to_string(),
+            InstrLoc::Dsp => "dsp".to_string(),
+            InstrLoc::Ram => "ram".to_string(),
+            InstrLoc::Ref(n) => format!("loc({})", n),
         };
         write!(f, "{}", name)
     }
