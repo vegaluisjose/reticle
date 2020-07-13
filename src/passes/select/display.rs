@@ -1,6 +1,7 @@
 use crate::passes::select::dag::*;
 use crate::passes::select::instr::*;
 use std::fmt;
+use petgraph::dot::{Config, Dot};
 
 impl fmt::Display for InstrOp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -46,5 +47,11 @@ impl fmt::Display for Instr {
 impl fmt::Display for Edge {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "")
+    }
+}
+
+impl fmt::Display for DAG {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]))
     }
 }

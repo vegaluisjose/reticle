@@ -2,7 +2,6 @@ use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
 use crate::passes::select::cost::*;
-use petgraph::dot::{Config, Dot};
 use petgraph::graph;
 use petgraph::prelude::Graph;
 use petgraph::visit::{Dfs, DfsPostOrder};
@@ -142,10 +141,6 @@ impl DAG {
         }
     }
 
-    fn print_dot(&self) {
-        println!("{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]));
-    }
-
     pub fn create_dag_from_prog(&mut self, input: &Prog) {
         assert!(input.defs.len() == 1, "Error: single component prog atm");
         for def in input.defs.iter() {
@@ -173,7 +168,6 @@ impl DAG {
                 self.create_edge(&dst.id(), &rhs.id());
             }
         }
-        self.print_dot();
     }
 
     pub fn select(&mut self) {
@@ -193,6 +187,5 @@ impl DAG {
                 }
             }
         }
-        self.print_dot();
     }
 }
