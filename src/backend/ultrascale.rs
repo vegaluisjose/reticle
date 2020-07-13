@@ -10,7 +10,7 @@ use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct SerialInstrDescriptor {
-    pub cost: i32,
+    pub cost: f32,
     pub loc: String,
     pub ty: String,
     pub output: String,
@@ -23,7 +23,7 @@ pub struct SerialTargetDescriptor {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct InstrDescriptor {
-    pub cost: i32,
+    pub cost: f32,
     pub loc: Loc,
     pub ty: DataType,
     pub output: Id,
@@ -59,7 +59,7 @@ pub fn example() {
     let data = r#"
         { "instr":
           [
-            {"cost": -1, "loc": "dsp", "ty": "i8", "output": "y"}
+            {"cost": 4, "loc": "dsp", "ty": "i8", "output": "y"}
           ]
         }"#;
     let target = TargetDescriptor::from_serial(serde_json::from_str(data).expect("Error"));
