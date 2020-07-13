@@ -105,33 +105,40 @@ impl DAG {
         cost
     }
 
-    fn rewrite(&mut self, start: DagIx, pattern: &Pattern) {
-        let mut is_first: bool = true;
-        let node_id: String = self.dag.node_weight(start).unwrap().name.to_string();
+    fn find_ref_node(&self, start: DagIx, pattern: &Pattern) -> String {
+        let mut node_id: String = String::new();
         let mut pat_instr = pattern.instr.iter();
         let mut visit = Dfs::new(&self.dag, start);
         while let Some(ix) = visit.next(&self.dag) {
             if let Some(instr) = pat_instr.next() {
+                if let Some(node) = self.dag.node_weight(ix) {
+                    if instr.op == node.instr.op {
+                        node_id = node.name.to_string();
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        node_id
+    }
+
+    fn rewrite(&mut self, start: DagIx, pattern: &Pattern) {
+        let mut pat_instr = pattern.instr.iter();
+        let mut visit = Dfs::new(&self.dag, start);
+        let node_id: String = self.find_ref_node(start, pattern);
+        while let Some(ix) = visit.next(&self.dag) {
+            if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.dag.node_weight_mut(ix) {
                     if instr.op != InstrOp::Any {
-                        if is_first {
+                        if node.name == node_id {
                             node.instr.loc = instr.loc.clone();
-                            is_first = false;
                         } else {
-                            node.instr.loc = InstrLoc::Ref(node_id.to_string());
+                            node.instr.loc = InstrLoc::Ref(node_id.to_string())
                         }
                     }
                 }
             }
-        }
-    }
-
-    fn debug(&self, start: DagIx, cost: i32, pattern: &Pattern) {
-        if let Some(node) = self.dag.node_weight(start) {
-            println!(
-                "new candidate, pattern:{} pattern-cost:{} node:{} node-cost:{}",
-                pattern.name, pattern.cost, node.name, cost
-            );
         }
     }
 
@@ -170,7 +177,7 @@ impl DAG {
     }
 
     pub fn select(&mut self) {
-        let roots = self.roots.clone(); // copy here, so I can mutate dag
+        let roots = self.roots.clone(); // copy here, so we can mutate dag
         for rid in roots.iter() {
             for pat in patterns().iter() {
                 if let Some(rix) = self.nodes.get(rid) {
@@ -179,7 +186,6 @@ impl DAG {
                         if self.is_match(ix, pat) {
                             let cost = self.estimate_cost(ix);
                             if pat.cost < cost {
-                                self.debug(ix, cost, pat);
                                 self.rewrite(ix, pat);
                             }
                         }
