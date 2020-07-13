@@ -2,7 +2,8 @@ use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
 use crate::passes::select::cost::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
-use petgraph::graph;
+use petgraph::graph::NodeIndex;
+use petgraph::Direction;
 use petgraph::prelude::Graph;
 use petgraph::visit::{Dfs, DfsPostOrder};
 use std::collections::HashMap;
@@ -33,7 +34,7 @@ impl Edge {
 }
 
 type Dag = Graph<Node, Edge>;
-type DagIx = graph::NodeIndex;
+type DagIx = NodeIndex;
 
 pub struct DAG {
     pub dag: Dag,
@@ -181,6 +182,27 @@ impl DAG {
                             let cost = self.estimate_cost(ix);
                             if pat.cost < cost {
                                 self.rewrite(ix, pat);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn to_prog(&self) {
+        for rid in self.roots.iter() {
+            if let Some(rix) = self.nodes.get(rid) {
+                let mut dag_iter = DfsPostOrder::new(&self.dag, *rix);
+                while let Some(ix) = dag_iter.next(&self.dag) {
+                    if let Some(node) = self.dag.node_weight(ix) {
+                        if node.instr.op != InstrOp::Ref {
+                            println!("op-node:{}", &node.name);
+                            let mut children = self.dag.neighbors_directed(ix, Direction::Outgoing);
+                            while let Some(cix) = children.next() {
+                                if let Some(children_node) = self.dag.node_weight(cix) {
+                                    println!("children:{}", &children_node.name);
+                                }
                             }
                         }
                     }

@@ -19,4 +19,5 @@ fn main() {
     println!("{}", dag);
     dag.select();
     println!("{}", dag);
+    dag.to_prog();
 }
