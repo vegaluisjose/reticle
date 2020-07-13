@@ -64,7 +64,21 @@ impl FromStr for PlacedOp {
             "add" => Ok(PlacedOp::Add),
             "sub" => Ok(PlacedOp::Sub),
             "mul" => Ok(PlacedOp::Mul),
-            _ => panic!("WIP"),
+            _ => panic!("Error: FromStr to PlacedOp conversion"),
+        }
+    }
+}
+
+impl FromStr for Loc {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input.as_ref() {
+            "??" => Ok(Loc::Unknown),
+            "lut" => Ok(Loc::Lut),
+            "lum" => Ok(Loc::Lum),
+            "dsp" => Ok(Loc::Dsp),
+            "ram" => Ok(Loc::Ram),
+            _ => panic!("Error: FromStr to Loc conversion"),
         }
     }
 }

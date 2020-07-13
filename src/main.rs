@@ -1,5 +1,6 @@
 use reticle::lang::ast::*;
 use reticle::passes::select::dag::DAG;
+use reticle::backend::ultrascale;
 
 fn main() {
     let mut comp = Def::new_comp("muladd");
@@ -18,4 +19,5 @@ fn main() {
     dag.from_prog(&prog);
     dag.select();
     println!("After instruction selection:\n{}", dag.to_prog());
+    ultrascale::example();
 }
