@@ -166,7 +166,7 @@ impl DAG {
                 self.roots.push(port.id());
             }
             for decl in def.body().iter() {
-                assert!(decl.outputs().len() == 1, "Error: single output atm");
+                assert!(decl.outputs().len() == 1, "Error: single output decl support atm");
                 let params = decl.params();
                 let lhs = &params[0];
                 let rhs = &params[1];
