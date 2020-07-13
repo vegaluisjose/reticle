@@ -47,6 +47,16 @@ impl InstrOp {
             _ => panic!("Error: op not supported"),
         }
     }
+
+    pub fn to_placed_op(&self) -> PlacedOp {
+        match self {
+            InstrOp::Reg => PlacedOp::Reg,
+            InstrOp::Add => PlacedOp::Add,
+            InstrOp::Sub => PlacedOp::Sub,
+            InstrOp::Mul => PlacedOp::Mul,
+            _ => panic!("Error: InstrOp conversion not supported")
+        }
+    }
 }
 
 impl InstrLoc {
@@ -58,6 +68,18 @@ impl InstrLoc {
             Loc::Dsp => InstrLoc::Dsp,
             Loc::Ram => InstrLoc::Ram,
             Loc::Ref(n) => InstrLoc::Ref(n.to_string()),
+        }
+    }
+
+    pub fn to_loc(&self) -> Loc {
+        match self {
+            InstrLoc::Unknown => Loc::Unknown,
+            InstrLoc::Lut => Loc::Lut,
+            InstrLoc::Lum => Loc::Lum,
+            InstrLoc::Dsp => Loc::Dsp,
+            InstrLoc::Ram => Loc::Ram,
+            InstrLoc::Ref(n) => Loc::Ref(n.to_string()),
+            _ => panic!("Error: Loc conversion not supported"),
         }
     }
 }

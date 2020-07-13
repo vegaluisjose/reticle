@@ -1,4 +1,4 @@
-use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
+use crate::lang::ast::{Expr, Loc, PlacedOp, Decl, Port, Op, Prog};
 use crate::passes::select::cost::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
@@ -19,6 +19,23 @@ impl Node {
         Node {
             name: name.to_string(),
             instr: instr,
+        }
+    }
+
+    pub fn to_ast_instr(&self, params: &Vec<String>) -> Decl {
+        let placed_op = Op::Placed {
+            op: self.instr.op.to_placed_op(),
+            attrs: vec![],
+            params: vec![Expr::Ref(params[0].to_string()), Expr::Ref(params[1].to_string())],
+            loc: self.instr.loc.to_loc(),
+        };
+        let output = Port::Output {
+            id: self.name.to_string(),
+            datatype: self.instr.ty.clone(),
+        };
+        Decl::Instr {
+            op: placed_op,
+            outputs: vec![output],
         }
     }
 }
@@ -197,13 +214,14 @@ impl DAG {
                 while let Some(ix) = dag_iter.next(&self.dag) {
                     if let Some(node) = self.dag.node_weight(ix) {
                         if node.instr.op != InstrOp::Ref {
-                            println!("op-node:{}", &node.name);
                             let mut children = self.dag.neighbors_directed(ix, Direction::Outgoing);
+                            let mut params: Vec<String> = Vec::new();
                             while let Some(cix) = children.next() {
                                 if let Some(children_node) = self.dag.node_weight(cix) {
-                                    println!("children:{}", &children_node.name);
+                                    params.push(children_node.name.to_string());
                                 }
                             }
+                            println!("{}", node.to_ast_instr(&params));
                         }
                     }
                 }
