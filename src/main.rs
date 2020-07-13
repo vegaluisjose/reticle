@@ -20,6 +20,6 @@ fn main() {
     dag.select();
     println!("After instruction selection:\n{}", dag.to_prog());
     let next_goal = format!("z: i8 = dsp_add_reg_mul(c, y) @dsp(??, ??);");
-    println!("Next goal is to produce the following asm:\n{}", next_goal);
+    println!("\n\nNext goal is to produce the following asm:\n{}\n\n", next_goal);
     ultrascale::example();
 }
