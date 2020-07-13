@@ -13,11 +13,9 @@ fn main() {
     comp.add_decl(Decl::new_instr("z", "i8", "add", "y", "c"));
     let mut prog = Prog::new();
     prog.add_def(comp);
-    println!("{}", prog);
+    println!("Original program:\n{}", prog);
     let mut dag = DAG::new();
     dag.from_prog(&prog);
-    println!("{}", dag);
     dag.select();
-    println!("{}", dag);
-    dag.to_prog();
+    println!("After instruction selection:\n{}", dag.to_prog());
 }

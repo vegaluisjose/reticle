@@ -1,4 +1,4 @@
-use crate::lang::ast::{Expr, Loc, PlacedOp, Decl, Port, Op, Prog};
+use crate::lang::ast::{Expr, Loc, PlacedOp, Decl, Port, Op, Def, Prog};
 use crate::passes::select::cost::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
@@ -227,8 +227,10 @@ impl DAG {
         }
     }
 
-    pub fn to_prog(&self) {
-        for (_, sig) in self.signature_map.iter() {
+    pub fn to_prog(&self) -> Prog {
+        let mut prog = Prog::new();
+        for (def_name, sig) in self.signature_map.iter() {
+            let mut comp = Def::new_comp_with_ports(def_name, &sig.inputs, &sig.outputs);
             for output in sig.outputs.iter() {
                 if let Some(oix) = self.index_map.get(&output.id()) {
                     let mut dag_iter = DfsPostOrder::new(&self.dag, *oix);
@@ -242,12 +244,14 @@ impl DAG {
                                         params.push(children_node.name.to_string());
                                     }
                                 }
-                                println!("{}", node.to_ast_instr(&params));
+                                comp.add_decl(node.to_ast_instr(&params));
                             }
                         }
                     }
                 }
             }
+            prog.add_def(comp);
         }
+        prog
     }
 }

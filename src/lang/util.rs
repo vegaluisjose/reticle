@@ -141,6 +141,15 @@ impl Def {
         }
     }
 
+    pub fn new_comp_with_ports(name: &str, inputs: &Vec<Port>, outputs: &Vec<Port>) -> Def {
+        Def::Comp {
+            name: name.to_string(),
+            inputs: inputs.to_vec(),
+            outputs: outputs.to_vec(),
+            body: Vec::new(),
+        }
+    }
+
     pub fn body(&self) -> &Vec<Decl> {
         match self {
             Def::Comp {
