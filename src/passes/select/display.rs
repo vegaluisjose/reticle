@@ -1,7 +1,7 @@
 use crate::passes::select::dag::*;
 use crate::passes::select::instr::*;
-use std::fmt;
 use petgraph::dot::{Config, Dot};
+use std::fmt;
 
 impl fmt::Display for InstrOp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

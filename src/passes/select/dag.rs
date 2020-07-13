@@ -1,7 +1,7 @@
 use crate::lang::ast::{Expr, Loc, PlacedOp, Prog};
+use crate::passes::select::cost::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
-use crate::passes::select::cost::*;
 use petgraph::graph;
 use petgraph::prelude::Graph;
 use petgraph::visit::{Dfs, DfsPostOrder};

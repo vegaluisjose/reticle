@@ -161,7 +161,7 @@ impl Def {
                 outputs: _,
                 body: _,
             } => inputs,
-            _ => panic!("Error: sim definition don't support inputs")
+            _ => panic!("Error: sim definition don't support inputs"),
         }
     }
 
@@ -173,7 +173,7 @@ impl Def {
                 outputs,
                 body: _,
             } => outputs,
-            _ => panic!("Error: sim definition don't support outputs")
+            _ => panic!("Error: sim definition don't support outputs"),
         }
     }
 
