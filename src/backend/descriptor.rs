@@ -93,7 +93,4 @@ impl Target {
             instr: instr.to_vec(),
         }
     }
-    // pub fn from_str(input: &str) -> Target {
-    //     Target::from_serial(serde_json::from_str(input).expect("Error: parsing json"))
-    // }
 }
