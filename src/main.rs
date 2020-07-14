@@ -1,4 +1,4 @@
-// use reticle::backend::ultrascale;
+use reticle::backend::ultrascale;
 use reticle::lang::ast::*;
 use reticle::passes::select::dag::DAG;
 
@@ -24,5 +24,5 @@ fn main() {
         "\n\nNext goal is to produce the following asm:\n{}\n\n",
         next_goal
     );
-    // ultrascale::example();
+    println!("{:?}", ultrascale::target_descriptor());
 }

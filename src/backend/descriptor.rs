@@ -11,9 +11,10 @@ use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
-pub enum SerialOp {
-    Node(String, Rc<SerialOp>, Rc<SerialOp>),
-    Leaf(String, String),
+pub enum SerialDexp {
+    Op(String),
+    Input(String, String),
+    Binary(Rc<SerialDexp>, Rc<SerialDexp>, Rc<SerialDexp>),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -23,7 +24,7 @@ pub struct SerialInstr {
     pub loc: String,
     pub ty: String,
     pub output: String,
-    pub op: SerialOp,
+    pub expr: SerialDexp,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -33,9 +34,10 @@ pub struct SerialTarget {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
-pub enum Op {
-    Node(PlacedOp, Rc<Op>, Rc<Op>),
-    Leaf(Loc, Id),
+pub enum Dexp {
+    Op(PlacedOp),
+    Input(Id, Loc),
+    Binary(Rc<Dexp>, Rc<Dexp>, Rc<Dexp>),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -45,7 +47,7 @@ pub struct Instr {
     pub loc: Loc,
     pub ty: DataType,
     pub output: Id,
-    pub op: Op,
+    pub expr: Dexp,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -53,19 +55,21 @@ pub struct Target {
     pub instr: Vec<Instr>,
 }
 
-impl Op {
-    pub fn from_serial(input: SerialOp) -> Op {
+impl Dexp {
+    pub fn from_serial(input: SerialDexp) -> Dexp {
         match input {
-            SerialOp::Node(op, left, right) => {
-                let lhs = &*left;
-                let rhs = &*right;
-                Op::Node(
-                    PlacedOp::from_str(&op).unwrap(),
-                    Rc::new(Op::from_serial(lhs.clone())),
-                    Rc::new(Op::from_serial(rhs.clone())),
+            SerialDexp::Op(op) => Dexp::Op(PlacedOp::from_str(&op).unwrap()),
+            SerialDexp::Input(id, loc) => Dexp::Input(id.to_string(), Loc::from_str(&loc).unwrap()),
+            SerialDexp::Binary(op, left, right) => {
+                let o = &*op;
+                let l = &*left;
+                let r = &*right;
+                Dexp::Binary(
+                    Rc::new(Dexp::from_serial(o.clone())),
+                    Rc::new(Dexp::from_serial(l.clone())),
+                    Rc::new(Dexp::from_serial(r.clone())),
                 )
             }
-            SerialOp::Leaf(loc, id) => Op::Leaf(Loc::from_str(&loc).unwrap(), id.to_string()),
         }
     }
 }
@@ -78,7 +82,7 @@ impl Instr {
             loc: Loc::from_str(&input.loc).unwrap(),
             ty: DataType::from_str(&input.ty).unwrap(),
             output: input.output.to_string(),
-            op: Op::from_serial(input.op.clone()),
+            expr: Dexp::from_serial(input.expr.clone()),
         }
     }
 }
