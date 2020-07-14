@@ -1,7 +1,7 @@
 use crate::backend::descriptor::Target;
 use std::str::FromStr;
 
-pub fn example() {
+pub fn target() -> Target {
     let spec = r#"
         { "instr":
           [
@@ -10,8 +10,5 @@ pub fn example() {
             {"name": "dsp_i8_add_reg_mul", "cost": 4, "loc": "dsp", "ty": "i8", "output": "y", "op": ["add",["lut","a"],["lut","b"]]}
           ]
         }"#;
-    let target_isa = Target::from_str(spec).unwrap();
-    for instr in target_isa.instr.iter() {
-      println!("{:?}", instr);
-    }
+    Target::from_str(spec).unwrap()
 }
