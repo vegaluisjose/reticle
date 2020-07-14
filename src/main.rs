@@ -1,6 +1,6 @@
+use reticle::backend::ultrascale;
 use reticle::lang::ast::*;
 use reticle::passes::select::dag::DAG;
-use reticle::backend::ultrascale;
 
 fn main() {
     let mut comp = Def::new_comp("muladd");
@@ -20,6 +20,9 @@ fn main() {
     dag.select();
     println!("After instruction selection:\n{}", dag.to_prog());
     let next_goal = format!("z: i8 = dsp_add_reg_mul(a, b, c, en) @dsp(??, ??);");
-    println!("\n\nNext goal is to produce the following asm:\n{}\n\n", next_goal);
+    println!(
+        "\n\nNext goal is to produce the following asm:\n{}\n\n",
+        next_goal
+    );
     ultrascale::example();
 }

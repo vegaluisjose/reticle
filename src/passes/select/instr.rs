@@ -54,7 +54,7 @@ impl InstrOp {
             InstrOp::Add => PlacedOp::Add,
             InstrOp::Sub => PlacedOp::Sub,
             InstrOp::Mul => PlacedOp::Mul,
-            _ => panic!("Error: InstrOp conversion not supported")
+            _ => panic!("Error: InstrOp conversion not supported"),
         }
     }
 }

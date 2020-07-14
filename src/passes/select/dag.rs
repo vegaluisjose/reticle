@@ -1,11 +1,11 @@
-use crate::lang::ast::{Expr, Loc, PlacedOp, Decl, Port, Op, Def, Prog};
+use crate::lang::ast::{Decl, Def, Expr, Loc, Op, PlacedOp, Port, Prog};
 use crate::passes::select::cost::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
 use petgraph::graph::NodeIndex;
-use petgraph::Direction;
 use petgraph::prelude::Graph;
 use petgraph::visit::{Dfs, DfsPostOrder};
+use petgraph::Direction;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
@@ -26,7 +26,10 @@ impl Node {
         let placed_op = Op::Placed {
             op: self.instr.op.to_placed_op(),
             attrs: vec![],
-            params: vec![Expr::Ref(params[0].to_string()), Expr::Ref(params[1].to_string())],
+            params: vec![
+                Expr::Ref(params[0].to_string()),
+                Expr::Ref(params[1].to_string()),
+            ],
             loc: self.instr.loc.to_loc(),
         };
         let output = Port::Output {
@@ -184,7 +187,10 @@ impl DAG {
                 panic!("Error: duplicate component definition");
             }
             for decl in def.body().iter() {
-                assert!(decl.outputs().len() == 1, "Error: single output decl support atm");
+                assert!(
+                    decl.outputs().len() == 1,
+                    "Error: single output decl support atm"
+                );
                 let params = decl.params();
                 let lhs = &params[0];
                 let rhs = &params[1];
@@ -237,7 +243,8 @@ impl DAG {
                     while let Some(ix) = dag_iter.next(&self.dag) {
                         if let Some(node) = self.dag.node_weight(ix) {
                             if node.instr.op != InstrOp::Ref {
-                                let mut children = self.dag.neighbors_directed(ix, Direction::Outgoing);
+                                let mut children =
+                                    self.dag.neighbors_directed(ix, Direction::Outgoing);
                                 let mut params: Vec<String> = Vec::new();
                                 while let Some(cix) = children.next() {
                                     if let Some(children_node) = self.dag.node_weight(cix) {
