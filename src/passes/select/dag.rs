@@ -88,7 +88,7 @@ impl DAG {
 
     fn create_node_from_expr(&mut self, input: &Expr, ty: &InstrTy) {
         let instr_op = InstrOp::from_expr(input);
-        let instr = Instr::new(instr_op, ty.clone(), InstrLoc::Any);
+        let instr = Instr::new(instr_op, ty.clone(), InstrLoc::Lut);
         let ix = self.dag.add_node(Node::new(&input.id(), instr));
         self.index_map.insert(input.id(), ix);
     }
@@ -118,8 +118,14 @@ impl DAG {
         while let Some(ix) = visit.next(&self.dag) {
             if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.dag.node_weight(ix) {
-                    if instr.op != InstrOp::Any && instr.op != node.instr.op {
-                        is_match = false;
+                    if instr.op != InstrOp::Any {
+                        if instr.op != node.instr.op {
+                            is_match = false;
+                        }
+                    } else {
+                        if instr.loc != node.instr.loc {
+                            is_match = false;
+                        }
                     }
                 }
             } else {

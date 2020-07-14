@@ -12,7 +12,7 @@ pub enum InstrOp {
     Mul,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum InstrLoc {
     Any,
     Unknown,

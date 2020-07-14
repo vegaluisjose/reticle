@@ -15,10 +15,10 @@ fn dsp_i8_mul_r_add() -> Pattern {
     instr.push(Instr::new(InstrOp::Add, InstrTy::SInt(8), InstrLoc::Dsp));
     instr.push(Instr::new(InstrOp::Reg, InstrTy::SInt(8), InstrLoc::Dsp));
     instr.push(Instr::new(InstrOp::Mul, InstrTy::SInt(8), InstrLoc::Dsp));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::Bool, InstrLoc::Any));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::Bool, InstrLoc::Lut));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
     Pattern {
         name: "dsp_i8_mul_r_add".to_string(),
         instr: instr,
@@ -29,8 +29,8 @@ fn dsp_i8_mul_r_add() -> Pattern {
 fn dsp_i8_mul() -> Pattern {
     let mut instr: Vec<Instr> = Vec::new();
     instr.push(Instr::new(InstrOp::Mul, InstrTy::SInt(8), InstrLoc::Dsp));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
     Pattern {
         name: "dsp_i8_mul".to_string(),
         instr: instr,
@@ -41,8 +41,8 @@ fn dsp_i8_mul() -> Pattern {
 fn dsp_i8_add() -> Pattern {
     let mut instr: Vec<Instr> = Vec::new();
     instr.push(Instr::new(InstrOp::Add, InstrTy::SInt(8), InstrLoc::Dsp));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
-    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Any));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
+    instr.push(Instr::new(InstrOp::Any, InstrTy::SInt(8), InstrLoc::Lut));
     Pattern {
         name: "dsp_i8_add".to_string(),
         instr: instr,
