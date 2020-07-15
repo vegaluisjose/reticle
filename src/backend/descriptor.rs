@@ -6,8 +6,7 @@ use std::str::FromStr;
 // there is probably a way to directly call a default func
 // for fields with custom types i.e. https://serde.rs/attr-default.html
 // We need something that takes arg, so we can use the from_str trait
-// If we solve this, then we can get rid of SerialInstr
-// and SerialTarget structs.
+// If we solve this, then we can get rid of Serial* structs.
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
