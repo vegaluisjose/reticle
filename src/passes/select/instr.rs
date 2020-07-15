@@ -2,7 +2,7 @@ use crate::lang::ast::{DataType, Expr, Id, Loc, PlacedOp};
 
 pub type InstrTy = DataType;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum InstrOp {
     Any,
     Ref,
@@ -12,7 +12,7 @@ pub enum InstrOp {
     Mul,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum InstrLoc {
     Any,
     Unknown,
@@ -23,11 +23,11 @@ pub enum InstrLoc {
     Ref(Id),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Instr {
-    pub op: InstrOp,
-    pub ty: InstrTy,
     pub loc: InstrLoc,
+    pub ty: InstrTy,
+    pub op: InstrOp,
 }
 
 impl InstrOp {
@@ -87,9 +87,9 @@ impl InstrLoc {
 impl Instr {
     pub fn new(op: InstrOp, ty: InstrTy, loc: InstrLoc) -> Instr {
         Instr {
-            op: op,
-            ty: ty,
             loc: loc,
+            ty: ty,
+            op: op,
         }
     }
 }

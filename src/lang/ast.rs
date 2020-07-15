@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 pub type Id = String;
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DataType {
     Bool,
     UInt(u64),

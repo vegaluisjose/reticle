@@ -24,5 +24,15 @@ fn main() {
         "\n\nNext goal is to produce the following asm:\n{}\n\n",
         next_goal
     );
-    println!("{:?}", ultrascale::target_descriptor());
+    let td = ultrascale::target_descriptor();
+    for (instr, cost) in td.cost_map.iter() {
+        println!("{} -> {}", instr, cost);
+    }
+    println!("patterns");
+    for p in td.patterns.iter() {
+        println!("name:{} cost:{}", p.name, p.cost);
+        for i in p.instr.iter() {
+            println!("    instr:{}", i);
+        }
+    }
 }

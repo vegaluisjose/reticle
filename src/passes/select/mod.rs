@@ -1,5 +1,5 @@
 mod cost;
 pub mod dag;
-mod display;
-mod instr;
-mod pattern;
+pub mod display;
+pub mod instr;
+pub mod pattern;
