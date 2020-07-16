@@ -65,11 +65,6 @@ pub enum PlacedOp {
     Lt,
     Ge,
     Le,
-    Lut2,
-    Lut3,
-    Lut4,
-    Lut5,
-    Lut6,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
