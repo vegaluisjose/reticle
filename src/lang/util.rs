@@ -105,28 +105,24 @@ impl Decl {
     pub fn outputs(&self) -> &Vec<Port> {
         match self {
             Decl::Instr { op: _, outputs } => outputs,
-            _ => panic!("Error: debug decl don't support outputs"),
         }
     }
 
     pub fn params(&self) -> &Vec<Expr> {
         match self {
             Decl::Instr { op, outputs: _ } => op.params(),
-            _ => panic!("Error: debug decl don't support params"),
         }
     }
 
     pub fn loc(&self) -> &Loc {
         match self {
             Decl::Instr { op, outputs: _ } => op.loc(),
-            _ => panic!("Error: debug decl don't support loc"),
         }
     }
 
     pub fn placed_op(&self) -> &PlacedOp {
         match self {
             Decl::Instr { op, outputs: _ } => op.placed_op(),
-            _ => panic!("Error: debug decl don't support placed op"),
         }
     }
 }

@@ -68,11 +68,6 @@ pub enum PlacedOp {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Dop {
-    Print { params: Vec<Expr> },
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Op {
     Std {
         op: StdOp,
@@ -95,7 +90,6 @@ pub enum Port {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Decl {
-    Debug { op: Dop }, // need to find a better name for this
     Instr { op: Op, outputs: Vec<Port> },
 }
 

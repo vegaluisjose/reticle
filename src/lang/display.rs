@@ -32,12 +32,6 @@ impl fmt::Display for PlacedOp {
     }
 }
 
-impl fmt::Display for Dop {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_pretty())
-    }
-}
-
 impl fmt::Display for Op {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())

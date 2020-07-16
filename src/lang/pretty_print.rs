@@ -63,12 +63,6 @@ impl PrettyPrint for PlacedOp {
     }
 }
 
-impl PrettyPrint for Dop {
-    fn to_doc(&self) -> RcDoc<()> {
-        panic!("WIP")
-    }
-}
-
 impl PrettyPrint for Op {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
@@ -189,7 +183,6 @@ impl PrettyPrint for Def {
 impl PrettyPrint for Decl {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Decl::Debug { op } => op.to_doc(),
             Decl::Instr { op, outputs } => RcDoc::intersperse(
                 outputs.iter().map(|o| o.to_doc()),
                 RcDoc::text(",").append(RcDoc::space()),
