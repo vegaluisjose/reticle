@@ -26,15 +26,70 @@ impl Expr {
     }
 }
 
-impl Op {
+impl Instr {
+    pub fn new_placed(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str) -> Instr {
+        Instr::Placed {
+            id: dst.to_string(),
+            ty: DataType::from_str(ty).unwrap(),
+            op: PlacedOp::from_str(op).unwrap(),
+            attrs: vec![],
+            params: vec![Expr::Ref(lhs.to_string()), Expr::Ref(rhs.to_string())],
+            loc: Loc::Unknown,
+        }
+    }
+
+    pub fn id(&self) -> String {
+        match self {
+            Instr::Std {
+                id,
+                ty: _,
+                op: _,
+                attrs:_,
+                params: _,
+            } => id.to_string(),
+            Instr::Placed {
+                id,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => id.to_string(),
+        }
+    }
+
+    pub fn ty(&self) -> &DataType {
+        match self {
+            Instr::Std {
+                id:_,
+                ty,
+                op: _,
+                attrs:_,
+                params: _,
+            } => ty,
+            Instr::Placed {
+                id:_,
+                ty,
+                op: _,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => ty,
+        }
+    }
+
     pub fn params(&self) -> &Vec<Expr> {
         match self {
-            Op::Std {
+            Instr::Std {
+                id: _,
+                ty: _,
                 op: _,
                 attrs: _,
                 params,
             } => params,
-            Op::Placed {
+            Instr::Placed {
+                id: _,
+                ty: _,
                 op: _,
                 attrs: _,
                 params,
@@ -45,12 +100,16 @@ impl Op {
 
     pub fn attrs(&self) -> &Vec<Expr> {
         match self {
-            Op::Std {
+            Instr::Std {
+                id: _,
+                ty: _,
                 op: _,
                 attrs,
                 params: _,
             } => attrs,
-            Op::Placed {
+            Instr::Placed {
+                id: _,
+                ty: _,
                 op: _,
                 attrs,
                 params: _,
@@ -61,7 +120,9 @@ impl Op {
 
     pub fn placed_op(&self) -> &PlacedOp {
         match self {
-            Op::Placed {
+            Instr::Placed {
+                id: _,
+                ty: _,
                 op,
                 attrs: _,
                 params: _,
@@ -73,56 +134,15 @@ impl Op {
 
     pub fn loc(&self) -> &Loc {
         match self {
-            Op::Placed {
+            Instr::Placed {
+                id: _,
+                ty: _,
                 op: _,
                 attrs: _,
                 params: _,
                 loc,
             } => loc,
             _ => panic!("Error: std ops don't support location"),
-        }
-    }
-}
-
-impl Decl {
-    pub fn new_instr(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str) -> Decl {
-        let placed_op = Op::Placed {
-            op: PlacedOp::from_str(op).unwrap(),
-            attrs: vec![],
-            params: vec![Expr::Ref(lhs.to_string()), Expr::Ref(rhs.to_string())],
-            loc: Loc::Unknown,
-        };
-        let output = Port::Output {
-            id: dst.to_string(),
-            datatype: DataType::from_str(ty).unwrap(),
-        };
-        Decl::Instr {
-            op: placed_op,
-            outputs: vec![output],
-        }
-    }
-
-    pub fn outputs(&self) -> &Vec<Port> {
-        match self {
-            Decl::Instr { op: _, outputs } => outputs,
-        }
-    }
-
-    pub fn params(&self) -> &Vec<Expr> {
-        match self {
-            Decl::Instr { op, outputs: _ } => op.params(),
-        }
-    }
-
-    pub fn loc(&self) -> &Loc {
-        match self {
-            Decl::Instr { op, outputs: _ } => op.loc(),
-        }
-    }
-
-    pub fn placed_op(&self) -> &PlacedOp {
-        match self {
-            Decl::Instr { op, outputs: _ } => op.placed_op(),
         }
     }
 }
@@ -146,7 +166,7 @@ impl Def {
         }
     }
 
-    pub fn body(&self) -> &Vec<Decl> {
+    pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
 
@@ -180,8 +200,8 @@ impl Def {
         self.outputs.push(port);
     }
 
-    pub fn add_decl(&mut self, decl: Decl) {
-        self.body.push(decl);
+    pub fn add_instr(&mut self, instr: Instr) {
+        self.body.push(instr);
     }
 }
 

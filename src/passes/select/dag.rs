@@ -1,4 +1,4 @@
-use crate::lang::ast::{Decl, Def, Expr, Loc, Op, PlacedOp, Port, Prog};
+use crate::lang::ast::{DataType, Instr, Def, Expr, Loc, PlacedOp, Port, Prog};
 use crate::passes::select::cost::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::pattern::*;
@@ -11,34 +11,28 @@ use std::collections::HashMap;
 #[derive(Clone, Debug)]
 pub struct Node {
     pub name: String,
-    pub instr: Instr,
+    pub instr: DagInstr,
 }
 
 impl Node {
-    pub fn new(name: &str, instr: Instr) -> Node {
+    pub fn new(name: &str, instr: DagInstr) -> Node {
         Node {
             name: name.to_string(),
             instr: instr,
         }
     }
 
-    pub fn to_ast_instr(&self, params: &Vec<String>) -> Decl {
-        let placed_op = Op::Placed {
+    pub fn to_ast_instr(&self, params: &Vec<String>) -> Instr {
+        Instr::Placed {
+            id: self.name.to_string(),
             op: self.instr.op.to_placed_op(),
+            ty: self.instr.ty.clone(),
             attrs: vec![],
             params: vec![
                 Expr::Ref(params[0].to_string()),
                 Expr::Ref(params[1].to_string()),
             ],
             loc: self.instr.loc.to_loc(),
-        };
-        let output = Port::Output {
-            id: self.name.to_string(),
-            datatype: self.instr.ty.clone(),
-        };
-        Decl::Instr {
-            op: placed_op,
-            outputs: vec![output],
         }
     }
 }
@@ -86,17 +80,17 @@ impl DAG {
         }
     }
 
-    fn create_node_from_expr(&mut self, input: &Expr, ty: &InstrTy) {
-        let instr_op = InstrOp::from_expr(input);
-        let instr = Instr::new(instr_op, ty.clone(), InstrLoc::Lut);
+    fn create_node_from_expr(&mut self, input: &Expr, ty: &DataType) {
+        let instr_op = DagOp::from_expr(input);
+        let instr = DagInstr::new(instr_op, ty.clone(), DagLoc::Lut);
         let ix = self.dag.add_node(Node::new(&input.id(), instr));
         self.index_map.insert(input.id(), ix);
     }
 
-    fn create_node_from_placed_op(&mut self, id: &str, input: &PlacedOp, ty: &InstrTy, loc: &Loc) {
-        let instr_op = InstrOp::from_placed_op(input);
-        let instr_loc = InstrLoc::from_loc(loc);
-        let instr = Instr::new(instr_op, ty.clone(), instr_loc);
+    fn create_node_from_placed_op(&mut self, id: &str, input: &PlacedOp, ty: &DataType, loc: &Loc) {
+        let instr_op = DagOp::from_placed_op(input);
+        let instr_loc = DagLoc::from_loc(loc);
+        let instr = DagInstr::new(instr_op, ty.clone(), instr_loc);
         let ix = self.dag.add_node(Node::new(id, instr));
         self.index_map.insert(id.to_string(), ix);
     }
@@ -118,7 +112,7 @@ impl DAG {
         while let Some(ix) = visit.next(&self.dag) {
             if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.dag.node_weight(ix) {
-                    if instr.op != InstrOp::Any {
+                    if instr.op != DagOp::Any {
                         if instr.op != node.instr.op {
                             is_match = false;
                         }
@@ -171,11 +165,11 @@ impl DAG {
         while let Some(ix) = visit.next(&self.dag) {
             if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.dag.node_weight_mut(ix) {
-                    if instr.op != InstrOp::Any {
+                    if instr.op != DagOp::Any {
                         if node.name == node_id {
                             node.instr.loc = instr.loc.clone();
                         } else {
-                            node.instr.loc = InstrLoc::Ref(node_id.to_string())
+                            node.instr.loc = DagLoc::Ref(node_id.to_string())
                         }
                     }
                 }
@@ -192,28 +186,22 @@ impl DAG {
             } else {
                 panic!("Error: duplicate component definition");
             }
-            for decl in def.body().iter() {
-                assert!(
-                    decl.outputs().len() == 1,
-                    "Error: single output decl support atm"
-                );
-                let params = decl.params();
+            for instr in def.body().iter() {
+                let params = instr.params();
                 let lhs = &params[0];
                 let rhs = &params[1];
-                let ty = decl.outputs()[0].datatype();
-                let dst = decl.outputs()[0].clone();
-                let loc = decl.loc();
+                let loc = instr.loc();
                 if !self.index_map.contains_key(&lhs.id()) {
-                    self.create_node_from_expr(&lhs, &ty);
+                    self.create_node_from_expr(&lhs, &instr.ty());
                 }
                 if !self.index_map.contains_key(&rhs.id()) {
-                    self.create_node_from_expr(&rhs, &ty);
+                    self.create_node_from_expr(&rhs, &instr.ty());
                 }
-                if !self.index_map.contains_key(&dst.id()) {
-                    self.create_node_from_placed_op(&dst.id(), decl.placed_op(), &ty, &loc);
+                if !self.index_map.contains_key(&instr.id()) {
+                    self.create_node_from_placed_op(&instr.id(), instr.placed_op(), &instr.ty(), &loc);
                 }
-                self.create_edge(&dst.id(), &lhs.id());
-                self.create_edge(&dst.id(), &rhs.id());
+                self.create_edge(&instr.id(), &lhs.id());
+                self.create_edge(&instr.id(), &rhs.id());
             }
         }
     }
@@ -248,7 +236,7 @@ impl DAG {
                     let mut dag_iter = DfsPostOrder::new(&self.dag, *oix);
                     while let Some(ix) = dag_iter.next(&self.dag) {
                         if let Some(node) = self.dag.node_weight(ix) {
-                            if node.instr.op != InstrOp::Ref {
+                            if node.instr.op != DagOp::Ref {
                                 let mut children =
                                     self.dag.neighbors_directed(ix, Direction::Outgoing);
                                 let mut params: Vec<String> = Vec::new();
@@ -257,7 +245,7 @@ impl DAG {
                                         params.push(children_node.name.to_string());
                                     }
                                 }
-                                def.add_decl(node.to_ast_instr(&params));
+                                def.add_instr(node.to_ast_instr(&params));
                             }
                         }
                     }

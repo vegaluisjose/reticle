@@ -3,44 +3,44 @@ use crate::passes::select::instr::*;
 use petgraph::dot::{Config, Dot};
 use std::fmt;
 
-impl fmt::Display for InstrOp {
+impl fmt::Display for DagOp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
-            InstrOp::Any => "any",
-            InstrOp::Ref => "ref",
-            InstrOp::Reg => "reg",
-            InstrOp::Add => "add",
-            InstrOp::Sub => "sub",
-            InstrOp::Mul => "mul",
+            DagOp::Any => "any",
+            DagOp::Ref => "ref",
+            DagOp::Reg => "reg",
+            DagOp::Add => "add",
+            DagOp::Sub => "sub",
+            DagOp::Mul => "mul",
         };
         write!(f, "{}", name)
     }
 }
 
-impl fmt::Display for InstrLoc {
+impl fmt::Display for DagLoc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
-            InstrLoc::Any => "any".to_string(),
-            InstrLoc::Unknown => "??".to_string(),
-            InstrLoc::Lut => "lut".to_string(),
-            InstrLoc::Lum => "lum".to_string(),
-            InstrLoc::Dsp => "dsp".to_string(),
-            InstrLoc::Ram => "ram".to_string(),
-            InstrLoc::Ref(n) => format!("loc({})", n),
+            DagLoc::Any => "any".to_string(),
+            DagLoc::Unknown => "??".to_string(),
+            DagLoc::Lut => "lut".to_string(),
+            DagLoc::Lum => "lum".to_string(),
+            DagLoc::Dsp => "dsp".to_string(),
+            DagLoc::Ram => "ram".to_string(),
+            DagLoc::Ref(n) => format!("loc({})", n),
         };
         write!(f, "{}", name)
+    }
+}
+
+impl fmt::Display for DagInstr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}<{}> @{}", self.op, self.ty, self.loc)
     }
 }
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}: {}", self.name, self.instr)
-    }
-}
-
-impl fmt::Display for Instr {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}<{}> @{}", self.op, self.ty, self.loc)
     }
 }
 

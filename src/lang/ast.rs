@@ -76,38 +76,20 @@ pub enum Port {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Instr {
     Std {
-        op: StdOp,
-        attrs: Vec<Expr>,
-        params: Vec<Expr>,
-        output: Port,
-    },
-    Placed {
-        op: PlacedOp,
-        attrs: Vec<Expr>,
-        params: Vec<Expr>,
-        loc: Loc,
-        output: Port,
-    },
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Op {
-    Std {
+        id: Id,
+        ty: DataType,
         op: StdOp,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
     },
     Placed {
+        id: Id,
+        ty: DataType,
         op: PlacedOp,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
         loc: Loc,
     },
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Decl {
-    Instr { op: Op, outputs: Vec<Port> },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -115,7 +97,7 @@ pub struct Def {
     pub name: Id,
     pub inputs: Vec<Port>,
     pub outputs: Vec<Port>,
-    pub body: Vec<Decl>,
+    pub body: Vec<Instr>,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

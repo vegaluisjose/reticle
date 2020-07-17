@@ -63,15 +63,24 @@ impl PrettyPrint for PlacedOp {
     }
 }
 
-impl PrettyPrint for Op {
+impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Op::Placed {
+            Instr::Placed {
+                id,
+                ty,
                 op,
                 attrs,
                 params,
                 loc,
             } => {
+                let out_doc = RcDoc::as_string(id)
+                    .append(RcDoc::text(":"))
+                    .append(RcDoc::space())
+                    .append(ty.to_doc())
+                    .append(RcDoc::space())
+                    .append(RcDoc::text("="))
+                    .append(RcDoc::space());
                 let attrs_doc = match attrs.is_empty() {
                     true => RcDoc::nil(),
                     false => RcDoc::text("[")
@@ -91,7 +100,8 @@ impl PrettyPrint for Op {
                         .append(RcDoc::text(")")),
                 };
                 let loc_doc = RcDoc::text("@").append(loc.to_doc());
-                op.to_doc()
+                out_doc
+                    .append(op.to_doc())
                     .append(attrs_doc)
                     .append(params_doc)
                     .append(RcDoc::space())
@@ -152,21 +162,6 @@ impl PrettyPrint for Def {
             .append(body_doc)
             .append(RcDoc::hardline())
             .append(RcDoc::text("}"))
-    }
-}
-
-impl PrettyPrint for Decl {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            Decl::Instr { op, outputs } => RcDoc::intersperse(
-                outputs.iter().map(|o| o.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .append(RcDoc::space())
-            .append(RcDoc::text("="))
-            .append(RcDoc::space())
-            .append(op.to_doc()),
-        }
     }
 }
 

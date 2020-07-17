@@ -48,7 +48,7 @@ pub struct SerialTarget {
 
 #[derive(Clone, Debug)]
 pub struct Target {
-    pub cost_map: HashMap<Instr, i32>,
+    pub cost_map: HashMap<DagInstr, i32>,
     pub patterns: Vec<Pattern>,
 }
 
@@ -86,15 +86,15 @@ pub struct Target {
 
 impl Target {
     pub fn from_serial(input: SerialTarget) -> Target {
-        let mut cost_map: HashMap<Instr, i32> = HashMap::new();
+        let mut cost_map: HashMap<DagInstr, i32> = HashMap::new();
         let mut patterns: Vec<Pattern> = Vec::new();
         for i in input.instr.iter() {
             match &i.expr {
                 SerialExpr::Op(op) => {
-                    let op = InstrOp::from_placed_op(&PlacedOp::from_str(&op).unwrap());
-                    let loc = InstrLoc::from_loc(&Loc::from_str(&i.loc).unwrap());
-                    let ty = InstrTy::from_str(&i.ty).unwrap();
-                    let instr = Instr::new(op, ty, loc);
+                    let op = DagOp::from_placed_op(&PlacedOp::from_str(&op).unwrap());
+                    let loc = DagLoc::from_loc(&Loc::from_str(&i.loc).unwrap());
+                    let ty = DagTy::from_str(&i.ty).unwrap();
+                    let instr = DagInstr::new(op, ty, loc);
                     if cost_map.contains_key(&instr) {
                         panic!("Error: found a duplicate instr {}");
                     } else {

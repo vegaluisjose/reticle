@@ -32,19 +32,13 @@ impl fmt::Display for PlacedOp {
     }
 }
 
-impl fmt::Display for Op {
+impl fmt::Display for Instr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }
 }
 
 impl fmt::Display for Port {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_pretty())
-    }
-}
-
-impl fmt::Display for Decl {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }

@@ -1,9 +1,9 @@
 use crate::lang::ast::{DataType, Expr, Id, Loc, PlacedOp};
 
-pub type InstrTy = DataType;
+pub type DagTy = DataType;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum InstrOp {
+pub enum DagOp {
     Any,
     Ref,
     Reg,
@@ -13,7 +13,7 @@ pub enum InstrOp {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum InstrLoc {
+pub enum DagLoc {
     Any,
     Unknown,
     Lut,
@@ -24,69 +24,69 @@ pub enum InstrLoc {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct Instr {
-    pub loc: InstrLoc,
-    pub ty: InstrTy,
-    pub op: InstrOp,
+pub struct DagInstr {
+    pub loc: DagLoc,
+    pub ty: DagTy,
+    pub op: DagOp,
 }
 
-impl InstrOp {
-    pub fn from_expr(input: &Expr) -> InstrOp {
+impl DagOp {
+    pub fn from_expr(input: &Expr) -> DagOp {
         match input {
-            Expr::Ref(_) => InstrOp::Ref,
+            Expr::Ref(_) => DagOp::Ref,
             _ => panic!("Error: only reference conversion supported"),
         }
     }
 
-    pub fn from_placed_op(input: &PlacedOp) -> InstrOp {
+    pub fn from_placed_op(input: &PlacedOp) -> DagOp {
         match input {
-            PlacedOp::Reg => InstrOp::Reg,
-            PlacedOp::Add => InstrOp::Add,
-            PlacedOp::Sub => InstrOp::Sub,
-            PlacedOp::Mul => InstrOp::Mul,
+            PlacedOp::Reg => DagOp::Reg,
+            PlacedOp::Add => DagOp::Add,
+            PlacedOp::Sub => DagOp::Sub,
+            PlacedOp::Mul => DagOp::Mul,
             _ => panic!("Error: op not supported"),
         }
     }
 
     pub fn to_placed_op(&self) -> PlacedOp {
         match self {
-            InstrOp::Reg => PlacedOp::Reg,
-            InstrOp::Add => PlacedOp::Add,
-            InstrOp::Sub => PlacedOp::Sub,
-            InstrOp::Mul => PlacedOp::Mul,
-            _ => panic!("Error: InstrOp conversion not supported"),
+            DagOp::Reg => PlacedOp::Reg,
+            DagOp::Add => PlacedOp::Add,
+            DagOp::Sub => PlacedOp::Sub,
+            DagOp::Mul => PlacedOp::Mul,
+            _ => panic!("Error: DagOp conversion not supported"),
         }
     }
 }
 
-impl InstrLoc {
-    pub fn from_loc(input: &Loc) -> InstrLoc {
+impl DagLoc {
+    pub fn from_loc(input: &Loc) -> DagLoc {
         match input {
-            Loc::Unknown => InstrLoc::Unknown,
-            Loc::Lut => InstrLoc::Lut,
-            Loc::Lum => InstrLoc::Lum,
-            Loc::Dsp => InstrLoc::Dsp,
-            Loc::Ram => InstrLoc::Ram,
-            Loc::Ref(n) => InstrLoc::Ref(n.to_string()),
+            Loc::Unknown => DagLoc::Unknown,
+            Loc::Lut => DagLoc::Lut,
+            Loc::Lum => DagLoc::Lum,
+            Loc::Dsp => DagLoc::Dsp,
+            Loc::Ram => DagLoc::Ram,
+            Loc::Ref(n) => DagLoc::Ref(n.to_string()),
         }
     }
 
     pub fn to_loc(&self) -> Loc {
         match self {
-            InstrLoc::Unknown => Loc::Unknown,
-            InstrLoc::Lut => Loc::Lut,
-            InstrLoc::Lum => Loc::Lum,
-            InstrLoc::Dsp => Loc::Dsp,
-            InstrLoc::Ram => Loc::Ram,
-            InstrLoc::Ref(n) => Loc::Ref(n.to_string()),
+            DagLoc::Unknown => Loc::Unknown,
+            DagLoc::Lut => Loc::Lut,
+            DagLoc::Lum => Loc::Lum,
+            DagLoc::Dsp => Loc::Dsp,
+            DagLoc::Ram => Loc::Ram,
+            DagLoc::Ref(n) => Loc::Ref(n.to_string()),
             _ => panic!("Error: Loc conversion not supported"),
         }
     }
 }
 
-impl Instr {
-    pub fn new(op: InstrOp, ty: InstrTy, loc: InstrLoc) -> Instr {
-        Instr {
+impl DagInstr {
+    pub fn new(op: DagOp, ty: DagTy, loc: DagLoc) -> DagInstr {
+        DagInstr {
             loc: loc,
             ty: ty,
             op: op,
