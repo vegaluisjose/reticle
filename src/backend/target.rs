@@ -1,5 +1,4 @@
-use crate::passes::select::dag_instr::*;
-use crate::passes::select::pattern::*;
+use crate::passes::select::instr;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;
 use serde_json;
@@ -7,56 +6,56 @@ use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
-pub enum TargetExpr {
+pub enum Expr {
     Input(String, String),
-    BinOp(String, Rc<TargetExpr>, Rc<TargetExpr>),
+    BinOp(String, Rc<Expr>, Rc<Expr>),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct TargetInstr {
+pub struct Instr {
     pub name: String,
     pub cost: u32,
     pub loc: String,
     pub ty: String,
     pub output: String,
-    pub expr: TargetExpr,
+    pub expr: Expr,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct TargetDef {
-    pub instr: Vec<TargetInstr>,
+pub struct Def {
+    pub instr: Vec<Instr>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Target {
-    pub patterns: Vec<Pattern>,
+    pub patterns: Vec<instr::Pattern>,
 }
 
-impl TargetExpr {
-    pub fn to_vec_dag_instr(&self, instr: &mut Vec<DagInstr>, op_ty: DagTy, op_loc: DagLoc) {
+impl Expr {
+    pub fn to_instr_mut(&self, instr: &mut Vec<instr::Instr>, op_ty: instr::Ty, op_loc: instr::Loc) {
         match self {
-            TargetExpr::Input(_, loc) => {
-                let op = DagOp::Inp;
-                let inp_loc = DagLoc::from_str(loc).unwrap();
-                instr.push(DagInstr::new(op, op_ty.clone(), inp_loc));
+            Expr::Input(_, loc) => {
+                let op = instr::Op::Inp;
+                let inp_loc = instr::Loc::from_str(loc).unwrap();
+                instr.push(instr::Instr::new(op, op_ty.clone(), inp_loc));
             }
-            TargetExpr::BinOp(op, lhs, rhs) => {
-                let op = DagOp::from_str(op).unwrap();
-                instr.push(DagInstr::new(op, op_ty.clone(), op_loc.clone()));
-                lhs.to_vec_dag_instr(instr, op_ty.clone(), op_loc.clone());
-                rhs.to_vec_dag_instr(instr, op_ty.clone(), op_loc.clone());
+            Expr::BinOp(op, lhs, rhs) => {
+                let op = instr::Op::from_str(op).unwrap();
+                instr.push(instr::Instr::new(op, op_ty.clone(), op_loc.clone()));
+                lhs.to_instr_mut(instr, op_ty.clone(), op_loc.clone());
+                rhs.to_instr_mut(instr, op_ty.clone(), op_loc.clone());
             }
         }
     }
 }
 
-impl TargetInstr {
-    fn to_pattern(&self) -> Pattern {
-        let ty = DagTy::from_str(&self.ty).unwrap();
-        let loc = DagLoc::from_str(&self.loc).unwrap();
-        let mut instr: Vec<DagInstr> = Vec::new();
-        self.expr.to_vec_dag_instr(&mut instr, ty, loc);
-        Pattern {
+impl Instr {
+    fn to_pattern(&self) -> instr::Pattern {
+        let ty = instr::Ty::from_str(&self.ty).unwrap();
+        let loc = instr::Loc::from_str(&self.loc).unwrap();
+        let mut instr: Vec<instr::Instr> = Vec::new();
+        self.expr.to_instr_mut(&mut instr, ty, loc);
+        instr::Pattern {
             name: self.name.to_string(),
             cost: self.cost.clone(),
             instr: instr.to_vec(),
@@ -65,8 +64,8 @@ impl TargetInstr {
 }
 
 impl Target {
-    pub fn from_serial(input: TargetDef) -> Target {
-        let mut patterns: Vec<Pattern> = Vec::new();
+    pub fn from_serial(input: Def) -> Target {
+        let mut patterns: Vec<instr::Pattern> = Vec::new();
         for instr in input.instr.iter() {
             patterns.push(instr.to_pattern());
         }
