@@ -22,7 +22,7 @@ impl Node {
         }
     }
 
-    pub fn to_ast_instr(&self, params: &Vec<String>) -> Instr {
+    pub fn to_instr_placed(&self, params: &Vec<String>) -> Instr {
         Instr::Placed {
             id: self.name.to_string(),
             op: self.instr.op.to_placed_op(),
@@ -245,7 +245,7 @@ impl DAG {
                                         params.push(children_node.name.to_string());
                                     }
                                 }
-                                def.add_instr(node.to_ast_instr(&params));
+                                def.add_instr(node.to_instr_placed(&params));
                             }
                         }
                     }
