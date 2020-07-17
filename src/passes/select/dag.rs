@@ -242,7 +242,7 @@ impl DAG {
     pub fn to_prog(&self) -> Prog {
         let mut prog = Prog::new();
         for (def_name, sig) in self.signature_map.iter() {
-            let mut comp = Def::new_comp_with_ports(def_name, &sig.inputs, &sig.outputs);
+            let mut def = Def::new_with_ports(def_name, &sig.inputs, &sig.outputs);
             for output in sig.outputs.iter() {
                 if let Some(oix) = self.index_map.get(&output.id()) {
                     let mut dag_iter = DfsPostOrder::new(&self.dag, *oix);
@@ -257,13 +257,13 @@ impl DAG {
                                         params.push(children_node.name.to_string());
                                     }
                                 }
-                                comp.add_decl(node.to_ast_instr(&params));
+                                def.add_decl(node.to_ast_instr(&params));
                             }
                         }
                     }
                 }
             }
-            prog.add_def(comp);
+            prog.add_def(def);
         }
         prog
     }

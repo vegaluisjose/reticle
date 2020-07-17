@@ -129,7 +129,7 @@ impl Decl {
 
 impl Def {
     pub fn new_comp(name: &str) -> Def {
-        Def::Comp {
+        Def {
             name: name.to_string(),
             inputs: Vec::new(),
             outputs: Vec::new(),
@@ -137,8 +137,8 @@ impl Def {
         }
     }
 
-    pub fn new_comp_with_ports(name: &str, inputs: &Vec<Port>, outputs: &Vec<Port>) -> Def {
-        Def::Comp {
+    pub fn new_with_ports(name: &str, inputs: &Vec<Port>, outputs: &Vec<Port>) -> Def {
+        Def {
             name: name.to_string(),
             inputs: inputs.to_vec(),
             outputs: outputs.to_vec(),
@@ -147,105 +147,41 @@ impl Def {
     }
 
     pub fn body(&self) -> &Vec<Decl> {
-        match self {
-            Def::Comp {
-                name: _,
-                inputs: _,
-                outputs: _,
-                body,
-            } => body,
-            Def::Sim { name: _, body } => body,
-        }
+        &self.body
     }
 
     pub fn name(&self) -> String {
-        match self {
-            Def::Comp {
-                name,
-                inputs: _,
-                outputs: _,
-                body: _,
-            } => name.to_string(),
-            Def::Sim { name, body: _ } => name.to_string(),
-        }
+        self.name.to_string()
     }
 
     pub fn inputs(&self) -> &Vec<Port> {
-        match self {
-            Def::Comp {
-                name: _,
-                inputs,
-                outputs: _,
-                body: _,
-            } => inputs,
-            _ => panic!("Error: sim definition don't support inputs"),
-        }
+        &self.inputs
     }
 
     pub fn outputs(&self) -> &Vec<Port> {
-        match self {
-            Def::Comp {
-                name: _,
-                inputs: _,
-                outputs,
-                body: _,
-            } => outputs,
-            _ => panic!("Error: sim definition don't support outputs"),
-        }
+        &self.outputs
     }
 
     pub fn add_input(&mut self, name: &str, ty: &str) {
-        match self {
-            Def::Comp {
-                name: _,
-                inputs,
-                outputs: _,
-                body: _,
-            } => {
-                let dtype = DataType::from_str(ty).unwrap();
-                let port = Port::Input {
-                    id: name.to_string(),
-                    datatype: dtype,
-                };
-                inputs.push(port);
-            }
-            _ => panic!("Error: sim definition does not support inputs"),
-        }
+        let dtype = DataType::from_str(ty).unwrap();
+        let port = Port::Input {
+            id: name.to_string(),
+            datatype: dtype,
+        };
+        self.inputs.push(port);
     }
 
     pub fn add_output(&mut self, name: &str, ty: &str) {
-        match self {
-            Def::Comp {
-                name: _,
-                inputs: _,
-                outputs,
-                body: _,
-            } => {
-                let dtype = DataType::from_str(ty).unwrap();
-                let port = Port::Output {
-                    id: name.to_string(),
-                    datatype: dtype,
-                };
-                outputs.push(port);
-            }
-            _ => panic!("Error: sim definition does not support outputs"),
-        }
+        let dtype = DataType::from_str(ty).unwrap();
+        let port = Port::Output {
+            id: name.to_string(),
+            datatype: dtype,
+        };
+        self.outputs.push(port);
     }
 
     pub fn add_decl(&mut self, decl: Decl) {
-        match self {
-            Def::Comp {
-                name: _,
-                inputs: _,
-                outputs: _,
-                body,
-            } => {
-                body.push(decl);
-            }
-            Def::Sim { name: _, body } => {
-                body.push(decl);
-            }
-        }
+        self.body.push(decl);
     }
 }
 

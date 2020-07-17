@@ -119,64 +119,39 @@ impl PrettyPrint for Port {
 
 impl PrettyPrint for Def {
     fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            Def::Sim { name, body } => {
-                let mut body_doc = RcDoc::nil();
-                for decl in body.iter() {
-                    body_doc = body_doc
-                        .append(RcDoc::hardline())
-                        .append(decl.to_doc())
-                        .append(RcDoc::text(";"));
-                }
-                body_doc = body_doc.nest(PRETTY_INDENT).group();
-                RcDoc::text("sim")
-                    .append(RcDoc::space())
-                    .append(RcDoc::as_string(name))
-                    .append(RcDoc::text("{"))
-                    .append(body_doc)
-                    .append(RcDoc::text("}"))
-            }
-            Def::Comp {
-                name,
-                inputs,
-                outputs,
-                body,
-            } => {
-                let inputs_doc = RcDoc::intersperse(
-                    inputs.iter().map(|i| i.to_doc()),
-                    RcDoc::text(",").append(RcDoc::space()),
-                );
-                let outputs_doc = RcDoc::intersperse(
-                    outputs.iter().map(|o| o.to_doc()),
-                    RcDoc::text(",").append(RcDoc::space()),
-                );
-                let mut body_doc = RcDoc::nil();
-                for decl in body.iter() {
-                    body_doc = body_doc
-                        .append(RcDoc::hardline())
-                        .append(decl.to_doc())
-                        .append(RcDoc::text(";"));
-                }
-                body_doc = body_doc.nest(PRETTY_INDENT).group();
-                RcDoc::text("def")
-                    .append(RcDoc::space())
-                    .append(RcDoc::as_string(name))
-                    .append(RcDoc::text("("))
-                    .append(inputs_doc)
-                    .append(RcDoc::text(")"))
-                    .append(RcDoc::space())
-                    .append(RcDoc::text("->"))
-                    .append(RcDoc::space())
-                    .append(RcDoc::text("("))
-                    .append(outputs_doc)
-                    .append(RcDoc::text(")"))
-                    .append(RcDoc::space())
-                    .append(RcDoc::text("{"))
-                    .append(body_doc)
-                    .append(RcDoc::hardline())
-                    .append(RcDoc::text("}"))
-            }
+        let inputs_doc = RcDoc::intersperse(
+            self.inputs().iter().map(|i| i.to_doc()),
+            RcDoc::text(",").append(RcDoc::space()),
+        );
+        let outputs_doc = RcDoc::intersperse(
+            self.outputs().iter().map(|o| o.to_doc()),
+            RcDoc::text(",").append(RcDoc::space()),
+        );
+        let mut body_doc = RcDoc::nil();
+        for decl in self.body().iter() {
+            body_doc = body_doc
+                .append(RcDoc::hardline())
+                .append(decl.to_doc())
+                .append(RcDoc::text(";"));
         }
+        body_doc = body_doc.nest(PRETTY_INDENT).group();
+        RcDoc::text("def")
+            .append(RcDoc::space())
+            .append(RcDoc::as_string(self.name()))
+            .append(RcDoc::text("("))
+            .append(inputs_doc)
+            .append(RcDoc::text(")"))
+            .append(RcDoc::space())
+            .append(RcDoc::text("->"))
+            .append(RcDoc::space())
+            .append(RcDoc::text("("))
+            .append(outputs_doc)
+            .append(RcDoc::text(")"))
+            .append(RcDoc::space())
+            .append(RcDoc::text("{"))
+            .append(body_doc)
+            .append(RcDoc::hardline())
+            .append(RcDoc::text("}"))
     }
 }
 
