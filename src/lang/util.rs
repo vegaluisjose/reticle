@@ -4,15 +4,15 @@ use std::str::FromStr;
 impl Port {
     pub fn id(&self) -> Id {
         match self {
-            Port::Input { id, datatype: _ } => id.to_string(),
-            Port::Output { id, datatype: _ } => id.to_string(),
+            Port::Input { id, ty: _ } => id.to_string(),
+            Port::Output { id, ty: _ } => id.to_string(),
         }
     }
 
-    pub fn datatype(&self) -> &DataType {
+    pub fn ty(&self) -> &DataType {
         match self {
-            Port::Input { id: _, datatype } => datatype,
-            Port::Output { id: _, datatype } => datatype,
+            Port::Input { id: _, ty } => ty,
+            Port::Output { id: _, ty } => ty,
         }
     }
 }
@@ -183,19 +183,19 @@ impl Def {
     }
 
     pub fn add_input(&mut self, name: &str, ty: &str) {
-        let dtype = DataType::from_str(ty).unwrap();
+        let ty = DataType::from_str(ty).unwrap();
         let port = Port::Input {
             id: name.to_string(),
-            datatype: dtype,
+            ty: ty,
         };
         self.inputs.push(port);
     }
 
     pub fn add_output(&mut self, name: &str, ty: &str) {
-        let dtype = DataType::from_str(ty).unwrap();
+        let ty = DataType::from_str(ty).unwrap();
         let port = Port::Output {
             id: name.to_string(),
-            datatype: dtype,
+            ty: ty,
         };
         self.outputs.push(port);
     }

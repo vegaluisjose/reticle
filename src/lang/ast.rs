@@ -69,8 +69,8 @@ pub enum PlacedOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Port {
-    Input { id: Id, datatype: DataType },
-    Output { id: Id, datatype: DataType },
+    Input { id: Id, ty: DataType },
+    Output { id: Id, ty: DataType },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

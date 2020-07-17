@@ -115,14 +115,14 @@ impl PrettyPrint for Instr {
 impl PrettyPrint for Port {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Port::Input { id, datatype } => RcDoc::as_string(id)
+            Port::Input { id, ty } => RcDoc::as_string(id)
                 .append(RcDoc::text(":"))
                 .append(RcDoc::space())
-                .append(datatype.to_doc()),
-            Port::Output { id, datatype } => RcDoc::as_string(id)
+                .append(ty.to_doc()),
+            Port::Output { id, ty } => RcDoc::as_string(id)
                 .append(RcDoc::text(":"))
                 .append(RcDoc::space())
-                .append(datatype.to_doc()),
+                .append(ty.to_doc()),
         }
     }
 }
