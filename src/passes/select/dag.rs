@@ -1,6 +1,6 @@
 use crate::lang::ast::{DataType, Instr, Def, Expr, Loc, PlacedOp, Port, Prog};
 use crate::passes::select::cost::*;
-use crate::passes::select::instr::*;
+use crate::passes::select::dag_instr::*;
 use crate::passes::select::pattern::*;
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;

@@ -1,5 +1,5 @@
 use crate::passes::select::dag::*;
-use crate::passes::select::instr::*;
+use crate::passes::select::dag_instr::*;
 use petgraph::dot::{Config, Dot};
 use std::fmt;
 

@@ -1,4 +1,4 @@
-use crate::passes::select::instr::*;
+use crate::passes::select::dag_instr::*;
 
 #[derive(Clone, Debug)]
 pub struct Pattern {

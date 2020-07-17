@@ -1,5 +1,5 @@
 use crate::lang::ast::{PlacedOp, Loc};
-use crate::passes::select::instr::*;
+use crate::passes::select::dag_instr::*;
 use crate::passes::select::pattern::*;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;

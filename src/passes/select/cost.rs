@@ -1,4 +1,4 @@
-use crate::passes::select::instr::*;
+use crate::passes::select::dag_instr::*;
 
 // using operation and location for estimating
 // cost. Maybe we would want to incorporate
