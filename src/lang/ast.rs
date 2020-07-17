@@ -20,8 +20,8 @@ pub enum Expr {
 pub enum Loc {
     Var,
     Lut,
-    Lum,
     Dsp,
+    Lum,
     Ram,
     Ref(Id),
 }
