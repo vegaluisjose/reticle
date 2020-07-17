@@ -4,7 +4,21 @@ use crate::passes::select::dag_instr::*;
 pub struct Pattern {
     pub name: String,
     pub instr: Vec<DagInstr>,
-    pub cost: i32,
+    pub cost: u32,
+}
+
+impl Pattern {
+    pub fn new_with_cost(name: &str, cost: u32) -> Pattern {
+        Pattern {
+            name: name.to_string(),
+            instr: Vec::new(),
+            cost: cost.clone(),
+        }
+    }
+
+    pub fn add_instr(&mut self, instr: DagInstr) {
+        self.instr.push(instr);
+    }
 }
 
 // hardcoded patterns for now, this could be generated

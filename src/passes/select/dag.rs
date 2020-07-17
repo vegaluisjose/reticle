@@ -129,8 +129,8 @@ impl DAG {
         is_match && pat_instr.len() == 0
     }
 
-    fn estimate_cost(&self, start: DagIx) -> i32 {
-        let mut cost: i32 = 0;
+    fn estimate_cost(&self, start: DagIx) -> u32 {
+        let mut cost: u32 = 0;
         let mut visit = Dfs::new(&self.dag, start);
         while let Some(ix) = visit.next(&self.dag) {
             if let Some(node) = self.dag.node_weight(ix) {
