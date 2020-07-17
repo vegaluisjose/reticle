@@ -20,7 +20,7 @@ impl PrettyPrint for DataType {
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Loc::Unknown => RcDoc::text("??"),
+            Loc::Var => RcDoc::text("??"),
             Loc::Lut => RcDoc::text("lut"),
             Loc::Lum => RcDoc::text("lum"),
             Loc::Dsp => RcDoc::text("dsp"),

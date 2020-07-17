@@ -9,9 +9,9 @@ fn main() {
     comp.add_input("c", "i8");
     comp.add_input("en", "bool");
     comp.add_output("z", "i8");
-    comp.add_instr(Instr::new_placed("x", "i8", "mul", "a", "b"));
-    comp.add_instr(Instr::new_placed("y", "i8", "reg", "x", "en"));
-    comp.add_instr(Instr::new_placed("z", "i8", "add", "y", "c"));
+    comp.add_instr(Instr::new_with_args("x", "i8", "mul", "a", "b", "??"));
+    comp.add_instr(Instr::new_with_args("y", "i8", "reg", "x", "en", "??"));
+    comp.add_instr(Instr::new_with_args("z", "i8", "add", "y", "c", "??"));
     let mut prog = Prog::new();
     prog.add_def(comp);
     println!("Original program:\n{}", prog);

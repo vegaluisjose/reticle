@@ -73,7 +73,7 @@ impl FromStr for Loc {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input.as_ref() {
-            "??" => Ok(Loc::Unknown),
+            "??" => Ok(Loc::Var),
             "lut" => Ok(Loc::Lut),
             "lum" => Ok(Loc::Lum),
             "dsp" => Ok(Loc::Dsp),

@@ -27,14 +27,14 @@ impl Expr {
 }
 
 impl Instr {
-    pub fn new_placed(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str) -> Instr {
+    pub fn new_with_args(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str, loc: &str) -> Instr {
         Instr::Placed {
             id: dst.to_string(),
             ty: DataType::from_str(ty).unwrap(),
             op: PlacedOp::from_str(op).unwrap(),
             attrs: vec![],
             params: vec![Expr::Ref(lhs.to_string()), Expr::Ref(rhs.to_string())],
-            loc: Loc::Unknown,
+            loc: Loc::from_str(loc).unwrap(),
         }
     }
 
@@ -147,27 +147,13 @@ impl Instr {
     }
 }
 
-impl Def {
-    pub fn new(name: &str) -> Def {
-        Def {
+impl Sig {
+    pub fn new(name: &str) -> Sig {
+        Sig {
             name: name.to_string(),
             inputs: Vec::new(),
             outputs: Vec::new(),
-            body: Vec::new(),
         }
-    }
-
-    pub fn new_with_ports(name: &str, inputs: &Vec<Port>, outputs: &Vec<Port>) -> Def {
-        Def {
-            name: name.to_string(),
-            inputs: inputs.to_vec(),
-            outputs: outputs.to_vec(),
-            body: Vec::new(),
-        }
-    }
-
-    pub fn body(&self) -> &Vec<Instr> {
-        &self.body
     }
 
     pub fn name(&self) -> String {
@@ -198,6 +184,46 @@ impl Def {
             ty: ty,
         };
         self.outputs.push(port);
+    }
+}
+
+impl Def {
+    pub fn new(name: &str) -> Def {
+        Def {
+            sig: Sig::new(name),
+            body: Vec::new(),
+        }
+    }
+
+    pub fn new_with_signature(sig: Sig) -> Def {
+        Def {
+            sig: sig,
+            body: Vec::new(),
+        }
+    }
+
+    pub fn body(&self) -> &Vec<Instr> {
+        &self.body
+    }
+
+    pub fn name(&self) -> String {
+        self.sig.name()
+    }
+
+    pub fn inputs(&self) -> &Vec<Port> {
+        &self.sig.inputs()
+    }
+
+    pub fn outputs(&self) -> &Vec<Port> {
+        &self.sig.outputs()
+    }
+
+    pub fn add_input(&mut self, name: &str, ty: &str) {
+        self.sig.add_input(name, ty);
+    }
+
+    pub fn add_output(&mut self, name: &str, ty: &str) {
+        self.sig.add_output(name, ty);
     }
 
     pub fn add_instr(&mut self, instr: Instr) {

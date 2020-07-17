@@ -20,7 +20,7 @@ pub enum Expr {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Loc {
-    Unknown,
+    Var,
     Lut,
     Lum,
     Dsp,
@@ -81,10 +81,15 @@ pub enum Instr {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Def {
+pub struct Sig {
     pub name: Id,
     pub inputs: Vec<Port>,
     pub outputs: Vec<Port>,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Def {
+    pub sig: Sig,
     pub body: Vec<Instr>,
 }
 
