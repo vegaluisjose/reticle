@@ -2,6 +2,8 @@
 use crate::passes::select::pattern::*;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;
+use serde_json;
+use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
@@ -28,6 +30,15 @@ pub struct SerialTarget {
 #[derive(Clone, Debug)]
 pub struct Target {
     pub patterns: Vec<Pattern>,
+}
+
+impl FromStr for Target {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Ok(Target::from_serial(
+            serde_json::from_str(input).expect("Error: parsing json"),
+        ))
+    }
 }
 
 // impl Dexp {
