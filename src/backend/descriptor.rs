@@ -29,23 +29,6 @@ pub struct SerialTarget {
     pub instr: Vec<SerialInstr>,
 }
 
-// #[derive(Clone, Debug)]
-// pub enum Dexp {
-//     Op(PlacedOp),
-//     Input(Id, Loc),
-//     Binary(Rc<Dexp>, Rc<Dexp>, Rc<Dexp>),
-// }
-
-// #[derive(Clone, Debug)]
-// pub struct Foo {
-//     pub name: String,
-//     pub cost: i32,
-//     pub loc: Loc,
-//     pub ty: DataType,
-//     pub output: Id,
-//     pub expr: Dexp,
-// }
-
 #[derive(Clone, Debug)]
 pub struct Target {
     pub cost_map: HashMap<DagInstr, i32>,
@@ -67,19 +50,6 @@ pub struct Target {
 //                     Rc::new(Dexp::from_serial(r.clone())),
 //                 )
 //             }
-//         }
-//     }
-// }
-
-// impl Foo {
-//     pub fn from_serial(input: SerialInstr) -> Foo {
-//         Foo {
-//             name: input.name.to_string(),
-//             cost: input.cost.clone(),
-//             loc: Loc::from_str(&input.loc).unwrap(),
-//             ty: DataType::from_str(&input.ty).unwrap(),
-//             output: input.output.to_string(),
-//             expr: Dexp::from_serial(input.expr.clone()),
 //         }
 //     }
 // }
