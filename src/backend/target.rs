@@ -1,7 +1,7 @@
 use crate::passes::select::instr;
 use serde::{Deserialize, Serialize};
-use std::rc::Rc;
 use serde_json;
+use std::rc::Rc;
 use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -32,7 +32,12 @@ pub struct Target {
 }
 
 impl Expr {
-    pub fn to_instr_mut(&self, instr: &mut Vec<instr::Instr>, op_ty: instr::Ty, op_loc: instr::Loc) {
+    pub fn to_instr_mut(
+        &self,
+        instr: &mut Vec<instr::Instr>,
+        op_ty: instr::Ty,
+        op_loc: instr::Loc,
+    ) {
         match self {
             Expr::Input(_, loc) => {
                 let op = instr::Op::Inp;

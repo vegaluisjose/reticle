@@ -1,5 +1,5 @@
-use reticle::lang::ast::{Instr, Def, Prog};
 use reticle::backend::ultrascale;
+use reticle::lang::ast::{Def, Instr, Prog};
 // use reticle::passes::select::dag::DAG;
 
 fn main() {

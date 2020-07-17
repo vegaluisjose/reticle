@@ -1,8 +1,8 @@
-use petgraph::dot::{Config, Dot};
-use std::fmt;
 use crate::passes::select::instr::*;
+use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
+use std::fmt;
 
 #[derive(Clone, Debug)]
 pub struct SDNode {
@@ -58,6 +58,10 @@ impl fmt::Display for SDEdge {
 
 impl fmt::Display for SDag {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Dot::with_config(&self.graph, &[Config::EdgeNoLabel]))
+        write!(
+            f,
+            "{}",
+            Dot::with_config(&self.graph, &[Config::EdgeNoLabel])
+        )
     }
 }

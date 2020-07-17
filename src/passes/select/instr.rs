@@ -1,6 +1,6 @@
 use crate::lang::ast;
-use std::str::FromStr;
 use std::fmt;
+use std::str::FromStr;
 
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;

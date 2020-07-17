@@ -39,7 +39,10 @@ impl Instr {
             ty: ty.clone(),
             op: PlacedOp::from_str(op).unwrap(),
             attrs: vec![],
-            params: vec![Expr::Ref(lhs.to_string(), ty.clone()), Expr::Ref(rhs.to_string(), ty.clone())],
+            params: vec![
+                Expr::Ref(lhs.to_string(), ty.clone()),
+                Expr::Ref(rhs.to_string(), ty.clone()),
+            ],
             loc: Loc::from_str(loc).unwrap(),
         }
     }
@@ -50,7 +53,7 @@ impl Instr {
                 id,
                 ty: _,
                 op: _,
-                attrs:_,
+                attrs: _,
                 params: _,
             } => id.to_string(),
             Instr::Placed {
@@ -67,14 +70,14 @@ impl Instr {
     pub fn ty(&self) -> &Ty {
         match self {
             Instr::Std {
-                id:_,
+                id: _,
                 ty,
                 op: _,
-                attrs:_,
+                attrs: _,
                 params: _,
             } => ty,
             Instr::Placed {
-                id:_,
+                id: _,
                 ty,
                 op: _,
                 attrs: _,
