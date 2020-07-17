@@ -1,5 +1,6 @@
 use crate::lang::ast;
 use std::str::FromStr;
+use std::fmt;
 
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;
@@ -92,55 +93,90 @@ impl Pattern {
     }
 }
 
-// impl DagOp {
-//     pub fn from_expr(input: &Expr) -> DagOp {
+impl fmt::Display for Op {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Op::Any => "any",
+            Op::Inp => "inp",
+            Op::Reg => "reg",
+            Op::Add => "add",
+            Op::Sub => "sub",
+            Op::Mul => "mul",
+        };
+        write!(f, "{}", name)
+    }
+}
+
+impl fmt::Display for Loc {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let name = match self {
+            Loc::Any => "any".to_string(),
+            Loc::Var => "??".to_string(),
+            Loc::Lut => "lut".to_string(),
+            Loc::Lum => "lum".to_string(),
+            Loc::Dsp => "dsp".to_string(),
+            Loc::Ram => "ram".to_string(),
+            Loc::Ref(n) => format!("loc({})", n),
+        };
+        write!(f, "{}", name)
+    }
+}
+
+impl fmt::Display for Instr {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[{},{},{}]", self.op, self.ty, self.loc)
+    }
+}
+
+// impl Op {
+//     pub fn from_expr(input: &Expr) -> Op {
 //         match input {
-//             Expr::Ref(_) => DagOp::Ref,
+//             Expr::Ref(_) => Op::Ref,
 //             _ => panic!("Error: only reference conversion supported"),
 //         }
 //     }
 
-//     pub fn from_placed_op(input: &PlacedOp) -> DagOp {
+//     pub fn from_placed_op(input: &PlacedOp) -> Op {
 //         match input {
-//             PlacedOp::Reg => DagOp::Reg,
-//             PlacedOp::Add => DagOp::Add,
-//             PlacedOp::Sub => DagOp::Sub,
-//             PlacedOp::Mul => DagOp::Mul,
+//             PlacedOp::Reg => Op::Reg,
+//             PlacedOp::Add => Op::Add,
+//             PlacedOp::Sub => Op::Sub,
+//             PlacedOp::Mul => Op::Mul,
 //             _ => panic!("Error: op not supported"),
 //         }
 //     }
 
 //     pub fn to_placed_op(&self) -> PlacedOp {
 //         match self {
-//             DagOp::Reg => PlacedOp::Reg,
-//             DagOp::Add => PlacedOp::Add,
-//             DagOp::Sub => PlacedOp::Sub,
-//             DagOp::Mul => PlacedOp::Mul,
-//             _ => panic!("Error: DagOp conversion not supported"),
+//             Op::Reg => PlacedOp::Reg,
+//             Op::Add => PlacedOp::Add,
+//             Op::Sub => PlacedOp::Sub,
+//             Op::Mul => PlacedOp::Mul,
+//             _ => panic!("Error: Op conversion not supported"),
 //         }
 //     }
 // }
 
-// impl DagLoc {
-//     pub fn from_loc(input: &Loc) -> DagLoc {
+// impl Loc {
+//     pub fn from_loc(input: &Loc) -> Loc {
 //         match input {
-//             Loc::Unknown => DagLoc::Unknown,
-//             Loc::Lut => DagLoc::Lut,
-//             Loc::Lum => DagLoc::Lum,
-//             Loc::Dsp => DagLoc::Dsp,
-//             Loc::Ram => DagLoc::Ram,
-//             Loc::Ref(n) => DagLoc::Ref(n.to_string()),
+//             Loc::Unknown => Loc::Unknown,
+//             Loc::Lut => Loc::Lut,
+//             Loc::Lum => Loc::Lum,
+//             Loc::Dsp => Loc::Dsp,
+//             Loc::Ram => Loc::Ram,
+//             Loc::Ref(n) => Loc::Ref(n.to_string()),
 //         }
 //     }
 
 //     pub fn to_loc(&self) -> Loc {
 //         match self {
-//             DagLoc::Unknown => Loc::Unknown,
-//             DagLoc::Lut => Loc::Lut,
-//             DagLoc::Lum => Loc::Lum,
-//             DagLoc::Dsp => Loc::Dsp,
-//             DagLoc::Ram => Loc::Ram,
-//             DagLoc::Ref(n) => Loc::Ref(n.to_string()),
+//             Loc::Unknown => Loc::Unknown,
+//             Loc::Lut => Loc::Lut,
+//             Loc::Lum => Loc::Lum,
+//             Loc::Dsp => Loc::Dsp,
+//             Loc::Ram => Loc::Ram,
+//             Loc::Ref(n) => Loc::Ref(n.to_string()),
 //             _ => panic!("Error: Loc conversion not supported"),
 //         }
 //     }
