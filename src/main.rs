@@ -24,7 +24,7 @@ fn main() {
         "\n\nNext goal is to produce the following asm:\n{}\n\n",
         next_goal
     );
-    let td = ultrascale::target_descriptor();
+    let td = ultrascale::target();
     for (instr, cost) in td.cost_map.iter() {
         println!("{} -> {}", instr, cost);
     }

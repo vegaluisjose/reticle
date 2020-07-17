@@ -1,4 +1,4 @@
-use crate::backend::descriptor::Target;
+use crate::backend::target::Target;
 use std::str::FromStr;
 
 fn spec() -> String {
@@ -14,6 +14,6 @@ fn spec() -> String {
   json.to_string()
 }
 
-pub fn target_descriptor() -> Target {
+pub fn target() -> Target {
     Target::from_str(&spec()).unwrap()
 }

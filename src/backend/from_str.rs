@@ -1,4 +1,4 @@
-use crate::backend::descriptor::Target;
+use crate::backend::target::Target;
 use serde_json;
 use std::str::FromStr;
 
