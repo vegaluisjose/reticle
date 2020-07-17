@@ -31,18 +31,6 @@ pub enum Loc {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum StdOp {
     Identity,
-    ScalarConst,
-    ScalarFromVec,
-    ScalarSlice,
-    ScalarExtract,
-    ScalarCat,
-    ScalarTruncate,
-    ScalarExtend,
-    VecConst,
-    VecSlice,
-    VecExtract,
-    VecCat,
-    VecFromScalar,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

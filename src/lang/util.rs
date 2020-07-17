@@ -148,7 +148,7 @@ impl Instr {
 }
 
 impl Def {
-    pub fn new_comp(name: &str) -> Def {
+    pub fn new(name: &str) -> Def {
         Def {
             name: name.to_string(),
             inputs: Vec::new(),
