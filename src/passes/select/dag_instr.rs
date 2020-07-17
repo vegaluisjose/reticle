@@ -89,9 +89,9 @@ impl DagLoc {
 impl DagInstr {
     pub fn new(op: DagOp, ty: DagTy, loc: DagLoc) -> DagInstr {
         DagInstr {
-            loc: loc,
-            ty: ty,
             op: op,
+            ty: ty,
+            loc: loc,
         }
     }
 }

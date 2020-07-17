@@ -1,4 +1,4 @@
-// use crate::passes::select::dag_instr::*;
+use crate::passes::select::dag_instr::*;
 use crate::passes::select::pattern::*;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;
@@ -7,29 +7,73 @@ use std::str::FromStr;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
-pub enum SerialExpr {
+pub enum TargetExpr {
     Input(String, String),
-    BinOp(String, Rc<SerialExpr>, Rc<SerialExpr>),
+    BinOp(String, Rc<TargetExpr>, Rc<TargetExpr>),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct SerialInstr {
+pub struct TargetInstr {
     pub name: String,
-    pub cost: i32,
+    pub cost: u32,
     pub loc: String,
     pub ty: String,
     pub output: String,
-    pub expr: SerialExpr,
+    pub expr: TargetExpr,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct SerialTarget {
-    pub instr: Vec<SerialInstr>,
+pub struct TargetDef {
+    pub instr: Vec<TargetInstr>,
 }
 
 #[derive(Clone, Debug)]
 pub struct Target {
     pub patterns: Vec<Pattern>,
+}
+
+impl TargetExpr {
+    pub fn to_vec_dag_instr(&self, instr: &mut Vec<DagInstr>, op_ty: DagTy, op_loc: DagLoc) {
+        match self {
+            TargetExpr::Input(_, loc) => {
+                let op = DagOp::Inp;
+                let inp_loc = DagLoc::from_str(loc).unwrap();
+                instr.push(DagInstr::new(op, op_ty.clone(), inp_loc));
+            }
+            TargetExpr::BinOp(op, lhs, rhs) => {
+                let op = DagOp::from_str(op).unwrap();
+                instr.push(DagInstr::new(op, op_ty.clone(), op_loc.clone()));
+                lhs.to_vec_dag_instr(instr, op_ty.clone(), op_loc.clone());
+                rhs.to_vec_dag_instr(instr, op_ty.clone(), op_loc.clone());
+            }
+        }
+    }
+}
+
+impl TargetInstr {
+    fn to_pattern(&self) -> Pattern {
+        let ty = DagTy::from_str(&self.ty).unwrap();
+        let loc = DagLoc::from_str(&self.loc).unwrap();
+        let mut instr: Vec<DagInstr> = Vec::new();
+        self.expr.to_vec_dag_instr(&mut instr, ty, loc);
+        Pattern {
+            name: self.name.to_string(),
+            cost: self.cost.clone(),
+            instr: instr.to_vec(),
+        }
+    }
+}
+
+impl Target {
+    pub fn from_serial(input: TargetDef) -> Target {
+        let mut patterns: Vec<Pattern> = Vec::new();
+        for instr in input.instr.iter() {
+            patterns.push(instr.to_pattern());
+        }
+        Target {
+            patterns: patterns.to_vec(),
+        }
+    }
 }
 
 impl FromStr for Target {
@@ -38,52 +82,5 @@ impl FromStr for Target {
         Ok(Target::from_serial(
             serde_json::from_str(input).expect("Error: parsing json"),
         ))
-    }
-}
-
-// impl Dexp {
-//     pub fn from_serial(input: SerialExpr) -> Dexp {
-//         match input {
-//             SerialExpr::Op(op) => Dexp::Op(PlacedOp::from_str(&op).unwrap()),
-//             SerialExpr::Ref(id, loc) => Dexp::Ref(id.to_string(), Loc::from_str(&loc).unwrap()),
-//             SerialExpr::BinOp(op, left, right) => {
-//                 let o = &*op;
-//                 let l = &*left;
-//                 let r = &*right;
-//                 Dexp::BinOp(
-//                     Rc::new(Dexp::from_serial(o.clone())),
-//                     Rc::new(Dexp::from_serial(l.clone())),
-//                     Rc::new(Dexp::from_serial(r.clone())),
-//                 )
-//             }
-//         }
-//     }
-// }
-
-impl Target {
-    pub fn from_serial(input: SerialTarget) -> Target {
-        let patterns: Vec<Pattern> = Vec::new();
-        // for i in input.instr.iter() {
-        //     match &i.expr {
-        //         // SerialExpr::Op(op) => {
-        //             // let op = DagOp::from_placed_op(&PlacedOp::from_str(&op).unwrap());
-        //             // let loc = DagLoc::from_loc(&Loc::from_str(&i.loc).unwrap());
-        //             // let ty = DagTy::from_str(&i.ty).unwrap();
-        //             // let instr = DagInstr::new(op, ty, loc);
-        //             // if cost_map.contains_key(&instr) {
-        //             //     panic!("Error: found a duplicate instr {}");
-        //             // } else {
-        //             //     cost_map.insert(instr.clone(), i.cost.clone());
-        //             // }
-        //         // },
-        //         SerialExpr::BinOp(op, lhs, rhs) => {
-        //             // patterns.push(Pattern{name: i.name.to_string(), instr: vec![], cost: i.cost.clone()})
-        //         },
-        //         _ => panic!("Error: reference expression alone does not represent a pattern"),
-        //     }
-        // }
-        Target {
-            patterns: patterns.to_vec(),
-        }
     }
 }

@@ -3,16 +3,16 @@ use crate::passes::select::dag_instr::*;
 #[derive(Clone, Debug)]
 pub struct Pattern {
     pub name: String,
-    pub instr: Vec<DagInstr>,
     pub cost: u32,
+    pub instr: Vec<DagInstr>,
 }
 
 impl Pattern {
     pub fn new_with_cost(name: &str, cost: u32) -> Pattern {
         Pattern {
             name: name.to_string(),
-            instr: Vec::new(),
             cost: cost.clone(),
+            instr: Vec::new(),
         }
     }
 
