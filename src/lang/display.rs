@@ -2,7 +2,7 @@ use crate::lang::ast::*;
 use crate::util::pretty_print::PrettyPrint;
 use std::fmt;
 
-impl fmt::Display for DataType {
+impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }

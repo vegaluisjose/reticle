@@ -2,13 +2,13 @@ use crate::lang::ast::*;
 use crate::util::pretty_print::{PrettyPrint, PRETTY_INDENT};
 use pretty::RcDoc;
 
-impl PrettyPrint for DataType {
+impl PrettyPrint for Ty {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            DataType::Bool => RcDoc::text("bool"),
-            DataType::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
-            DataType::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),
-            DataType::Vector(dtype, len) => dtype
+            Ty::Bool => RcDoc::text("bool"),
+            Ty::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
+            Ty::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),
+            Ty::Vector(dtype, len) => dtype
                 .to_doc()
                 .append(RcDoc::text("<"))
                 .append(RcDoc::as_string(len))
@@ -36,9 +36,7 @@ impl PrettyPrint for Loc {
 impl PrettyPrint for Expr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Expr::ULit(n) => RcDoc::as_string(n),
-            Expr::SLit(n) => RcDoc::as_string(n),
-            Expr::Ref(n) => RcDoc::as_string(n),
+            Expr::Ref(n, _) => RcDoc::as_string(n),
         }
     }
 }

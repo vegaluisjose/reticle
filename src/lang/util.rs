@@ -9,7 +9,7 @@ impl Port {
         }
     }
 
-    pub fn ty(&self) -> &DataType {
+    pub fn ty(&self) -> &Ty {
         match self {
             Port::Input { id: _, ty } => ty,
             Port::Output { id: _, ty } => ty,
@@ -20,20 +20,26 @@ impl Port {
 impl Expr {
     pub fn id(&self) -> Id {
         match self {
-            Expr::Ref(name) => name.to_string(),
-            _ => panic!("Error: expr is not Ref"),
+            Expr::Ref(n, _) => n.to_string(),
+        }
+    }
+
+    pub fn ty(&self) -> &Ty {
+        match self {
+            Expr::Ref(_, ty) => ty,
         }
     }
 }
 
 impl Instr {
     pub fn new_with_args(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str, loc: &str) -> Instr {
+        let ty = Ty::from_str(ty).unwrap();
         Instr::Placed {
             id: dst.to_string(),
-            ty: DataType::from_str(ty).unwrap(),
+            ty: ty.clone(),
             op: PlacedOp::from_str(op).unwrap(),
             attrs: vec![],
-            params: vec![Expr::Ref(lhs.to_string()), Expr::Ref(rhs.to_string())],
+            params: vec![Expr::Ref(lhs.to_string(), ty.clone()), Expr::Ref(rhs.to_string(), ty.clone())],
             loc: Loc::from_str(loc).unwrap(),
         }
     }
@@ -58,7 +64,7 @@ impl Instr {
         }
     }
 
-    pub fn ty(&self) -> &DataType {
+    pub fn ty(&self) -> &Ty {
         match self {
             Instr::Std {
                 id:_,
@@ -169,7 +175,7 @@ impl Sig {
     }
 
     pub fn add_input(&mut self, name: &str, ty: &str) {
-        let ty = DataType::from_str(ty).unwrap();
+        let ty = Ty::from_str(ty).unwrap();
         let port = Port::Input {
             id: name.to_string(),
             ty: ty,
@@ -178,7 +184,7 @@ impl Sig {
     }
 
     pub fn add_output(&mut self, name: &str, ty: &str) {
-        let ty = DataType::from_str(ty).unwrap();
+        let ty = Ty::from_str(ty).unwrap();
         let port = Port::Output {
             id: name.to_string(),
             ty: ty,

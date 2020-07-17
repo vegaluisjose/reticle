@@ -3,7 +3,7 @@ use regex::Regex;
 use std::rc::Rc;
 use std::str::FromStr;
 
-impl FromStr for DataType {
+impl FromStr for Ty {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let re_bool = Regex::new(r"bool$").unwrap();
@@ -11,23 +11,23 @@ impl FromStr for DataType {
         let re_sint = Regex::new(r"^i([[:alnum:]]+)$").unwrap();
         let re_uvec = Regex::new(r"^u([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
         let re_svec = Regex::new(r"^i([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
-        let mut dtype = Err(());
+        let mut ty = Err(());
         let caps;
         if re_bool.is_match(input) {
-            dtype = Ok(DataType::Bool);
+            ty = Ok(Ty::Bool);
         } else if re_uint.is_match(input) {
             caps = re_uint.captures(input).unwrap();
             if let Some(w) = caps.get(1) {
                 let width = w.as_str().parse::<u64>().unwrap();
                 assert!(width > 0, "Error: width must be greater than zero");
-                dtype = Ok(DataType::UInt(width));
+                ty = Ok(Ty::UInt(width));
             }
         } else if re_sint.is_match(input) {
             caps = re_sint.captures(input).unwrap();
             if let Some(w) = caps.get(1) {
                 let width = w.as_str().parse::<u64>().unwrap();
                 assert!(width > 1, "Error: width must be greater than one");
-                dtype = Ok(DataType::SInt(width));
+                ty = Ok(Ty::SInt(width));
             }
         } else if re_uvec.is_match(input) {
             caps = re_uvec.captures(input).unwrap();
@@ -37,7 +37,7 @@ impl FromStr for DataType {
                     let len = l.as_str().parse::<u64>().unwrap();
                     assert!(width > 0, "Error: width must be greater than zero");
                     assert!(len > 0, "Error: length must be greater than zero");
-                    dtype = Ok(DataType::Vector(Rc::new(DataType::UInt(width)), len));
+                    ty = Ok(Ty::Vector(Rc::new(Ty::UInt(width)), len));
                 }
             }
         } else if re_svec.is_match(input) {
@@ -48,11 +48,11 @@ impl FromStr for DataType {
                     let len = l.as_str().parse::<u64>().unwrap();
                     assert!(width > 1, "Error: width must be greater than one");
                     assert!(len > 0, "Error: length must be greater than zero");
-                    dtype = Ok(DataType::Vector(Rc::new(DataType::SInt(width)), len));
+                    ty = Ok(Ty::Vector(Rc::new(Ty::SInt(width)), len));
                 }
             }
         }
-        dtype
+        ty
     }
 }
 

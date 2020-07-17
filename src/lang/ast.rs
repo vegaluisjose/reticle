@@ -4,18 +4,16 @@ use std::rc::Rc;
 pub type Id = String;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DataType {
+pub enum Ty {
     Bool,
     UInt(u64),
     SInt(u64),
-    Vector(Rc<DataType>, u64),
+    Vector(Rc<Ty>, u64),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Expr {
-    Ref(Id),
-    ULit(u64),
-    SLit(i64),
+    Ref(Id, Ty),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -57,22 +55,22 @@ pub enum PlacedOp {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Port {
-    Input { id: Id, ty: DataType },
-    Output { id: Id, ty: DataType },
+    Input { id: Id, ty: Ty },
+    Output { id: Id, ty: Ty },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Instr {
     Std {
         id: Id,
-        ty: DataType,
+        ty: Ty,
         op: StdOp,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
     },
     Placed {
         id: Id,
-        ty: DataType,
+        ty: Ty,
         op: PlacedOp,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
