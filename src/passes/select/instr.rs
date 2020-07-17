@@ -77,6 +77,13 @@ impl Instr {
             loc: loc,
         }
     }
+
+    pub fn from_ast_expr(expr: &ast::Expr) -> Instr {
+        let op = Op::Inp;
+        let ty = expr.ty().clone();
+        let loc = Loc::Var;
+        Instr::new(op, ty, loc)
+    }
 }
 
 impl Pattern {
