@@ -3,6 +3,7 @@ use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use std::fmt;
+use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 pub struct SDNode {
@@ -15,10 +16,15 @@ pub struct SDEdge;
 
 type SDGraph = Graph<SDNode, SDEdge>;
 type SDNodeIx = NodeIndex;
+type SDVarId = String;
+type SDFuncId = String;
+type SDFuncCtx = HashMap<SDVarId, SDNodeIx>;
+type SDProgCtx = HashMap<SDFuncId, SDFuncCtx>;
 
 #[derive(Clone, Debug)]
 pub struct SDag {
     pub graph: SDGraph,
+    pub ctx: SDProgCtx,
 }
 
 impl SDNode {
@@ -40,6 +46,7 @@ impl SDag {
     pub fn new() -> SDag {
         SDag {
             graph: SDGraph::new(),
+            ctx: SDProgCtx::new(),
         }
     }
 }
