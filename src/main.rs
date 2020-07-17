@@ -25,9 +25,6 @@ fn main() {
         next_goal
     );
     let td = ultrascale::target();
-    for (instr, cost) in td.cost_map.iter() {
-        println!("{} -> {}", instr, cost);
-    }
     println!("patterns");
     for p in td.patterns.iter() {
         println!("name:{} cost:{}", p.name, p.cost);

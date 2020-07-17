@@ -1,4 +1,5 @@
 use crate::lang::ast::{DataType, Expr, Id, Loc, PlacedOp};
+use std::str::FromStr;
 
 pub type DagTy = DataType;
 
@@ -6,6 +7,7 @@ pub type DagTy = DataType;
 pub enum DagOp {
     Any,
     Ref,
+    Inp,
     Reg,
     Add,
     Sub,
@@ -90,6 +92,36 @@ impl DagInstr {
             loc: loc,
             ty: ty,
             op: op,
+        }
+    }
+}
+
+impl FromStr for DagOp {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input.as_ref() {
+            "any" => Ok(DagOp::Any),
+            "ref" => Ok(DagOp::Ref),
+            "reg" => Ok(DagOp::Reg),
+            "add" => Ok(DagOp::Add),
+            "sub" => Ok(DagOp::Sub),
+            "mul" => Ok(DagOp::Mul),
+            _ => panic!("Error: FromStr to Loc conversion"),
+        }
+    }
+}
+
+impl FromStr for DagLoc {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input.as_ref() {
+            "any" => Ok(DagLoc::Any),
+            "??" => Ok(DagLoc::Unknown),
+            "lut" => Ok(DagLoc::Lut),
+            "lum" => Ok(DagLoc::Lum),
+            "dsp" => Ok(DagLoc::Dsp),
+            "ram" => Ok(DagLoc::Ram),
+            _ => panic!("Error: FromStr to Loc conversion"),
         }
     }
 }

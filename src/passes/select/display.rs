@@ -8,6 +8,7 @@ impl fmt::Display for DagOp {
         let name = match self {
             DagOp::Any => "any",
             DagOp::Ref => "ref",
+            DagOp::Inp => "inp",
             DagOp::Reg => "reg",
             DagOp::Add => "add",
             DagOp::Sub => "sub",
@@ -34,7 +35,7 @@ impl fmt::Display for DagLoc {
 
 impl fmt::Display for DagInstr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}<{}> @{}", self.op, self.ty, self.loc)
+        write!(f, "[{},{},{}]", self.op, self.ty, self.loc)
     }
 }
 
