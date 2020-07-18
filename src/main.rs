@@ -9,10 +9,10 @@ fn sample_prog() -> Prog {
     def.add_input("b", "i8");
     def.add_input("c", "i8");
     def.add_input("en", "bool");
-    def.add_output("z", "i8");
-    def.add_instr(Instr::new_with_args("x", "i8", "mul", "a", "b", "??"));
-    def.add_instr(Instr::new_with_args("y", "i8", "reg", "x", "en", "??"));
-    def.add_instr(Instr::new_with_args("z", "i8", "add", "y", "c", "??"));
+    def.add_output("y", "i8");
+    def.add_instr(Instr::new_with_args("t0", "i8", "mul", "a", "b", "??"));
+    def.add_instr(Instr::new_with_args("t1", "i8", "reg", "t0", "en", "??"));
+    def.add_instr(Instr::new_with_args("y", "i8", "add", "t1", "c", "??"));
     let mut prog = Prog::new();
     prog.add_def(def);
     println!("Original program:\n{}", &prog);
