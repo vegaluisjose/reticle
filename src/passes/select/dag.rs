@@ -16,15 +16,13 @@ pub struct SDEdge;
 
 type SDGraph = Graph<SDNode, SDEdge>;
 type SDNodeIx = NodeIndex;
-type SDVarId = String;
-type SDFuncId = String;
-type SDFuncCtx = HashMap<SDVarId, SDNodeIx>;
-type SDProgCtx = HashMap<SDFuncId, SDFuncCtx>;
+type SDId = String;
+type SDCtx = HashMap<SDId, SDNodeIx>;
 
 #[derive(Clone, Debug)]
 pub struct SDag {
     pub graph: SDGraph,
-    pub ctx: SDProgCtx,
+    pub ctx: SDCtx,
 }
 
 impl SDNode {
@@ -46,7 +44,22 @@ impl SDag {
     pub fn new() -> SDag {
         SDag {
             graph: SDGraph::new(),
-            ctx: SDProgCtx::new(),
+            ctx: SDCtx::new(),
+        }
+    }
+
+    pub fn add_sdnode(&mut self, name: &str, instr: Instr) {
+        let ix = self.graph.add_node(SDNode::new(name, instr));
+        self.ctx.insert(name.to_string(), ix);
+    }
+
+    pub fn add_sdedge(&mut self, from: &str, to: &str) {
+        if let Some(from_ix) = self.ctx.get(from) {
+            if let Some(to_ix) = self.ctx.get(to) {
+                if let None = self.graph.find_edge(*from_ix, *to_ix) {
+                    self.graph.add_edge(*from_ix, *to_ix, SDEdge::new());
+                }
+            }
         }
     }
 }
