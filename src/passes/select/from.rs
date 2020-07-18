@@ -4,10 +4,13 @@ use crate::passes::select::dag::*;
 use crate::passes::select::instr::*;
 use std::convert::From;
 
+// Once we support partitioning, then
+// this function will likely change because
+// inputs can come from either lut or dsp
 fn create_instr_from_expr(expr: &ast::Expr) -> Instr {
     let op = Op::In;
     let ty = expr.ty().clone();
-    let loc = Loc::Var;
+    let loc = Loc::Lut;
     Instr::new(op, ty, loc)
 }
 
