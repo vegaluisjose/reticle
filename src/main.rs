@@ -1,6 +1,7 @@
 use reticle::backend::ultrascale;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::dag::SDag;
+use reticle::passes::select::block::BasicBlock;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");
@@ -14,12 +15,11 @@ fn sample_prog() -> Prog {
     def.add_instr(Instr::new_with_args("z", "i8", "add", "y", "c", "??"));
     let mut prog = Prog::new();
     prog.add_def(def);
+    println!("Original program:\n{}", &prog);
     prog
 }
 
-fn main() {
-    let prog = sample_prog();
-    println!("Original program:\n{}", prog);
+fn target_info() {
     let target = ultrascale::target();
     println!("ultrascale patterns\n");
     for p in target.patterns.iter() {
@@ -28,5 +28,16 @@ fn main() {
             println!("    instr:{}", i);
         }
     }
-    let dag = SDag::from(prog.clone());
+}
+
+fn create_dag_from_prog(prog: &Prog) {
+    let block = BasicBlock::from(prog.defs[0].clone());
+    let sdag = SDag::from(block);
+    println!("{:?}", sdag);
+}
+
+fn main() {
+    let prog = sample_prog();
+    target_info();
+    create_dag_from_prog(&prog);
 }
