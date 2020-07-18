@@ -91,7 +91,7 @@ impl From<BasicBlock> for SDag {
                     sdag.add_sdedge(&instr.id(), &lhs.id());
                     sdag.add_sdedge(&instr.id(), &rhs.id());
                 }
-                _ => panic!("Error: only 1, 2, and 3 params op supported"),
+                _ => panic!("Error: only 2 params op supported atm"),
             }
         }
         sdag
