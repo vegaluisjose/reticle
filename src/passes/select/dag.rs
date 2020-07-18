@@ -62,6 +62,10 @@ impl SDag {
             }
         }
     }
+
+    pub fn contains_sdnode(&self, name: &str) -> bool {
+        self.ctx.contains_key(name)
+    }
 }
 
 impl fmt::Display for SDNode {

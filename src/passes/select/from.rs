@@ -4,7 +4,7 @@ use crate::passes::select::dag::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::block::*;
 
-fn create_input_from_expr(expr: &ast::Expr) -> Instr {
+fn create_instr_from_expr(expr: &ast::Expr) -> Instr {
     let op = Op::In;
     let ty = expr.ty().clone();
     let loc = Loc::Var;
@@ -71,9 +71,27 @@ impl From<ast::Def> for BasicBlock {
 
 impl From<BasicBlock> for SDag {
     fn from(block: BasicBlock) -> Self {
-        let sdag = SDag::new();
+        let mut sdag = SDag::new();
         for instr in block.body().iter() {
-            println!("{}", instr);
+            match instr.params().len() {
+                2 => { // binary op i.e. add
+                    let params = instr.params();
+                    let lhs = &params[0];
+                    let rhs = &params[1];
+                    if !sdag.contains_sdnode(&lhs.id()) {
+                        sdag.add_sdnode(&lhs.id(), create_instr_from_expr(&lhs));
+                    }
+                    if !sdag.contains_sdnode(&rhs.id()) {
+                        sdag.add_sdnode(&rhs.id(), create_instr_from_expr(&rhs));
+                    }
+                    if !sdag.contains_sdnode(&instr.id()) {
+                        sdag.add_sdnode(&instr.id(), create_instr_from_instr(instr));
+                    }
+                    sdag.add_sdedge(&instr.id(), &lhs.id());
+                    sdag.add_sdedge(&instr.id(), &rhs.id());
+                }
+                _ => panic!("Error: only 1, 2, and 3 params op supported"),
+            }
         }
         sdag
     }

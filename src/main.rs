@@ -33,7 +33,7 @@ fn target_info() {
 fn create_dag_from_prog(prog: &Prog) {
     let block = BasicBlock::from(prog.defs[0].clone());
     let sdag = SDag::from(block);
-    println!("{:?}", sdag);
+    println!("{}", sdag);
 }
 
 fn main() {
