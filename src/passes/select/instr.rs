@@ -13,6 +13,20 @@ pub enum Op {
     Add,
     Sub,
     Mul,
+    Not,
+    And,
+    Nand,
+    Or,
+    Nor,
+    Xor,
+    Xnor,
+    Mux,
+    Equal,
+    Nequal,
+    Gt,
+    Lt,
+    Ge,
+    Le,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -45,10 +59,25 @@ impl FromStr for Op {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input.as_ref() {
             "any" => Ok(Op::Any),
+            "inp" => Ok(Op::Inp),
             "reg" => Ok(Op::Reg),
             "add" => Ok(Op::Add),
             "sub" => Ok(Op::Sub),
             "mul" => Ok(Op::Mul),
+            "not" => Ok(Op::Not),
+            "and" => Ok(Op::And),
+            "nand" => Ok(Op::Nand),
+            "or" => Ok(Op::Or),
+            "nor" => Ok(Op::Nor),
+            "xor" => Ok(Op::Xor),
+            "xnor" => Ok(Op::Xnor),
+            "mux" => Ok(Op::Mux),
+            "eq" => Ok(Op::Equal),
+            "neq" => Ok(Op::Nequal),
+            "gt" => Ok(Op::Gt),
+            "lt" => Ok(Op::Lt),
+            "ge" => Ok(Op::Ge),
+            "le" => Ok(Op::Le),
             _ => panic!("Error: FromStr to Op conversion"),
         }
     }
@@ -77,13 +106,6 @@ impl Instr {
             loc: loc,
         }
     }
-
-    pub fn from_ast_expr(expr: &ast::Expr) -> Instr {
-        let op = Op::Inp;
-        let ty = expr.ty().clone();
-        let loc = Loc::Var;
-        Instr::new(op, ty, loc)
-    }
 }
 
 impl Pattern {
@@ -109,6 +131,20 @@ impl fmt::Display for Op {
             Op::Add => "add",
             Op::Sub => "sub",
             Op::Mul => "mul",
+            Op::Not => "not",
+            Op::And => "and",
+            Op::Nand => "nand",
+            Op::Or => "or",
+            Op::Nor => "nor",
+            Op::Xor => "xor",
+            Op::Xnor => "xnor",
+            Op::Mux => "mux",
+            Op::Equal => "eq",
+            Op::Nequal => "neq",
+            Op::Gt => "gt",
+            Op::Lt => "lt",
+            Op::Ge => "ge",
+            Op::Le => "le",
         };
         write!(f, "{}", name)
     }
