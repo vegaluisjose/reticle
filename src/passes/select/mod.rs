@@ -1,4 +1,4 @@
-pub mod dag;
-pub mod instr;
-pub mod from;
 pub mod block;
+pub mod dag;
+pub mod from;
+pub mod instr;

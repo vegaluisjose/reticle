@@ -6,9 +6,7 @@ pub struct BasicBlock {
 
 impl BasicBlock {
     pub fn new() -> BasicBlock {
-        BasicBlock {
-            body: Vec::new(),
-        }
+        BasicBlock { body: Vec::new() }
     }
 
     pub fn add_instr(&mut self, instr: &ast::Instr) {

@@ -2,8 +2,8 @@ use crate::passes::select::instr::*;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
-use std::fmt;
 use std::collections::HashMap;
+use std::fmt;
 
 #[derive(Clone, Debug)]
 pub struct SDNode {

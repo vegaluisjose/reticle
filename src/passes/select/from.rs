@@ -1,8 +1,8 @@
-use std::convert::From;
 use crate::lang::ast;
+use crate::passes::select::block::*;
 use crate::passes::select::dag::*;
 use crate::passes::select::instr::*;
-use crate::passes::select::block::*;
+use std::convert::From;
 
 fn create_instr_from_expr(expr: &ast::Expr) -> Instr {
     let op = Op::In;
@@ -74,7 +74,8 @@ impl From<BasicBlock> for SDag {
         let mut sdag = SDag::new();
         for instr in block.body().iter() {
             match instr.params().len() {
-                2 => { // binary op i.e. add
+                2 => {
+                    // binary op i.e. add
                     let params = instr.params();
                     let lhs = &params[0];
                     let rhs = &params[1];
