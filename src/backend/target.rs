@@ -40,7 +40,7 @@ impl Expr {
     ) {
         match self {
             Expr::Input(_, loc) => {
-                let op = instr::Op::Inp;
+                let op = instr::Op::In;
                 let inp_loc = instr::Loc::from_str(loc).unwrap();
                 instr.push(instr::Instr::new(op, op_ty.clone(), inp_loc));
             }

@@ -4,7 +4,7 @@ use crate::passes::select::dag::*;
 use crate::passes::select::instr::*;
 
 fn create_input_from_expr(expr: &ast::Expr) -> Instr {
-    let op = Op::Inp;
+    let op = Op::In;
     let ty = expr.ty().clone();
     let loc = Loc::Var;
     Instr::new(op, ty, loc)

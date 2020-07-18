@@ -8,7 +8,7 @@ pub type Ty = ast::Ty;
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Op {
     Any,
-    Inp,
+    In,
     Reg,
     Add,
     Sub,
@@ -59,7 +59,7 @@ impl FromStr for Op {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input.as_ref() {
             "any" => Ok(Op::Any),
-            "inp" => Ok(Op::Inp),
+            "inp" => Ok(Op::In),
             "reg" => Ok(Op::Reg),
             "add" => Ok(Op::Add),
             "sub" => Ok(Op::Sub),
@@ -126,7 +126,7 @@ impl fmt::Display for Op {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
             Op::Any => "any",
-            Op::Inp => "inp",
+            Op::In => "in",
             Op::Reg => "reg",
             Op::Add => "add",
             Op::Sub => "sub",
