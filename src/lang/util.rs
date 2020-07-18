@@ -159,14 +159,14 @@ impl Instr {
 impl Sig {
     pub fn new(name: &str) -> Sig {
         Sig {
-            name: name.to_string(),
+            id: name.to_string(),
             inputs: Vec::new(),
             outputs: Vec::new(),
         }
     }
 
-    pub fn name(&self) -> String {
-        self.name.to_string()
+    pub fn id(&self) -> String {
+        self.id.to_string()
     }
 
     pub fn inputs(&self) -> &Vec<Port> {
@@ -215,8 +215,8 @@ impl Def {
         &self.body
     }
 
-    pub fn name(&self) -> String {
-        self.sig.name()
+    pub fn id(&self) -> String {
+        self.sig.id()
     }
 
     pub fn inputs(&self) -> &Vec<Port> {
@@ -247,5 +247,9 @@ impl Prog {
 
     pub fn add_def(&mut self, def: Def) {
         self.defs.push(def);
+    }
+
+    pub fn defs(&self) -> &Vec<Def> {
+        &self.defs
     }
 }

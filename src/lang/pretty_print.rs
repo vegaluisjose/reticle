@@ -25,10 +25,6 @@ impl PrettyPrint for Loc {
             Loc::Lum => RcDoc::text("lum"),
             Loc::Dsp => RcDoc::text("dsp"),
             Loc::Ram => RcDoc::text("ram"),
-            Loc::Ref(n) => RcDoc::text("loc")
-                .append(RcDoc::text("("))
-                .append(RcDoc::as_string(n))
-                .append(RcDoc::text(")")),
         }
     }
 }
@@ -128,11 +124,11 @@ impl PrettyPrint for Port {
 impl PrettyPrint for Def {
     fn to_doc(&self) -> RcDoc<()> {
         let inputs_doc = RcDoc::intersperse(
-            self.inputs().iter().map(|i| i.to_doc()),
+            self.sig.inputs().iter().map(|i| i.to_doc()),
             RcDoc::text(",").append(RcDoc::space()),
         );
         let outputs_doc = RcDoc::intersperse(
-            self.outputs().iter().map(|o| o.to_doc()),
+            self.sig.outputs().iter().map(|o| o.to_doc()),
             RcDoc::text(",").append(RcDoc::space()),
         );
         let mut body_doc = RcDoc::nil();
@@ -145,7 +141,7 @@ impl PrettyPrint for Def {
         body_doc = body_doc.nest(PRETTY_INDENT).group();
         RcDoc::text("def")
             .append(RcDoc::space())
-            .append(RcDoc::as_string(self.name()))
+            .append(RcDoc::as_string(self.id()))
             .append(RcDoc::text("("))
             .append(inputs_doc)
             .append(RcDoc::text(")"))
@@ -166,7 +162,7 @@ impl PrettyPrint for Def {
 impl PrettyPrint for Prog {
     fn to_doc(&self) -> RcDoc<()> {
         let mut defs_doc = RcDoc::nil();
-        for d in self.defs.iter() {
+        for d in self.defs().iter() {
             defs_doc = defs_doc.append(d.to_doc());
         }
         defs_doc

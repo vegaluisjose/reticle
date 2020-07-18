@@ -37,7 +37,6 @@ pub enum Loc {
     Lum,
     Dsp,
     Ram,
-    Ref(Id),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -153,13 +152,12 @@ impl fmt::Display for Op {
 impl fmt::Display for Loc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
-            Loc::Any => "any".to_string(),
-            Loc::Var => "??".to_string(),
-            Loc::Lut => "lut".to_string(),
-            Loc::Lum => "lum".to_string(),
-            Loc::Dsp => "dsp".to_string(),
-            Loc::Ram => "ram".to_string(),
-            Loc::Ref(n) => format!("loc({})", n),
+            Loc::Any => "any",
+            Loc::Var => "??",
+            Loc::Lut => "lut",
+            Loc::Lum => "lum",
+            Loc::Dsp => "dsp",
+            Loc::Ram => "ram",
         };
         write!(f, "{}", name)
     }

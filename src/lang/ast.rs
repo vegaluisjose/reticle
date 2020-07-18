@@ -23,7 +23,6 @@ pub enum Loc {
     Dsp,
     Lum,
     Ram,
-    Ref(Id),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -80,7 +79,7 @@ pub enum Instr {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Sig {
-    pub name: Id,
+    pub id: Id,
     pub inputs: Vec<Port>,
     pub outputs: Vec<Port>,
 }

@@ -11,6 +11,13 @@ fn create_input_from_expr(expr: &ast::Expr) -> Instr {
     Instr::new(op, ty, loc)
 }
 
+fn create_instr_from_instr(instr: &ast::Instr) -> Instr {
+    let op = Op::from(instr.placed_op().clone());
+    let ty = instr.ty().clone();
+    let loc = Loc::from(instr.loc().clone());
+    Instr::new(op, ty, loc)
+}
+
 impl From<ast::PlacedOp> for Op {
     fn from(placed_op: ast::PlacedOp) -> Self {
         match placed_op {
@@ -36,6 +43,18 @@ impl From<ast::PlacedOp> for Op {
     }
 }
 
+impl From<ast::Loc> for Loc {
+    fn from(loc: ast::Loc) -> Self {
+        match loc {
+            ast::Loc::Var => Loc::Var,
+            ast::Loc::Lut => Loc::Lut,
+            ast::Loc::Dsp => Loc::Dsp,
+            ast::Loc::Lum => Loc::Lum,
+            ast::Loc::Ram => Loc::Ram,
+        }
+    }
+}
+
 // for now, a block consist of all the instr
 // in the body and there is no partitioning
 // yet. Likely, this is going to change very
@@ -43,7 +62,7 @@ impl From<ast::PlacedOp> for Op {
 impl From<ast::Def> for BasicBlock {
     fn from(def: ast::Def) -> Self {
         let mut block = BasicBlock::new();
-        for instr in def.body.iter() {
+        for instr in def.body().iter() {
             block.add_instr(instr);
         }
         block
@@ -59,10 +78,3 @@ impl From<BasicBlock> for SDag {
         sdag
     }
 }
-
-// impl From<ast::Prog> for SDag {
-//     fn from(prog: ast::Prog) -> Self {
-//         assert!(prog.defs.len() == 1, "Error: only single definition allowed atm");
-//         SDag::from(prog.defs[0].clone())
-//     }
-// }
