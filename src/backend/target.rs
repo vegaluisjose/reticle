@@ -68,10 +68,10 @@ impl Instr {
     }
 }
 
-impl Target {
-    pub fn from_serial(input: Def) -> Target {
+impl From<Def> for Target {
+    fn from(def: Def) -> Self {
         let mut patterns: Vec<instr::Pattern> = Vec::new();
-        for instr in input.instr.iter() {
+        for instr in def.instr.iter() {
             patterns.push(instr.to_pattern());
         }
         Target {
@@ -83,8 +83,7 @@ impl Target {
 impl FromStr for Target {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        Ok(Target::from_serial(
-            serde_json::from_str(input).expect("Error: parsing json"),
-        ))
+        let def: Def = serde_json::from_str(input).expect("Error: parsing json");
+        Ok(Target::from(def))
     }
 }
