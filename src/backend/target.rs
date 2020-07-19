@@ -1,5 +1,5 @@
-use crate::passes::select::instr as sel;
 use crate::backend::asm;
+use crate::passes::select::instr as sel;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::rc::Rc;
@@ -39,12 +39,7 @@ pub struct Target {
 }
 
 impl Expr {
-    pub fn to_instr_mut(
-        &self,
-        instr: &mut Vec<sel::Instr>,
-        op_ty: sel::Ty,
-        op_loc: sel::Loc,
-    ) {
+    pub fn to_instr_mut(&self, instr: &mut Vec<sel::Instr>, op_ty: sel::Ty, op_loc: sel::Loc) {
         match self {
             Expr::Input(ty, loc) => {
                 let op = sel::Op::In;

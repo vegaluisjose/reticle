@@ -10,9 +10,15 @@ fn sample_prog() -> Prog {
     def.add_input("c", "i8");
     def.add_input("en", "bool");
     def.add_output("y", "i8");
-    def.add_instr(Instr::new_with_args("t0", "i8", "mul", "a", "b", "??"));
-    def.add_instr(Instr::new_with_args("t1", "i8", "reg", "t0", "en", "??"));
-    def.add_instr(Instr::new_with_args("y", "i8", "add", "t1", "c", "??"));
+    def.add_instr(Instr::new_with_args(
+        "t0", "i8", "mul", "a", "i8", "b", "i8", "??",
+    ));
+    def.add_instr(Instr::new_with_args(
+        "t1", "i8", "reg", "t0", "i8", "en", "bool", "??",
+    ));
+    def.add_instr(Instr::new_with_args(
+        "y", "i8", "add", "t1", "i8", "c", "i8", "??",
+    ));
     let mut prog = Prog::new();
     prog.add_def(def);
     println!("Original program:\n{}", &prog);
@@ -23,7 +29,10 @@ fn target_info() {
     let target = ultrascale::target();
     println!("\nultrascale\n");
     for tile in target.tiles.iter() {
-        println!("[pattern] name:{} cost:{}", tile.pattern.name, tile.pattern.cost);
+        println!(
+            "[pattern] name:{} cost:{}",
+            tile.pattern.name, tile.pattern.cost
+        );
         for i in tile.pattern.instr.iter() {
             println!("    instr:{}", i);
         }

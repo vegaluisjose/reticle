@@ -32,16 +32,27 @@ impl Expr {
 }
 
 impl Instr {
-    pub fn new_with_args(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str, loc: &str) -> Instr {
-        let ty = Ty::from_str(ty).unwrap();
+    pub fn new_with_args(
+        dst: &str,
+        op_ty: &str,
+        op: &str,
+        lhs: &str,
+        lhs_ty: &str,
+        rhs: &str,
+        rhs_ty: &str,
+        loc: &str,
+    ) -> Instr {
+        let op_ty = Ty::from_str(op_ty).unwrap();
+        let lhs_ty = Ty::from_str(lhs_ty).unwrap();
+        let rhs_ty = Ty::from_str(rhs_ty).unwrap();
         Instr::Prim {
             id: dst.to_string(),
-            ty: ty.clone(),
+            ty: op_ty.clone(),
             op: PrimOp::from_str(op).unwrap(),
             attrs: vec![],
             params: vec![
-                Expr::Ref(lhs.to_string(), ty.clone()),
-                Expr::Ref(rhs.to_string(), ty.clone()),
+                Expr::Ref(lhs.to_string(), lhs_ty.clone()),
+                Expr::Ref(rhs.to_string(), rhs_ty.clone()),
             ],
             loc: Loc::from_str(loc).unwrap(),
         }
