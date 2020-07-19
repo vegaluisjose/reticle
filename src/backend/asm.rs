@@ -5,16 +5,16 @@ pub type Ty = ast::Ty;
 pub type LocTy = ast::Loc;
 
 #[derive(Clone, Debug)]
-pub enum CoorTy {
-    Var,
+pub enum LocExpr {
+    Var(Id),
     Lit(u32),
 }
 
 #[derive(Clone, Debug)]
 pub struct Loc {
     ty: LocTy,
-    x: CoorTy,
-    y: CoorTy,
+    x: LocExpr,
+    y: LocExpr,
 }
 
 #[derive(Clone, Debug)]
