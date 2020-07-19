@@ -49,7 +49,7 @@ impl From<ast::PrimOp> for Op {
 impl From<ast::Loc> for Loc {
     fn from(loc: ast::Loc) -> Self {
         match loc {
-            ast::Loc::Var => Loc::Var,
+            ast::Loc::Hole => Loc::Hole,
             ast::Loc::Lut => Loc::Lut,
             ast::Loc::Dsp => Loc::Dsp,
             ast::Loc::Lum => Loc::Lum,

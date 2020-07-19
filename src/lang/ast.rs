@@ -18,7 +18,7 @@ pub enum Expr {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Loc {
-    Var,
+    Hole,
     Lut,
     Dsp,
     Lum,

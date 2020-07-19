@@ -32,7 +32,7 @@ pub enum Op {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Loc {
     Any,
-    Var,
+    Hole,
     Lut,
     Lum,
     Dsp,
@@ -87,7 +87,7 @@ impl FromStr for Loc {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input.as_ref() {
             "any" => Ok(Loc::Any),
-            "??" => Ok(Loc::Var),
+            "??" => Ok(Loc::Hole),
             "lut" => Ok(Loc::Lut),
             "lum" => Ok(Loc::Lum),
             "dsp" => Ok(Loc::Dsp),
@@ -153,7 +153,7 @@ impl fmt::Display for Loc {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
             Loc::Any => "any",
-            Loc::Var => "??",
+            Loc::Hole => "??",
             Loc::Lut => "lut",
             Loc::Lum => "lum",
             Loc::Dsp => "dsp",
