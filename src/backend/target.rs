@@ -39,10 +39,11 @@ impl Expr {
         op_loc: instr::Loc,
     ) {
         match self {
-            Expr::Input(_, loc) => {
+            Expr::Input(ty, loc) => {
                 let op = instr::Op::In;
+                let ty = instr::Ty::from_str(ty).unwrap();
                 let inp_loc = instr::Loc::from_str(loc).unwrap();
-                instr.push(instr::Instr::new(op, op_ty.clone(), inp_loc));
+                instr.push(instr::Instr::new(op, ty, inp_loc));
             }
             Expr::BinOp(op, lhs, rhs) => {
                 let op = instr::Op::from_str(op).unwrap();
