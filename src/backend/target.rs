@@ -1,5 +1,5 @@
 use crate::passes::select::instr as sel;
-use crate::backend::asm;
+// use crate::backend::asm;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::rc::Rc;
@@ -29,13 +29,13 @@ pub struct Def {
 
 #[derive(Clone, Debug)]
 pub struct Tile {
-    pub asm: asm::Instr,
+    // pub asm: asm::Instr,
     pub pattern: sel::Pattern,
 }
 
 #[derive(Clone, Debug)]
 pub struct Target {
-    pub patterns: Vec<sel::Pattern>,
+    pub tiles: Vec<Tile>,
 }
 
 impl Expr {
@@ -76,14 +76,22 @@ impl Instr {
     }
 }
 
+impl From<Instr> for Tile {
+    fn from(instr: Instr) -> Self {
+        Tile {
+            pattern: instr.to_pattern(),
+        }
+    }
+}
+
 impl From<Def> for Target {
     fn from(def: Def) -> Self {
-        let mut patterns: Vec<sel::Pattern> = Vec::new();
+        let mut tiles: Vec<Tile> = Vec::new();
         for instr in def.instr.iter() {
-            patterns.push(instr.to_pattern());
+            tiles.push(Tile::from(instr.clone()));
         }
         Target {
-            patterns: patterns.to_vec(),
+            tiles: tiles.to_vec(),
         }
     }
 }

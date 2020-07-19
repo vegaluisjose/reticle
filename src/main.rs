@@ -21,10 +21,10 @@ fn sample_prog() -> Prog {
 
 fn target_info() {
     let target = ultrascale::target();
-    println!("ultrascale patterns\n");
-    for p in target.patterns.iter() {
-        println!("name:{} cost:{}", p.name, p.cost);
-        for i in p.instr.iter() {
+    println!("\nultrascale patterns\n");
+    for tile in target.tiles.iter() {
+        println!("name:{} cost:{}", tile.pattern.name, tile.pattern.cost);
+        for i in tile.pattern.instr.iter() {
             println!("    instr:{}", i);
         }
     }
@@ -33,7 +33,7 @@ fn target_info() {
 fn create_dag_from_prog(prog: &Prog) {
     let block = BasicBlock::from(prog.defs[0].clone());
     let sdag = SDag::from(block);
-    println!("{}", sdag);
+    println!("\n{}", sdag);
 }
 
 fn main() {
