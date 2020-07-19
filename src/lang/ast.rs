@@ -31,7 +31,7 @@ pub enum StdOp {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub enum PlacedOp {
+pub enum PrimOp {
     Reg,
     Add,
     Sub,
@@ -67,10 +67,10 @@ pub enum Instr {
         attrs: Vec<Expr>,
         params: Vec<Expr>,
     },
-    Placed {
+    Prim {
         id: Id,
         ty: Ty,
-        op: PlacedOp,
+        op: PrimOp,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
         loc: Loc,

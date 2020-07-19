@@ -45,13 +45,13 @@ impl PrettyPrint for StdOp {
     }
 }
 
-impl PrettyPrint for PlacedOp {
+impl PrettyPrint for PrimOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            PlacedOp::Reg => RcDoc::text("reg"),
-            PlacedOp::Add => RcDoc::text("add"),
-            PlacedOp::Sub => RcDoc::text("sub"),
-            PlacedOp::Mul => RcDoc::text("mul"),
+            PrimOp::Reg => RcDoc::text("reg"),
+            PrimOp::Add => RcDoc::text("add"),
+            PrimOp::Sub => RcDoc::text("sub"),
+            PrimOp::Mul => RcDoc::text("mul"),
             _ => panic!("WIP"),
         }
     }
@@ -60,7 +60,7 @@ impl PrettyPrint for PlacedOp {
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Instr::Placed {
+            Instr::Prim {
                 id,
                 ty,
                 op,

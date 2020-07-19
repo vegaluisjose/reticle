@@ -34,10 +34,10 @@ impl Expr {
 impl Instr {
     pub fn new_with_args(dst: &str, ty: &str, op: &str, lhs: &str, rhs: &str, loc: &str) -> Instr {
         let ty = Ty::from_str(ty).unwrap();
-        Instr::Placed {
+        Instr::Prim {
             id: dst.to_string(),
             ty: ty.clone(),
-            op: PlacedOp::from_str(op).unwrap(),
+            op: PrimOp::from_str(op).unwrap(),
             attrs: vec![],
             params: vec![
                 Expr::Ref(lhs.to_string(), ty.clone()),
@@ -56,7 +56,7 @@ impl Instr {
                 attrs: _,
                 params: _,
             } => id.to_string(),
-            Instr::Placed {
+            Instr::Prim {
                 id,
                 ty: _,
                 op: _,
@@ -76,7 +76,7 @@ impl Instr {
                 attrs: _,
                 params: _,
             } => ty,
-            Instr::Placed {
+            Instr::Prim {
                 id: _,
                 ty,
                 op: _,
@@ -96,7 +96,7 @@ impl Instr {
                 attrs: _,
                 params,
             } => params,
-            Instr::Placed {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,
@@ -116,7 +116,7 @@ impl Instr {
                 attrs,
                 params: _,
             } => attrs,
-            Instr::Placed {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,
@@ -127,9 +127,9 @@ impl Instr {
         }
     }
 
-    pub fn placed_op(&self) -> &PlacedOp {
+    pub fn prim_op(&self) -> &PrimOp {
         match self {
-            Instr::Placed {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op,
@@ -137,13 +137,13 @@ impl Instr {
                 params: _,
                 loc: _,
             } => op,
-            _ => panic!("Error: std ops don't support placed op"),
+            _ => panic!("Error: std ops don't support prim op"),
         }
     }
 
     pub fn loc(&self) -> &Loc {
         match self {
-            Instr::Placed {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,

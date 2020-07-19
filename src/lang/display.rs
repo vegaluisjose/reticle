@@ -26,7 +26,7 @@ impl fmt::Display for StdOp {
     }
 }
 
-impl fmt::Display for PlacedOp {
+impl fmt::Display for PrimOp {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }

@@ -56,15 +56,15 @@ impl FromStr for Ty {
     }
 }
 
-impl FromStr for PlacedOp {
+impl FromStr for PrimOp {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input.as_ref() {
-            "reg" => Ok(PlacedOp::Reg),
-            "add" => Ok(PlacedOp::Add),
-            "sub" => Ok(PlacedOp::Sub),
-            "mul" => Ok(PlacedOp::Mul),
-            _ => panic!("Error: FromStr to PlacedOp conversion"),
+            "reg" => Ok(PrimOp::Reg),
+            "add" => Ok(PrimOp::Add),
+            "sub" => Ok(PrimOp::Sub),
+            "mul" => Ok(PrimOp::Mul),
+            _ => panic!("Error: FromStr to PrimOp conversion"),
         }
     }
 }
