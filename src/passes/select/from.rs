@@ -77,8 +77,8 @@ impl From<BasicBlock> for SDag {
         let mut sdag = SDag::new();
         for instr in block.body().iter() {
             match instr.params().len() {
+                // binary op i.e. add
                 2 => {
-                    // binary op i.e. add
                     let params = instr.params();
                     let lhs = &params[0];
                     let rhs = &params[1];
