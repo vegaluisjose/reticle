@@ -1,4 +1,5 @@
-use reticle::backend::ultrascale;
+use reticle::backend::target::Target;
+use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::block::BasicBlock;
 use reticle::passes::select::dag::SDag;
@@ -26,9 +27,10 @@ fn sample_prog() -> Prog {
 }
 
 fn target_info() {
-    let target = ultrascale::target();
+    let target = Ultrascale::new();
+    let descriptor = target.to_descriptor();
     println!("\nultrascale\n");
-    for tile in target.tiles.iter() {
+    for tile in descriptor.def.iter() {
         println!(
             "[pattern] name:{} cost:{}",
             tile.pattern.name, tile.pattern.cost
