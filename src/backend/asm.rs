@@ -1,5 +1,4 @@
 use crate::lang::ast;
-use std::collections::HashMap;
 
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;
