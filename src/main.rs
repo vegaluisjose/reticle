@@ -21,12 +21,13 @@ fn sample_prog() -> Prog {
 
 fn target_info() {
     let target = ultrascale::target();
-    println!("\nultrascale patterns\n");
+    println!("\nultrascale\n");
     for tile in target.tiles.iter() {
-        println!("name:{} cost:{}", tile.pattern.name, tile.pattern.cost);
+        println!("[pattern] name:{} cost:{}", tile.pattern.name, tile.pattern.cost);
         for i in tile.pattern.instr.iter() {
             println!("    instr:{}", i);
         }
+        println!("[asm] instr:{:?}", tile.asm);
     }
 }
 

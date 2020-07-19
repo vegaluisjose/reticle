@@ -1,29 +1,35 @@
-use crate::lang::ast;
+use crate::passes::select::instr as sel;
 
-pub type Id = ast::Id;
-pub type Ty = ast::Ty;
-pub type LocTy = ast::Loc;
+pub type Id = sel::Id;
+pub type Ty = sel::Ty;
+pub type LocTy = sel::Loc;
 
 #[derive(Clone, Debug)]
 pub enum LocExpr {
+    Hole,
     Var(Id),
     Lit(u32),
 }
 
 #[derive(Clone, Debug)]
 pub struct Loc {
-    ty: LocTy,
-    x: LocExpr,
-    y: LocExpr,
+    pub ty: LocTy,
+    pub x: LocExpr,
+    pub y: LocExpr,
+}
+
+#[derive(Clone, Debug)]
+pub enum Expr {
+    Ref(Id, Ty),
 }
 
 #[derive(Clone, Debug)]
 pub struct Instr {
-    pub id: Id,
     pub ty: Ty,
     pub op: Id,
     pub loc: Loc,
-    pub params: Vec<Id>,
+    pub dst: Option<Id>,
+    pub params: Vec<Expr>,
 }
 
 #[derive(Clone, Debug)]

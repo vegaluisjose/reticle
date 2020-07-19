@@ -1,5 +1,5 @@
 use crate::passes::select::instr as sel;
-// use crate::backend::asm;
+use crate::backend::asm;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::rc::Rc;
@@ -29,7 +29,7 @@ pub struct Def {
 
 #[derive(Clone, Debug)]
 pub struct Tile {
-    // pub asm: asm::Instr,
+    pub asm: asm::Instr,
     pub pattern: sel::Pattern,
 }
 
@@ -63,6 +63,22 @@ impl Expr {
 }
 
 impl Instr {
+    fn to_asm_instr(&self) -> asm::Instr {
+        let ty = sel::Ty::from_str(&self.ty).unwrap();
+        let loc = sel::Loc::from_str(&self.loc).unwrap();
+        let asm_loc = asm::Loc {
+            ty: loc,
+            x: asm::LocExpr::Hole,
+            y: asm::LocExpr::Hole,
+        };
+        asm::Instr {
+            ty: ty,
+            op: self.name.to_string(),
+            loc: asm_loc,
+            dst: None,
+            params: Vec::new(),
+        }
+    }
     fn to_pattern(&self) -> sel::Pattern {
         let ty = sel::Ty::from_str(&self.ty).unwrap();
         let loc = sel::Loc::from_str(&self.loc).unwrap();
@@ -79,6 +95,7 @@ impl Instr {
 impl From<Instr> for Tile {
     fn from(instr: Instr) -> Self {
         Tile {
+            asm: instr.to_asm_instr(),
             pattern: instr.to_pattern(),
         }
     }
