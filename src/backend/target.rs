@@ -1,4 +1,4 @@
-use crate::backend::asm;
+use crate::backend::asm::ast as asm;
 use crate::passes::select::instr as sel;
 use serde::{Deserialize, Serialize};
 use serde_json;
