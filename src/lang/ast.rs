@@ -53,12 +53,6 @@ pub enum PrimOp {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub enum Port {
-    Input { id: Id, ty: Ty },
-    Output { id: Id, ty: Ty },
-}
-
-#[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Instr {
     Std {
         id: Id,
@@ -75,6 +69,12 @@ pub enum Instr {
         params: Vec<Expr>,
         loc: Loc,
     },
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub enum Port {
+    Input { id: Id, ty: Ty },
+    Output { id: Id, ty: Ty },
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
