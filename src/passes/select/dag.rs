@@ -1,3 +1,4 @@
+use crate::backend::target::descriptor::Tile;
 use crate::passes::select::instr::*;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
@@ -9,6 +10,7 @@ use std::fmt;
 pub struct SDNode {
     pub name: String,
     pub instr: Instr,
+    pub tile: Option<Tile>,
 }
 
 #[derive(Clone, Debug)]
@@ -30,6 +32,7 @@ impl SDNode {
         SDNode {
             name: name.to_string(),
             instr: instr,
+            tile: None,
         }
     }
 }
