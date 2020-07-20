@@ -58,6 +58,7 @@ impl Instr {
             ty: ty,
             op: self.name.to_string(),
             loc: asm_loc,
+            area: self.area.clone(),
             dst: None,
             params: Vec::new(),
         }

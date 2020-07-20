@@ -28,6 +28,7 @@ pub struct Instr {
     pub ty: Ty,
     pub op: Id,
     pub loc: Loc,
+    pub area: u32,
     pub dst: Option<Id>,
     pub params: Vec<Expr>,
 }
