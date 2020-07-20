@@ -17,7 +17,7 @@ pub struct Instr {
     pub cost: u32,
     pub loc: String,
     pub ty: String,
-    pub output: String,
+    pub area: u32,
     pub expr: Expr,
 }
 
