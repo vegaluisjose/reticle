@@ -1,5 +1,5 @@
 use crate::backend::asm::ast as asm;
-use crate::backend::target::spec as spec;
+use crate::backend::target::spec;
 use crate::passes::select::instr as sel;
 use std::str::FromStr;
 
@@ -29,9 +29,7 @@ impl From<spec::Spec> for Descriptor {
         for instr in spec.isa.iter() {
             def.push(Tile::from(instr.clone()));
         }
-        Descriptor {
-            def: def.to_vec(),
-        }
+        Descriptor { def: def.to_vec() }
     }
 }
 
