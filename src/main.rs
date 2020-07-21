@@ -31,7 +31,7 @@ fn codegen(prog: &Prog) {
     let block = BasicBlock::from(prog.defs[0].clone());
     let mut sdag = SDag::from(block);
     println!("\n{}", sdag);
-    sdag.select("y", &target.to_descriptor());
+    sdag.select_mut("y", &target.to_descriptor());
 }
 
 fn main() {

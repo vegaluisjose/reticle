@@ -84,15 +84,23 @@ impl SDag {
         while let Some(ix) = visit.next(&self.graph) {
             if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.graph.node_weight_mut(ix) {
-                    node.tile = None;
+                    if start == ix {
+                        asm.set_dst(&node.name);
+                    }
                     if instr.op == Op::In {
                         let expr = asm::Expr::new_ref(&node.name, node.instr.ty.clone());
                         asm.add_param(expr);
                     }
+                    node.tile = None;
                 }
             } else {
                 break;
             }
+        }
+        // set tile for root node
+        if let Some(node) = self.graph.node_weight_mut(start) {
+            let tile = Tile { asm: asm.clone(), pattern: pattern.clone() };
+            node.tile = Some(tile);
         }
     }
 
@@ -138,7 +146,7 @@ impl SDag {
         self.ctx.contains_key(name)
     }
 
-    pub fn select(&mut self, name: &str, descriptor: &Descriptor) {
+    pub fn select_mut(&mut self, name: &str, descriptor: &Descriptor) {
         if self.contains_sdnode(name) {
             for tile in descriptor.tiles.iter() {
                 if let Some(start) = self.ctx.get(name) {
