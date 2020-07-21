@@ -1,5 +1,4 @@
 use crate::backend::asm::ast as asm;
-use crate::lang::ast;
 use crate::passes::select::instr as sel;
 use serde::{Deserialize, Serialize};
 use std::rc::Rc;
@@ -47,12 +46,11 @@ impl Expr {
 }
 
 impl Instr {
-    // fix type alias to use asm instead of ast
     pub fn to_asm_instr(&self) -> asm::Instr {
-        let ty = ast::Ty::from_str(&self.ty).unwrap();
-        let loc = ast::Loc::from_str(&self.loc).unwrap();
+        let ty = asm::Ty::from_str(&self.ty).unwrap();
+        let loc_ty = asm::LocTy::from_str(&self.loc).unwrap();
         let asm_loc = asm::Loc {
-            ty: loc,
+            ty: loc_ty,
             x: asm::LocExpr::Hole,
             y: asm::LocExpr::Hole,
         };
@@ -65,6 +63,7 @@ impl Instr {
             params: Vec::new(),
         }
     }
+
     pub fn to_pattern(&self) -> sel::Pattern {
         let ty = sel::Ty::from_str(&self.ty).unwrap();
         let loc = sel::Loc::from_str(&self.loc).unwrap();
