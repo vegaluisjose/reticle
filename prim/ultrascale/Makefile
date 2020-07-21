@@ -1,7 +1,7 @@
 OUT_DIR = $(abspath .)/out
 LIB_DIR = $(abspath .)/lib
 
-NAME = dsp_add_mul
+NAME = dsp_add_reg_mul
 
 IMPL_FILE = \
 $(LIB_DIR)/$(NAME).v \
@@ -29,7 +29,8 @@ $(LIB_DIR)/lut_add_w16.v \
 $(LIB_DIR)/lut_sub_w16.v \
 $(LIB_DIR)/lut_add_w32.v \
 $(LIB_DIR)/lut_sub_w32.v \
-$(LIB_DIR)/dsp_add_mul.v
+$(LIB_DIR)/dsp_add_mul.v \
+$(LIB_DIR)/dsp_add_reg_mul.v
 
 TIME_FILE = $(OUT_DIR)/$(NAME)_time.txt
 UTIL_FILE = $(OUT_DIR)/$(NAME)_util.txt
@@ -49,7 +50,7 @@ xvlog:
 	xvlog --sv --incr --relax test/test.v $(SIM_FILES) $(XILINX_VIVADO)/data/verilog/src/glbl.v
 
 xelab:
-	xelab --snapshot test --timescale 1ps/1ps -R -L unisims_ver glbl test
+	xelab --snapshot test --timescale 1ns/1ps -R -L unisims_ver glbl test
 
 $(OUT_DIR):
 	mkdir -p $@
