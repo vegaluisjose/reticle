@@ -1,6 +1,7 @@
 use crate::backend::target::descriptor::Descriptor;
 use crate::backend::target::Target;
 use std::str::FromStr;
+use crate::util::file::read_to_string;
 
 pub struct Ultrascale {
     pub spec: String,
@@ -8,16 +9,8 @@ pub struct Ultrascale {
 
 impl Ultrascale {
     pub fn new() -> Ultrascale {
-        let json = r#"
-        { "isa":
-        [
-          {"name": "dsp_i8_mul_lut_lut", "cost": 4, "loc": "dsp", "ty": "i8", "area": 1, "expr": ["mul",["i8","lut"],["i8","lut"]]},
-          {"name": "dsp_i8_add_lut_lut", "cost": 4, "loc": "dsp", "ty": "i8", "area": 1, "expr": ["add",["i8","lut"],["i8","lut"]]},
-          {"name": "dsp_i8_add_reg_mul_lut_lut_lut_lut", "cost": 4, "loc": "dsp", "ty": "i8", "area": 1, "expr": ["add",["reg",["mul",["i8","lut"],["i8","lut"]],["bool", "lut"]],["i8","lut"]]}
-        ]
-        }"#;
         Ultrascale {
-            spec: json.to_string(),
+            spec: read_to_string("isa/ultrascale.json"),
         }
     }
 }
