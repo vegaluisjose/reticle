@@ -724,6 +724,36 @@ module test_lut_sub_width_32 (
 
 endmodule
 
+module test_dsp_add_mul_8 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 8;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] c;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = -8'd8;
+    assign b = 8'd3;
+    assign c = 8'd12;
+
+    assign y_ref = ((a * b) + c);
+
+    dsp_add_mul #(.width(width)) dut (clock, reset, a, b, c, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display("[PASS] test_dsp_add_reg_mul_width_8 res:%d exp:%d", $signed(y), $signed(y_ref));
+                else $error("[FAIL] test_dsp_add_reg_mul_width_8 res:%d exp:%d", $signed(y), $signed(y_ref));
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -778,5 +808,6 @@ module test();
     test_lut_sub_width_16    t20 (clock, reset, cycles);
     test_lut_add_width_32    t21 (clock, reset, cycles);
     test_lut_sub_width_32    t22 (clock, reset, cycles);
+    test_dsp_add_mul_8       t23 (clock, reset, cycles);
 
 endmodule
