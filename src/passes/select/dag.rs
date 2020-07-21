@@ -172,7 +172,7 @@ impl SDag {
                 while let Some(ix) = dag_iter.next(&self.graph) {
                     if let Some(node) = self.graph.node_weight(ix) {
                         if let Some(tile) = &node.tile {
-                            println!("new instr:{:?}", tile.asm);
+                            println!("{}", tile.asm);
                         }
                     }
                 }
