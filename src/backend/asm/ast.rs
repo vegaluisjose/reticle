@@ -51,3 +51,19 @@ pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,
 }
+
+impl Expr {
+    pub fn new_ref(name: &str, ty: Ty) -> Expr {
+        Expr::Ref(name.to_string(), ty)
+    }
+}
+
+impl Instr {
+    pub fn set_dst(&mut self, name: &str) {
+        self.dst = Some(name.to_string());
+    }
+
+    pub fn add_param(&mut self, expr: Expr) {
+        self.params.push(expr);
+    }
+}

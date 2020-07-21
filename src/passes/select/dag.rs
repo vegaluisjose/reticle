@@ -1,3 +1,4 @@
+use crate::backend::asm::ast as asm;
 use crate::backend::target::descriptor::{Descriptor, Tile};
 use crate::passes::select::instr::*;
 use petgraph::dot::{Config, Dot};
@@ -77,6 +78,24 @@ impl SDag {
         is_match && pat_instr.len() == 0
     }
 
+    fn build_instr_mut(&mut self, start: SDNodeIx, pattern: &Pattern, asm: &mut asm::Instr) {
+        let mut pat_instr = pattern.instr.iter();
+        let mut visit = Dfs::new(&self.graph, start);
+        while let Some(ix) = visit.next(&self.graph) {
+            if let Some(instr) = pat_instr.next() {
+                if let Some(node) = self.graph.node_weight_mut(ix) {
+                    node.tile = None;
+                    if instr.op == Op::In {
+                        let expr = asm::Expr::new_ref(&node.name, node.instr.ty.clone());
+                        asm.add_param(expr);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
     fn estimate_cost(&self, ix: SDNodeIx) -> f32 {
         if let Some(node) = self.graph.node_weight(ix) {
             if node.instr.op == Op::In {
@@ -128,7 +147,9 @@ impl SDag {
                         if self.is_match(ix, &tile.pattern) {
                             let cost = tile.pattern.cost.clone() as f32;
                             if cost < self.estimate_cost(ix) {
-                                println!("there is match");
+                                let mut asm = tile.asm.clone();
+                                self.build_instr_mut(ix, &tile.pattern, &mut asm);
+                                println!("new instr:{:?}", asm);
                             }
                         }
                     }
