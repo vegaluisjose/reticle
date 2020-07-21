@@ -1,8 +1,11 @@
-use crate::passes::select::instr as sel;
+use crate::lang::ast;
 
-pub type Id = sel::Id;
-pub type Ty = sel::Ty;
-pub type LocTy = sel::Loc;
+// reuse from reticle ast for the time being
+pub type Id = ast::Id;
+pub type Ty = ast::Ty;
+pub type LocTy = ast::Loc;
+pub type Port = ast::Port;
+pub type Sig = ast::Sig;
 
 #[derive(Clone, Debug)]
 pub enum LocExpr {
@@ -31,19 +34,6 @@ pub struct Instr {
     pub area: u32,
     pub dst: Option<Id>,
     pub params: Vec<Expr>,
-}
-
-#[derive(Clone, Debug)]
-pub enum Port {
-    Input { id: Id, ty: Ty },
-    Output { id: Id, ty: Ty },
-}
-
-#[derive(Clone, Debug)]
-pub struct Sig {
-    pub id: Id,
-    pub inputs: Vec<Port>,
-    pub outputs: Vec<Port>,
 }
 
 #[derive(Clone, Debug)]
