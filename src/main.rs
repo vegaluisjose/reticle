@@ -26,30 +26,15 @@ fn sample_prog() -> Prog {
     prog
 }
 
-fn target_info() {
+fn codegen(prog: &Prog) {
     let target = Ultrascale::new();
-    let descriptor = target.to_descriptor();
-    println!("\nultrascale\n");
-    for tile in descriptor.def.iter() {
-        println!(
-            "[pattern] name:{} cost:{}",
-            tile.pattern.name, tile.pattern.cost
-        );
-        for i in tile.pattern.instr.iter() {
-            println!("    instr:{}", i);
-        }
-        println!("[asm] instr:{:?}", tile.asm);
-    }
-}
-
-fn create_dag_from_prog(prog: &Prog) {
     let block = BasicBlock::from(prog.defs[0].clone());
-    let sdag = SDag::from(block);
+    let mut sdag = SDag::from(block);
     println!("\n{}", sdag);
+    sdag.select("y", &target.to_descriptor());
 }
 
 fn main() {
     let prog = sample_prog();
-    target_info();
-    create_dag_from_prog(&prog);
+    codegen(&prog);
 }

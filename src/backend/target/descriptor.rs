@@ -11,7 +11,7 @@ pub struct Tile {
 
 #[derive(Clone, Debug)]
 pub struct Descriptor {
-    pub def: Vec<Tile>,
+    pub tiles: Vec<Tile>,
 }
 
 impl From<spec::Instr> for Tile {
@@ -25,11 +25,13 @@ impl From<spec::Instr> for Tile {
 
 impl From<spec::Spec> for Descriptor {
     fn from(spec: spec::Spec) -> Self {
-        let mut def: Vec<Tile> = Vec::new();
+        let mut tiles: Vec<Tile> = Vec::new();
         for instr in spec.isa.iter() {
-            def.push(Tile::from(instr.clone()));
+            tiles.push(Tile::from(instr.clone()));
         }
-        Descriptor { def: def.to_vec() }
+        Descriptor {
+            tiles: tiles.to_vec(),
+        }
     }
 }
 
