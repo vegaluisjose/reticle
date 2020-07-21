@@ -32,7 +32,7 @@ fn compile(prog: &Prog) {
     let block = BasicBlock::from(prog.defs[0].clone());
     let mut sdag = SDag::from(block);
     sdag.select_mut("y", &target.to_descriptor());
-    let asm_instr = sdag.compile("y");
+    let asm_instr = sdag.codegen("y");
     let mut asm_prog = asm::Prog::new(prog.defs[0].sig.clone());
     for instr in asm_instr.iter() {
         asm_prog.add_instr(instr.clone());
