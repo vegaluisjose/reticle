@@ -157,8 +157,22 @@ impl SDag {
                             if cost < self.estimate_cost(ix) {
                                 let mut asm = tile.asm.clone();
                                 self.build_instr_mut(ix, &tile.pattern, &mut asm);
-                                println!("new instr:{:?}", asm);
                             }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn codegen(&self, name: &str) {
+        if self.contains_sdnode(name) {
+            if let Some(start) = self.ctx.get(name) {
+                let mut dag_iter = DfsPostOrder::new(&self.graph, *start);
+                while let Some(ix) = dag_iter.next(&self.graph) {
+                    if let Some(node) = self.graph.node_weight(ix) {
+                        if let Some(tile) = &node.tile {
+                            println!("new instr:{:?}", tile.asm);
                         }
                     }
                 }
