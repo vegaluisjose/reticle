@@ -132,10 +132,10 @@ impl PrettyPrint for Def {
             RcDoc::text(",").append(RcDoc::space()),
         );
         let mut body_doc = RcDoc::nil();
-        for decl in self.body().iter() {
+        for instr in self.body().iter() {
             body_doc = body_doc
                 .append(RcDoc::hardline())
-                .append(decl.to_doc())
+                .append(instr.to_doc())
                 .append(RcDoc::text(";"));
         }
         body_doc = body_doc.nest(PRETTY_INDENT).group();
