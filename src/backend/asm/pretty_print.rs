@@ -10,6 +10,28 @@ impl PrettyPrint for Expr {
     }
 }
 
+impl PrettyPrint for LocExpr {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            LocExpr::Hole => RcDoc::text("??"),
+            LocExpr::Var(n) => RcDoc::as_string(n),
+            LocExpr::Lit(n) => RcDoc::as_string(n),
+        }
+    }
+}
+
+impl PrettyPrint for Loc {
+    fn to_doc(&self) -> RcDoc<()> {
+        self.ty.to_doc()
+            .append(RcDoc::text("("))
+            .append(self.x.to_doc())
+            .append(RcDoc::text(","))
+            .append(RcDoc::space())
+            .append(self.y.to_doc())
+            .append(RcDoc::text(")"))
+    }
+}
+
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
         let dst_doc = match &self.dst {
@@ -33,9 +55,13 @@ impl PrettyPrint for Instr {
                 .append(RcDoc::text(")")),
         };
         let op_doc = RcDoc::as_string(&self.op);
+        let loc_doc = RcDoc::space()
+            .append(RcDoc::text("@"))
+            .append(self.loc.to_doc());
         dst_doc
             .append(op_doc)
             .append(params_doc)
+            .append(loc_doc)
     }
 }
 
