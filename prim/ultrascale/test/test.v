@@ -739,7 +739,7 @@ module test_dsp_add_mul_8 (
 
     assign a = -8'd8;
     assign b = 8'd3;
-    assign c = 8'd12;
+    assign c = 8'd5;
 
     assign y_ref = ((a * b) + c);
 
