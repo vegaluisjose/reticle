@@ -57,3 +57,20 @@ impl Instr {
         self.params.push(expr);
     }
 }
+
+impl Prog {
+    pub fn new(sig: Sig) -> Prog {
+        Prog {
+            sig: sig,
+            body: Vec::new(),
+        }
+    }
+
+    pub fn add_instr(&mut self, instr: Instr) {
+        self.body.push(instr);
+    }
+
+    pub fn body(&self) -> &Vec<Instr> {
+        &self.body
+    }
+}
