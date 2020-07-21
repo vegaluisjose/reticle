@@ -1,5 +1,5 @@
 use crate::backend::asm::ast::*;
-use crate::util::pretty_print::PrettyPrint;
+use crate::util::pretty_print::{PrettyPrint, PRETTY_INDENT};
 use pretty::RcDoc;
 
 impl PrettyPrint for Expr {
@@ -36,5 +36,43 @@ impl PrettyPrint for Instr {
         dst_doc
             .append(op_doc)
             .append(params_doc)
+    }
+}
+
+impl PrettyPrint for Prog {
+    fn to_doc(&self) -> RcDoc<()> {
+        let inputs_doc = RcDoc::intersperse(
+            self.sig.inputs().iter().map(|i| i.to_doc()),
+            RcDoc::text(",").append(RcDoc::space()),
+        );
+        let outputs_doc = RcDoc::intersperse(
+            self.sig.outputs().iter().map(|o| o.to_doc()),
+            RcDoc::text(",").append(RcDoc::space()),
+        );
+        let mut body_doc = RcDoc::nil();
+        for instr in self.body().iter() {
+            body_doc = body_doc
+                .append(RcDoc::hardline())
+                .append(instr.to_doc())
+                .append(RcDoc::text(";"));
+        }
+        body_doc = body_doc.nest(PRETTY_INDENT).group();
+        RcDoc::text("def")
+            .append(RcDoc::space())
+            .append(RcDoc::as_string(self.sig.id()))
+            .append(RcDoc::text("("))
+            .append(inputs_doc)
+            .append(RcDoc::text(")"))
+            .append(RcDoc::space())
+            .append(RcDoc::text("->"))
+            .append(RcDoc::space())
+            .append(RcDoc::text("("))
+            .append(outputs_doc)
+            .append(RcDoc::text(")"))
+            .append(RcDoc::space())
+            .append(RcDoc::text("{"))
+            .append(body_doc)
+            .append(RcDoc::hardline())
+            .append(RcDoc::text("}"))
     }
 }

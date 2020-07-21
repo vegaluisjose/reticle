@@ -165,19 +165,21 @@ impl SDag {
         }
     }
 
-    pub fn codegen(&self, name: &str) {
+    pub fn codegen(&self, name: &str) -> Vec<asm::Instr> {
+        let mut instr: Vec<asm::Instr> = Vec::new();
         if self.contains_sdnode(name) {
             if let Some(start) = self.ctx.get(name) {
                 let mut dag_iter = DfsPostOrder::new(&self.graph, *start);
                 while let Some(ix) = dag_iter.next(&self.graph) {
                     if let Some(node) = self.graph.node_weight(ix) {
                         if let Some(tile) = &node.tile {
-                            println!("{}", tile.asm);
+                            instr.push(tile.asm.clone());
                         }
                     }
                 }
             }
         }
+        instr
     }
 }
 

@@ -13,3 +13,9 @@ impl fmt::Display for Instr {
         write!(f, "{}", self.to_pretty())
     }
 }
+
+impl fmt::Display for Prog {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_pretty())
+    }
+}

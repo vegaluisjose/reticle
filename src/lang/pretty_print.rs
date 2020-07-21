@@ -141,7 +141,7 @@ impl PrettyPrint for Def {
         body_doc = body_doc.nest(PRETTY_INDENT).group();
         RcDoc::text("def")
             .append(RcDoc::space())
-            .append(RcDoc::as_string(self.id()))
+            .append(RcDoc::as_string(self.sig.id()))
             .append(RcDoc::text("("))
             .append(inputs_doc)
             .append(RcDoc::text(")"))

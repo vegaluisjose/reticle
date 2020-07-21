@@ -1,5 +1,6 @@
 use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
+use reticle::backend::asm::ast as asm;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::block::BasicBlock;
 use reticle::passes::select::dag::SDag;
@@ -22,20 +23,24 @@ fn sample_prog() -> Prog {
     ));
     let mut prog = Prog::new();
     prog.add_def(def);
-    println!("Original program:\n{}", &prog);
+    println!("Original program:\n\n{}", &prog);
     prog
 }
 
-fn codegen(prog: &Prog) {
+fn compile(prog: &Prog) {
     let target = Ultrascale::new();
     let block = BasicBlock::from(prog.defs[0].clone());
     let mut sdag = SDag::from(block);
-    println!("\n{}", sdag);
     sdag.select_mut("y", &target.to_descriptor());
-    sdag.codegen("y");
+    let asm_instr = sdag.compile("y");
+    let mut asm_prog = asm::Prog::new(prog.defs[0].sig.clone());
+    for instr in asm_instr.iter() {
+        asm_prog.add_instr(instr.clone());
+    }
+    println!("Assembly program:\n\n{}", asm_prog);
 }
 
 fn main() {
     let prog = sample_prog();
-    codegen(&prog);
+    compile(&prog);
 }
