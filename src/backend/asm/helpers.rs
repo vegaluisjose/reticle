@@ -19,7 +19,7 @@ impl Instr {
 impl Prog {
     pub fn new(sig: Sig) -> Prog {
         Prog {
-            sig: sig,
+            sig,
             body: Vec::new(),
         }
     }

@@ -55,10 +55,10 @@ impl Instr {
             y: asm::LocExpr::Hole,
         };
         asm::Instr {
-            ty: ty,
+            ty,
             op: self.name.to_string(),
             loc: asm_loc,
-            area: self.area.clone(),
+            area: self.area,
             dst: None,
             params: Vec::new(),
         }
@@ -71,7 +71,7 @@ impl Instr {
         self.expr.to_sel_instr_mut(&mut instr, ty, loc);
         sel::Pattern {
             name: self.name.to_string(),
-            cost: self.cost.clone(),
+            cost: self.cost,
             instr: instr.to_vec(),
         }
     }

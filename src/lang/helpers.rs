@@ -192,7 +192,7 @@ impl Sig {
         let ty = Ty::from_str(ty).unwrap();
         let port = Port::Input {
             id: name.to_string(),
-            ty: ty,
+            ty,
         };
         self.inputs.push(port);
     }
@@ -201,7 +201,7 @@ impl Sig {
         let ty = Ty::from_str(ty).unwrap();
         let port = Port::Output {
             id: name.to_string(),
-            ty: ty,
+            ty,
         };
         self.outputs.push(port);
     }
@@ -217,7 +217,7 @@ impl Def {
 
     pub fn new_with_signature(sig: Sig) -> Def {
         Def {
-            sig: sig,
+            sig,
             body: Vec::new(),
         }
     }
