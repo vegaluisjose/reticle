@@ -21,21 +21,17 @@ impl SDag {
         while let Some(ix) = visit.next(&self.graph) {
             if let Some(instr) = pat_instr.next() {
                 if let Some(node) = self.graph.node_weight(ix) {
-                    if instr.op != Op::Any {
-                        if instr.op != node.instr.op {
-                            is_match = false;
-                            break;
-                        }
+                    if instr.op != Op::Any && instr.op != node.instr.op {
+                        is_match = false;
+                        break;
                     }
                     if instr.ty != node.instr.ty {
                         is_match = false;
                         break;
                     }
-                    if node.instr.loc != Loc::Hole {
-                        if instr.loc != Loc::Any && instr.loc != node.instr.loc {
-                            is_match = false;
-                            break;
-                        }
+                    if node.instr.loc != Loc::Hole && instr.loc != Loc::Any && instr.loc != node.instr.loc {
+                        is_match = false;
+                        break;
                     }
                 }
             } else {
@@ -78,12 +74,10 @@ impl SDag {
         if let Some(node) = self.graph.node_weight(ix) {
             if node.instr.op == Op::In {
                 0 as f32
-            } else {
-                if let Some(tile) = &node.tile {
+            } else if let Some(tile) = &node.tile {
                     tile.pattern.cost as f32
-                } else {
+            } else {
                     f32::INFINITY
-                }
             }
         } else {
             panic!("Error: node index does not seems to exists")
