@@ -5,7 +5,7 @@ use std::convert::From;
 
 impl From<BasicBlock> for SDag {
     fn from(block: BasicBlock) -> Self {
-        let mut sdag = SDag::new();
+        let mut sdag = SDag::default();
         for instr in block.body().iter() {
             match instr.params().len() {
                 // binary op i.e. add

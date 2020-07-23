@@ -23,7 +23,7 @@ pub type SDNodeIx = NodeIndex;
 pub type SDId = String;
 pub type SDCtx = HashMap<SDId, SDNodeIx>;
 
-#[derive(Clone, Debug)]
+#[derive(Default, Clone, Debug)]
 pub struct SDag {
     pub graph: SDGraph,
     pub ctx: SDCtx,

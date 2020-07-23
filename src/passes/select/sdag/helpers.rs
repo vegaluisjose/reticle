@@ -96,13 +96,6 @@ impl SDag {
         }
     }
 
-    pub fn new() -> SDag {
-        SDag {
-            graph: SDGraph::new(),
-            ctx: SDCtx::new(),
-        }
-    }
-
     pub fn add_sdnode(&mut self, name: &str, instr: Instr) {
         let ix = self.graph.add_node(SDNode::new(name, instr));
         self.ctx.insert(name.to_string(), ix);
