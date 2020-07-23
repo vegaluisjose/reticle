@@ -47,12 +47,12 @@ impl Instr {
         let rhs_ty = Ty::from_str(rhs_ty).unwrap();
         Instr::Prim {
             id: dst.to_string(),
-            ty: op_ty.clone(),
+            ty: op_ty,
             op: PrimOp::from_str(op).unwrap(),
             attrs: vec![],
             params: vec![
-                Expr::Ref(lhs.to_string(), lhs_ty.clone()),
-                Expr::Ref(rhs.to_string(), rhs_ty.clone()),
+                Expr::Ref(lhs.to_string(), lhs_ty),
+                Expr::Ref(rhs.to_string(), rhs_ty),
             ],
             loc: Loc::from_str(loc).unwrap(),
         }
