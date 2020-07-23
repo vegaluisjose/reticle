@@ -15,7 +15,7 @@ pub struct SDNode {
     pub tile: Option<Tile>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Default, Clone, Debug)]
 pub struct SDEdge;
 
 pub type SDGraph = Graph<SDNode, SDEdge>;

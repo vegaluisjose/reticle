@@ -13,12 +13,6 @@ impl SDNode {
     }
 }
 
-impl SDEdge {
-    pub fn new() -> SDEdge {
-        SDEdge {}
-    }
-}
-
 impl SDag {
     fn is_match(&self, start: SDNodeIx, pattern: &Pattern) -> bool {
         let mut is_match: bool = true;
@@ -105,7 +99,7 @@ impl SDag {
         if let Some(from_ix) = self.ctx.get(from) {
             if let Some(to_ix) = self.ctx.get(to) {
                 if self.graph.find_edge(*from_ix, *to_ix).is_none() {
-                    self.graph.add_edge(*from_ix, *to_ix, SDEdge::new());
+                    self.graph.add_edge(*from_ix, *to_ix, SDEdge::default());
                 }
             }
         }
