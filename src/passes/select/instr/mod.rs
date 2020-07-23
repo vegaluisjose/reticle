@@ -1,9 +1,9 @@
 use crate::lang::ast;
 
 pub mod display;
+pub mod from;
 pub mod from_str;
 pub mod helpers;
-pub mod from;
 
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;
