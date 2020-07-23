@@ -29,7 +29,10 @@ impl SDag {
                         is_match = false;
                         break;
                     }
-                    if node.instr.loc != Loc::Hole && instr.loc != Loc::Any && instr.loc != node.instr.loc {
+                    if node.instr.loc != Loc::Hole
+                        && instr.loc != Loc::Any
+                        && instr.loc != node.instr.loc
+                    {
                         is_match = false;
                         break;
                     }
@@ -75,9 +78,9 @@ impl SDag {
             if node.instr.op == Op::In {
                 0 as f32
             } else if let Some(tile) = &node.tile {
-                    tile.pattern.cost as f32
+                tile.pattern.cost as f32
             } else {
-                    f32::INFINITY
+                f32::INFINITY
             }
         } else {
             panic!("Error: node index does not seems to exists")
