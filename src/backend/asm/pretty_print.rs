@@ -46,14 +46,15 @@ impl PrettyPrint for Instr {
                 .append(RcDoc::space()),
             None => RcDoc::nil(),
         };
-        let params_doc = match self.params.is_empty() {
-            true => RcDoc::nil(),
-            false => RcDoc::text("(")
+        let params_doc = if self.params.is_empty() {
+            RcDoc::nil()
+        } else {
+            RcDoc::text("(")
                 .append(RcDoc::intersperse(
                     self.params.iter().map(|p| p.to_doc()),
                     RcDoc::text(",").append(RcDoc::space()),
                 ))
-                .append(RcDoc::text(")")),
+                .append(RcDoc::text(")"))
         };
         let op_doc = RcDoc::as_string(&self.op);
         let loc_doc = RcDoc::space()

@@ -84,14 +84,15 @@ impl PrettyPrint for Instr {
                         ))
                         .append(RcDoc::text("]")),
                 };
-                let params_doc = match params.is_empty() {
-                    true => panic!("Error: must have at least one param"),
-                    false => RcDoc::text("(")
+                let params_doc = if !params.is_empty() {
+                    RcDoc::nil()
+                } else {
+                    RcDoc::text("(")
                         .append(RcDoc::intersperse(
                             params.iter().map(|p| p.to_doc()),
                             RcDoc::text(",").append(RcDoc::space()),
                         ))
-                        .append(RcDoc::text(")")),
+                        .append(RcDoc::text(")"))
                 };
                 let loc_doc = RcDoc::text("@").append(loc.to_doc());
                 out_doc
