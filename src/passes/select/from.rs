@@ -1,7 +1,7 @@
 use crate::lang::ast;
 use crate::passes::select::block::*;
-use crate::passes::select::sdag::*;
 use crate::passes::select::instr::*;
+use crate::passes::select::sdag::*;
 use std::convert::From;
 
 // Once we support partitioning, then
