@@ -1,12 +1,10 @@
 use crate::backend::asm::ast as asm;
 use crate::backend::target::descriptor::{Descriptor, Tile};
 use crate::passes::select::instr::*;
-use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use petgraph::visit::{Dfs, DfsPostOrder};
 use std::collections::HashMap;
-use std::fmt;
 
 #[derive(Clone, Debug)]
 pub struct SDNode {
@@ -46,7 +44,6 @@ impl SDEdge {
 }
 
 impl SDag {
-
     fn is_match(&self, start: SDNodeIx, pattern: &Pattern) -> bool {
         let mut is_match: bool = true;
         let mut pat_instr = pattern.instr.iter();
@@ -99,7 +96,10 @@ impl SDag {
         }
         // set tile for root node
         if let Some(node) = self.graph.node_weight_mut(start) {
-            let tile = Tile { asm: asm.clone(), pattern: pattern.clone() };
+            let tile = Tile {
+                asm: asm.clone(),
+                pattern: pattern.clone(),
+            };
             node.tile = Some(tile);
         }
     }
@@ -180,27 +180,5 @@ impl SDag {
             }
         }
         instr
-    }
-}
-
-impl fmt::Display for SDNode {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}: {}", self.name, self.instr)
-    }
-}
-
-impl fmt::Display for SDEdge {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl fmt::Display for SDag {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            Dot::with_config(&self.graph, &[Config::EdgeNoLabel])
-        )
     }
 }
