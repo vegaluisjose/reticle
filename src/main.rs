@@ -28,7 +28,7 @@ fn sample_prog() -> Prog {
 }
 
 fn compile(prog: &Prog) {
-    let target = Ultrascale::new();
+    let target = Ultrascale::default();
     let block = BasicBlock::from(prog.defs[0].clone());
     let mut sdag = SDag::from(block);
     sdag.select_mut("y", &target.to_descriptor());
