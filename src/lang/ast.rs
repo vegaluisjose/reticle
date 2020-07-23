@@ -90,7 +90,7 @@ pub struct Def {
     pub body: Vec<Instr>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Default, Serialize, Deserialize, Clone, Debug)]
 pub struct Prog {
     pub defs: Vec<Def>,
 }

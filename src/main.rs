@@ -21,7 +21,7 @@ fn sample_prog() -> Prog {
     def.add_instr(Instr::new_with_args(
         "y", "i8", "add", "t1", "i8", "c", "i8", "??",
     ));
-    let mut prog = Prog::new();
+    let mut prog = Prog::default();
     prog.add_def(def);
     println!("Original program:\n\n{}", &prog);
     prog
