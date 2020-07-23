@@ -252,7 +252,6 @@ impl Def {
 }
 
 impl Prog {
-
     pub fn add_def(&mut self, def: Def) {
         self.defs.push(def);
     }

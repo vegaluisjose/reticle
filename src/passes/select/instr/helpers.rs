@@ -20,11 +20,7 @@ pub fn create_instr_from_instr(instr: &ast::Instr) -> Instr {
 
 impl Instr {
     pub fn new(op: Op, ty: Ty, loc: Loc) -> Instr {
-        Instr {
-            op,
-            ty,
-            loc,
-        }
+        Instr { op, ty, loc }
     }
 }
 
