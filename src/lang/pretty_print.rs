@@ -75,14 +75,15 @@ impl PrettyPrint for Instr {
                     .append(RcDoc::space())
                     .append(RcDoc::text("="))
                     .append(RcDoc::space());
-                let attrs_doc = match attrs.is_empty() {
-                    true => RcDoc::nil(),
-                    false => RcDoc::text("[")
+                let attrs_doc = if attrs.is_empty() {
+                    RcDoc::nil()
+                } else {
+                    RcDoc::text("[")
                         .append(RcDoc::intersperse(
                             attrs.iter().map(|a| a.to_doc()),
                             RcDoc::text(",").append(RcDoc::space()),
                         ))
-                        .append(RcDoc::text("]")),
+                        .append(RcDoc::text("]"))
                 };
                 let params_doc = if !params.is_empty() {
                     RcDoc::nil()

@@ -7,7 +7,7 @@ impl SDNode {
     pub fn new(name: &str, instr: Instr) -> SDNode {
         SDNode {
             name: name.to_string(),
-            instr: instr,
+            instr,
             tile: None,
         }
     }
@@ -111,7 +111,7 @@ impl SDag {
     pub fn add_sdedge(&mut self, from: &str, to: &str) {
         if let Some(from_ix) = self.ctx.get(from) {
             if let Some(to_ix) = self.ctx.get(to) {
-                if let None = self.graph.find_edge(*from_ix, *to_ix) {
+                if self.graph.find_edge(*from_ix, *to_ix).is_none() {
                     self.graph.add_edge(*from_ix, *to_ix, SDEdge::new());
                 }
             }
@@ -129,7 +129,7 @@ impl SDag {
                     let mut dag_iter = DfsPostOrder::new(&self.graph, *start);
                     while let Some(ix) = dag_iter.next(&self.graph) {
                         if self.is_match(ix, &tile.pattern) {
-                            let cost = tile.pattern.cost.clone() as f32;
+                            let cost = tile.pattern.cost as f32;
                             if cost < self.estimate_cost(ix) {
                                 let mut asm = tile.asm.clone();
                                 self.build_instr_mut(ix, &tile.pattern, &mut asm);

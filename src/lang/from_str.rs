@@ -59,7 +59,7 @@ impl FromStr for Ty {
 impl FromStr for PrimOp {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input.as_ref() {
+        match input {
             "reg" => Ok(PrimOp::Reg),
             "add" => Ok(PrimOp::Add),
             "sub" => Ok(PrimOp::Sub),
@@ -72,7 +72,7 @@ impl FromStr for PrimOp {
 impl FromStr for Loc {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input.as_ref() {
+        match input {
             "??" => Ok(Loc::Hole),
             "lut" => Ok(Loc::Lut),
             "lum" => Ok(Loc::Lum),

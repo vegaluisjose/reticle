@@ -4,7 +4,7 @@ use std::str::FromStr;
 impl FromStr for Op {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input.as_ref() {
+        match input {
             "any" => Ok(Op::Any),
             "inp" => Ok(Op::In),
             "reg" => Ok(Op::Reg),
@@ -33,7 +33,7 @@ impl FromStr for Op {
 impl FromStr for Loc {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        match input.as_ref() {
+        match input {
             "any" => Ok(Loc::Any),
             "??" => Ok(Loc::Hole),
             "lut" => Ok(Loc::Lut),

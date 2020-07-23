@@ -39,7 +39,7 @@ impl Expr {
                 let op = sel::Op::from_str(op).unwrap();
                 instr.push(sel::Instr::new(op, op_ty.clone(), op_loc.clone()));
                 lhs.to_sel_instr_mut(instr, op_ty.clone(), op_loc.clone());
-                rhs.to_sel_instr_mut(instr, op_ty.clone(), op_loc.clone());
+                rhs.to_sel_instr_mut(instr, op_ty, op_loc);
             }
         }
     }
