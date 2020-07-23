@@ -1,5 +1,5 @@
-use crate::passes::select::block::*;
 use crate::lang::ast;
+use crate::passes::select::block::*;
 
 impl BasicBlock {
     pub fn new() -> BasicBlock {

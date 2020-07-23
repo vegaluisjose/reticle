@@ -1,6 +1,6 @@
+use reticle::backend::asm::ast as asm;
 use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
-use reticle::backend::asm::ast as asm;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::block::BasicBlock;
 use reticle::passes::select::dag::SDag;

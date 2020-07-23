@@ -22,7 +22,8 @@ impl PrettyPrint for LocExpr {
 
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
-        self.ty.to_doc()
+        self.ty
+            .to_doc()
             .append(RcDoc::text("("))
             .append(self.x.to_doc())
             .append(RcDoc::text(","))
@@ -58,10 +59,7 @@ impl PrettyPrint for Instr {
         let loc_doc = RcDoc::space()
             .append(RcDoc::text("@"))
             .append(self.loc.to_doc());
-        dst_doc
-            .append(op_doc)
-            .append(params_doc)
-            .append(loc_doc)
+        dst_doc.append(op_doc).append(params_doc).append(loc_doc)
     }
 }
 
