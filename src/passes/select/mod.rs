@@ -1,5 +1,5 @@
-pub mod block;
-pub mod block_helpers;
+pub mod basic_block;
+pub mod basic_block_helpers;
 pub mod from;
 pub mod instr;
 pub mod sdag;

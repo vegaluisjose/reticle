@@ -1,5 +1,5 @@
 use crate::lang::ast;
-use crate::passes::select::block::*;
+use crate::passes::select::basic_block::*;
 use crate::passes::select::instr::*;
 use crate::passes::select::sdag::*;
 use std::convert::From;
