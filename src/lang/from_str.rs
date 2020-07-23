@@ -6,14 +6,13 @@ use std::str::FromStr;
 impl FromStr for Ty {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let re_bool = Regex::new(r"bool$").unwrap();
         let re_uint = Regex::new(r"^u([[:alnum:]]+)$").unwrap();
         let re_sint = Regex::new(r"^i([[:alnum:]]+)$").unwrap();
         let re_uvec = Regex::new(r"^u([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
         let re_svec = Regex::new(r"^i([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
         let mut ty = Err(());
         let caps;
-        if re_bool.is_match(input) {
+        if input == "bool" {
             ty = Ok(Ty::Bool);
         } else if re_uint.is_match(input) {
             caps = re_uint.captures(input).unwrap();
