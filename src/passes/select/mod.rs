@@ -5,6 +5,7 @@ pub mod instr;
 pub mod instr_display;
 pub mod instr_from_str;
 pub mod instr_helpers;
+pub mod instr_from;
 pub mod sdag;
 pub mod sdag_display;
 pub mod sdag_helpers;
