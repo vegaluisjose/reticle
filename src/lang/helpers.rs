@@ -32,7 +32,8 @@ impl Expr {
 }
 
 impl Instr {
-    pub fn new_with_args(
+    // need to think a better way to do this, probably from_str
+    #[allow(clippy::too_many_arguments)] pub fn new_with_args(
         dst: &str,
         op_ty: &str,
         op: &str,
