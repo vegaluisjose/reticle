@@ -8,7 +8,7 @@ use std::convert::From;
 // soon
 impl From<ast::Def> for BasicBlock {
     fn from(def: ast::Def) -> Self {
-        let mut block = BasicBlock::new();
+        let mut block = BasicBlock::default();
         for instr in def.body().iter() {
             block.add_instr(instr);
         }
