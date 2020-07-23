@@ -1,6 +1,5 @@
 use crate::backend::asm::ast as asm;
 use crate::backend::target::descriptor::{Descriptor, Tile};
-use crate::passes::select::instr::*;
 use crate::passes::select::sdag::*;
 use petgraph::visit::{Dfs, DfsPostOrder};
 
