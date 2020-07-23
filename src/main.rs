@@ -3,7 +3,7 @@ use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::block::BasicBlock;
-use reticle::passes::select::dag::SDag;
+use reticle::passes::select::sdag::SDag;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");

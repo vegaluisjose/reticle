@@ -1,4 +1,4 @@
-use crate::passes::select::dag::*;
+use crate::passes::select::sdag::*;
 use petgraph::dot::{Config, Dot};
 use std::fmt;
 
