@@ -1,4 +1,22 @@
+use crate::lang::ast;
 use crate::passes::select::instr::*;
+
+// Once we support partitioning, then
+// this function will likely change because
+// inputs can come from either lut or dsp
+pub fn create_instr_from_expr(expr: &ast::Expr) -> Instr {
+    let op = Op::In;
+    let ty = expr.ty().clone();
+    let loc = Loc::Lut;
+    Instr::new(op, ty, loc)
+}
+
+pub fn create_instr_from_instr(instr: &ast::Instr) -> Instr {
+    let op = Op::from(instr.prim_op().clone());
+    let ty = instr.ty().clone();
+    let loc = Loc::from(instr.loc().clone());
+    Instr::new(op, ty, loc)
+}
 
 impl Instr {
     pub fn new(op: Op, ty: Ty, loc: Loc) -> Instr {
