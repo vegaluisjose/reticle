@@ -40,7 +40,7 @@ impl PrettyPrint for Expr {
 impl PrettyPrint for StdOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            _ => panic!("WIP"),
+            StdOp::Identity => RcDoc::nil(),
         }
     }
 }
