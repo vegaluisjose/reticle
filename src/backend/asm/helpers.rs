@@ -28,6 +28,14 @@ impl Prog {
         self.sig.id()
     }
 
+    pub fn inputs(&self) -> &Vec<Port> {
+        self.sig.inputs()
+    }
+
+    pub fn outputs(&self) -> &Vec<Port> {
+        self.sig.outputs()
+    }
+
     pub fn add_instr(&mut self, instr: Instr) {
         self.body.push(instr);
     }
