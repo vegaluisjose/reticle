@@ -1,6 +1,31 @@
 use crate::lang::ast::*;
 use std::str::FromStr;
 
+impl Ty {
+    pub fn width(&self) -> u64 {
+        match self {
+            Ty::Bool => 1,
+            Ty::UInt(w) => *w,
+            Ty::SInt(w) => *w,
+            Ty::Vector(d, _) => d.width(),
+        }
+    }
+
+    pub fn length(&self) -> u64 {
+        match self {
+            Ty::Vector(_, l) => *l,
+            _ => panic!("Error: type is not a vector"),
+        }
+    }
+
+    pub fn is_vector(&self) -> bool {
+        match self {
+            Ty::Vector(_, _) => true,
+            _ => false,
+        }
+    }
+}
+
 impl Port {
     pub fn id(&self) -> Id {
         match self {
