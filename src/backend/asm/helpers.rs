@@ -24,6 +24,10 @@ impl Prog {
         }
     }
 
+    pub fn id(&self) -> String {
+        self.sig.id()
+    }
+
     pub fn add_instr(&mut self, instr: Instr) {
         self.body.push(instr);
     }

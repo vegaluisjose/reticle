@@ -1,6 +1,7 @@
 use reticle::backend::asm::ast as asm;
 use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
+use reticle::backend::verilog::Module;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::basic_block::BasicBlock;
 use reticle::passes::select::sdag::SDag;
@@ -23,11 +24,11 @@ fn sample_prog() -> Prog {
     ));
     let mut prog = Prog::default();
     prog.add_def(def);
-    println!("Original program:\n\n{}", &prog);
+    println!("\n\nOriginal program:\n\n{}", &prog);
     prog
 }
 
-fn compile(prog: &Prog) {
+fn compile(prog: &Prog) -> asm::Prog {
     let target = Ultrascale::default();
     let block = BasicBlock::from(prog.defs[0].clone());
     let mut sdag = SDag::from(block);
@@ -37,10 +38,13 @@ fn compile(prog: &Prog) {
     for instr in asm_instr.iter() {
         asm_prog.add_instr(instr.clone());
     }
-    println!("Assembly program:\n\n{}", asm_prog);
+    println!("\n\nAssembly program:\n\n{}", asm_prog);
+    asm_prog
 }
 
 fn main() {
     let prog = sample_prog();
-    compile(&prog);
+    let asm = compile(&prog);
+    let vlog = Module::from(asm);
+    println!("\n\nVerilog module:\n\n{}", vlog);
 }
