@@ -10,7 +10,7 @@ pub struct Ultrascale {
 impl Default for Ultrascale {
     fn default() -> Self {
         Ultrascale {
-            spec: read_to_string("isa/ultrascale.json"),
+            spec: read_to_string("spec/ultrascale/isa.json"),
         }
     }
 }
