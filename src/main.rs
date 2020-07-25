@@ -1,3 +1,4 @@
+use handlebars::Handlebars;
 use reticle::backend::asm::ast as asm;
 use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
@@ -5,6 +6,8 @@ use reticle::backend::verilog::Module;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::basic_block::BasicBlock;
 use reticle::passes::select::sdag::SDag;
+use reticle::util::file::read_to_string;
+use serde_json::json;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");
@@ -42,9 +45,19 @@ fn compile(prog: &Prog) -> asm::Prog {
     asm_prog
 }
 
+fn test_dsp_prim() {
+    let reg = Handlebars::new();
+    let dsp = read_to_string("spec/ultrascale/dsp.hb");
+    let render = reg
+        .render_template(&dsp, &json!({"name": "foo"}))
+        .expect("Error: rendering handlebars");
+    println!("\n\n{}", render);
+}
+
 fn main() {
     let prog = sample_prog();
     let asm = compile(&prog);
     let vlog = Module::from(asm);
     println!("\n\nVerilog module:\n\n{}", vlog);
+    test_dsp_prim();
 }
