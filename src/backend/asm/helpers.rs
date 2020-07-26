@@ -6,11 +6,21 @@ impl Expr {
     pub fn new_ref(name: &str, ty: Ty) -> Expr {
         Expr::Ref(name.to_string(), ty)
     }
+
+    pub fn id(&self) -> String {
+        match self {
+            Expr::Ref(id, _) => id.to_string(),
+        }
+    }
 }
 
 impl Instr {
     pub fn dst(&self) -> String {
         self.dst.to_string()
+    }
+
+    pub fn params(&self) -> &Vec<Expr> {
+        &self.params
     }
 
     pub fn set_dst(&mut self, name: &str) {
