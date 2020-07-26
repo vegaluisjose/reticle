@@ -1,7 +1,5 @@
-use reticle::backend::asm::ast as asm;
 use reticle::lang::ast::{Def, Instr, Prog};
-use reticle::passes::select::basic_block::BasicBlock;
-use reticle::passes::select::sdag::SDag;
+use reticle::passes::select::Select;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");
@@ -25,22 +23,10 @@ fn sample_prog() -> Prog {
     prog
 }
 
-fn compile(prog: &Prog) -> asm::Prog {
-    let block = BasicBlock::from(prog.defs[0].clone());
-    let mut sdag = SDag::new(block, "ultrascale");
-    sdag.select("y");
-    let asm_instr = sdag.codegen("y");
-    let mut asm_prog = asm::Prog::new(prog.clone(), "ultrascale");
-    for instr in asm_instr.iter() {
-        asm_prog.add_instr(instr.clone());
-    }
-    println!("\n\nAssembly program:\n\n{}", asm_prog);
-    asm_prog
-}
-
 fn main() {
     let prog = sample_prog();
-    let asm = compile(&prog);
+    let pass = Select::new(prog, "ultrascale");
+    let asm = pass.run();
     let vlog = asm.to_verilog();
     println!("\n\nVerilog module:\n\n{}", vlog);
 }
