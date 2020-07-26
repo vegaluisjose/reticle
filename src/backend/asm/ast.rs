@@ -32,7 +32,7 @@ pub struct Instr {
     pub op: Id,
     pub loc: Loc,
     pub area: u32,
-    pub dst: Option<Id>,
+    pub dst: Id,
     pub params: Vec<Expr>,
 }
 

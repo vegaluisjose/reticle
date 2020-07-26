@@ -59,7 +59,7 @@ impl Instr {
             op: self.name.to_string(),
             loc: asm_loc,
             area: self.area,
-            dst: None,
+            dst: String::new(),
             params: Vec::new(),
         }
     }

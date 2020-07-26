@@ -19,14 +19,15 @@ fn sample_prog() -> Prog {
     ));
     let mut prog = Prog::default();
     prog.add_def(def);
-    println!("\n\nOriginal program:\n\n{}", &prog);
     prog
 }
 
 fn main() {
     let prog = sample_prog();
-    let pass = Select::new(prog, "ultrascale");
+    let pass = Select::new(prog.clone(), "ultrascale");
     let asm = pass.run();
     let vlog = asm.to_verilog();
+    println!("\n\nOriginal program:\n\n{}", &prog);
+    println!("\n\nAsm program:\n\n{}", &asm);
     println!("\n\nVerilog module:\n\n{}", vlog);
 }

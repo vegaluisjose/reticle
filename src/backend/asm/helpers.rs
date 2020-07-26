@@ -9,8 +9,12 @@ impl Expr {
 }
 
 impl Instr {
+    pub fn dst(&self) -> String {
+        self.dst.to_string()
+    }
+
     pub fn set_dst(&mut self, name: &str) {
-        self.dst = Some(name.to_string());
+        self.dst = name.to_string();
     }
 
     pub fn add_param(&mut self, expr: Expr) {

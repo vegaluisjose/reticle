@@ -35,17 +35,14 @@ impl PrettyPrint for Loc {
 
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
-        let dst_doc = match &self.dst {
-            Some(n) => RcDoc::as_string(n)
-                .append(RcDoc::space())
-                .append(RcDoc::text(":"))
-                .append(RcDoc::space())
-                .append(self.ty.to_doc())
-                .append(RcDoc::space())
-                .append(RcDoc::text("="))
-                .append(RcDoc::space()),
-            None => RcDoc::nil(),
-        };
+        let dst_doc = RcDoc::as_string(self.dst())
+            .append(RcDoc::space())
+            .append(RcDoc::text(":"))
+            .append(RcDoc::space())
+            .append(self.ty.to_doc())
+            .append(RcDoc::space())
+            .append(RcDoc::text("="))
+            .append(RcDoc::space());
         let params_doc = if self.params.is_empty() {
             RcDoc::nil()
         } else {
