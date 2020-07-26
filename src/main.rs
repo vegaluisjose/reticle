@@ -1,13 +1,9 @@
-use handlebars::Handlebars;
 use reticle::backend::asm::ast as asm;
 use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
-use reticle::backend::verilog::Module;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::basic_block::BasicBlock;
 use reticle::passes::select::sdag::SDag;
-use reticle::util::file::read_to_string;
-use serde_json::json;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");
@@ -37,7 +33,7 @@ fn compile(prog: &Prog) -> asm::Prog {
     let mut sdag = SDag::from(block);
     sdag.select_mut("y", &target.to_descriptor());
     let asm_instr = sdag.codegen("y");
-    let mut asm_prog = asm::Prog::new(prog.defs[0].sig.clone());
+    let mut asm_prog = asm::Prog::new(prog.clone(), "ultrascale");
     for instr in asm_instr.iter() {
         asm_prog.add_instr(instr.clone());
     }
@@ -48,6 +44,6 @@ fn compile(prog: &Prog) -> asm::Prog {
 fn main() {
     let prog = sample_prog();
     let asm = compile(&prog);
-    let vlog = Module::from(asm);
+    let vlog = asm.to_verilog();
     println!("\n\nVerilog module:\n\n{}", vlog);
 }

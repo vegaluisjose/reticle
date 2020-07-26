@@ -40,4 +40,5 @@ pub struct Instr {
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,
+    pub target: String,
 }

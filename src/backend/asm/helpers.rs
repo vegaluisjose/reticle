@@ -1,4 +1,6 @@
 use crate::backend::asm::ast::*;
+use crate::backend::verilog::Module;
+use crate::lang::ast as reticle;
 
 impl Expr {
     pub fn new_ref(name: &str, ty: Ty) -> Expr {
@@ -17,10 +19,12 @@ impl Instr {
 }
 
 impl Prog {
-    pub fn new(sig: Sig) -> Prog {
+    pub fn new(prog: reticle::Prog, target: &str) -> Prog {
+        assert_eq!(target, "ultrascale", "Error: ultrascale support only");
         Prog {
-            sig,
+            sig: prog.defs[0].sig.clone(),
             body: Vec::new(),
+            target: target.to_string(),
         }
     }
 
@@ -42,5 +46,9 @@ impl Prog {
 
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
+    }
+
+    pub fn to_verilog(&self) -> Module {
+        Module::from(self.clone())
     }
 }
