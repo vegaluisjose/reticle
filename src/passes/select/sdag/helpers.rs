@@ -1,5 +1,7 @@
+use crate::backend::arch::ultrascale::Ultrascale;
 use crate::backend::asm::ast as asm;
 use crate::backend::target::descriptor::{Descriptor, Tile};
+use crate::backend::target::Target;
 use crate::passes::select::basic_block::BasicBlock;
 use crate::passes::select::sdag::*;
 use petgraph::visit::{Dfs, DfsPostOrder};
@@ -19,7 +21,7 @@ impl Default for SDag {
         SDag {
             graph: SDGraph::new(),
             ctx: SDCtx::new(),
-            target: String::new(),
+            descriptor: None,
         }
     }
 }
@@ -105,12 +107,15 @@ impl SDag {
     }
 
     pub fn set_target(&mut self, target: &str) {
-        assert_eq!(target, "ultrascale", "Error: ultrascale support only");
-        self.target = target.to_string();
+        let descriptor = match target {
+            "ultrascale" => Ultrascale::default().to_descriptor(),
+            _ => panic!("Error: only ultrascale support"),
+        };
+        self.descriptor = Some(descriptor);
     }
 
-    pub fn target(&self) -> String {
-        self.target.to_string()
+    pub fn descriptor(&self) -> Option<&Descriptor> {
+        self.descriptor.as_ref()
     }
 
     pub fn add_sdnode(&mut self, name: &str, instr: Instr) {
@@ -132,17 +137,21 @@ impl SDag {
         self.ctx.contains_key(name)
     }
 
-    pub fn select_mut(&mut self, name: &str, descriptor: &Descriptor) {
-        if self.contains_sdnode(name) {
-            for tile in descriptor.tiles.iter() {
-                if let Some(start) = self.ctx.get(name) {
-                    let mut dag_iter = DfsPostOrder::new(&self.graph, *start);
-                    while let Some(ix) = dag_iter.next(&self.graph) {
-                        if self.is_match(ix, &tile.pattern) {
-                            let cost = tile.pattern.cost as f32;
-                            if cost < self.estimate_cost(ix) {
-                                let mut asm = tile.asm.clone();
-                                self.build_instr_mut(ix, &tile.pattern, &mut asm);
+    pub fn select(&mut self, name: &str) {
+        if let Some(descriptor) = self.descriptor() {
+            if self.contains_sdnode(name) {
+                // copy tiles because of mutable borrow
+                let tiles = descriptor.tiles.clone();
+                for tile in tiles.iter() {
+                    if let Some(start) = self.ctx.get(name) {
+                        let mut dag_iter = DfsPostOrder::new(&self.graph, *start);
+                        while let Some(ix) = dag_iter.next(&self.graph) {
+                            if self.is_match(ix, &tile.pattern) {
+                                let cost = tile.pattern.cost as f32;
+                                if cost < self.estimate_cost(ix) {
+                                    let mut asm = tile.asm.clone();
+                                    self.build_instr_mut(ix, &tile.pattern, &mut asm);
+                                }
                             }
                         }
                     }

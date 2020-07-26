@@ -1,4 +1,4 @@
-use crate::backend::target::descriptor::Tile;
+use crate::backend::target::descriptor::{Descriptor, Tile};
 use crate::passes::select::instr::*;
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
@@ -27,5 +27,5 @@ pub type SDCtx = HashMap<SDId, SDNodeIx>;
 pub struct SDag {
     pub graph: SDGraph,
     pub ctx: SDCtx,
-    pub target: String,
+    pub descriptor: Option<Descriptor>,
 }
