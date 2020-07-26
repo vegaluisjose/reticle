@@ -1,5 +1,5 @@
+use reticle::backend::arch::ultrascale::Ultrascale;
 use reticle::backend::asm::ast as asm;
-use reticle::backend::target::ultrascale::Ultrascale;
 use reticle::backend::target::Target;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::basic_block::BasicBlock;
@@ -30,7 +30,7 @@ fn sample_prog() -> Prog {
 fn compile(prog: &Prog) -> asm::Prog {
     let target = Ultrascale::default();
     let block = BasicBlock::from(prog.defs[0].clone());
-    let mut sdag = SDag::from(block);
+    let mut sdag = SDag::new(block, "ultrascale");
     sdag.select_mut("y", &target.to_descriptor());
     let asm_instr = sdag.codegen("y");
     let mut asm_prog = asm::Prog::new(prog.clone(), "ultrascale");

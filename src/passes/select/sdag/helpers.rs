@@ -1,5 +1,6 @@
 use crate::backend::asm::ast as asm;
 use crate::backend::target::descriptor::{Descriptor, Tile};
+use crate::passes::select::basic_block::BasicBlock;
 use crate::passes::select::sdag::*;
 use petgraph::visit::{Dfs, DfsPostOrder};
 
@@ -9,6 +10,16 @@ impl SDNode {
             name: name.to_string(),
             instr,
             tile: None,
+        }
+    }
+}
+
+impl Default for SDag {
+    fn default() -> SDag {
+        SDag {
+            graph: SDGraph::new(),
+            ctx: SDCtx::new(),
+            target: String::new(),
         }
     }
 }
@@ -85,6 +96,21 @@ impl SDag {
         } else {
             panic!("Error: node index does not seems to exists")
         }
+    }
+
+    pub fn new(block: BasicBlock, target: &str) -> SDag {
+        let mut sdag = SDag::from(block);
+        sdag.set_target(target);
+        sdag
+    }
+
+    pub fn set_target(&mut self, target: &str) {
+        assert_eq!(target, "ultrascale", "Error: ultrascale support only");
+        self.target = target.to_string();
+    }
+
+    pub fn target(&self) -> String {
+        self.target.to_string()
     }
 
     pub fn add_sdnode(&mut self, name: &str, instr: Instr) {
