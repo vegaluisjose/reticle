@@ -45,19 +45,9 @@ fn compile(prog: &Prog) -> asm::Prog {
     asm_prog
 }
 
-fn test_dsp_prim() {
-    let reg = Handlebars::new();
-    let dsp = read_to_string("spec/ultrascale/dsp.hb");
-    let render = reg
-        .render_template(&dsp, &json!({"name": "foo"}))
-        .expect("Error: rendering handlebars");
-    println!("\n\n{}", render);
-}
-
 fn main() {
     let prog = sample_prog();
     let asm = compile(&prog);
     let vlog = Module::from(asm);
     println!("\n\nVerilog module:\n\n{}", vlog);
-    test_dsp_prim();
 }
