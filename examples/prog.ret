@@ -1,1 +1,1 @@
-t = add
+t : i8 = add

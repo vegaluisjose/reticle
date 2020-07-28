@@ -29,6 +29,14 @@ impl ReticleParser {
         Ok(input.as_str().parse::<i64>().unwrap())
     }
 
+    fn ty(input: Node) -> Result<Ty> {
+        Ok(Ty::from_str(input.as_str()).unwrap())
+    }
+
+    fn primop(input: Node) -> Result<PrimOp> {
+        Ok(PrimOp::from_str(input.as_str()).unwrap())
+    }
+
     fn expr(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
@@ -36,16 +44,12 @@ impl ReticleParser {
         ))
     }
 
-    fn primop(input: Node) -> Result<PrimOp> {
-        Ok(PrimOp::from_str(input.as_str()).unwrap())
-    }
-
     fn prim(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(id), primop(op)] => Instr::Prim {
+            [identifier(id), ty(ty), primop(op)] => Instr::Prim {
                 id,
-                ty: Ty::Hole,
+                ty,
                 op,
                 attrs: Vec::new(),
                 params: Vec::new(),
