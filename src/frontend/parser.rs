@@ -72,7 +72,7 @@ impl ReticleParser {
         ))
     }
 
-    fn def(input: Node) -> Result<Def> {
+    fn definition(input: Node) -> Result<Def> {
         Ok(match_nodes!(
             input.into_children();
             [identifier(id), instrs(body)] => Def {
@@ -82,21 +82,23 @@ impl ReticleParser {
         ))
     }
 
-    // fn file(input: Node) -> Result<Expr> {
-    //     Ok(match_nodes!(
-    //         input.into_children();
-    //         [expr(e)] => e,
-    //     ))
-    // }
+    fn file(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [definition(def)..] => Prog {
+                defs: def.collect(),
+            }
+        ))
+    }
 }
 
-pub fn parse(input_str: &str) -> Result<Def> {
-    let inputs = ReticleParser::parse(Rule::def, input_str)?;
+pub fn parse(input_str: &str) -> Result<Prog> {
+    let inputs = ReticleParser::parse(Rule::file, input_str)?;
     let input = inputs.single()?;
-    ReticleParser::def(input)
+    ReticleParser::file(input)
 }
 
-pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Def> {
+pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
     let content = read_to_string(path);
     parse(&content)
 }

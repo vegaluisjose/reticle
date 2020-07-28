@@ -20,6 +20,8 @@ instr = { prim }
 
 instrs = { instr ~ ";" ~ (instr ~ ";")* }
 
-def = { "def" ~ identifier ~ "{" ~ instrs ~ "}" }
+definition = { "def" ~ identifier ~ "{" ~ instrs ~ "}" }
 
-file = { SOI ~ prim ~ EOI }
+file = { SOI ~ definition+ }
+
+dummy = { EOI }
