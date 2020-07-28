@@ -58,6 +58,30 @@ impl ReticleParser {
         ))
     }
 
+    fn instr(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [prim(p)] => p,
+        ))
+    }
+
+    fn instrs(input: Node) -> Result<Vec<Instr>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr(instr)..] => instr.collect()
+        ))
+    }
+
+    fn def(input: Node) -> Result<Def> {
+        Ok(match_nodes!(
+            input.into_children();
+            [identifier(id), instrs(body)] => Def {
+                sig: Sig::new(&id),
+                body,
+            }
+        ))
+    }
+
     // fn file(input: Node) -> Result<Expr> {
     //     Ok(match_nodes!(
     //         input.into_children();
@@ -66,13 +90,13 @@ impl ReticleParser {
     // }
 }
 
-pub fn parse(input_str: &str) -> Result<Instr> {
-    let inputs = ReticleParser::parse(Rule::prim, input_str)?;
+pub fn parse(input_str: &str) -> Result<Def> {
+    let inputs = ReticleParser::parse(Rule::def, input_str)?;
     let input = inputs.single()?;
-    ReticleParser::prim(input)
+    ReticleParser::def(input)
 }
 
-pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Instr> {
+pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Def> {
     let content = read_to_string(path);
     parse(&content)
 }

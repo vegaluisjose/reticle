@@ -1,10 +1,25 @@
 WHITESPACE = _{ " " | "\t" | NEWLINE }
+
 COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
 sep = _{ "_" | "-"}
+
 identifier = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+
 number = @{ ASCII_DIGIT+ }
+
 ty = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
 expr = { identifier }
+
 primop = { "add" }
+
 prim = { identifier ~ ":" ~ ty ~ "=" ~ primop }
+
+instr = { prim }
+
+instrs = { instr ~ ";" ~ (instr ~ ";")* }
+
+def = { "def" ~ identifier ~ "{" ~ instrs ~ "}" }
+
 file = { SOI ~ prim ~ EOI }
