@@ -12,13 +12,13 @@ ty = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
 expr = { identifier }
 
-primop = { "add" }
+primop = { "add" | "mul" }
 
 prim = { identifier ~ ":" ~ ty ~ "=" ~ primop }
 
-instr = { prim }
+instr = { prim ~ ";" }
 
-instrs = { instr ~ ";" ~ (instr ~ ";")* }
+instrs = { instr ~ (instr)* }
 
 definition = { "def" ~ identifier ~ "{" ~ instrs ~ "}" }
 

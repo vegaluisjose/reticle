@@ -1,3 +1,4 @@
 def muladd {
-    t : i8 = add;
+    t0 : i8 = mul;
+    t1 : i8 = add;
 }
