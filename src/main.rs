@@ -1,5 +1,6 @@
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::Select;
+use reticle::frontend::parser::parse_from_file;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");
@@ -22,6 +23,11 @@ fn sample_prog() -> Prog {
     prog
 }
 
+fn test_parser() {
+    let prog = parse_from_file("examples/prog.ret");
+    println!("expr:{}", prog.unwrap());
+}
+
 fn main() {
     let prog = sample_prog();
     let pass = Select::new(prog.clone(), "ultrascale");
@@ -30,4 +36,5 @@ fn main() {
     println!("\n\nOriginal program:\n\n{}", &prog);
     println!("\n\nAsm program:\n\n{}", &asm);
     println!("\n\nVerilog module:\n\n{}", vlog);
+    test_parser()
 }
