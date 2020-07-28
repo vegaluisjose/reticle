@@ -85,7 +85,7 @@ impl ReticleParser {
     fn file(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [definition(def)..] => Prog {
+            [definition(def).., _] => Prog {
                 defs: def.collect(),
             }
         ))

@@ -22,6 +22,4 @@ instrs = { instr ~ ";" ~ (instr ~ ";")* }
 
 definition = { "def" ~ identifier ~ "{" ~ instrs ~ "}" }
 
-file = { SOI ~ definition+ }
-
-dummy = { EOI }
+file = { SOI ~ definition+ ~ EOI }
