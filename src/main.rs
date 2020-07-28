@@ -1,6 +1,6 @@
+use reticle::frontend::parser::parse_from_file;
 use reticle::lang::ast::{Def, Instr, Prog};
 use reticle::passes::select::Select;
-use reticle::frontend::parser::parse_from_file;
 
 fn sample_prog() -> Prog {
     let mut def = Def::new("muladd");
@@ -25,7 +25,7 @@ fn sample_prog() -> Prog {
 
 fn test_parser() {
     let prog = parse_from_file("examples/prog.ret");
-    println!("expr:{}", prog.unwrap());
+    println!("parse result\n{}", prog.unwrap());
 }
 
 fn main() {
