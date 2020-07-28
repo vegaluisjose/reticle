@@ -1,4 +1,4 @@
-def muladd {
+def muladd(a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
     t0 : i8 = mul;
     t1 : i8 = add;
 }

@@ -72,11 +72,49 @@ impl ReticleParser {
         ))
     }
 
-    fn definition(input: Node) -> Result<Def> {
+    fn input(input: Node) -> Result<Port> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(id), instrs(body)] => Def {
-                sig: Sig::new(&id),
+            [identifier(id), ty(ty)] => Port::Input {
+                id,
+                ty,
+            }
+        ))
+    }
+
+    fn inputs(input: Node) -> Result<Vec<Port>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [input(input)..] => input.collect()
+        ))
+    }
+
+    fn output(input: Node) -> Result<Port> {
+        Ok(match_nodes!(
+            input.into_children();
+            [identifier(id), ty(ty)] => Port::Output {
+                id,
+                ty,
+            }
+        ))
+    }
+
+    fn outputs(input: Node) -> Result<Vec<Port>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [output(output)..] => output.collect()
+        ))
+    }
+
+    fn def(input: Node) -> Result<Def> {
+        Ok(match_nodes!(
+            input.into_children();
+            [identifier(id), inputs(inputs), outputs(outputs), instrs(body)] => Def {
+                sig: Sig {
+                    id,
+                    inputs,
+                    outputs,
+                },
                 body,
             }
         ))
@@ -85,7 +123,7 @@ impl ReticleParser {
     fn file(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [definition(def).., _] => Prog {
+            [def(def).., _] => Prog {
                 defs: def.collect(),
             }
         ))

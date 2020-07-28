@@ -8,7 +8,11 @@ identifier = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
 number = @{ ASCII_DIGIT+ }
 
-ty = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+ty_int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+ty_bool = @{ ASCII_ALPHA_LOWER+ }
+
+ty = { ty_int | ty_bool }
 
 expr = { identifier }
 
@@ -20,6 +24,16 @@ instr = { prim ~ ";" }
 
 instrs = { instr ~ (instr)* }
 
-definition = { "def" ~ identifier ~ "{" ~ instrs ~ "}" }
+input = { identifier ~ ":" ~ ty }
 
-file = { SOI ~ definition+ ~ EOI }
+inputs = { "(" ~ (input ~ ("," ~ input)*)? ~ ")" }
+
+output = { identifier ~ ":" ~ ty }
+
+outputs = { "->" ~ "(" ~ (output ~ ("," ~ output)*)? ~ ")" }
+
+def = {
+    "def" ~ identifier ~ inputs ~ outputs ~ "{" ~ instrs ~ "}"
+}
+
+file = { SOI ~ def+ ~ EOI }
