@@ -16,9 +16,11 @@ ty = { ty_int | ty_bool }
 
 expr = { identifier }
 
-primop = { "add" | "mul" }
+primop = { "reg" | "add" | "sub" | "mul" }
 
-prim = { identifier ~ ":" ~ ty ~ "=" ~ primop }
+params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
+
+prim = { identifier ~ ":" ~ ty ~ "=" ~ primop ~ params }
 
 instr = { prim ~ ";" }
 

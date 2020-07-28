@@ -44,15 +44,22 @@ impl ReticleParser {
         ))
     }
 
+    fn params(input: Node) -> Result<Vec<Expr>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [expr(expr)..] => expr.collect()
+        ))
+    }
+
     fn prim(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(id), ty(ty), primop(op)] => Instr::Prim {
+            [identifier(id), ty(ty), primop(op), params(params)] => Instr::Prim {
                 id,
                 ty,
                 op,
                 attrs: Vec::new(),
-                params: Vec::new(),
+                params,
                 loc: Loc::Hole,
             },
         ))
