@@ -1,5 +1,5 @@
 use crate::backend::asm::ast as asm;
-use crate::backend::verilog::*;
+use crate::backend::asm::verilog::*;
 use std::convert::From;
 
 // there is going to be a better way to do this

@@ -1,5 +1,5 @@
 use crate::backend::asm::ast::*;
-use crate::backend::verilog::Module;
+use crate::backend::asm::verilog::Module;
 use crate::lang::ast as reticle;
 
 impl Expr {
