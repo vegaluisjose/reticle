@@ -5,6 +5,7 @@ pub type Id = String;
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Ty {
+    Hole,
     Bool,
     UInt(u64),
     SInt(u64),

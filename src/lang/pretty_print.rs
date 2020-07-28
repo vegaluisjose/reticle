@@ -5,6 +5,7 @@ use pretty::RcDoc;
 impl PrettyPrint for Ty {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
+            Ty::Hole => RcDoc::text("??"),
             Ty::Bool => RcDoc::text("bool"),
             Ty::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
             Ty::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),

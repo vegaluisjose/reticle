@@ -8,6 +8,7 @@ impl Ty {
             Ty::UInt(w) => *w,
             Ty::SInt(w) => *w,
             Ty::Vector(d, _) => d.width(),
+            _ => panic!("Error: hole does not support width"),
         }
     }
 
