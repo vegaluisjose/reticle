@@ -87,7 +87,7 @@ impl PrettyPrint for Instr {
                         .append(RcDoc::text("]"))
                 };
                 let params_doc = if params.is_empty() {
-                    RcDoc::nil()
+                    RcDoc::text("(").append(RcDoc::text(")"))
                 } else {
                     RcDoc::text("(")
                         .append(RcDoc::intersperse(
