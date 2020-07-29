@@ -58,34 +58,6 @@ impl Expr {
 }
 
 impl Instr {
-    // need to think a better way to do this, probably from_str
-    #[allow(clippy::too_many_arguments)]
-    pub fn new_with_args(
-        dst: &str,
-        op_ty: &str,
-        op: &str,
-        lhs: &str,
-        lhs_ty: &str,
-        rhs: &str,
-        rhs_ty: &str,
-        loc: &str,
-    ) -> Instr {
-        let op_ty = Ty::from_str(op_ty).unwrap();
-        let lhs_ty = Ty::from_str(lhs_ty).unwrap();
-        let rhs_ty = Ty::from_str(rhs_ty).unwrap();
-        Instr::Prim {
-            id: dst.to_string(),
-            ty: op_ty,
-            op: PrimOp::from_str(op).unwrap(),
-            attrs: vec![],
-            params: vec![
-                Expr::Ref(lhs.to_string(), lhs_ty),
-                Expr::Ref(rhs.to_string(), rhs_ty),
-            ],
-            loc: Loc::from_str(loc).unwrap(),
-        }
-    }
-
     pub fn id(&self) -> String {
         match self {
             Instr::Std {
