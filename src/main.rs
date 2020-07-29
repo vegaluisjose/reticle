@@ -25,7 +25,7 @@ fn sample_prog() -> Prog {
 
 fn test_parser() {
     let prog = parse_from_file("examples/prog.ret");
-    println!("parse result\n{}", prog.unwrap());
+    println!("parse result\n{}", prog);
 }
 
 fn main() {

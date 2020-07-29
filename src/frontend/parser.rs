@@ -137,13 +137,13 @@ impl ReticleParser {
     }
 }
 
-pub fn parse(input_str: &str) -> Result<Prog> {
-    let inputs = ReticleParser::parse(Rule::file, input_str)?;
-    let input = inputs.single()?;
-    ReticleParser::file(input)
+pub fn parse(input_str: &str) -> Prog {
+    let inputs = ReticleParser::parse(Rule::file, input_str).expect("Error: parsing inputs");
+    let input = inputs.single().expect("Error: parsing root");
+    ReticleParser::file(input).expect("Error: parsing file")
 }
 
-pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
+pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
     let content = read_to_string(path);
     parse(&content)
 }
