@@ -193,6 +193,46 @@ impl Instr {
             _ => panic!("Error: std ops don't support location"),
         }
     }
+
+    pub fn add_param(&mut self, expr: Expr) {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+            } => params.push(expr),
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+                loc: _,
+            } => params.push(expr),
+        }
+    }
+
+    pub fn clear_params(&mut self) {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+            } => params.clear(),
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+                loc: _,
+            } => params.clear(),
+        }
+    }
 }
 
 impl Sig {
@@ -236,9 +276,9 @@ impl Sig {
 }
 
 impl Def {
-    pub fn new(name: &str) -> Def {
+    pub fn new(id: &str) -> Def {
         Def {
-            sig: Sig::new(name),
+            sig: Sig::new(id),
             body: Vec::new(),
         }
     }
@@ -258,12 +298,20 @@ impl Def {
         self.sig.id()
     }
 
+    pub fn signature(&self) -> &Sig {
+        &self.sig
+    }
+
     pub fn inputs(&self) -> &Vec<Port> {
         &self.sig.inputs()
     }
 
     pub fn outputs(&self) -> &Vec<Port> {
         &self.sig.outputs()
+    }
+
+    pub fn add_sig(&mut self, sig: Sig) {
+        self.sig = sig;
     }
 
     pub fn add_input(&mut self, name: &str, ty: &str) {
@@ -286,5 +334,30 @@ impl Prog {
 
     pub fn defs(&self) -> &Vec<Def> {
         &self.defs
+    }
+}
+
+impl Default for Sig {
+    fn default() -> Sig {
+        Sig {
+            id: String::new(),
+            inputs: Vec::new(),
+            outputs: Vec::new(),
+        }
+    }
+}
+
+impl Default for Def {
+    fn default() -> Def {
+        Def {
+            sig: Sig::default(),
+            body: Vec::new(),
+        }
+    }
+}
+
+impl Default for Prog {
+    fn default() -> Prog {
+        Prog { defs: Vec::new() }
     }
 }
