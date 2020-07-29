@@ -3,7 +3,7 @@ use reticle::frontend::type_check::type_check;
 use reticle::passes::select::Select;
 
 fn main() {
-    let prog = parse_from_file("examples/prog.ret");
+    let prog = parse_from_file("examples/muladd.ret");
     let typed_prog = type_check(&prog);
     let pass = Select::new(typed_prog.clone(), "ultrascale");
     let asm = pass.run();
