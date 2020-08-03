@@ -1,8 +1,8 @@
 use crate::lang::interp::ty::Value;
 use std::collections::HashMap;
-use std::slice::Iter;
+use std::collections::VecDeque;
 
-type TraceValue = Vec<Value>;
+type TraceValue = VecDeque<Value>;
 type Map = HashMap<String, TraceValue>;
 
 #[derive(Clone, Debug)]
@@ -17,13 +17,25 @@ impl Default for Trace {
 }
 
 impl Trace {
-    pub fn poke(&mut self, id: &str, value: Value) {
+    pub fn enq(&mut self, id: &str, value: Value) {
         if let Some(data) = self.map.get_mut(id) {
-            data.push(value);
+            data.push_front(value);
         } else {
-            let mut data = Vec::new();
-            data.push(value);
+            let mut data = VecDeque::new();
+            data.push_front(value);
             self.map.insert(id.to_string(), data);
+        }
+    }
+
+    pub fn deq(&mut self, id: &str) -> Value {
+        if let Some(data) = self.map.get_mut(id) {
+            if let Some(value) = data.pop_back() {
+                value
+            } else {
+                panic!("Error: {} has empty queue", id);
+            }
+        } else {
+            panic!("Error: {} not found", id);
         }
     }
 
@@ -45,14 +57,6 @@ impl Trace {
     pub fn trace_from_id(&self, id: &str) -> &TraceValue {
         if let Some(trace) = self.map.get(id) {
             trace
-        } else {
-            panic!("Error: {} not found", id);
-        }
-    }
-
-    pub fn iter_from_id(&self, id: &str) -> Iter<Value> {
-        if let Some(trace) = self.map.get(id) {
-            trace.iter()
         } else {
             panic!("Error: {} not found", id);
         }

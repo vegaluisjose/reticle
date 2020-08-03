@@ -5,8 +5,8 @@ use reticle::lang::interp::trace::Trace;
 fn test_identity() {
     let prog = parse_from_file("examples/identity.ret");
     let mut trace = Trace::default();
-    trace.poke("a", 4);
-    trace.poke("a", 8);
+    trace.enq("a", 9);
+    trace.enq("a", 3);
     interpreter(&prog, &trace);
 }
 

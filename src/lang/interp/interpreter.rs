@@ -6,11 +6,16 @@ use crate::lang::interp::trace::Trace;
 pub fn interpreter(prog: &Prog, trace: &Trace) {
     assert!(trace.is_valid(), "Error: invalid trace, check values");
     assert!(prog.defs().len() == 1, "Error: single-def support atm");
+    let mut trace = trace.clone();
     let mut state = State::default();
-    state.add_input("a", 4);
-    for def in prog.defs().iter() {
-        for instr in def.body().iter() {
-            println!("{}", instr.eval_current(&state));
+    if let Some(def) = prog.defs().iter().next() {
+        for cycle in 0..trace.len() {
+            for input in def.inputs().iter() {
+                state.add_input(&input.id(), trace.deq(&input.id()))
+            }
+            for instr in def.body().iter() {
+                println!("cycle:{} value:{}", cycle, instr.eval_current(&state));
+            }
         }
     }
 }
