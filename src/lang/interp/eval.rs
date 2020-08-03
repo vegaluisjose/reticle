@@ -1,5 +1,6 @@
 use crate::lang::ast::*;
-use crate::lang::interp::state::{State, Value};
+use crate::lang::interp::state::State;
+use crate::lang::interp::ty::Value;
 
 pub trait Eval {
     fn eval_current(&self, state: &State) -> Value;
