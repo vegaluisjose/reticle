@@ -41,7 +41,7 @@ impl PrettyPrint for Expr {
 impl PrettyPrint for StdOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            StdOp::Identity => RcDoc::nil(),
+            StdOp::Identity => RcDoc::text("id"),
         }
     }
 }
@@ -104,7 +104,45 @@ impl PrettyPrint for Instr {
                     .append(RcDoc::space())
                     .append(loc_doc)
             }
-            _ => panic!("WIP"),
+            Instr::Std {
+                id,
+                ty,
+                op,
+                attrs,
+                params,
+            } => {
+                let out_doc = RcDoc::as_string(id)
+                    .append(RcDoc::text(":"))
+                    .append(RcDoc::space())
+                    .append(ty.to_doc())
+                    .append(RcDoc::space())
+                    .append(RcDoc::text("="))
+                    .append(RcDoc::space());
+                let attrs_doc = if attrs.is_empty() {
+                    RcDoc::nil()
+                } else {
+                    RcDoc::text("[")
+                        .append(RcDoc::intersperse(
+                            attrs.iter().map(|a| a.to_doc()),
+                            RcDoc::text(",").append(RcDoc::space()),
+                        ))
+                        .append(RcDoc::text("]"))
+                };
+                let params_doc = if params.is_empty() {
+                    RcDoc::text("(").append(RcDoc::text(")"))
+                } else {
+                    RcDoc::text("(")
+                        .append(RcDoc::intersperse(
+                            params.iter().map(|p| p.to_doc()),
+                            RcDoc::text(",").append(RcDoc::space()),
+                        ))
+                        .append(RcDoc::text(")"))
+                };
+                out_doc
+                    .append(op.to_doc())
+                    .append(attrs_doc)
+                    .append(params_doc)
+            }
         }
     }
 }

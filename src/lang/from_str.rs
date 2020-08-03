@@ -68,6 +68,16 @@ impl FromStr for PrimOp {
     }
 }
 
+impl FromStr for StdOp {
+    type Err = ();
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        match input {
+            "id" => Ok(StdOp::Identity),
+            _ => panic!("Error: FromStr to StdOp conversion"),
+        }
+    }
+}
+
 impl FromStr for Loc {
     type Err = ();
     fn from_str(input: &str) -> Result<Self, Self::Err> {

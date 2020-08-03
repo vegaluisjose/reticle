@@ -18,11 +18,13 @@ expr = { identifier }
 
 primop = { "reg" | "add" | "sub" | "mul" }
 
+stdop = { "id" }
+
+op = _{ primop | stdop }
+
 params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
 
-prim = { identifier ~ ":" ~ ty ~ "=" ~ primop ~ params }
-
-instr = { prim ~ ";" }
+instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ params ~ ";" }
 
 instrs = { instr ~ (instr)* }
 
