@@ -1,22 +1,17 @@
 use reticle::frontend::parser::parse_from_file;
-use reticle::lang::ast::Prog;
-use reticle::lang::interp::eval::Eval;
-use reticle::lang::interp::state::State;
+use reticle::lang::interp::interpreter;
+use reticle::lang::interp::trace::Trace;
 
-fn test_identity(prog: &Prog) {
-    let mut state = State::default();
-    state.add_input("a", 4);
-    for def in prog.defs().iter() {
-        for instr in def.body().iter() {
-            println!("{}", instr.eval_current(&state));
-        }
-    }
+fn test_identity() {
+    let prog = parse_from_file("examples/identity.ret");
+    let mut trace = Trace::default();
+    trace.poke("a", 4);
+    trace.poke("a", 8);
+    interpreter(&prog, &trace);
 }
 
 fn main() {
-    let prog = parse_from_file("examples/identity.ret");
-    println!("{}", &prog);
-    test_identity(&prog);
+    test_identity();
 }
 
 // compilation pipeline example
