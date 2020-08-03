@@ -5,6 +5,7 @@ use crate::lang::interp::trace::Trace;
 
 pub fn interpreter(prog: &Prog, trace: &Trace) {
     assert!(trace.is_valid(), "Error: invalid trace, check values");
+    assert!(prog.defs().len() == 1, "Error: single-def support atm");
     let mut state = State::default();
     state.add_input("a", 4);
     for def in prog.defs().iter() {
