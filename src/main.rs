@@ -1,5 +1,25 @@
 use reticle::frontend::parser::parse_from_file;
+use reticle::lang::ast::Prog;
+use reticle::lang::interp::eval::eval_instr;
+use reticle::lang::interp::state::State;
 
+fn test_identity(prog: &Prog) {
+    let mut state = State::default();
+    state.add_input("a", 4);
+    for def in prog.defs().iter() {
+        for instr in def.body().iter() {
+            eval_instr(instr, &state);
+        }
+    }
+}
+
+fn main() {
+    let prog = parse_from_file("examples/identity.ret");
+    println!("{}", &prog);
+    test_identity(&prog);
+}
+
+// compilation pipeline example
 // use reticle::frontend::type_check::type_check;
 // use reticle::passes::select::Select;
 // fn main() {
@@ -12,8 +32,3 @@ use reticle::frontend::parser::parse_from_file;
 //     println!("\n\nAsm program:\n\n{}", &asm);
 //     println!("\n\nVerilog module:\n\n{}", vlog);
 // }
-
-fn main() {
-    let prog = parse_from_file("examples/identity.ret");
-    println!("{}", prog);
-}
