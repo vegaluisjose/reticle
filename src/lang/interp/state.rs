@@ -3,7 +3,8 @@ use std::collections::HashMap;
 // use 64-bit values for now, probably this
 // should change if we would like to support
 // bigger int types
-type Map = HashMap<String, i64>;
+pub type Value = i64;
+pub type Map = HashMap<String, Value>;
 
 #[derive(Clone, Debug)]
 pub struct State {
@@ -17,11 +18,11 @@ impl Default for State {
 }
 
 impl State {
-    pub fn add_input(&mut self, id: &str, value: i64) {
+    pub fn add_input(&mut self, id: &str, value: Value) {
         self.inputs.insert(id.to_string(), value);
     }
 
-    pub fn get_value(&self, id: &str) -> i64 {
+    pub fn get_value(&self, id: &str) -> Value {
         if let Some(input) = self.inputs.get(id) {
             *input
         } else {

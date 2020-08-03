@@ -1,6 +1,6 @@
 use reticle::frontend::parser::parse_from_file;
 use reticle::lang::ast::Prog;
-use reticle::lang::interp::eval::eval_instr;
+use reticle::lang::interp::eval::Eval;
 use reticle::lang::interp::state::State;
 
 fn test_identity(prog: &Prog) {
@@ -8,7 +8,7 @@ fn test_identity(prog: &Prog) {
     state.add_input("a", 4);
     for def in prog.defs().iter() {
         for instr in def.body().iter() {
-            eval_instr(instr, &state);
+            println!("{}", instr.eval_current(&state));
         }
     }
 }
