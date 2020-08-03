@@ -53,7 +53,20 @@ impl PrettyPrint for PrimOp {
             PrimOp::Add => RcDoc::text("add"),
             PrimOp::Sub => RcDoc::text("sub"),
             PrimOp::Mul => RcDoc::text("mul"),
-            _ => panic!("WIP"),
+            PrimOp::Not => RcDoc::text("not"),
+            PrimOp::And => RcDoc::text("and"),
+            PrimOp::Nand => RcDoc::text("nand"),
+            PrimOp::Or => RcDoc::text("or"),
+            PrimOp::Nor => RcDoc::text("nor"),
+            PrimOp::Xor => RcDoc::text("xor"),
+            PrimOp::Xnor => RcDoc::text("xnor"),
+            PrimOp::Mux => RcDoc::text("mux"),
+            PrimOp::Equal => RcDoc::text("eq"),
+            PrimOp::Nequal => RcDoc::text("neq"),
+            PrimOp::Gt => RcDoc::text("gt"),
+            PrimOp::Lt => RcDoc::text("lt"),
+            PrimOp::Ge => RcDoc::text("ge"),
+            PrimOp::Le => RcDoc::text("le"),
         }
     }
 }
