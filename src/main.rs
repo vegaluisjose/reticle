@@ -1,6 +1,6 @@
 use reticle::frontend::parser::parse_from_file;
-use reticle::lang::interp::interpreter;
 use reticle::lang::interp::trace::Trace;
+use reticle::lang::interp::Interpreter;
 
 fn test_identity() {
     let prog = parse_from_file("examples/identity.ret");
@@ -9,7 +9,10 @@ fn test_identity() {
     trace.enq("a", 3);
     trace.enq("y", 9);
     trace.enq("y", 3);
-    interpreter(&prog, &trace);
+    assert!(!Interpreter::default()
+        .with_print()
+        .run(&prog, &trace)
+        .is_failed());
 }
 
 fn main() {
