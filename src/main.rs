@@ -9,9 +9,7 @@ fn test_identity() {
     trace.enq("a", 3);
     trace.enq("y", 9);
     trace.enq("y", 3);
-    assert!(!Interpreter::default()
-        .run(&prog, &trace)
-        .is_failed());
+    assert!(!Interpreter::default().run(&prog, &trace).is_failed());
 }
 
 fn test_register() {
@@ -26,9 +24,7 @@ fn test_register() {
     trace.enq("a", 0);
     trace.enq("en", 0);
     trace.enq("y", 9);
-    assert!(!Interpreter::default()
-        .run(&prog, &trace)
-        .is_failed());
+    assert!(!Interpreter::default().run(&prog, &trace).is_failed());
 }
 
 fn test_pipeline() {
@@ -43,9 +39,7 @@ fn test_pipeline() {
     trace.enq("a", 0);
     trace.enq("en", 0);
     trace.enq("y", 9);
-    assert!(!Interpreter::default()
-        .run(&prog, &trace)
-        .is_failed());
+    assert!(!Interpreter::default().run(&prog, &trace).is_failed());
 }
 
 fn main() {

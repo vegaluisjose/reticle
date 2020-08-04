@@ -115,8 +115,8 @@ impl Interpreter {
                 } else {
                     self.failed = true;
                 }
-                self.finished = true;
             }
+            self.finished = true;
         }
         self
     }
