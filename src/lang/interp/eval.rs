@@ -32,7 +32,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => state.contains(&params[0].id()) && state.contains(&params[1].id() && state.contains(&params[2].id()),
+            } => {
+                state.contains(&params[0].id())
+                    && state.contains(&params[1].id())
+                    && state.contains(&params[2].id())
+            }
             Instr::Prim {
                 id: _,
                 ty: _,
