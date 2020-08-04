@@ -1,0 +1,4 @@
+def pipeline(a: i8, en: bool) -> (y: i8) {
+    t0: i8 = reg(a, en);
+    y: i8 = reg(t0, en);
+}
