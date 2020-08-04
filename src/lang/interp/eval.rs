@@ -3,11 +3,11 @@ use crate::lang::interp::state::State;
 use crate::lang::interp::ty::Value;
 
 pub trait Eval {
-    fn eval_current(&self, state: &State) -> Value;
+    fn eval(&self, state: &State) -> Value;
 }
 
 impl Eval for Instr {
-    fn eval_current(&self, state: &State) -> Value {
+    fn eval(&self, state: &State) -> Value {
         match self {
             Instr::Std {
                 id: _,

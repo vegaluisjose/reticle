@@ -22,7 +22,7 @@ pub fn interpreter(prog: &Prog, trace: &Trace) {
                 curr.add_input(&input.id(), trace.deq(&input.id()))
             }
             for instr in def.body().iter() {
-                let value = instr.eval_current(&curr);
+                let value = instr.eval(&curr);
                 if instr.is_reg() {
                     next.add_reg(&instr.id(), value);
                 } else {
