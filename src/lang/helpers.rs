@@ -152,6 +152,20 @@ impl Instr {
         }
     }
 
+    pub fn is_reg(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: PrimOp::Reg,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => true,
+            _ => false,
+        }
+    }
+
     pub fn loc(&self) -> &Loc {
         match self {
             Instr::Prim {

@@ -7,6 +7,8 @@ fn test_identity() {
     let mut trace = Trace::default();
     trace.enq("a", 9);
     trace.enq("a", 3);
+    trace.enq("y", 9);
+    trace.enq("y", 3);
     interpreter(&prog, &trace);
 }
 

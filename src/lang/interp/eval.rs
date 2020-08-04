@@ -15,7 +15,7 @@ impl Eval for Instr {
                 op: StdOp::Identity,
                 attrs: _,
                 params,
-            } => state.get_value(&params[0].id()),
+            } => state.get(&params[0].id()),
             _ => unimplemented!("Prim instr not supported yet"),
         }
     }
