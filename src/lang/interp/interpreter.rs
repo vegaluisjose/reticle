@@ -1,4 +1,4 @@
-use crate::lang::ast::Prog;
+use crate::lang::ast::{Instr, Prog};
 use crate::lang::interp::eval::Eval;
 use crate::lang::interp::state::State;
 use crate::lang::interp::trace::Trace;
@@ -21,12 +21,36 @@ pub fn interpreter(prog: &Prog, trace: &Trace) {
             for input in def.inputs().iter() {
                 curr.add_input(&input.id(), trace.deq(&input.id()))
             }
+            // instr queue for vars not present in state
+            let mut unresolved: Vec<Instr> = Vec::new();
+            // run ready-to-execute instructions, or instructions with
+            // params available in the environment(state)
             for instr in def.body().iter() {
-                let value = instr.eval(&curr);
-                if instr.is_reg() {
-                    next.add_reg(&instr.id(), value);
+                if instr.is_ready(&curr) {
+                    let value = instr.eval(&curr);
+                    if instr.is_reg() {
+                        next.add_reg(&instr.id(), value);
+                    } else {
+                        curr.add_temp(&instr.id(), value);
+                    }
                 } else {
-                    curr.add_temp(&instr.id(), value);
+                    unresolved.push(instr.clone());
+                }
+            }
+            // run remaining instructions
+            for instr in unresolved.iter() {
+                if instr.is_ready(&curr) {
+                    let value = instr.eval(&curr);
+                    if instr.is_reg() {
+                        next.add_reg(&instr.id(), value);
+                    } else {
+                        curr.add_temp(&instr.id(), value);
+                    }
+                } else {
+                    panic!(
+                        "Error: malformed program with cycles, check instr:{}",
+                        instr
+                    );
                 }
             }
             // check output
