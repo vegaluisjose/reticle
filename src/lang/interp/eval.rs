@@ -17,7 +17,15 @@ impl Eval for Instr {
                 attrs: _,
                 params,
             } => state.contains(&params[0].id()),
-            _ => unimplemented!("Prim instr not supported yet"),
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: PrimOp::Reg,
+                attrs: _,
+                params,
+                loc: _,
+            } => state.contains(&params[0].id()) && state.contains(&params[1].id()),
+            instr => unimplemented!("instr:{} not supported yet", instr),
         }
     }
 
@@ -30,7 +38,22 @@ impl Eval for Instr {
                 attrs: _,
                 params,
             } => state.get(&params[0].id()),
-            _ => unimplemented!("Prim instr not supported yet"),
+            Instr::Prim {
+                id,
+                ty: _,
+                op: PrimOp::Reg,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let en = state.get(&params[1].id());
+                if en > 0 {
+                    state.get(&params[0].id())
+                } else {
+                    state.get(id)
+                }
+            }
+            instr => unimplemented!("instr: {} not supported yet", instr),
         }
     }
 }

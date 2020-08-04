@@ -15,8 +15,27 @@ fn test_identity() {
         .is_failed());
 }
 
+fn test_register() {
+    let prog = parse_from_file("examples/reg.ret");
+    let mut trace = Trace::default();
+    trace.enq("a", 9);
+    trace.enq("en", 1);
+    trace.enq("y", 0);
+    trace.enq("a", 0);
+    trace.enq("en", 0);
+    trace.enq("y", 9);
+    trace.enq("a", 0);
+    trace.enq("en", 0);
+    trace.enq("y", 9);
+    assert!(!Interpreter::default()
+        .with_print()
+        .run(&prog, &trace)
+        .is_failed());
+}
+
 fn main() {
     test_identity();
+    test_register();
 }
 
 // compilation pipeline example
