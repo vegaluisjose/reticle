@@ -85,4 +85,8 @@ impl State {
     pub fn update_regs_from_state(&mut self, other: &State) {
         self.regs = other.regs().clone();
     }
+
+    pub fn contains(&self, id: &str) -> bool {
+        self.inputs.get(id).is_some() || self.regs.get(id).is_some() || self.temps.get(id).is_some()
+    }
 }
