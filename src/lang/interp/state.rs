@@ -58,6 +58,30 @@ impl State {
         }
     }
 
+    pub fn get_input(&self, id: &str) -> Value {
+        if let Some(input) = self.inputs.get(id) {
+            *input
+        } else {
+            panic!("input:{} not found", id);
+        }
+    }
+
+    pub fn get_reg(&self, id: &str) -> Value {
+        if let Some(reg) = self.regs.get(id) {
+            *reg
+        } else {
+            panic!("reg:{} not found", id);
+        }
+    }
+
+    pub fn get_temp(&self, id: &str) -> Value {
+        if let Some(temp) = self.temps.get(id) {
+            *temp
+        } else {
+            panic!("temp:{} not found", id);
+        }
+    }
+
     pub fn update_regs_from_state(&mut self, other: &State) {
         self.regs = other.regs().clone();
     }

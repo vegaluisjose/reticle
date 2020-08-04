@@ -9,6 +9,7 @@ pub fn interpreter(prog: &Prog, trace: &Trace) {
     let mut trace = trace.clone();
     let mut curr = State::default();
     let mut next = State::default();
+    // eval one def in prog
     if let Some(def) = prog.defs().iter().next() {
         // initialize registers with zero
         for instr in def.body().iter() {
@@ -26,16 +27,16 @@ pub fn interpreter(prog: &Prog, trace: &Trace) {
                     next.add_reg(&instr.id(), value);
                 } else {
                     curr.add_temp(&instr.id(), value);
-                    next.add_temp(&instr.id(), value);
                 }
             }
+            // check output
             for output in def.outputs().iter() {
                 let exp = trace.deq(&output.id());
                 // store results depending on whether they are regs or temps
                 let res = if curr.is_reg(&output.id()) {
-                    curr.get(&output.id())
+                    curr.get_reg(&output.id())
                 } else {
-                    next.get(&output.id())
+                    curr.get_temp(&output.id())
                 };
                 println!(
                     "[cycle:{}] [id:{}] res:{} exp:{}",
