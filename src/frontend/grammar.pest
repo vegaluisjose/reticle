@@ -8,11 +8,11 @@ identifier = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
 number = @{ ASCII_DIGIT+ }
 
-ty_int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
-ty_bool = @{ ASCII_ALPHA_LOWER+ }
+bool = @{ ASCII_ALPHA_LOWER+ }
 
-ty = { ty_int | ty_bool }
+ty = { int | bool }
 
 expr = { identifier }
 
