@@ -2,10 +2,9 @@
     "isa":[
        {
           "name":"dsp_i8_mul_lut_lut",
-          "cost":4,
+          "cost": {"perf":4, "area": 1},
           "loc":"dsp",
           "ty":"i8",
-          "area":1,
           "expr":[
              "mul",
              [
@@ -20,10 +19,9 @@
        },
        {
           "name":"dsp_i8_add_lut_lut",
-          "cost":4,
+          "cost": {"perf":4, "area": 1},
           "loc":"dsp",
           "ty":"i8",
-          "area":1,
           "expr":[
              "add",
              [
@@ -38,10 +36,9 @@
        },
        {
           "name":"dsp_i8_add_reg_mul_lut_lut_lut_lut",
-          "cost":4,
+          "cost": {"perf":4, "area": 1},
           "loc":"dsp",
           "ty":"i8",
-          "area":1,
           "expr":[
              "add",
              [

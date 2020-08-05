@@ -12,12 +12,17 @@ pub enum Expr {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Cost {
+    pub perf: u32,
+    pub area: u32,
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Instr {
     pub name: String,
-    pub cost: u32,
+    pub cost: Cost,
     pub loc: String,
     pub ty: String,
-    pub area: u32,
     pub expr: Expr,
 }
 
@@ -58,7 +63,7 @@ impl Instr {
             ty,
             op: self.name.to_string(),
             loc: asm_loc,
-            area: self.area,
+            area: self.cost.area,
             dst: String::new(),
             params: Vec::new(),
         }
@@ -71,7 +76,7 @@ impl Instr {
         self.expr.to_sel_instr_mut(&mut instr, ty, loc);
         sel::Pattern {
             name: self.name.to_string(),
-            cost: self.cost,
+            cost: self.cost.perf,
             instr: instr.to_vec(),
         }
     }
