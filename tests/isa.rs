@@ -23,7 +23,7 @@ mod tests {
         let mut trace = Trace::default();
         trace.enq("a", 9);
         trace.enq("en", 1);
-        trace.enq("y", 0);
+        trace.enq("y", 3);
         trace.enq("a", 0);
         trace.enq("en", 0);
         trace.enq("y", 9);

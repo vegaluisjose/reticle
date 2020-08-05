@@ -51,7 +51,8 @@ impl Interpreter {
             // initialize registers with zero
             for instr in def.body().iter() {
                 if instr.is_reg() {
-                    curr.add_reg(&instr.id(), 0);
+                    let attrs = instr.attrs();
+                    curr.add_reg(&instr.id(), attrs[0].value());
                 }
             }
             for cycle in 0..trace.len() {

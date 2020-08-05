@@ -57,6 +57,13 @@ impl Expr {
             _ => panic!("Error does not support ty"),
         }
     }
+
+    pub fn value(&self) -> i64 {
+        match self {
+            Expr::Int(n) => *n,
+            _ => panic!("Error does not support value"),
+        }
+    }
 }
 
 impl Instr {
