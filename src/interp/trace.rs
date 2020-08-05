@@ -1,4 +1,4 @@
-use crate::lang::interp::ty::Value;
+use crate::interp::ty::Value;
 use std::collections::HashMap;
 use std::collections::VecDeque;
 

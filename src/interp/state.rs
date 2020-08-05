@@ -1,4 +1,4 @@
-use crate::lang::interp::ty::{Map, Value};
+use crate::interp::ty::{Map, Value};
 
 #[derive(Clone, Debug)]
 pub struct State {

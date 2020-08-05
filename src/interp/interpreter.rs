@@ -1,7 +1,7 @@
+use crate::interp::eval::Eval;
+use crate::interp::state::State;
+use crate::interp::trace::Trace;
 use crate::lang::ast::{Instr, Prog};
-use crate::lang::interp::eval::Eval;
-use crate::lang::interp::state::State;
-use crate::lang::interp::trace::Trace;
 
 #[derive(Clone, Debug)]
 pub struct Interpreter {

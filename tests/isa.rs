@@ -1,6 +1,6 @@
 use reticle::frontend::parser::parse_from_file;
-use reticle::lang::interp::trace::Trace;
-use reticle::lang::interp::Interpreter;
+use reticle::interp::trace::Trace;
+use reticle::interp::Interpreter;
 
 #[cfg(test)]
 mod tests {

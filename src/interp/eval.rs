@@ -1,6 +1,6 @@
+use crate::interp::state::State;
+use crate::interp::ty::Value;
 use crate::lang::ast::*;
-use crate::lang::interp::state::State;
-use crate::lang::interp::ty::Value;
 
 pub trait Eval {
     fn is_ready(&self, state: &State) -> bool;
