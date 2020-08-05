@@ -45,4 +45,21 @@ mod tests {
         trace.enq("y", 9);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
+
+    #[test]
+    fn test_muladd() {
+        let prog = parse_from_file("examples/muladd.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", 4);
+        trace.enq("b", 2);
+        trace.enq("c", 3);
+        trace.enq("en", 1);
+        trace.enq("y", 3);
+        trace.enq("a", 0);
+        trace.enq("b", 0);
+        trace.enq("c", 3);
+        trace.enq("en", 0);
+        trace.enq("y", 11);
+        assert!(!Interpreter::default().run(&prog, &trace).is_failed());
+    }
 }
