@@ -34,6 +34,7 @@ impl PrettyPrint for Expr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Expr::Ref(n, _) => RcDoc::as_string(n),
+            Expr::Int(n) => RcDoc::as_string(n),
         }
     }
 }

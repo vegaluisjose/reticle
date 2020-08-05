@@ -14,6 +14,7 @@ pub enum Ty {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum Expr {
+    Int(i64),
     Ref(Id, Ty),
 }
 

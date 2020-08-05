@@ -47,12 +47,14 @@ impl Expr {
     pub fn id(&self) -> Id {
         match self {
             Expr::Ref(n, _) => n.to_string(),
+            _ => panic!("Error does not support Id"),
         }
     }
 
     pub fn ty(&self) -> &Ty {
         match self {
             Expr::Ref(_, ty) => ty,
+            _ => panic!("Error does not support ty"),
         }
     }
 }

@@ -45,6 +45,14 @@ impl ReticleParser {
         Ok(match_nodes!(
             input.into_children();
             [identifier(n)] => Expr::Ref(n, Ty::Hole),
+            [number(n)] => Expr::Int(n),
+        ))
+    }
+
+    fn attrs(input: Node) -> Result<Vec<Expr>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [expr(expr)..] => expr.collect()
         ))
     }
 
@@ -58,6 +66,20 @@ impl ReticleParser {
     fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
+            [identifier(id), ty(ty), stdop(op), params(params)] => Instr::Std {
+                id,
+                ty,
+                op,
+                attrs: Vec::new(),
+                params,
+            },
+            [identifier(id), ty(ty), stdop(op), attrs(attrs), params(params)] => Instr::Std {
+                id,
+                ty,
+                op,
+                attrs,
+                params,
+            },
             [identifier(id), ty(ty), primop(op), params(params)] => Instr::Prim {
                 id,
                 ty,
@@ -66,12 +88,13 @@ impl ReticleParser {
                 params,
                 loc: Loc::Hole,
             },
-            [identifier(id), ty(ty), stdop(op), params(params)] => Instr::Std {
+            [identifier(id), ty(ty), primop(op), attrs(attrs), params(params)] => Instr::Prim {
                 id,
                 ty,
                 op,
-                attrs: Vec::new(),
+                attrs,
                 params,
+                loc: Loc::Hole,
             },
         ))
     }

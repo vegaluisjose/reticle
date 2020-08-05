@@ -14,7 +14,7 @@ bool = @{ ASCII_ALPHA_LOWER+ }
 
 ty = { int | bool }
 
-expr = { identifier }
+expr = { identifier | number }
 
 primop = { "reg" | "add" | "sub" | "mul" }
 
@@ -22,9 +22,11 @@ stdop = { "id" }
 
 op = _{ primop | stdop }
 
+attrs = { "[" ~ (expr ~ ("," ~ expr)*)? ~ "]" }
+
 params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
 
-instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ params ~ ";" }
+instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ attrs? ~ params ~ ";" }
 
 instrs = { instr ~ (instr)* }
 
