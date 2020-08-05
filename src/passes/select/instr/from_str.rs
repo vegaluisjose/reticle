@@ -20,7 +20,7 @@ impl FromStr for Op {
             "xnor" => Ok(Op::Xnor),
             "mux" => Ok(Op::Mux),
             "eq" => Ok(Op::Equal),
-            "neq" => Ok(Op::Nequal),
+            "neq" => Ok(Op::NotEqual),
             "gt" => Ok(Op::Gt),
             "lt" => Ok(Op::Lt),
             "ge" => Ok(Op::Ge),

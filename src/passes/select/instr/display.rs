@@ -19,7 +19,7 @@ impl fmt::Display for Op {
             Op::Xnor => "xnor",
             Op::Mux => "mux",
             Op::Equal => "eq",
-            Op::Nequal => "neq",
+            Op::NotEqual => "neq",
             Op::Gt => "gt",
             Op::Lt => "lt",
             Op::Ge => "ge",

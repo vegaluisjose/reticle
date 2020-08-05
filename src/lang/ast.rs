@@ -46,7 +46,7 @@ pub enum PrimOp {
     Xnor,
     Mux,
     Equal,
-    Nequal,
+    NotEqual,
     Gt,
     Lt,
     Ge,

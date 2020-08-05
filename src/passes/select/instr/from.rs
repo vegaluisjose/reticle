@@ -18,7 +18,7 @@ impl From<ast::PrimOp> for Op {
             ast::PrimOp::Xnor => Op::Xnor,
             ast::PrimOp::Mux => Op::Mux,
             ast::PrimOp::Equal => Op::Equal,
-            ast::PrimOp::Nequal => Op::Nequal,
+            ast::PrimOp::NotEqual => Op::NotEqual,
             ast::PrimOp::Gt => Op::Gt,
             ast::PrimOp::Lt => Op::Lt,
             ast::PrimOp::Ge => Op::Ge,

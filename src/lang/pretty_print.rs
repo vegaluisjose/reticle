@@ -62,7 +62,7 @@ impl PrettyPrint for PrimOp {
             PrimOp::Xnor => RcDoc::text("xnor"),
             PrimOp::Mux => RcDoc::text("mux"),
             PrimOp::Equal => RcDoc::text("eq"),
-            PrimOp::Nequal => RcDoc::text("neq"),
+            PrimOp::NotEqual => RcDoc::text("neq"),
             PrimOp::Gt => RcDoc::text("gt"),
             PrimOp::Lt => RcDoc::text("lt"),
             PrimOp::Ge => RcDoc::text("ge"),

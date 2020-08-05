@@ -72,7 +72,7 @@ impl FromStr for PrimOp {
             "xnor" => Ok(PrimOp::Xnor),
             "mux" => Ok(PrimOp::Mux),
             "eq" => Ok(PrimOp::Equal),
-            "neq" => Ok(PrimOp::Nequal),
+            "neq" => Ok(PrimOp::NotEqual),
             "gt" => Ok(PrimOp::Gt),
             "lt" => Ok(PrimOp::Lt),
             "ge" => Ok(PrimOp::Ge),

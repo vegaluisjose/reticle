@@ -178,7 +178,7 @@ impl Eval for Instr {
             Instr::Prim {
                 id: _,
                 ty: _,
-                op: PrimOp::Nequal,
+                op: PrimOp::NotEqual,
                 attrs: _,
                 params,
                 loc: _,
