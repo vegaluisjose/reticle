@@ -1,4 +1,4 @@
-use crate::util::pretty_print::PrettyPrint;
+use crate::util::pretty_print::{add_newline, block_with_braces, PrettyPrint};
 use pretty::RcDoc;
 
 #[derive(Clone, Debug)]
@@ -8,9 +8,15 @@ pub enum Shape {
 }
 
 #[derive(Clone, Debug)]
-pub struct Port {
-    pub name: String,
-    pub shape: Shape,
+pub enum Dir {
+    Input,
+    Output,
+}
+
+#[derive(Clone, Debug)]
+pub enum Port {
+    Input { name: String, shape: Shape },
+    Output { name: String, shape: Shape },
 }
 
 #[derive(Clone, Debug)]
@@ -31,16 +37,36 @@ pub struct Block {
 #[derive(Clone, Debug)]
 pub struct Graph {
     pub name: String,
-    pub inputs: Vec<Port>,
-    pub outputs: Vec<Port>,
+    pub ports: Vec<Port>,
     pub blocks: Vec<Block>,
 }
 
 impl Port {
-    pub fn new(name: &str) -> Port {
-        Port {
+    pub fn new_input(name: &str) -> Port {
+        Port::Input {
             name: name.to_string(),
             shape: Shape::Octagon,
+        }
+    }
+
+    pub fn new_output(name: &str) -> Port {
+        Port::Output {
+            name: name.to_string(),
+            shape: Shape::Octagon,
+        }
+    }
+
+    pub fn shape(&self) -> &Shape {
+        match self {
+            Port::Input { name: _, shape } => shape,
+            Port::Output { name: _, shape } => shape,
+        }
+    }
+
+    pub fn name(&self) -> String {
+        match self {
+            Port::Input { name, shape: _ } => name.to_string(),
+            Port::Output { name, shape: _ } => name.to_string(),
         }
     }
 }
@@ -65,11 +91,11 @@ impl Block {
         }
     }
 
-    pub fn add_input_pin(&mut self, id: &str, name: &str) {
+    pub fn add_input(&mut self, id: &str, name: &str) {
         self.inputs.push(Pin::new(id, name));
     }
 
-    pub fn add_output_pin(&mut self, id: &str, name: &str) {
+    pub fn add_output(&mut self, id: &str, name: &str) {
         self.outputs.push(Pin::new(id, name));
     }
 }
@@ -78,39 +104,42 @@ impl Graph {
     pub fn new(name: &str) -> Graph {
         Graph {
             name: name.to_string(),
-            inputs: Vec::new(),
-            outputs: Vec::new(),
+            ports: Vec::new(),
             blocks: Vec::new(),
         }
     }
 
-    pub fn add_input_port(&mut self, id: &str) {
-        self.inputs.push(Port::new(id))
+    pub fn add_input(&mut self, id: &str) {
+        self.ports.push(Port::new_input(id))
     }
 
-    pub fn add_output_port(&mut self, id: &str) {
-        self.outputs.push(Port::new(id))
+    pub fn add_output(&mut self, id: &str) {
+        self.ports.push(Port::new_output(id))
     }
 
     pub fn add_block(&mut self, block: Block) {
         self.blocks.push(block);
     }
+
+    pub fn ports(&self) -> &Vec<Port> {
+        &self.ports
+    }
 }
 
 impl PrettyPrint for Port {
     fn to_doc(&self) -> RcDoc<()> {
-        RcDoc::as_string(&self.name)
+        RcDoc::as_string(&self.name())
             .append(RcDoc::space())
             .append(RcDoc::text("["))
             .append(RcDoc::text("shape"))
             .append(RcDoc::text("="))
-            .append(self.shape.to_doc())
+            .append(self.shape().to_doc())
             .append(RcDoc::text(","))
             .append(RcDoc::space())
             .append(RcDoc::text("label"))
             .append(RcDoc::text("="))
             .append(RcDoc::text(r#"""#))
-            .append(RcDoc::as_string(&self.name))
+            .append(RcDoc::as_string(&self.name()))
             .append(RcDoc::text(r#"""#))
             .append(RcDoc::text("]"))
     }
@@ -188,23 +217,27 @@ impl PrettyPrint for Block {
 
 impl PrettyPrint for Graph {
     fn to_doc(&self) -> RcDoc<()> {
-        RcDoc::text("digraph")
+        let ports = add_newline(
+            self.ports()
+                .iter()
+                .map(|x| x.to_doc().append(RcDoc::text(";"))),
+        );
+        let name = RcDoc::text("digraph")
             .append(RcDoc::space())
-            .append(RcDoc::as_string(&self.name))
-            .append(RcDoc::space())
-            .append(RcDoc::text("{"))
-            .append(RcDoc::text("}"))
+            .append(RcDoc::as_string(&self.name));
+        block_with_braces(name, ports)
     }
 }
 
 pub fn example() {
-    let graph = Graph::new("muladd");
-    let port = Port::new("a");
     let mut block = Block::new("t0", "add");
-    block.add_input_pin("lhs", "L");
-    block.add_input_pin("rhs", "R");
-    block.add_output_pin("out", "O");
+    block.add_input("lhs", "L");
+    block.add_input("rhs", "R");
+    block.add_output("out", "O");
+    let mut graph = Graph::new("muladd");
+    graph.add_input("a");
+    graph.add_input("b");
+    graph.add_output("y");
+    graph.add_block(block);
     println!("{}", graph.to_pretty());
-    println!("{}", port.to_pretty());
-    println!("{}", block.to_pretty());
 }
