@@ -1,0 +1,3 @@
+def neq(a: i8, b: i8) -> (y: bool) {
+    y: bool = neq(a, b);
+}
