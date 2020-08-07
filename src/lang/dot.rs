@@ -1,4 +1,6 @@
-use crate::util::pretty_print::{add_newline, block_with_braces, PrettyPrint};
+use crate::util::pretty_print::{
+    add_newline, add_space, block_with_braces, PrettyHelper, PrettyPrint,
+};
 use pretty::RcDoc;
 
 #[derive(Clone, Debug)]
@@ -35,10 +37,26 @@ pub struct Block {
 }
 
 #[derive(Clone, Debug)]
+pub enum RDir {
+    TopBottom,
+    LeftRight,
+}
+
+#[derive(Clone, Debug)]
+pub enum Opt {
+    Remincross(bool),
+    RankDir(RDir),
+    Label(String),
+}
+
+#[derive(Clone, Debug)]
 pub struct Graph {
     pub name: String,
     pub ports: Vec<Port>,
     pub blocks: Vec<Block>,
+    pub opts: Vec<Opt>,
+    pub has_input: bool,
+    pub has_output: bool,
 }
 
 impl Port {
@@ -67,6 +85,20 @@ impl Port {
         match self {
             Port::Input { name, shape: _ } => name.to_string(),
             Port::Output { name, shape: _ } => name.to_string(),
+        }
+    }
+
+    pub fn is_input(&self) -> bool {
+        match self {
+            Port::Input { name: _, shape: _ } => true,
+            Port::Output { name: _, shape: _ } => false,
+        }
+    }
+
+    pub fn is_output(&self) -> bool {
+        match self {
+            Port::Input { name: _, shape: _ } => false,
+            Port::Output { name: _, shape: _ } => true,
         }
     }
 }
@@ -100,29 +132,75 @@ impl Block {
     }
 }
 
+impl Opt {
+    pub fn new_label(name: &str) -> Opt {
+        Opt::Label(name.to_string())
+    }
+
+    pub fn new_rankdir_tb() -> Opt {
+        Opt::RankDir(RDir::TopBottom)
+    }
+
+    pub fn new_rankdir_lr() -> Opt {
+        Opt::RankDir(RDir::LeftRight)
+    }
+}
+
 impl Graph {
     pub fn new(name: &str) -> Graph {
+        let mut default_opt: Vec<Opt> = Vec::new();
+        default_opt.push(Opt::new_label(name));
+        default_opt.push(Opt::new_rankdir_tb());
         Graph {
             name: name.to_string(),
             ports: Vec::new(),
             blocks: Vec::new(),
+            opts: default_opt.to_vec(),
+            has_input: false,
+            has_output: false,
         }
     }
 
     pub fn add_input(&mut self, id: &str) {
-        self.ports.push(Port::new_input(id))
+        self.ports.push(Port::new_input(id));
+        self.has_input = true;
     }
 
     pub fn add_output(&mut self, id: &str) {
-        self.ports.push(Port::new_output(id))
+        self.ports.push(Port::new_output(id));
+        self.has_output = true;
     }
 
     pub fn add_block(&mut self, block: Block) {
         self.blocks.push(block);
     }
 
+    pub fn add_opt(&mut self, opt: Opt) {
+        self.opts.push(opt);
+    }
+
     pub fn ports(&self) -> &Vec<Port> {
         &self.ports
+    }
+
+    pub fn opts(&self) -> &Vec<Opt> {
+        &self.opts
+    }
+
+    pub fn has_input(&self) -> bool {
+        self.has_input
+    }
+
+    pub fn has_output(&self) -> bool {
+        self.has_output
+    }
+
+    pub fn has_opt(&self) -> bool {
+        !self.opts.is_empty()
+    }
+
+    pub fn has_port(&self) -> bool {
+        !self.ports.is_empty()
     }
 }
 
@@ -215,17 +293,98 @@ impl PrettyPrint for Block {
     }
 }
 
+impl PrettyPrint for RDir {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            RDir::TopBottom => RcDoc::text("TB"),
+            RDir::LeftRight => RcDoc::text("LR"),
+        }
+    }
+}
+
+impl PrettyPrint for Opt {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            Opt::Remincross(flag) => RcDoc::text("remincross")
+                .append(RcDoc::text("="))
+                .append(RcDoc::as_string(flag)),
+            Opt::RankDir(dir) => RcDoc::text("rankdir")
+                .append(RcDoc::text("="))
+                .append(dir.to_doc()),
+            Opt::Label(name) => RcDoc::text("label")
+                .append(RcDoc::text("="))
+                .append(RcDoc::as_string(name)),
+        }
+    }
+}
+
+pub fn rank_source_from_ports(ports: &[Port]) -> RcDoc<()> {
+    RcDoc::text("rank")
+        .append(RcDoc::text("="))
+        .append(RcDoc::text("source"))
+        .append(RcDoc::text(";"))
+        .append(RcDoc::space())
+        .append(add_space(
+            ports
+                .iter()
+                .filter(|x| x.is_input())
+                .map(|x| RcDoc::as_string(&x.name()).append(RcDoc::text(";"))),
+        ))
+        .braces()
+}
+
+pub fn rank_sink_from_ports(ports: &[Port]) -> RcDoc<()> {
+    RcDoc::text("rank")
+        .append(RcDoc::text("="))
+        .append(RcDoc::text("sink"))
+        .append(RcDoc::text(";"))
+        .append(RcDoc::space())
+        .append(add_space(
+            ports
+                .iter()
+                .filter(|x| x.is_output())
+                .map(|x| RcDoc::as_string(&x.name()).append(RcDoc::text(";"))),
+        ))
+        .braces()
+}
+
 impl PrettyPrint for Graph {
     fn to_doc(&self) -> RcDoc<()> {
-        let ports = add_newline(
-            self.ports()
-                .iter()
-                .map(|x| x.to_doc().append(RcDoc::text(";"))),
-        );
+        let opts = if self.has_opt() {
+            add_newline(
+                self.opts()
+                    .iter()
+                    .map(|x| x.to_doc().append(RcDoc::text(";"))),
+            )
+            .append(RcDoc::hardline())
+        } else {
+            RcDoc::nil()
+        };
+        let ports = if self.has_port() {
+            add_newline(
+                self.ports()
+                    .iter()
+                    .map(|x| x.to_doc().append(RcDoc::text(";"))),
+            )
+            .append(RcDoc::hardline())
+        } else {
+            RcDoc::nil()
+        };
+        let rank_source = if self.has_input() {
+            rank_source_from_ports(&self.ports).append(RcDoc::hardline())
+        } else {
+            RcDoc::nil()
+        };
+        let rank_sink = if self.has_output() {
+            rank_sink_from_ports(&self.ports)
+        } else {
+            RcDoc::nil()
+        };
         let name = RcDoc::text("digraph")
             .append(RcDoc::space())
             .append(RcDoc::as_string(&self.name));
-        block_with_braces(name, ports)
+        let body = opts.append(ports).append(rank_source).append(rank_sink);
+        block_with_braces(name, body)
     }
 }
 
@@ -239,5 +398,6 @@ pub fn example() {
     graph.add_input("b");
     graph.add_output("y");
     graph.add_block(block);
+    graph.add_opt(Opt::Remincross(true));
     println!("{}", graph.to_pretty());
 }
