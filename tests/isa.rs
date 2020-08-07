@@ -34,6 +34,15 @@ mod tests {
     }
 
     #[test]
+    fn test_const() {
+        let prog = parse_from_file("examples/isa/const.ret");
+        let mut trace = Trace::default();
+        trace.enq("y", 3);
+        trace.enq("y", 3);
+        assert!(!Interpreter::default().run(&prog, &trace).is_failed());
+    }
+
+    #[test]
     fn test_add() {
         let prog = parse_from_file("examples/isa/add.ret");
         let mut trace = Trace::default();

@@ -17,6 +17,13 @@ impl Eval for Instr {
                 attrs: _,
                 params,
             } => state.contains(&params[0].id()),
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: StdOp::ScalarConst,
+                attrs: _,
+                params: _,
+            } => true,
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -57,6 +64,13 @@ impl Eval for Instr {
                 attrs: _,
                 params,
             } => state.get(&params[0].id()),
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: StdOp::ScalarConst,
+                attrs,
+                params: _,
+            } => attrs[0].value(),
             Instr::Prim {
                 id,
                 ty: _,

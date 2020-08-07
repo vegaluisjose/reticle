@@ -74,6 +74,13 @@ impl ReticleParser {
                 attrs: Vec::new(),
                 params,
             },
+            [identifier(id), ty(ty), stdop(op), attrs(attrs)] => Instr::Std {
+                id,
+                ty,
+                op,
+                attrs,
+                params: Vec::new(),
+            },
             [identifier(id), ty(ty), stdop(op), attrs(attrs), params(params)] => Instr::Std {
                 id,
                 ty,
@@ -87,6 +94,14 @@ impl ReticleParser {
                 op,
                 attrs: Vec::new(),
                 params,
+                loc: Loc::Hole,
+            },
+            [identifier(id), ty(ty), primop(op), attrs(attrs)] => Instr::Prim {
+                id,
+                ty,
+                op,
+                attrs,
+                params: Vec::new(),
                 loc: Loc::Hole,
             },
             [identifier(id), ty(ty), primop(op), attrs(attrs), params(params)] => Instr::Prim {

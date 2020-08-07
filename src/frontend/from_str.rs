@@ -87,6 +87,7 @@ impl FromStr for StdOp {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "id" => Ok(StdOp::Identity),
+            "const" => Ok(StdOp::ScalarConst),
             _ => panic!("Error: FromStr to StdOp conversion"),
         }
     }

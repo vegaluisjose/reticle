@@ -37,7 +37,10 @@ primop = {
     "le"
 }
 
-stdop = { "id" }
+stdop = {
+    "id" |
+    "const"
+}
 
 op = _{ primop | stdop }
 
@@ -45,7 +48,7 @@ attrs = { "[" ~ (expr ~ ("," ~ expr)*)? ~ "]" }
 
 params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
 
-instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ attrs? ~ params ~ ";" }
+instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ attrs? ~ params? ~ ";" }
 
 instrs = { instr ~ (instr)* }
 
