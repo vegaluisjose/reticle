@@ -187,6 +187,10 @@ impl Dot {
         &self.opts
     }
 
+    pub fn blocks(&self) -> &Vec<Block> {
+        &self.blocks
+    }
+
     pub fn has_input(&self) -> bool {
         self.has_input
     }
@@ -201,6 +205,10 @@ impl Dot {
 
     pub fn has_port(&self) -> bool {
         !self.ports.is_empty()
+    }
+
+    pub fn has_block(&self) -> bool {
+        !self.blocks.is_empty()
     }
 }
 
@@ -376,14 +384,27 @@ impl PrettyPrint for Dot {
             RcDoc::nil()
         };
         let rank_sink = if self.has_output() {
-            rank_sink_from_ports(&self.ports)
+            rank_sink_from_ports(&self.ports).append(RcDoc::hardline())
+        } else {
+            RcDoc::nil()
+        };
+        let blocks = if self.has_block() {
+            add_newline(
+                self.blocks()
+                    .iter()
+                    .map(|x| x.to_doc().append(RcDoc::text(";"))),
+            )
         } else {
             RcDoc::nil()
         };
         let name = RcDoc::text("digraph")
             .append(RcDoc::space())
             .append(RcDoc::as_string(&self.name));
-        let body = opts.append(ports).append(rank_source).append(rank_sink);
+        let body = opts
+            .append(ports)
+            .append(rank_source)
+            .append(rank_sink)
+            .append(blocks);
         block_with_braces(name, body)
     }
 }
