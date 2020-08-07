@@ -16,13 +16,13 @@ pub enum Dir {
 }
 
 #[derive(Clone, Debug)]
-pub enum Port {
+pub enum IO {
     Input { name: String, shape: Shape },
     Output { name: String, shape: Shape },
 }
 
 #[derive(Clone, Debug)]
-pub struct Pin {
+pub struct Port {
     pub id: String,
     pub name: String,
 }
@@ -31,8 +31,8 @@ pub struct Pin {
 pub struct Block {
     pub name: String,
     pub op: String,
-    pub inputs: Vec<Pin>,
-    pub outputs: Vec<Pin>,
+    pub inputs: Vec<Port>,
+    pub outputs: Vec<Port>,
     pub shape: Shape,
 }
 
@@ -52,23 +52,23 @@ pub enum Opt {
 #[derive(Clone, Debug)]
 pub struct Dot {
     pub name: String,
-    pub ports: Vec<Port>,
+    pub io: Vec<IO>,
     pub blocks: Vec<Block>,
     pub opts: Vec<Opt>,
     pub has_input: bool,
     pub has_output: bool,
 }
 
-impl Port {
-    pub fn new_input(name: &str) -> Port {
-        Port::Input {
+impl IO {
+    pub fn new_input(name: &str) -> IO {
+        IO::Input {
             name: name.to_string(),
             shape: Shape::Octagon,
         }
     }
 
-    pub fn new_output(name: &str) -> Port {
-        Port::Output {
+    pub fn new_output(name: &str) -> IO {
+        IO::Output {
             name: name.to_string(),
             shape: Shape::Octagon,
         }
@@ -76,36 +76,36 @@ impl Port {
 
     pub fn shape(&self) -> &Shape {
         match self {
-            Port::Input { name: _, shape } => shape,
-            Port::Output { name: _, shape } => shape,
+            IO::Input { name: _, shape } => shape,
+            IO::Output { name: _, shape } => shape,
         }
     }
 
     pub fn name(&self) -> String {
         match self {
-            Port::Input { name, shape: _ } => name.to_string(),
-            Port::Output { name, shape: _ } => name.to_string(),
+            IO::Input { name, shape: _ } => name.to_string(),
+            IO::Output { name, shape: _ } => name.to_string(),
         }
     }
 
     pub fn is_input(&self) -> bool {
         match self {
-            Port::Input { name: _, shape: _ } => true,
-            Port::Output { name: _, shape: _ } => false,
+            IO::Input { name: _, shape: _ } => true,
+            IO::Output { name: _, shape: _ } => false,
         }
     }
 
     pub fn is_output(&self) -> bool {
         match self {
-            Port::Input { name: _, shape: _ } => false,
-            Port::Output { name: _, shape: _ } => true,
+            IO::Input { name: _, shape: _ } => false,
+            IO::Output { name: _, shape: _ } => true,
         }
     }
 }
 
-impl Pin {
-    pub fn new(id: &str, name: &str) -> Pin {
-        Pin {
+impl Port {
+    pub fn new(id: &str, name: &str) -> Port {
+        Port {
             id: id.to_string(),
             name: name.to_string(),
         }
@@ -124,11 +124,11 @@ impl Block {
     }
 
     pub fn add_input(&mut self, id: &str, name: &str) {
-        self.inputs.push(Pin::new(id, name));
+        self.inputs.push(Port::new(id, name));
     }
 
     pub fn add_output(&mut self, id: &str, name: &str) {
-        self.outputs.push(Pin::new(id, name));
+        self.outputs.push(Port::new(id, name));
     }
 }
 
@@ -153,7 +153,7 @@ impl Dot {
         default_opt.push(Opt::new_rankdir_tb());
         Dot {
             name: name.to_string(),
-            ports: Vec::new(),
+            io: Vec::new(),
             blocks: Vec::new(),
             opts: default_opt.to_vec(),
             has_input: false,
@@ -162,12 +162,12 @@ impl Dot {
     }
 
     pub fn add_input(&mut self, id: &str) {
-        self.ports.push(Port::new_input(id));
+        self.io.push(IO::new_input(id));
         self.has_input = true;
     }
 
     pub fn add_output(&mut self, id: &str) {
-        self.ports.push(Port::new_output(id));
+        self.io.push(IO::new_output(id));
         self.has_output = true;
     }
 
@@ -179,8 +179,8 @@ impl Dot {
         self.opts.push(opt);
     }
 
-    pub fn ports(&self) -> &Vec<Port> {
-        &self.ports
+    pub fn io(&self) -> &Vec<IO> {
+        &self.io
     }
 
     pub fn opts(&self) -> &Vec<Opt> {
@@ -204,7 +204,7 @@ impl Dot {
     }
 
     pub fn has_port(&self) -> bool {
-        !self.ports.is_empty()
+        !self.io.is_empty()
     }
 
     pub fn has_block(&self) -> bool {
@@ -212,7 +212,7 @@ impl Dot {
     }
 }
 
-impl PrettyPrint for Port {
+impl PrettyPrint for IO {
     fn to_doc(&self) -> RcDoc<()> {
         RcDoc::as_string(&self.name())
             .append(RcDoc::space())
@@ -240,7 +240,7 @@ impl PrettyPrint for Shape {
     }
 }
 
-impl PrettyPrint for Pin {
+impl PrettyPrint for Port {
     fn to_doc(&self) -> RcDoc<()> {
         RcDoc::text("<")
             .append(RcDoc::as_string(&self.id))
@@ -326,30 +326,28 @@ impl PrettyPrint for Opt {
     }
 }
 
-pub fn rank_source_from_ports(ports: &[Port]) -> RcDoc<()> {
+pub fn rank_source_from_ports(io: &[IO]) -> RcDoc<()> {
     RcDoc::text("rank")
         .append(RcDoc::text("="))
         .append(RcDoc::text("source"))
         .append(RcDoc::text(";"))
         .append(RcDoc::space())
         .append(add_space(
-            ports
-                .iter()
+            io.iter()
                 .filter(|x| x.is_input())
                 .map(|x| RcDoc::as_string(&x.name()).append(RcDoc::text(";"))),
         ))
         .braces()
 }
 
-pub fn rank_sink_from_ports(ports: &[Port]) -> RcDoc<()> {
+pub fn rank_sink_from_ports(io: &[IO]) -> RcDoc<()> {
     RcDoc::text("rank")
         .append(RcDoc::text("="))
         .append(RcDoc::text("sink"))
         .append(RcDoc::text(";"))
         .append(RcDoc::space())
         .append(add_space(
-            ports
-                .iter()
+            io.iter()
                 .filter(|x| x.is_output())
                 .map(|x| RcDoc::as_string(&x.name()).append(RcDoc::text(";"))),
         ))
@@ -368,9 +366,9 @@ impl PrettyPrint for Dot {
         } else {
             RcDoc::nil()
         };
-        let ports = if self.has_port() {
+        let io = if self.has_port() {
             add_newline(
-                self.ports()
+                self.io()
                     .iter()
                     .map(|x| x.to_doc().append(RcDoc::text(";"))),
             )
@@ -379,12 +377,12 @@ impl PrettyPrint for Dot {
             RcDoc::nil()
         };
         let rank_source = if self.has_input() {
-            rank_source_from_ports(&self.ports).append(RcDoc::hardline())
+            rank_source_from_ports(&self.io).append(RcDoc::hardline())
         } else {
             RcDoc::nil()
         };
         let rank_sink = if self.has_output() {
-            rank_sink_from_ports(&self.ports).append(RcDoc::hardline())
+            rank_sink_from_ports(&self.io).append(RcDoc::hardline())
         } else {
             RcDoc::nil()
         };
@@ -401,7 +399,7 @@ impl PrettyPrint for Dot {
             .append(RcDoc::space())
             .append(RcDoc::as_string(&self.name));
         let body = opts
-            .append(ports)
+            .append(io)
             .append(rank_source)
             .append(rank_sink)
             .append(blocks);
