@@ -38,6 +38,26 @@ mod tests {
     }
 
     #[test]
+    fn test_mul() {
+        let prog = parse_from_file("examples/isa/mul.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", 3);
+        trace.enq("b", 5);
+        trace.enq("y", 15);
+        assert!(!Interpreter::default().run(&prog, &trace).is_failed());
+    }
+
+    #[test]
+    // FIXME: need to start checking types in order to make this work properly
+    fn test_not() {
+        let prog = parse_from_file("examples/isa/not.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", 0xfffffffffffffff0u64 as i64);
+        trace.enq("y", 0xfu64 as i64);
+        assert!(!Interpreter::default().run(&prog, &trace).is_failed());
+    }
+
+    #[test]
     fn test_mux() {
         let prog = parse_from_file("examples/isa/mux.ret");
         let mut trace = Trace::default();
