@@ -50,7 +50,7 @@ pub enum Opt {
 }
 
 #[derive(Clone, Debug)]
-pub struct Graph {
+pub struct Dot {
     pub name: String,
     pub ports: Vec<Port>,
     pub blocks: Vec<Block>,
@@ -146,12 +146,12 @@ impl Opt {
     }
 }
 
-impl Graph {
-    pub fn new(name: &str) -> Graph {
+impl Dot {
+    pub fn new(name: &str) -> Dot {
         let mut default_opt: Vec<Opt> = Vec::new();
         default_opt.push(Opt::new_label(name));
         default_opt.push(Opt::new_rankdir_tb());
-        Graph {
+        Dot {
             name: name.to_string(),
             ports: Vec::new(),
             blocks: Vec::new(),
@@ -348,7 +348,7 @@ pub fn rank_sink_from_ports(ports: &[Port]) -> RcDoc<()> {
         .braces()
 }
 
-impl PrettyPrint for Graph {
+impl PrettyPrint for Dot {
     fn to_doc(&self) -> RcDoc<()> {
         let opts = if self.has_opt() {
             add_newline(
@@ -393,7 +393,7 @@ pub fn example() {
     block.add_input("lhs", "L");
     block.add_input("rhs", "R");
     block.add_output("out", "O");
-    let mut graph = Graph::new("muladd");
+    let mut graph = Dot::new("muladd");
     graph.add_input("a");
     graph.add_input("b");
     graph.add_output("y");
