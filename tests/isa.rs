@@ -18,6 +18,16 @@ mod tests {
     }
 
     #[test]
+    fn test_add() {
+        let prog = parse_from_file("examples/isa/add.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", 9);
+        trace.enq("b", 7);
+        trace.enq("y", 16);
+        assert!(!Interpreter::default().run(&prog, &trace).is_failed());
+    }
+
+    #[test]
     fn test_mux() {
         let prog = parse_from_file("examples/isa/mux.ret");
         let mut trace = Trace::default();
