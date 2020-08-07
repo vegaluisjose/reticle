@@ -16,7 +16,25 @@ ty = { int | bool }
 
 expr = { identifier | number }
 
-primop = { "reg" | "add" | "sub" | "mul" }
+primop = {
+    "reg" |
+    "add" |
+    "sub" |
+    "mul" |
+    "not" |
+    "and" |
+    "nand" |
+    "or" |
+    "xor" |
+    "xnor" |
+    "mux" |
+    "eq" |
+    "neq" |
+    "gt" |
+    "lt" |
+    "ge" |
+    "le"
+}
 
 stdop = { "id" }
 
