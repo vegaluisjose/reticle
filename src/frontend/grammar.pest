@@ -25,6 +25,7 @@ primop = {
     "and" |
     "nand" |
     "or" |
+    "nor" |
     "xor" |
     "xnor" |
     "mux" |
