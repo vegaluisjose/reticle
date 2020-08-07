@@ -11,9 +11,24 @@ mod tests {
         let prog = parse_from_file("examples/isa/identity.ret");
         let mut trace = Trace::default();
         trace.enq("a", 9);
-        trace.enq("a", 3);
         trace.enq("y", 9);
+        trace.enq("a", 3);
         trace.enq("y", 3);
+        assert!(!Interpreter::default().run(&prog, &trace).is_failed());
+    }
+
+    #[test]
+    fn test_mux() {
+        let prog = parse_from_file("examples/isa/mux.ret");
+        let mut trace = Trace::default();
+        trace.enq("cond", 0);
+        trace.enq("t", 2);
+        trace.enq("f", 6);
+        trace.enq("y", 6);
+        trace.enq("cond", 1);
+        trace.enq("t", 2);
+        trace.enq("f", 6);
+        trace.enq("y", 2);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
 
