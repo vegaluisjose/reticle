@@ -1,14 +1,14 @@
 use crate::lang::ast::*;
 use std::collections::HashMap;
 
-// this is a "quick-dirty" type checking for resolving
-// types of references (expressions)
+// Resolve types for expr(references)
 
 type Env = HashMap<String, Ty>;
 
+// build environment
 fn build_env_from_def(def: &Def) -> Env {
     let mut env = Env::new();
-    // do this only for inputs, since outputs are defined in the body
+    // add inputs
     for input in def.inputs().iter() {
         if let Some(ty) = env.insert(input.id(), input.ty().clone()) {
             panic!(
@@ -18,6 +18,7 @@ fn build_env_from_def(def: &Def) -> Env {
             );
         }
     }
+    // add instr values
     for instr in def.body().iter() {
         if let Some(ty) = env.insert(instr.id(), instr.ty().clone()) {
             panic!(
@@ -30,6 +31,7 @@ fn build_env_from_def(def: &Def) -> Env {
     env
 }
 
+// change a reference w/ hole by a reference with type
 fn change_expr(input: &Expr, ty: Ty) -> Expr {
     match input {
         Expr::Ref(n, Ty::Hole) => Expr::Ref(n.to_string(), ty),
@@ -37,6 +39,7 @@ fn change_expr(input: &Expr, ty: Ty) -> Expr {
     }
 }
 
+// change instructions that has type holes
 fn change_instr(input: &Instr, env: &Env) -> Instr {
     let mut instr = input.clone();
     instr.clear_params();
@@ -50,7 +53,8 @@ fn change_instr(input: &Instr, env: &Env) -> Instr {
     instr
 }
 
-pub fn type_check(input: &Prog) -> Prog {
+// infer all expressions in the program
+pub fn infer_expr_types(input: &Prog) -> Prog {
     let mut prog = Prog::default();
     for d in input.defs().iter() {
         let env = build_env_from_def(d);
