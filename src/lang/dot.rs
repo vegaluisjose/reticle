@@ -10,6 +10,19 @@ pub enum Shape {
 }
 
 #[derive(Clone, Debug)]
+pub enum RDir {
+    TopBottom,
+    LeftRight,
+}
+
+#[derive(Clone, Debug)]
+pub enum Opt {
+    Remincross(bool),
+    RankDir(RDir),
+    Label(String),
+}
+
+#[derive(Clone, Debug)]
 pub enum IO {
     Input { name: String, shape: Shape },
     Output { name: String, shape: Shape },
@@ -57,19 +70,6 @@ pub enum Connection {
 }
 
 #[derive(Clone, Debug)]
-pub enum RDir {
-    TopBottom,
-    LeftRight,
-}
-
-#[derive(Clone, Debug)]
-pub enum Opt {
-    Remincross(bool),
-    RankDir(RDir),
-    Label(String),
-}
-
-#[derive(Clone, Debug)]
 pub struct Dot {
     pub name: String,
     pub io: Vec<IO>,
@@ -78,6 +78,20 @@ pub struct Dot {
     pub connections: Vec<Connection>,
     pub has_input: bool,
     pub has_output: bool,
+}
+
+impl Opt {
+    pub fn new_label(name: &str) -> Opt {
+        Opt::Label(name.to_string())
+    }
+
+    pub fn new_rankdir_tb() -> Opt {
+        Opt::RankDir(RDir::TopBottom)
+    }
+
+    pub fn new_rankdir_lr() -> Opt {
+        Opt::RankDir(RDir::LeftRight)
+    }
 }
 
 impl IO {
@@ -175,20 +189,6 @@ impl Connection {
     }
 }
 
-impl Opt {
-    pub fn new_label(name: &str) -> Opt {
-        Opt::Label(name.to_string())
-    }
-
-    pub fn new_rankdir_tb() -> Opt {
-        Opt::RankDir(RDir::TopBottom)
-    }
-
-    pub fn new_rankdir_lr() -> Opt {
-        Opt::RankDir(RDir::LeftRight)
-    }
-}
-
 impl Dot {
     pub fn new(name: &str) -> Dot {
         let mut default_opt: Vec<Opt> = Vec::new();
@@ -271,6 +271,22 @@ impl Dot {
 
     pub fn has_connections(&self) -> bool {
         !self.connections.is_empty()
+    }
+}
+
+impl PrettyPrint for Opt {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            Opt::Remincross(flag) => RcDoc::text("remincross")
+                .append(RcDoc::text("="))
+                .append(RcDoc::as_string(flag)),
+            Opt::RankDir(dir) => RcDoc::text("rankdir")
+                .append(RcDoc::text("="))
+                .append(dir.to_doc()),
+            Opt::Label(name) => RcDoc::text("label")
+                .append(RcDoc::text("="))
+                .append(RcDoc::as_string(name)),
+        }
     }
 }
 
@@ -424,22 +440,6 @@ impl PrettyPrint for RDir {
         match self {
             RDir::TopBottom => RcDoc::text("TB"),
             RDir::LeftRight => RcDoc::text("LR"),
-        }
-    }
-}
-
-impl PrettyPrint for Opt {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            Opt::Remincross(flag) => RcDoc::text("remincross")
-                .append(RcDoc::text("="))
-                .append(RcDoc::as_string(flag)),
-            Opt::RankDir(dir) => RcDoc::text("rankdir")
-                .append(RcDoc::text("="))
-                .append(dir.to_doc()),
-            Opt::Label(name) => RcDoc::text("label")
-                .append(RcDoc::text("="))
-                .append(RcDoc::as_string(name)),
         }
     }
 }
