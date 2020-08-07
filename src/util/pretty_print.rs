@@ -47,7 +47,7 @@ pub fn add_space<'a>(iter: impl Iterator<Item = RcDoc<'a>>) -> RcDoc<'a> {
     RcDoc::intersperse(iter, RcDoc::space())
 }
 
-pub fn block<'a>(body: RcDoc<'a>) -> RcDoc<'a> {
+pub fn block(body: RcDoc<()>) -> RcDoc<()> {
     RcDoc::nil()
         .append(RcDoc::hardline())
         .append(body)
