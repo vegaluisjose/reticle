@@ -73,11 +73,11 @@ impl Eval for Instr {
         match self {
             Instr::Std {
                 id: _,
-                ty: _,
+                ty,
                 op: StdOp::Identity,
                 attrs: _,
                 params,
-            } => state.get(&params[0].id()),
+            } => mask_scalar(state.get(&params[0].id()), ty),
             Instr::Std {
                 id: _,
                 ty: _,
@@ -87,43 +87,52 @@ impl Eval for Instr {
             } => attrs[0].value(),
             Instr::Prim {
                 id,
-                ty: _,
+                ty,
                 op: PrimOp::Reg,
                 attrs: _,
                 params,
                 loc: _,
             } => {
-                let en = state.get(&params[1].id());
-                if en > 0 {
-                    state.get(&params[0].id())
+                let en = mask_scalar(state.get(&params[1].id()), &params[1].ty());
+                if en == 1 {
+                    mask_scalar(state.get(&params[0].id()), ty)
                 } else {
-                    state.get(id)
+                    mask_scalar(state.get(id), ty)
                 }
             }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Add,
                 attrs: _,
                 params,
                 loc: _,
-            } => state.get(&params[0].id()) + state.get(&params[1].id()),
+            } => {
+                mask_scalar(state.get(&params[0].id()), ty)
+                    + mask_scalar(state.get(&params[1].id()), ty)
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Sub,
                 attrs: _,
                 params,
                 loc: _,
-            } => state.get(&params[0].id()) - state.get(&params[1].id()),
+            } => {
+                mask_scalar(state.get(&params[0].id()), ty)
+                    - mask_scalar(state.get(&params[1].id()), ty)
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Mul,
                 attrs: _,
                 params,
                 loc: _,
-            } => state.get(&params[0].id()) * state.get(&params[1].id()),
+            } => {
+                mask_scalar(state.get(&params[0].id()), ty)
+                    * mask_scalar(state.get(&params[1].id()), ty)
+            }
             Instr::Prim {
                 id: _,
                 ty,
@@ -134,65 +143,83 @@ impl Eval for Instr {
             } => !mask_scalar(state.get(&params[0].id()), ty),
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::And,
                 attrs: _,
                 params,
                 loc: _,
-            } => state.get(&params[0].id()) & state.get(&params[1].id()),
+            } => {
+                mask_scalar(state.get(&params[0].id()), ty)
+                    & mask_scalar(state.get(&params[1].id()), ty)
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Nand,
                 attrs: _,
                 params,
                 loc: _,
-            } => !(state.get(&params[0].id()) & state.get(&params[1].id())),
+            } => {
+                !(mask_scalar(state.get(&params[0].id()), ty)
+                    & mask_scalar(state.get(&params[1].id()), ty))
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Or,
                 attrs: _,
                 params,
                 loc: _,
-            } => state.get(&params[0].id()) | state.get(&params[1].id()),
+            } => {
+                mask_scalar(state.get(&params[0].id()), ty)
+                    | mask_scalar(state.get(&params[1].id()), ty)
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Nor,
                 attrs: _,
                 params,
                 loc: _,
-            } => !(state.get(&params[0].id()) | state.get(&params[1].id())),
+            } => {
+                !(mask_scalar(state.get(&params[0].id()), ty)
+                    | mask_scalar(state.get(&params[1].id()), ty))
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Xor,
                 attrs: _,
                 params,
                 loc: _,
-            } => state.get(&params[0].id()) ^ state.get(&params[1].id()),
+            } => {
+                mask_scalar(state.get(&params[0].id()), ty)
+                    ^ mask_scalar(state.get(&params[1].id()), ty)
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Xnor,
                 attrs: _,
                 params,
                 loc: _,
-            } => !(state.get(&params[0].id()) ^ state.get(&params[1].id())),
+            } => {
+                !(mask_scalar(state.get(&params[0].id()), ty)
+                    ^ mask_scalar(state.get(&params[1].id()), ty))
+            }
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Mux,
                 attrs: _,
                 params,
                 loc: _,
             } => {
-                let en = state.get(&params[0].id());
-                if en > 0 {
-                    state.get(&params[1].id())
+                let en = mask_scalar(state.get(&params[0].id()), &params[0].ty());
+                if en == 1 {
+                    mask_scalar(state.get(&params[1].id()), ty)
                 } else {
-                    state.get(&params[2].id())
+                    mask_scalar(state.get(&params[2].id()), ty)
                 }
             }
             Instr::Prim {
@@ -202,7 +229,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => (state.get(&params[0].id()) == state.get(&params[1].id())) as i64,
+            } => {
+                (mask_scalar(state.get(&params[0].id()), &params[0].ty())
+                    == mask_scalar(state.get(&params[1].id()), &params[1].ty()))
+                    as i64
+            }
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -210,7 +241,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => (state.get(&params[0].id()) != state.get(&params[1].id())) as i64,
+            } => {
+                (mask_scalar(state.get(&params[0].id()), &params[0].ty())
+                    != mask_scalar(state.get(&params[1].id()), &params[1].ty()))
+                    as i64
+            }
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -218,7 +253,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => (state.get(&params[0].id()) > state.get(&params[1].id())) as i64,
+            } => {
+                (mask_scalar(state.get(&params[0].id()), &params[0].ty())
+                    > mask_scalar(state.get(&params[1].id()), &params[1].ty()))
+                    as i64
+            }
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -226,7 +265,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => (state.get(&params[0].id()) < state.get(&params[1].id())) as i64,
+            } => {
+                (mask_scalar(state.get(&params[0].id()), &params[0].ty())
+                    < mask_scalar(state.get(&params[1].id()), &params[1].ty()))
+                    as i64
+            }
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -234,7 +277,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => (state.get(&params[0].id()) >= state.get(&params[1].id())) as i64,
+            } => {
+                (mask_scalar(state.get(&params[0].id()), &params[0].ty())
+                    >= mask_scalar(state.get(&params[1].id()), &params[1].ty()))
+                    as i64
+            }
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -242,7 +289,11 @@ impl Eval for Instr {
                 attrs: _,
                 params,
                 loc: _,
-            } => (state.get(&params[0].id()) <= state.get(&params[1].id())) as i64,
+            } => {
+                (mask_scalar(state.get(&params[0].id()), &params[0].ty())
+                    <= mask_scalar(state.get(&params[1].id()), &params[1].ty()))
+                    as i64
+            }
         }
     }
 }

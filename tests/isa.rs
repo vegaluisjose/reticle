@@ -95,9 +95,9 @@ mod tests {
     fn test_nand() {
         let prog = parse_from_file("examples/isa/nand.ret");
         let mut trace = Trace::default();
-        trace.enq("a", 0xfu64 as i64);
-        trace.enq("b", 0xfu64 as i64);
-        trace.enq("y", 0xfffffffffffffff0u64 as i64);
+        trace.enq("a", 15);
+        trace.enq("b", 15);
+        trace.enq("y", -16);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
 
@@ -117,7 +117,7 @@ mod tests {
         let mut trace = Trace::default();
         trace.enq("a", 7);
         trace.enq("b", 8);
-        trace.enq("y", 0xfffffffffffffff0u64 as i64);
+        trace.enq("y", -16);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
 
@@ -137,7 +137,7 @@ mod tests {
         let mut trace = Trace::default();
         trace.enq("a", 3);
         trace.enq("b", 12);
-        trace.enq("y", 0xfffffffffffffff0u64 as i64);
+        trace.enq("y", -16);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
 
