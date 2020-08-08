@@ -1,0 +1,6 @@
+def counter(en: bool) -> (y: i8) {
+    t0: i8 = const[1];
+    t1: i8 = add(t0, t2);
+    t2: i8 = reg[0](t1, en);
+    y: i8 = id(t2);
+}
