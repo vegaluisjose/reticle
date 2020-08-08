@@ -77,8 +77,8 @@ mod tests {
     fn test_not() {
         let prog = parse_from_file("examples/isa/not.ret");
         let mut trace = Trace::default();
-        trace.enq("a", 0xfffffffffffffff0u64 as i64);
-        trace.enq("y", 0xfu64 as i64);
+        trace.enq("a", 3);
+        trace.enq("y", -4);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
 
