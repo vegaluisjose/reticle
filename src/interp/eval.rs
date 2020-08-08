@@ -2,6 +2,20 @@ use crate::interp::state::State;
 use crate::interp::ty::Value;
 use crate::lang::ast::*;
 
+fn mask_scalar(value: Value, ty: &Ty) -> Value {
+    // mask width since we are not planning to go above 64-bit
+    // gotta fix Ty at some point to reflect this
+    let width = ty.width() as u32;
+    let two: i64 = 2;
+    match ty {
+        Ty::SInt(_) if value < 0 => -(value & (two.pow(width - 1) - 1)),
+        Ty::SInt(_) => value & (two.pow(width - 1) - 1),
+        Ty::UInt(_) => value & (two.pow(width) - 1),
+        Ty::Bool => value & 1,
+        _ => panic!("Error: {} not scalar type", ty),
+    }
+}
+
 pub trait Eval {
     fn is_ready(&self, state: &State) -> bool;
     fn eval(&self, state: &State) -> Value;
@@ -112,12 +126,12 @@ impl Eval for Instr {
             } => state.get(&params[0].id()) * state.get(&params[1].id()),
             Instr::Prim {
                 id: _,
-                ty: _,
+                ty,
                 op: PrimOp::Not,
                 attrs: _,
                 params,
                 loc: _,
-            } => !state.get(&params[0].id()),
+            } => !mask_scalar(state.get(&params[0].id()), ty),
             Instr::Prim {
                 id: _,
                 ty: _,
