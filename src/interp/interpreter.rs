@@ -59,37 +59,38 @@ impl Interpreter {
                 for input in def.inputs().iter() {
                     curr.add_input(&input.id(), trace.deq(&input.id()))
                 }
-                // instr queue for vars not present in state
-                let mut unresolved: Vec<Instr> = Vec::new();
-                // run ready-to-execute instructions, or instructions with
-                // params available in the environment(state)
+                // instr queue for params not present in state
+                let mut instr_unresolved: Vec<Instr> = Vec::new();
+                // instr queue for regs
+                let mut instr_register: Vec<Instr> = Vec::new();
+                // run instructions with params available in the env
+                // that are not registers
                 for instr in def.body().iter() {
-                    if instr.is_ready(&curr) {
+                    if instr.is_reg() {
+                        instr_register.push(instr.clone());
+                    } else if instr.is_ready(&curr) {
                         let value = instr.eval(&curr);
-                        if instr.is_reg() {
-                            next.add_reg(&instr.id(), value);
-                        } else {
-                            curr.add_temp(&instr.id(), value);
-                        }
+                        curr.add_temp(&instr.id(), value);
                     } else {
-                        unresolved.push(instr.clone());
+                        instr_unresolved.push(instr.clone());
                     }
                 }
-                // run remaining instructions
-                for instr in unresolved.iter() {
+                // run unresolved instr
+                for instr in instr_unresolved.iter() {
                     if instr.is_ready(&curr) {
                         let value = instr.eval(&curr);
-                        if instr.is_reg() {
-                            next.add_reg(&instr.id(), value);
-                        } else {
-                            curr.add_temp(&instr.id(), value);
-                        }
+                        curr.add_temp(&instr.id(), value);
                     } else {
                         self.malformed = true;
                         break;
                     }
                 }
                 if !self.is_malformed() {
+                    // run register instr -- update registers
+                    for instr in instr_register.iter() {
+                        let value = instr.eval(&curr);
+                        next.add_reg(&instr.id(), value);
+                    }
                     // check output, if not malformed
                     for output in def.outputs().iter() {
                         let exp = trace.deq(&output.id());
