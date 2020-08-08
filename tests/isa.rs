@@ -73,12 +73,11 @@ mod tests {
     }
 
     #[test]
-    // FIXME: need to start checking types in order to make this work properly
     fn test_not() {
         let prog = parse_from_file("examples/isa/not.ret");
         let mut trace = Trace::default();
-        trace.enq("a", 3);
-        trace.enq("y", -4);
+        trace.enq("a", 3); // 0b00000011
+        trace.enq("y", -4); // 0b11111100
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
 
