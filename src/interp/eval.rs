@@ -232,7 +232,7 @@ impl Eval for Instr {
             } => {
                 (mask_scalar(state.get(&params[0].id()), &params[0].ty())
                     == mask_scalar(state.get(&params[1].id()), &params[1].ty()))
-                    as i64
+                    as Value
             }
             Instr::Prim {
                 id: _,
@@ -244,7 +244,7 @@ impl Eval for Instr {
             } => {
                 (mask_scalar(state.get(&params[0].id()), &params[0].ty())
                     != mask_scalar(state.get(&params[1].id()), &params[1].ty()))
-                    as i64
+                    as Value
             }
             Instr::Prim {
                 id: _,
@@ -256,7 +256,7 @@ impl Eval for Instr {
             } => {
                 (mask_scalar(state.get(&params[0].id()), &params[0].ty())
                     > mask_scalar(state.get(&params[1].id()), &params[1].ty()))
-                    as i64
+                    as Value
             }
             Instr::Prim {
                 id: _,
@@ -268,7 +268,7 @@ impl Eval for Instr {
             } => {
                 (mask_scalar(state.get(&params[0].id()), &params[0].ty())
                     < mask_scalar(state.get(&params[1].id()), &params[1].ty()))
-                    as i64
+                    as Value
             }
             Instr::Prim {
                 id: _,
@@ -280,7 +280,7 @@ impl Eval for Instr {
             } => {
                 (mask_scalar(state.get(&params[0].id()), &params[0].ty())
                     >= mask_scalar(state.get(&params[1].id()), &params[1].ty()))
-                    as i64
+                    as Value
             }
             Instr::Prim {
                 id: _,
@@ -292,7 +292,7 @@ impl Eval for Instr {
             } => {
                 (mask_scalar(state.get(&params[0].id()), &params[0].ty())
                     <= mask_scalar(state.get(&params[1].id()), &params[1].ty()))
-                    as i64
+                    as Value
             }
         }
     }
