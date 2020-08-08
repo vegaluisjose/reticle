@@ -85,7 +85,10 @@ impl Interpreter {
                         break;
                     }
                 }
-                if !self.is_malformed() {
+                if self.is_malformed() {
+                    self.failed = true;
+                    break;
+                } else {
                     // run register instr -- update registers
                     for instr in instr_register.iter() {
                         let value = instr.eval(&curr);
@@ -114,8 +117,6 @@ impl Interpreter {
                         }
                     }
                     curr.update_regs_from_state(&next);
-                } else {
-                    self.failed = true;
                 }
             }
             self.finished = true;
