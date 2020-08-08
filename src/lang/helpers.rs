@@ -25,6 +25,27 @@ impl Ty {
             _ => false,
         }
     }
+
+    pub fn is_uint(&self) -> bool {
+        match self {
+            Ty::UInt(_) => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_sint(&self) -> bool {
+        match self {
+            Ty::SInt(_) => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_bool(&self) -> bool {
+        match self {
+            Ty::Bool => true,
+            _ => false,
+        }
+    }
 }
 
 impl Port {
