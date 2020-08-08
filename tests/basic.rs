@@ -51,4 +51,26 @@ mod tests {
         trace.enq("y", 2);
         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
     }
+
+    #[test]
+    fn test_fsm_two() {
+        let prog = parse_from_file("examples/basic/fsm_two.ret");
+        let mut trace = Trace::default();
+        trace.enq("start", 0);
+        trace.enq("start", 1);
+        trace.enq("start", 0);
+        trace.enq("start", 0);
+        trace.enq("done", 0);
+        trace.enq("done", 0);
+        trace.enq("done", 1);
+        trace.enq("done", 0);
+        trace.enq("state", 0);
+        trace.enq("state", 0);
+        trace.enq("state", 1);
+        trace.enq("state", 0);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 }
