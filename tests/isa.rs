@@ -142,15 +142,18 @@ mod test_scalar_instr {
             .is_failed());
     }
 
-    //     #[test]
-    //     fn test_nor() {
-    //         let prog = parse_from_file("examples/isa/nor.ret");
-    //         let mut trace = Trace::default();
-    //         trace.enq("a", 7);
-    //         trace.enq("b", 8);
-    //         trace.enq("y", -16);
-    //         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
-    //     }
+    #[test]
+    fn test_nor() {
+        let prog = parse_from_file("examples/isa/scalar/nor.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::new_scalar(7));
+        trace.enq("b", Value::new_scalar(8));
+        trace.enq("y", Value::new_scalar(-16));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 
     //     #[test]
     //     fn test_xor() {
@@ -356,6 +359,19 @@ mod test_vector_instr {
         trace.enq("a", Value::from(vec![4, 8, 1, 0]));
         trace.enq("b", Value::from(vec![4, 3, 0, 0]));
         trace.enq("y", Value::from(vec![4, 11, 1, 0]));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
+    #[test]
+    fn test_vnor_v4() {
+        let prog = parse_from_file("examples/isa/vector/vnor_v4.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::from(vec![7, -2, 1, 0]));
+        trace.enq("b", Value::from(vec![8, 1, 0, 0]));
+        trace.enq("y", Value::from(vec![-16, 0, -2, -1]));
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
