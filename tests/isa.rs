@@ -65,6 +65,19 @@ mod test_scalar_instr {
             .is_failed());
     }
 
+    #[test]
+    fn test_sub() {
+        let prog = parse_from_file("examples/isa/scalar/sub.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::new_scalar(9));
+        trace.enq("b", Value::new_scalar(3));
+        trace.enq("y", Value::new_scalar(6));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
     //     #[test]
     //     fn test_sub() {
     //         let prog = parse_from_file("examples/isa/sub.ret");
@@ -274,6 +287,19 @@ mod test_vector_instr {
         trace.enq("a", Value::from(vec![-4, 2, 2, 1]));
         trace.enq("b", Value::from(vec![1, 3, 0, 1]));
         trace.enq("y", Value::from(vec![-3, 5, 2, 2]));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
+    #[test]
+    fn test_vsub_v4() {
+        let prog = parse_from_file("examples/isa/vector/vsub_v4.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::from(vec![-4, 2, 2, 1]));
+        trace.enq("b", Value::from(vec![1, 3, 0, 1]));
+        trace.enq("y", Value::from(vec![-5, -1, 2, 0]));
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
