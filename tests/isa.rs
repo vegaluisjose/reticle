@@ -116,25 +116,18 @@ mod test_scalar_instr {
             .is_failed());
     }
 
-    //     #[test]
-    //     fn test_and() {
-    //         let prog = parse_from_file("examples/isa/and.ret");
-    //         let mut trace = Trace::default();
-    //         trace.enq("a", 3);
-    //         trace.enq("b", 3);
-    //         trace.enq("y", 3);
-    //         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
-    //     }
-
-    //     #[test]
-    //     fn test_nand() {
-    //         let prog = parse_from_file("examples/isa/nand.ret");
-    //         let mut trace = Trace::default();
-    //         trace.enq("a", 15);
-    //         trace.enq("b", 15);
-    //         trace.enq("y", -16);
-    //         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
-    //     }
+    #[test]
+    fn test_nand() {
+        let prog = parse_from_file("examples/isa/scalar/nand.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::new_scalar(15));
+        trace.enq("b", Value::new_scalar(15));
+        trace.enq("y", Value::new_scalar(-16));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 
     //     #[test]
     //     fn test_or() {

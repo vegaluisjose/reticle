@@ -214,149 +214,233 @@ impl Eval for Instr {
                     Value::new_scalar(lhs.get_scalar() & rhs.get_scalar())
                 }
             }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::Nand,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             !(mask(state.get(&params[0].id()), ty)
-            //                 & mask(state.get(&params[1].id()), ty))
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::Or,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             mask(state.get(&params[0].id()), ty)
-            //                 | mask(state.get(&params[1].id()), ty)
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::Nor,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             !(mask(state.get(&params[0].id()), ty)
-            //                 | mask(state.get(&params[1].id()), ty))
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::Xor,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             mask(state.get(&params[0].id()), ty)
-            //                 ^ mask(state.get(&params[1].id()), ty)
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::Xnor,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             !(mask(state.get(&params[0].id()), ty)
-            //                 ^ mask(state.get(&params[1].id()), ty))
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::Mux,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             let en = mask(state.get(&params[0].id()), &params[0].ty());
-            //             if en == 1 {
-            //                 mask(state.get(&params[1].id()), ty)
-            //             } else {
-            //                 mask(state.get(&params[2].id()), ty)
-            //             }
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty: _,
-            //             op: PrimOp::Equal,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             (mask(state.get(&params[0].id()), &params[0].ty())
-            //                 == mask(state.get(&params[1].id()), &params[1].ty()))
-            //                 as Value
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty: _,
-            //             op: PrimOp::NotEqual,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             (mask(state.get(&params[0].id()), &params[0].ty())
-            //                 != mask(state.get(&params[1].id()), &params[1].ty()))
-            //                 as Value
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty: _,
-            //             op: PrimOp::Gt,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             (mask(state.get(&params[0].id()), &params[0].ty())
-            //                 > mask(state.get(&params[1].id()), &params[1].ty()))
-            //                 as Value
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty: _,
-            //             op: PrimOp::Lt,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             (mask(state.get(&params[0].id()), &params[0].ty())
-            //                 < mask(state.get(&params[1].id()), &params[1].ty()))
-            //                 as Value
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty: _,
-            //             op: PrimOp::Ge,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             (mask(state.get(&params[0].id()), &params[0].ty())
-            //                 >= mask(state.get(&params[1].id()), &params[1].ty()))
-            //                 as Value
-            //         }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty: _,
-            //             op: PrimOp::Le,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             (mask(state.get(&params[0].id()), &params[0].ty())
-            //                 <= mask(state.get(&params[1].id()), &params[1].ty()))
-            //                 as Value
-            //         }
-            _ => panic!("WIP"),
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Nand,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let lhs = mask(state.get(&params[0].id()), ty);
+                let rhs = mask(state.get(&params[1].id()), ty);
+                if ty.is_vector() {
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(!(a & b));
+                    }
+                    res
+                } else {
+                    Value::new_scalar(!(lhs.get_scalar() & rhs.get_scalar()))
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Or,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let lhs = mask(state.get(&params[0].id()), ty);
+                let rhs = mask(state.get(&params[1].id()), ty);
+                if ty.is_vector() {
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(a | b);
+                    }
+                    res
+                } else {
+                    Value::new_scalar(lhs.get_scalar() | rhs.get_scalar())
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Nor,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let lhs = mask(state.get(&params[0].id()), ty);
+                let rhs = mask(state.get(&params[1].id()), ty);
+                if ty.is_vector() {
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(!(a | b));
+                    }
+                    res
+                } else {
+                    Value::new_scalar(!(lhs.get_scalar() | rhs.get_scalar()))
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Xor,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let lhs = mask(state.get(&params[0].id()), ty);
+                let rhs = mask(state.get(&params[1].id()), ty);
+                if ty.is_vector() {
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(a ^ b);
+                    }
+                    res
+                } else {
+                    Value::new_scalar(lhs.get_scalar() ^ rhs.get_scalar())
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Xnor,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let lhs = mask(state.get(&params[0].id()), ty);
+                let rhs = mask(state.get(&params[1].id()), ty);
+                if ty.is_vector() {
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(!(a ^ b));
+                    }
+                    res
+                } else {
+                    Value::new_scalar(!(lhs.get_scalar() ^ rhs.get_scalar()))
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Mux,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector mux is not supported");
+                } else {
+                    let en = mask(state.get(&params[0].id()), &params[0].ty());
+                    if en == Value::new_scalar(1) {
+                        mask(state.get(&params[1].id()), ty)
+                    } else {
+                        mask(state.get(&params[2].id()), ty)
+                    }
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Equal,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector eq is not supported");
+                } else {
+                    Value::new_scalar(
+                        (mask(state.get(&params[0].id()), &params[0].ty())
+                            == mask(state.get(&params[1].id()), &params[1].ty()))
+                            as i64,
+                    )
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::NotEqual,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector neq is not supported");
+                } else {
+                    Value::new_scalar(
+                        (mask(state.get(&params[0].id()), &params[0].ty())
+                            != mask(state.get(&params[1].id()), &params[1].ty()))
+                            as i64,
+                    )
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Gt,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector gt is not supported");
+                } else {
+                    Value::new_scalar(
+                        (mask(state.get(&params[0].id()), &params[0].ty()).get_scalar()
+                            > mask(state.get(&params[1].id()), &params[1].ty()).get_scalar())
+                            as i64,
+                    )
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Lt,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector lt is not supported");
+                } else {
+                    Value::new_scalar(
+                        (mask(state.get(&params[0].id()), &params[0].ty()).get_scalar()
+                            < mask(state.get(&params[1].id()), &params[1].ty()).get_scalar())
+                            as i64,
+                    )
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Ge,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector ge is not supported");
+                } else {
+                    Value::new_scalar(
+                        (mask(state.get(&params[0].id()), &params[0].ty()).get_scalar()
+                            >= mask(state.get(&params[1].id()), &params[1].ty()).get_scalar())
+                            as i64,
+                    )
+                }
+            }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::Le,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                if ty.is_vector() {
+                    panic!("Error: vector le is not supported");
+                } else {
+                    Value::new_scalar(
+                        (mask(state.get(&params[0].id()), &params[0].ty()).get_scalar()
+                            <= mask(state.get(&params[1].id()), &params[1].ty()).get_scalar())
+                            as i64,
+                    )
+                }
+            }
         }
     }
 }
