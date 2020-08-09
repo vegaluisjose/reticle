@@ -353,6 +353,19 @@ mod test_vector_instr {
     }
 
     #[test]
+    fn test_vnand_v4() {
+        let prog = parse_from_file("examples/isa/vector/vnand_v4.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::from(vec![4, 15, 1, 0]));
+        trace.enq("b", Value::from(vec![4, 15, 0, 0]));
+        trace.enq("y", Value::from(vec![-5, -16, -1, -1]));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
+    #[test]
     fn test_vor_v4() {
         let prog = parse_from_file("examples/isa/vector/vor_v4.ret");
         let mut trace = Trace::default();
