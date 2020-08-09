@@ -48,11 +48,11 @@ impl State {
 
     pub fn get(&self, id: &str) -> Value {
         if let Some(input) = self.inputs.get(id) {
-            *input
+            input.clone()
         } else if let Some(reg) = self.regs.get(id) {
-            *reg
+            reg.clone()
         } else if let Some(temp) = self.temps.get(id) {
-            *temp
+            temp.clone()
         } else {
             panic!("id:{} not found", id);
         }
@@ -60,7 +60,7 @@ impl State {
 
     pub fn get_input(&self, id: &str) -> Value {
         if let Some(input) = self.inputs.get(id) {
-            *input
+            input.clone()
         } else {
             panic!("input:{} not found", id);
         }
@@ -68,7 +68,7 @@ impl State {
 
     pub fn get_reg(&self, id: &str) -> Value {
         if let Some(reg) = self.regs.get(id) {
-            *reg
+            reg.clone()
         } else {
             panic!("reg:{} not found", id);
         }
@@ -76,7 +76,7 @@ impl State {
 
     pub fn get_temp(&self, id: &str) -> Value {
         if let Some(temp) = self.temps.get(id) {
-            *temp
+            temp.clone()
         } else {
             panic!("temp:{} not found", id);
         }

@@ -1,6 +1,7 @@
 use crate::interp::eval::Eval;
 use crate::interp::state::State;
 use crate::interp::trace::Trace;
+use crate::interp::ty::Value;
 use crate::lang::ast::{Instr, Prog};
 
 #[derive(Clone, Debug)]
@@ -52,7 +53,22 @@ impl Interpreter {
             for instr in def.body().iter() {
                 if instr.is_reg() {
                     let attrs = instr.attrs();
-                    curr.add_reg(&instr.id(), attrs[0].value());
+                    if instr.ty().is_vector() {
+                        assert_eq!(
+                            attrs.len() as u64,
+                            instr.ty().length(),
+                            "Error: vector register length does not match number of attrs"
+                        );
+                        let values: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
+                        curr.add_reg(&instr.id(), Value::from(values));
+                    } else {
+                        assert_eq!(
+                            attrs.len(),
+                            1 as usize,
+                            "Error: scalar register only support one attribute"
+                        );
+                        curr.add_reg(&instr.id(), Value::new_scalar(attrs[0].value()));
+                    }
                 }
             }
             for cycle in 0..trace.len() {

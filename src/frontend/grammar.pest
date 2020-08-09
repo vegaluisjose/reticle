@@ -12,7 +12,9 @@ int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
 bool = @{ ASCII_ALPHA_LOWER+ }
 
-ty = { int | bool }
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+
+ty = { vector | int | bool }
 
 expr = { identifier | number }
 
