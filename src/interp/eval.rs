@@ -194,17 +194,26 @@ impl Eval for Instr {
                     Value::new_scalar(!input.get_scalar())
                 }
             }
-            //         Instr::Prim {
-            //             id: _,
-            //             ty,
-            //             op: PrimOp::And,
-            //             attrs: _,
-            //             params,
-            //             loc: _,
-            //         } => {
-            //             mask(state.get(&params[0].id()), ty)
-            //                 & mask(state.get(&params[1].id()), ty)
-            //         }
+            Instr::Prim {
+                id: _,
+                ty,
+                op: PrimOp::And,
+                attrs: _,
+                params,
+                loc: _,
+            } => {
+                let lhs = mask(state.get(&params[0].id()), ty);
+                let rhs = mask(state.get(&params[1].id()), ty);
+                if ty.is_vector() {
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(a & b);
+                    }
+                    res
+                } else {
+                    Value::new_scalar(lhs.get_scalar() & rhs.get_scalar())
+                }
+            }
             //         Instr::Prim {
             //             id: _,
             //             ty,

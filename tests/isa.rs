@@ -103,6 +103,19 @@ mod test_scalar_instr {
             .is_failed());
     }
 
+    #[test]
+    fn test_and() {
+        let prog = parse_from_file("examples/isa/scalar/and.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::new_scalar(3));
+        trace.enq("b", Value::new_scalar(3));
+        trace.enq("y", Value::new_scalar(3));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
     //     #[test]
     //     fn test_and() {
     //         let prog = parse_from_file("examples/isa/and.ret");
@@ -321,6 +334,19 @@ mod test_vector_instr {
         let mut trace = Trace::default();
         trace.enq("a", Value::from(vec![-4, 3, 1, 0]));
         trace.enq("y", Value::from(vec![3, -4, -2, -1]));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
+    #[test]
+    fn test_vand_v4() {
+        let prog = parse_from_file("examples/isa/vector/vand_v4.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::from(vec![4, 15, 1, 0]));
+        trace.enq("b", Value::from(vec![4, 3, 0, 0]));
+        trace.enq("y", Value::from(vec![4, 3, 0, 0]));
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
