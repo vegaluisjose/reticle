@@ -78,25 +78,18 @@ mod test_scalar_instr {
             .is_failed());
     }
 
-    //     #[test]
-    //     fn test_sub() {
-    //         let prog = parse_from_file("examples/isa/sub.ret");
-    //         let mut trace = Trace::default();
-    //         trace.enq("a", 9);
-    //         trace.enq("b", 7);
-    //         trace.enq("y", 2);
-    //         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
-    //     }
-
-    //     #[test]
-    //     fn test_mul() {
-    //         let prog = parse_from_file("examples/isa/mul.ret");
-    //         let mut trace = Trace::default();
-    //         trace.enq("a", 3);
-    //         trace.enq("b", 5);
-    //         trace.enq("y", 15);
-    //         assert!(!Interpreter::default().run(&prog, &trace).is_failed());
-    //     }
+    #[test]
+    fn test_mul() {
+        let prog = parse_from_file("examples/isa/scalar/mul.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::new_scalar(9));
+        trace.enq("b", Value::new_scalar(3));
+        trace.enq("y", Value::new_scalar(27));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 
     //     #[test]
     //     fn test_not() {
@@ -300,6 +293,19 @@ mod test_vector_instr {
         trace.enq("a", Value::from(vec![-4, 2, 2, 1]));
         trace.enq("b", Value::from(vec![1, 3, 0, 1]));
         trace.enq("y", Value::from(vec![-5, -1, 2, 0]));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
+    #[test]
+    fn test_vmul_v4() {
+        let prog = parse_from_file("examples/isa/vector/vmul_v4.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::from(vec![-4, 2, 2, 1]));
+        trace.enq("b", Value::from(vec![1, 3, 0, 1]));
+        trace.enq("y", Value::from(vec![-4, 6, 0, 1]));
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
