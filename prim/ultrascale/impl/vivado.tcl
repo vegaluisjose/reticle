@@ -1,13 +1,17 @@
 set top_name [lindex $argv 0]
-set verilog_file [lindex $argv 1]
-set utilization_file [lindex $argv 2]
-set timing_file [lindex $argv 3]
-set dcp_file [lindex $argv 4]
-set netlist_file [lindex $argv 5]
+set lib_file [lindex $argv 1]
+set lib_dir [lindex $argv 2]
+set out_dir [lindex $argv 3]
+
+set utilization_file $out_dir/${top_name}_util.txt
+set timing_file $out_dir/${top_name}_time.txt
+set dcp_file $out_dir/${top_name}.dcp
+set netlist_file $out_dir/${top_name}.v
 
 set part_name "xczu3eg-sbva484-1-e"
 
-read_verilog -sv $verilog_file
+source $lib_file
+
 synth_design -mode "out_of_context" -flatten_hierarchy "rebuilt" -top $top_name -part $part_name
 opt_design
 place_design -directive Default
