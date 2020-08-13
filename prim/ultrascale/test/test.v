@@ -788,6 +788,38 @@ module test_dsp_add_reg_mul_8 (
 
 endmodule
 
+module test_dsp_add_add_add_mul (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 8;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic [width-1:0] c;
+    logic [width-1:0] d;
+    logic [width-1:0] y;
+    logic [width-1:0] y_ref;
+
+    assign a = 8'd3;
+    assign b = -8'd3;
+    assign c = 8'd2;
+    assign d = 8'd8;
+
+    assign y_ref = (a + (b * c)) + (d + (b * c));
+
+    dsp_add_add_add_mul dut (clock, reset, a, b, c, d, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display("[PASS] test_dsp_add_add_add_mul res:%d exp:%d", $signed(y), $signed(y_ref));
+                else $error("[FAIL] test_dsp_add_add_add_mul res:%d exp:%d", $signed(y), $signed(y_ref));
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -844,5 +876,6 @@ module test();
     test_lut_sub_width_32    t22 (clock, reset, cycles);
     test_dsp_add_mul_8       t23 (clock, reset, cycles);
     test_dsp_add_reg_mul_8   t24 (clock, reset, cycles);
+    test_dsp_add_add_add_mul t25 (clock, reset, cycles);
 
 endmodule
