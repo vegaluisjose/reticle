@@ -149,4 +149,20 @@ mod test_basic {
             .run(&prog, &trace)
             .is_failed());
     }
+
+    #[test]
+    fn test_two_add() {
+        let prog = parse_from_file("examples/basic/two_add.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("c", -3);
+        trace.enq_scalar("d", -7);
+        trace.enq_scalar("f", 4);
+        trace.enq_scalar("g", -10);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 }
