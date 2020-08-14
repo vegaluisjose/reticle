@@ -1,37 +1,8 @@
 OUT_DIR = $(abspath .)/out
-LIB_DIR = $(abspath .)/lib
+export LIB_DIR := $(abspath .)/lib
+export XILINX_VIVADO := $(XILINX_VIVADO)
 
 NAME = dsp_add
-
-IMPL_FILE = \
-$(LIB_DIR)/$(NAME).v \
-
-SIM_FILES = \
-$(LIB_DIR)/dsp_add.v \
-$(LIB_DIR)/dsp_add_v2.v \
-$(LIB_DIR)/dsp_add_v4.v \
-$(LIB_DIR)/dsp_add_v3.v \
-$(LIB_DIR)/dsp_mul.v \
-$(LIB_DIR)/dsp_sub.v \
-$(LIB_DIR)/dsp_sub_v2.v \
-$(LIB_DIR)/dsp_sub_v4.v \
-$(LIB_DIR)/dsp_sub_v3.v \
-$(LIB_DIR)/dsp_and.v \
-$(LIB_DIR)/dsp_or.v \
-$(LIB_DIR)/dsp_xor.v \
-$(LIB_DIR)/dsp_nor.v \
-$(LIB_DIR)/dsp_xnor.v \
-$(LIB_DIR)/dsp_nand.v \
-$(LIB_DIR)/dsp_not.v \
-$(LIB_DIR)/lut_add_w8.v \
-$(LIB_DIR)/lut_sub_w8.v \
-$(LIB_DIR)/lut_add_w16.v \
-$(LIB_DIR)/lut_sub_w16.v \
-$(LIB_DIR)/lut_add_w32.v \
-$(LIB_DIR)/lut_sub_w32.v \
-$(LIB_DIR)/dsp_add_mul.v \
-$(LIB_DIR)/dsp_add_reg_mul.v \
-$(LIB_DIR)/dsp_add_add_add_mul.v
 
 default: test
 
@@ -40,10 +11,10 @@ test: xvlog xelab
 
 .PHONY: impl
 impl: | $(OUT_DIR)
-	vivado -mode batch -source impl/vivado.tcl -tclargs $(NAME) impl/lib.tcl $(LIB_DIR) $(OUT_DIR)
+	vivado -mode batch -source tcl/vivado.tcl -tclargs $(NAME) tcl/lib.tcl $(LIB_DIR) $(OUT_DIR)
 
 xvlog:
-	xvlog --sv --incr --relax test/test.v $(SIM_FILES) $(XILINX_VIVADO)/data/verilog/src/glbl.v
+	xvlog --sv --incr --relax -f tcl/sim.tcl
 
 xelab:
 	xelab --snapshot test --timescale 1ns/1ps -R -L unisims_ver glbl test
