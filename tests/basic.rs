@@ -1,6 +1,5 @@
 use reticle::frontend::parser::parse_from_file;
 use reticle::interp::trace::Trace;
-use reticle::interp::ty::Value;
 use reticle::interp::Interpreter;
 
 #[cfg(test)]
@@ -11,8 +10,8 @@ mod test_basic {
     fn test_vadd_one() {
         let prog = parse_from_file("examples/basic/vadd_one.ret");
         let mut trace = Trace::default();
-        trace.enq("a", Value::from(vec![-4, 2, 0, 1]));
-        trace.enq("y", Value::from(vec![-3, 3, 1, 2]));
+        trace.enq_vector("a", vec![-4, 2, 0, 1]);
+        trace.enq_vector("y", vec![-3, 3, 1, 2]);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
@@ -23,15 +22,15 @@ mod test_basic {
     fn test_pipeline() {
         let prog = parse_from_file("examples/basic/pipeline.ret");
         let mut trace = Trace::default();
-        trace.enq("a", Value::new_scalar(9));
-        trace.enq("a", Value::new_scalar(0));
-        trace.enq("a", Value::new_scalar(0));
-        trace.enq("en", Value::new_scalar(1));
-        trace.enq("en", Value::new_scalar(1));
-        trace.enq("en", Value::new_scalar(0));
-        trace.enq("y", Value::new_scalar(0));
-        trace.enq("y", Value::new_scalar(0));
-        trace.enq("y", Value::new_scalar(9));
+        trace.enq_scalar("a", 9);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("en", 1);
+        trace.enq_scalar("en", 1);
+        trace.enq_scalar("en", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 9);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
@@ -42,16 +41,16 @@ mod test_basic {
     fn test_muladd() {
         let prog = parse_from_file("examples/basic/muladd.ret");
         let mut trace = Trace::default();
-        trace.enq("a", Value::new_scalar(4));
-        trace.enq("a", Value::new_scalar(0));
-        trace.enq("b", Value::new_scalar(2));
-        trace.enq("b", Value::new_scalar(0));
-        trace.enq("c", Value::new_scalar(3));
-        trace.enq("c", Value::new_scalar(3));
-        trace.enq("en", Value::new_scalar(1));
-        trace.enq("en", Value::new_scalar(0));
-        trace.enq("y", Value::new_scalar(3));
-        trace.enq("y", Value::new_scalar(11));
+        trace.enq_scalar("a", 4);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("b", 2);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("c", 3);
+        trace.enq_scalar("c", 3);
+        trace.enq_scalar("en", 1);
+        trace.enq_scalar("en", 0);
+        trace.enq_scalar("y", 3);
+        trace.enq_scalar("y", 11);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
@@ -62,12 +61,12 @@ mod test_basic {
     fn test_counter() {
         let prog = parse_from_file("examples/basic/counter.ret");
         let mut trace = Trace::default();
-        trace.enq("en", Value::new_scalar(1));
-        trace.enq("en", Value::new_scalar(1));
-        trace.enq("en", Value::new_scalar(0));
-        trace.enq("y", Value::new_scalar(0));
-        trace.enq("y", Value::new_scalar(1));
-        trace.enq("y", Value::new_scalar(2));
+        trace.enq_scalar("en", 1);
+        trace.enq_scalar("en", 1);
+        trace.enq_scalar("en", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 2);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
@@ -78,18 +77,18 @@ mod test_basic {
     fn test_fsm_two() {
         let prog = parse_from_file("examples/basic/fsm_two.ret");
         let mut trace = Trace::default();
-        trace.enq("start", Value::new_scalar(0));
-        trace.enq("start", Value::new_scalar(1));
-        trace.enq("start", Value::new_scalar(0));
-        trace.enq("start", Value::new_scalar(0));
-        trace.enq("done", Value::new_scalar(0));
-        trace.enq("done", Value::new_scalar(0));
-        trace.enq("done", Value::new_scalar(1));
-        trace.enq("done", Value::new_scalar(0));
-        trace.enq("state", Value::new_scalar(0));
-        trace.enq("state", Value::new_scalar(0));
-        trace.enq("state", Value::new_scalar(1));
-        trace.enq("state", Value::new_scalar(0));
+        trace.enq_scalar("start", 0);
+        trace.enq_scalar("start", 1);
+        trace.enq_scalar("start", 0);
+        trace.enq_scalar("start", 0);
+        trace.enq_scalar("done", 0);
+        trace.enq_scalar("done", 0);
+        trace.enq_scalar("done", 1);
+        trace.enq_scalar("done", 0);
+        trace.enq_scalar("state", 0);
+        trace.enq_scalar("state", 0);
+        trace.enq_scalar("state", 1);
+        trace.enq_scalar("state", 0);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)

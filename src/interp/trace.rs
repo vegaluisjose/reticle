@@ -27,6 +27,14 @@ impl Trace {
         }
     }
 
+    pub fn enq_vector(&mut self, id: &str, vector: Vec<i64>) {
+        self.enq(id, Value::from(vector));
+    }
+
+    pub fn enq_scalar(&mut self, id: &str, scalar: i64) {
+        self.enq(id, Value::new_scalar(scalar));
+    }
+
     pub fn deq(&mut self, id: &str) -> Value {
         if let Some(data) = self.map.get_mut(id) {
             if let Some(value) = data.pop_back() {
