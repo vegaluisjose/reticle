@@ -1,10 +1,24 @@
-// use reticle::frontend::parser::parse_from_file;
-// use reticle::interp::trace::Trace;
-// use reticle::interp::Interpreter;
+use reticle::frontend::parser::parse_from_file;
+use reticle::interp::trace::Trace;
+use reticle::interp::ty::Value;
+use reticle::interp::Interpreter;
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod test_basic {
+    use super::*;
+
+    #[test]
+    fn test_vadd_one() {
+        let prog = parse_from_file("examples/basic/vadd_one.ret");
+        let mut trace = Trace::default();
+        trace.enq("a", Value::from(vec![-4, 2, 0, 1]));
+        trace.enq("y", Value::from(vec![-3, 3, 1, 2]));
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+}
 
 //     #[test]
 //     fn test_pipeline() {

@@ -95,11 +95,26 @@ impl Eval for Instr {
             } => mask(state.get(&params[0].id()), ty),
             Instr::Std {
                 id: _,
-                ty: _,
+                ty,
                 op: StdOp::Const,
                 attrs,
                 params: _,
-            } => Value::new_scalar(attrs[0].value()),
+            } => {
+                if ty.is_vector() {
+                    assert_eq!(
+                        attrs.len() as u64,
+                        ty.length(),
+                        "Error: vector length does not match"
+                    );
+                    let mut val = Value::new_vector();
+                    for a in attrs.iter() {
+                        val.push(a.value());
+                    }
+                    val
+                } else {
+                    Value::new_scalar(attrs[0].value())
+                }
+            }
             Instr::Prim {
                 id,
                 ty,

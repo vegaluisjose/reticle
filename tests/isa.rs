@@ -4,7 +4,7 @@ use reticle::interp::ty::Value;
 use reticle::interp::Interpreter;
 
 #[cfg(test)]
-mod test_scalar_instr {
+mod test_scalar_isa {
     use super::*;
 
     #[test]
@@ -279,7 +279,7 @@ mod test_scalar_instr {
 }
 
 #[cfg(test)]
-mod test_vector_instr {
+mod test_vector_isa {
     use super::*;
 
     #[test]
