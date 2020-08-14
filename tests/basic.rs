@@ -74,8 +74,8 @@ mod test_basic {
     }
 
     #[test]
-    fn test_fsm_two() {
-        let prog = parse_from_file("examples/basic/fsm_two.ret");
+    fn test_fsm() {
+        let prog = parse_from_file("examples/basic/fsm.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("start", 0);
         trace.enq_scalar("start", 1);
@@ -151,8 +151,8 @@ mod test_basic {
     }
 
     #[test]
-    fn test_two_add() {
-        let prog = parse_from_file("examples/basic/two_add.ret");
+    fn test_add_pair() {
+        let prog = parse_from_file("examples/basic/add_pair.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 1);
         trace.enq_scalar("b", 3);

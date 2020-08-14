@@ -4,7 +4,7 @@
 // input start, change FSM from idle to active
 // input done, change FSM from active to idle
 // output state, state value
-def fsm_two(start: bool, done: bool) -> (state: i8) {
+def fsm(start: bool, done: bool) -> (state: i8) {
     t0: i8 = const[0];
     t1: i8 = const[1];
     t2: i8 = reg[0](t8, t9);
