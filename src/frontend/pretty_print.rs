@@ -43,7 +43,7 @@ impl PrettyPrint for StdOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             StdOp::Identity => RcDoc::text("id"),
-            StdOp::ScalarConst => RcDoc::text("const"),
+            StdOp::Const => RcDoc::text("const"),
         }
     }
 }

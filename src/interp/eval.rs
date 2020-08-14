@@ -49,7 +49,7 @@ impl Eval for Instr {
             Instr::Std {
                 id: _,
                 ty: _,
-                op: StdOp::ScalarConst,
+                op: StdOp::Const,
                 attrs: _,
                 params: _,
             } => true,
@@ -96,7 +96,7 @@ impl Eval for Instr {
             Instr::Std {
                 id: _,
                 ty: _,
-                op: StdOp::ScalarConst,
+                op: StdOp::Const,
                 attrs,
                 params: _,
             } => Value::new_scalar(attrs[0].value()),

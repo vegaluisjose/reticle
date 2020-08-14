@@ -30,7 +30,7 @@ pub enum Loc {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub enum StdOp {
     Identity,
-    ScalarConst,
+    Const,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
