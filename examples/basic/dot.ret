@@ -1,0 +1,14 @@
+def dot(en: bool, bias: i8, a: i8, b: i8, c: i8, d: i8) -> (y: i8) {
+    t0: i8 = reg[0](a, en);
+    t1: i8 = reg[0](b, en);
+    t2: i8 = reg[0](c, en);
+    t3: i8 = reg[0](d, en);
+    t4: i8 = mul(t0, t1);
+    t5: i8 = mul(t2, t3);
+    t6: i8 = reg[0](t4, en);
+    t7: i8 = reg[0](t5, en);
+    t8: i8 = add(bias, t6);
+    t9: i8 = reg[0](t8, en);
+    t10: i8 = add(t7, t9);
+    y: i8 = reg[0](t10, en);
+}
