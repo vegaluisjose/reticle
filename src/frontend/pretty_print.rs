@@ -44,6 +44,8 @@ impl PrettyPrint for StdOp {
         match self {
             StdOp::Identity => RcDoc::text("id"),
             StdOp::Const => RcDoc::text("const"),
+            StdOp::ShiftLeft => RcDoc::text("shl"),
+            StdOp::ShiftRight => RcDoc::text("shr"),
         }
     }
 }

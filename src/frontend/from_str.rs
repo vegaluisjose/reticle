@@ -88,6 +88,8 @@ impl FromStr for StdOp {
         match input {
             "id" => Ok(StdOp::Identity),
             "const" => Ok(StdOp::Const),
+            "shl" => Ok(StdOp::ShiftLeft),
+            "shr" => Ok(StdOp::ShiftRight),
             _ => panic!("Error: FromStr to StdOp conversion"),
         }
     }

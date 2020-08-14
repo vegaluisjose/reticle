@@ -15,11 +15,6 @@ fn mask(value: Value, ty: &Ty) -> Value {
         Ty::UInt(_) => Value::new_scalar(value.get_scalar() & (two.pow(width) - 1)),
         Ty::Bool => Value::new_scalar(value.get_scalar() & 1),
         Ty::Vector(scalar_ty, _) => {
-            assert_eq!(
-                value.get_vector().len() as u64,
-                ty.length(),
-                "Error: vector length does not match"
-            );
             let mut masked = Value::new_vector();
             for val in value.get_vector().iter() {
                 let scalar = Value::new_scalar(*val);
@@ -53,6 +48,20 @@ impl Eval for Instr {
                 attrs: _,
                 params: _,
             } => true,
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: StdOp::ShiftLeft,
+                attrs: _,
+                params,
+            } => state.contains(&params[0].id()),
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: StdOp::ShiftRight,
+                attrs: _,
+                params,
+            } => state.contains(&params[0].id()),
             Instr::Prim {
                 id: _,
                 ty: _,
@@ -101,11 +110,6 @@ impl Eval for Instr {
                 params: _,
             } => {
                 if ty.is_vector() {
-                    assert_eq!(
-                        attrs.len() as u64,
-                        ty.length(),
-                        "Error: vector length does not match"
-                    );
                     let mut val = Value::new_vector();
                     for a in attrs.iter() {
                         val.push(a.value());
@@ -113,6 +117,48 @@ impl Eval for Instr {
                     val
                 } else {
                     Value::new_scalar(attrs[0].value())
+                }
+            }
+            Instr::Std {
+                id: _,
+                ty,
+                op: StdOp::ShiftLeft,
+                attrs,
+                params,
+            } => {
+                let val: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
+                let lhs = mask(state.get(&params[0].id()), ty);
+                if ty.is_vector() {
+                    let rhs = mask(Value::from(val), ty);
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(a << b);
+                    }
+                    res
+                } else {
+                    let rhs = mask(Value::new_scalar(val[0]), ty);
+                    Value::new_scalar(lhs.get_scalar() << rhs.get_scalar())
+                }
+            }
+            Instr::Std {
+                id: _,
+                ty,
+                op: StdOp::ShiftRight,
+                attrs,
+                params,
+            } => {
+                let val: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
+                let lhs = mask(state.get(&params[0].id()), ty);
+                if ty.is_vector() {
+                    let rhs = mask(Value::from(val), ty);
+                    let mut res = Value::new_vector();
+                    for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
+                        res.push(a >> b);
+                    }
+                    res
+                } else {
+                    let rhs = mask(Value::new_scalar(val[0]), ty);
+                    Value::new_scalar(lhs.get_scalar() >> rhs.get_scalar())
                 }
             }
             Instr::Prim {

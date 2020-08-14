@@ -31,6 +31,8 @@ pub enum Loc {
 pub enum StdOp {
     Identity,
     Const,
+    ShiftLeft,
+    ShiftRight,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]

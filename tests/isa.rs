@@ -275,6 +275,30 @@ mod test_scalar_isa {
             .run(&prog, &trace)
             .is_failed());
     }
+
+    #[test]
+    fn test_shl() {
+        let prog = parse_from_file("examples/isa/scalar/shl.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 4);
+        trace.enq_scalar("y", 8);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
+
+    #[test]
+    fn test_shr() {
+        let prog = parse_from_file("examples/isa/scalar/shr.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 3);
+        trace.enq_scalar("y", 1);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 }
 
 #[cfg(test)]

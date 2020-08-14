@@ -41,7 +41,9 @@ primop = {
 
 stdop = {
     "id" |
-    "const"
+    "const" |
+    "shl" |
+    "shr"
 }
 
 op = _{ primop | stdop }
