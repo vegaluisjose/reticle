@@ -97,11 +97,11 @@ impl Eval for Instr {
         match self {
             Instr::Std {
                 id: _,
-                ty,
+                ty: _,
                 op: StdOp::Identity,
                 attrs: _,
                 params,
-            } => mask(state.get(&params[0].id()), ty),
+            } => state.get(&params[0].id()),
             Instr::Std {
                 id: _,
                 ty,
@@ -110,11 +110,8 @@ impl Eval for Instr {
                 params: _,
             } => {
                 if ty.is_vector() {
-                    let mut val = Value::new_vector();
-                    for a in attrs.iter() {
-                        val.push(a.value());
-                    }
-                    val
+                    let val: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
+                    mask(Value::from(val), ty)
                 } else {
                     Value::new_scalar(attrs[0].value())
                 }
