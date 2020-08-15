@@ -182,6 +182,33 @@ impl Instr {
         }
     }
 
+    pub fn std_op(&self) -> &StdOp {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op,
+                attrs: _,
+                params: _,
+            } => op,
+            _ => panic!("Error: prim ops don't support std op"),
+        }
+    }
+
+    pub fn is_prim(&self) -> bool {
+        match self {
+            Instr::Prim {..} => true,
+            Instr::Std {..} => false,
+        }
+    }
+
+    pub fn is_std(&self) -> bool {
+        match self {
+            Instr::Prim {..} => false,
+            Instr::Std {..} => true,
+        }
+    }
+
     pub fn is_reg(&self) -> bool {
         match self {
             Instr::Prim {
