@@ -195,4 +195,30 @@ mod test_basic {
             .run(&prog, &trace)
             .is_failed());
     }
+
+    #[test]
+    fn test_fanout() {
+        // y = a + (b * c)
+        // z = d + (b * c)
+        let prog = parse_from_file("examples/basic/fanout.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("en", 1);
+        trace.enq_scalar("en", 0);
+        trace.enq_scalar("a", 4);
+        trace.enq_scalar("a", 4);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("c", 2);
+        trace.enq_scalar("c", 2);
+        trace.enq_scalar("d", 1);
+        trace.enq_scalar("d", 1);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 10);
+        trace.enq_scalar("z", 0);
+        trace.enq_scalar("z", 7);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 }
