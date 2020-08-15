@@ -2,6 +2,8 @@ use crate::lang::ast::{Instr, Port, Prog};
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
+use petgraph::visit::Dfs;
+use petgraph::Direction;
 use std::collections::HashMap;
 use std::fmt;
 
@@ -15,8 +17,6 @@ pub enum DagNodeValue {
 #[derive(Clone, Debug)]
 pub struct DagNode {
     pub value: DagNodeValue,
-    pub visited: bool,
-    pub root: bool,
 }
 
 #[derive(Default, Clone, Debug)]
@@ -29,7 +29,7 @@ pub type DagCtx = HashMap<DagId, DagIx>;
 
 #[derive(Clone, Debug)]
 pub struct Dag {
-    pub dag: DGraph,
+    pub graph: DGraph,
     pub ctx: DagCtx,
 }
 
@@ -70,38 +70,32 @@ impl DagNodeValue {
             }
         }
     }
+
+    pub fn is_std_instr(&self) -> bool {
+        match self {
+            DagNodeValue::Ins(instr) => instr.is_std(),
+            _ => false,
+        }
+    }
+
+    pub fn is_prim_instr(&self) -> bool {
+        match self {
+            DagNodeValue::Ins(instr) => instr.is_prim(),
+            _ => false,
+        }
+    }
 }
 
 impl DagNode {
     pub fn new(value: DagNodeValue) -> DagNode {
-        DagNode {
-            value,
-            visited: false,
-            root: false,
-        }
-    }
-
-    pub fn is_visited(&self) -> bool {
-        self.visited
-    }
-
-    pub fn is_root(&self) -> bool {
-        self.root
-    }
-
-    pub fn set_visited(&mut self) {
-        self.visited = true;
-    }
-
-    pub fn set_root(&mut self) {
-        self.root = true;
+        DagNode { value }
     }
 }
 
 impl Default for Dag {
     fn default() -> Dag {
         Dag {
-            dag: DGraph::new(),
+            graph: DGraph::new(),
             ctx: DagCtx::new(),
         }
     }
@@ -109,7 +103,7 @@ impl Default for Dag {
 
 impl Dag {
     pub fn add_node(&mut self, name: &str, value: DagNodeValue) {
-        let ix = self.dag.add_node(DagNode::new(value));
+        let ix = self.graph.add_node(DagNode::new(value));
         self.ctx.insert(name.to_string(), ix);
     }
 
@@ -117,11 +111,15 @@ impl Dag {
         self.ctx.contains_key(name)
     }
 
+    pub fn get_node_index(&self, name: &str) -> Option<&DagIx> {
+        self.ctx.get(name)
+    }
+
     pub fn add_edge(&mut self, from: &str, to: &str) {
         if let Some(from_ix) = self.ctx.get(from) {
             if let Some(to_ix) = self.ctx.get(to) {
-                if self.dag.find_edge(*from_ix, *to_ix).is_none() {
-                    self.dag.add_edge(*from_ix, *to_ix, DagEdge::default());
+                if self.graph.find_edge(*from_ix, *to_ix).is_none() {
+                    self.graph.add_edge(*from_ix, *to_ix, DagEdge::default());
                 }
             }
         }
@@ -130,14 +128,7 @@ impl Dag {
 
 impl fmt::Display for DagNode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}:{}\nvis:{}\nroot:{}",
-            self.value.id(),
-            self.value.op(),
-            self.is_visited(),
-            self.is_root()
-        )
+        write!(f, "id:{} op:{}", self.value.id(), self.value.op())
     }
 }
 
@@ -149,7 +140,11 @@ impl fmt::Display for DagEdge {
 
 impl fmt::Display for Dag {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Dot::with_config(&self.dag, &[Config::EdgeNoLabel]))
+        write!(
+            f,
+            "{}",
+            Dot::with_config(&self.graph, &[Config::EdgeNoLabel])
+        )
     }
 }
 
@@ -161,12 +156,6 @@ impl From<Prog> for Dag {
                 if !dag.contains_node(&input.id()) {
                     let val = DagNodeValue::from(input.clone());
                     dag.add_node(&input.id(), val);
-                }
-            }
-            for output in def.outputs().iter() {
-                if !dag.contains_node(&output.id()) {
-                    let val = DagNodeValue::from(output.clone());
-                    dag.add_node(&output.id(), val);
                 }
             }
             for instr in def.body().iter() {
@@ -187,6 +176,27 @@ impl From<Prog> for Dag {
 
 pub fn example(prog: &Prog) {
     let dag = Dag::from(prog.clone());
+    let mut root = DagCtx::new();
+    if let Some(def) = prog.defs().iter().next() {
+        for input in def.inputs().iter() {
+            if let Some(ix) = dag.get_node_index(&input.id()) {
+                let mut visit = Dfs::new(&dag.graph, *ix);
+                while let Some(next) = visit.next(&dag.graph) {
+                    if let Some(node) = dag.graph.node_weight(next) {
+                        let neighbors = dag.graph.neighbors_directed(next, Direction::Outgoing);
+                        let n = neighbors.count();
+                        if node.value.is_prim_instr()
+                            && n != 1
+                            && !root.contains_key(&node.value.id())
+                        {
+                            root.insert(node.value.id(), next);
+                        }
+                    }
+                }
+            }
+        }
+        println!("roots:{:?}", root);
+    }
     println!("{}", dag);
-    println!("{}", prog);
+    // println!("{}", prog);
 }
