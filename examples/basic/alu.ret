@@ -1,0 +1,27 @@
+// op = 0 -> nop
+// op = 1 -> add
+// op = 2 -> sub
+// op = 3 -> and
+// op = 4 -> or
+
+def alu(op: i8, a: i8, b: i8) -> (y: i8) {
+    t0: i8 = const[0];
+    t1: i8 = const[1];
+    t2: i8 = const[2];
+    t3: i8 = const[3];
+    t4: i8 = const[4];
+    t5: bool = eq(op, t0);
+    t6: bool = eq(op, t1);
+    t7: bool = eq(op, t2);
+    t8: bool = eq(op, t3);
+    t9: bool = eq(op, t4);
+    t10: i8 = add(a, b);
+    t11: i8 = sub(a, b);
+    t12: i8 = and(a, b);
+    t13: i8 = or(a, b);
+    t14: i8 = mux(t9, t13, t0);
+    t15: i8 = mux(t8, t12, t14);
+    t16: i8 = mux(t7, t11, t15);
+    t17: i8 = mux(t6, t10, t16);
+    y: i8 = mux(t5, t0, t17);
+}

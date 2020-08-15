@@ -165,4 +165,34 @@ mod test_basic {
             .run(&prog, &trace)
             .is_failed());
     }
+
+    #[test]
+    fn test_alu() {
+        let prog = parse_from_file("examples/basic/alu.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("op", 0);
+        trace.enq_scalar("op", 1);
+        trace.enq_scalar("op", 2);
+        trace.enq_scalar("op", 3);
+        trace.enq_scalar("op", 4);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("b", 3);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 4);
+        trace.enq_scalar("y", -2);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 3);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .is_failed());
+    }
 }
