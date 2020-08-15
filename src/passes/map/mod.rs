@@ -130,7 +130,14 @@ impl Dag {
 
 impl fmt::Display for DagNode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}:{}", self.value.id(), self.value.op())
+        write!(
+            f,
+            "{}:{}\nvis:{}\nroot:{}",
+            self.value.id(),
+            self.value.op(),
+            self.is_visited(),
+            self.is_root()
+        )
     }
 }
 
