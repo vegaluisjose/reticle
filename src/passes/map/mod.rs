@@ -36,8 +36,8 @@ pub struct Dag {
 impl From<Port> for DagNodeValue {
     fn from(port: Port) -> Self {
         match port {
-            Port::Input {..} => DagNodeValue::Inp(port),
-            Port::Output {..} => DagNodeValue::Out(port),
+            Port::Input { .. } => DagNodeValue::Inp(port),
+            Port::Output { .. } => DagNodeValue::Out(port),
         }
     }
 }

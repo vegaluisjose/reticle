@@ -197,15 +197,15 @@ impl Instr {
 
     pub fn is_prim(&self) -> bool {
         match self {
-            Instr::Prim {..} => true,
-            Instr::Std {..} => false,
+            Instr::Prim { .. } => true,
+            Instr::Std { .. } => false,
         }
     }
 
     pub fn is_std(&self) -> bool {
         match self {
-            Instr::Prim {..} => false,
-            Instr::Std {..} => true,
+            Instr::Prim { .. } => false,
+            Instr::Std { .. } => true,
         }
     }
 
