@@ -146,33 +146,40 @@ impl fmt::Display for Dag {
     }
 }
 
-pub fn example(prog: &Prog) {
-    let mut dag = Dag::default();
-    if let Some(def) = prog.defs().iter().next() {
-        for input in def.inputs().iter() {
-            if !dag.contains_node(&input.id()) {
-                let val = DagNodeValue::from(input.clone());
-                dag.add_node(&input.id(), val);
+impl From<Prog> for Dag {
+    fn from(prog: Prog) -> Self {
+        let mut dag = Dag::default();
+        if let Some(def) = prog.defs().iter().next() {
+            for input in def.inputs().iter() {
+                if !dag.contains_node(&input.id()) {
+                    let val = DagNodeValue::from(input.clone());
+                    dag.add_node(&input.id(), val);
+                }
+            }
+            for output in def.outputs().iter() {
+                if !dag.contains_node(&output.id()) {
+                    let val = DagNodeValue::from(output.clone());
+                    dag.add_node(&output.id(), val);
+                }
+            }
+            for instr in def.body().iter() {
+                if !dag.contains_node(&instr.id()) {
+                    let val = DagNodeValue::from(instr.clone());
+                    dag.add_node(&instr.id(), val);
+                }
+            }
+            for instr in def.body().iter() {
+                for param in instr.params().iter() {
+                    dag.add_edge(&param.id(), &instr.id());
+                }
             }
         }
-        for output in def.outputs().iter() {
-            if !dag.contains_node(&output.id()) {
-                let val = DagNodeValue::from(output.clone());
-                dag.add_node(&output.id(), val);
-            }
-        }
-        for instr in def.body().iter() {
-            if !dag.contains_node(&instr.id()) {
-                let val = DagNodeValue::from(instr.clone());
-                dag.add_node(&instr.id(), val);
-            }
-        }
-        for instr in def.body().iter() {
-            for param in instr.params().iter() {
-                dag.add_edge(&param.id(), &instr.id());
-            }
-        }
-        println!("{}", dag);
-        println!("{}", prog);
+        dag
     }
+}
+
+pub fn example(prog: &Prog) {
+    let dag = Dag::from(prog.clone());
+    println!("{}", dag);
+    println!("{}", prog);
 }
