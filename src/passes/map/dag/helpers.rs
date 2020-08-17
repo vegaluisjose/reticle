@@ -26,14 +26,14 @@ impl DagNodeValue {
         }
     }
 
-    pub fn is_std_instr(&self) -> bool {
+    pub fn is_std(&self) -> bool {
         match self {
             DagNodeValue::Ins(instr) => instr.is_std(),
             _ => false,
         }
     }
 
-    pub fn is_prim_instr(&self) -> bool {
+    pub fn is_prim(&self) -> bool {
         match self {
             DagNodeValue::Ins(instr) => instr.is_prim(),
             _ => false,
@@ -69,16 +69,16 @@ impl DagNode {
         self.root
     }
 
-    pub fn is_covered(&self) -> bool {
+    pub fn is_visited(&self) -> bool {
         self.visited
     }
 
-    pub fn is_prim_instr(&self) -> bool {
-        self.value.is_prim_instr()
+    pub fn is_prim(&self) -> bool {
+        self.value.is_prim()
     }
 
-    pub fn is_std_instr(&self) -> bool {
-        self.value.is_std_instr()
+    pub fn is_std(&self) -> bool {
+        self.value.is_std()
     }
 
     pub fn instr(&self) -> &Instr {
@@ -133,7 +133,7 @@ impl Dag {
                                 .graph
                                 .neighbors_directed(next, Direction::Outgoing)
                                 .count();
-                            if node.value.is_prim_instr()
+                            if node.value.is_prim()
                                 && fanout != 1
                                 && !roots.contains_key(&node.value.id())
                             {
@@ -159,7 +159,7 @@ impl Dag {
         let neighbors = self.graph.neighbors_directed(ix, Direction::Incoming);
         for nix in neighbors {
             if let Some(node) = self.graph.node_weight(nix) {
-                if node.is_prim_instr() && !node.is_covered() && !node.is_root() {
+                if node.is_prim() && !node.is_visited() && !node.is_root() {
                     ctx.insert(node.value.id(), nix);
                 }
             }
