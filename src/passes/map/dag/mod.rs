@@ -1,3 +1,5 @@
+pub mod from;
+
 use crate::lang::ast::{Instr, Port, Prog};
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
@@ -34,21 +36,6 @@ pub struct Dag {
     pub graph: DagGraph,
     pub ctx: DagCtx,
     pub roots: DagCtx,
-}
-
-impl From<Port> for DagNodeValue {
-    fn from(port: Port) -> Self {
-        match port {
-            Port::Input { .. } => DagNodeValue::Inp(port),
-            Port::Output { .. } => DagNodeValue::Out(port),
-        }
-    }
-}
-
-impl From<Instr> for DagNodeValue {
-    fn from(instr: Instr) -> Self {
-        DagNodeValue::Ins(instr)
-    }
 }
 
 impl DagNodeValue {
@@ -175,8 +162,10 @@ impl Dag {
                     let mut visit = Dfs::new(&self.graph, *ix);
                     while let Some(next) = visit.next(&self.graph) {
                         if let Some(node) = self.graph.node_weight(next) {
-                            let fanout =
-                                self.graph.neighbors_directed(next, Direction::Outgoing).count();
+                            let fanout = self
+                                .graph
+                                .neighbors_directed(next, Direction::Outgoing)
+                                .count();
                             if node.value.is_prim_instr()
                                 && fanout != 1
                                 && !roots.contains_key(&node.value.id())
@@ -231,32 +220,5 @@ impl fmt::Display for Dag {
             "{}",
             Dot::with_config(&self.graph, &[Config::EdgeNoLabel])
         )
-    }
-}
-
-impl From<Prog> for Dag {
-    fn from(prog: Prog) -> Self {
-        let mut dag = Dag::default();
-        if let Some(def) = prog.defs().iter().next() {
-            for input in def.inputs().iter() {
-                if !dag.contains_node(&input.id()) {
-                    let val = DagNodeValue::from(input.clone());
-                    dag.add_node(&input.id(), val);
-                }
-            }
-            for instr in def.body().iter() {
-                if !dag.contains_node(&instr.id()) {
-                    let val = DagNodeValue::from(instr.clone());
-                    dag.add_node(&instr.id(), val);
-                }
-            }
-            for instr in def.body().iter() {
-                for param in instr.params().iter() {
-                    dag.add_edge(&param.id(), &instr.id());
-                }
-            }
-        }
-        dag.find_roots(&prog);
-        dag
     }
 }
