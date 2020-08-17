@@ -166,17 +166,19 @@ impl Dag {
 
     pub fn find_roots(&mut self, prog: &Prog) {
         let mut roots = DagCtx::new();
+        // find roots, roots are:
+        // 1. Instructions that are primitives (no std)
+        // 2. Nodes that have a fanout greater than one (reuse) or are zero (output)
         if let Some(def) = prog.defs().iter().next() {
             for input in def.inputs().iter() {
                 if let Some(ix) = self.get_node_index(&input.id()) {
                     let mut visit = Dfs::new(&self.graph, *ix);
                     while let Some(next) = visit.next(&self.graph) {
                         if let Some(node) = self.graph.node_weight(next) {
-                            let neighbors =
-                                self.graph.neighbors_directed(next, Direction::Outgoing);
-                            let n = neighbors.count();
+                            let fanout =
+                                self.graph.neighbors_directed(next, Direction::Outgoing).count();
                             if node.value.is_prim_instr()
-                                && n != 1
+                                && fanout != 1
                                 && !roots.contains_key(&node.value.id())
                             {
                                 roots.insert(node.value.id(), next);
@@ -186,15 +188,14 @@ impl Dag {
                 }
             }
         }
-        self.roots = roots;
-    }
-
-    pub fn set_roots(&mut self) {
-        for (_, root) in self.roots().clone().iter() {
+        // mark root nodes
+        for (_, root) in roots.iter() {
             if let Some(node) = self.graph.node_weight_mut(*root) {
                 node.set_root();
             }
         }
+        // store roots
+        self.roots = roots;
     }
 
     pub fn get_incoming_nodes(&self, ix: DagIx) -> DagCtx {
@@ -256,7 +257,6 @@ impl From<Prog> for Dag {
             }
         }
         dag.find_roots(&prog);
-        dag.set_roots();
         dag
     }
 }
