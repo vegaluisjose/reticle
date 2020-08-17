@@ -76,6 +76,18 @@ impl DagNode {
     pub fn is_prim_instr(&self) -> bool {
         self.value.is_prim_instr()
     }
+
+    pub fn is_std_instr(&self) -> bool {
+        self.value.is_std_instr()
+    }
+
+    pub fn instr(&self) -> &Instr {
+        self.value.instr()
+    }
+
+    pub fn id(&self) -> String {
+        self.value.id()
+    }
 }
 
 impl Dag {
