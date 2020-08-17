@@ -1,2 +1,2 @@
 pub mod dag;
-pub mod forest;
+pub mod partition;
