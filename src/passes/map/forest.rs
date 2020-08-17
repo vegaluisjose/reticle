@@ -70,28 +70,25 @@ impl From<Dag> for Forest {
                         src_node.set_visited();
                     }
                     if let Some(src_node) = dag.graph.node_weight(src_ix) {
-                        if !tree.contains_node(&src_node.value.id()) {
-                            tree.add_node(
-                                &src_node.value.id(),
-                                TreeNode::from(src_node.value.instr().clone()),
-                            );
+                        if !tree.contains_node(&src_node.id()) {
+                            tree.add_node(&src_node.id(), TreeNode::from(src_node.instr().clone()));
                         }
                         let incoming = dag.get_incoming_nodes(src_ix);
-                        for param in src_node.value.instr().params().iter() {
+                        for param in src_node.instr().params().iter() {
                             if let Some(dst_ix) = incoming.get(&param.id()) {
                                 if let Some(dst_node) = dag.graph.node_weight(*dst_ix) {
                                     tree.add_node(
-                                        &dst_node.value.id(),
-                                        TreeNode::from(dst_node.value.instr().clone()),
+                                        &dst_node.id(),
+                                        TreeNode::from(dst_node.instr().clone()),
                                     );
-                                    tree.add_edge(&src_node.value.id(), &dst_node.value.id());
+                                    tree.add_edge(&src_node.id(), &dst_node.id());
                                 }
                             } else {
                                 tree.add_node(
                                     &param.id(),
                                     TreeNode::new_input(&param.id(), param.ty().clone()),
                                 );
-                                tree.add_edge(&src_node.value.id(), &param.id());
+                                tree.add_edge(&src_node.id(), &param.id());
                             }
                         }
                         let incoming_ix: Vec<DagIx> = incoming.values().cloned().collect();
