@@ -1,13 +1,12 @@
+pub mod display;
 pub mod from;
 
 use crate::lang::ast::{Instr, Port, Prog};
-use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use petgraph::visit::Dfs;
 use petgraph::Direction;
 use std::collections::HashMap;
-use std::fmt;
 
 pub type DagId = String;
 pub type DagIx = NodeIndex;
@@ -198,27 +197,5 @@ impl Dag {
             }
         }
         ctx
-    }
-}
-
-impl fmt::Display for DagNode {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "id:{} op:{}", self.value.id(), self.value.op())
-    }
-}
-
-impl fmt::Display for DagEdge {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "")
-    }
-}
-
-impl fmt::Display for Dag {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            Dot::with_config(&self.graph, &[Config::EdgeNoLabel])
-        )
     }
 }

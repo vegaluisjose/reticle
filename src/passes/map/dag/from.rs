@@ -1,5 +1,5 @@
 use crate::lang::ast::{Instr, Port, Prog};
-use crate::passes::map::dag::{DagNodeValue, Dag};
+use crate::passes::map::dag::{Dag, DagNodeValue};
 
 impl From<Port> for DagNodeValue {
     fn from(port: Port) -> Self {
