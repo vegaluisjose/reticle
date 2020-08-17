@@ -4,7 +4,7 @@ use std::fmt;
 
 impl fmt::Display for DagNode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "id:{} op:{}", self.value.id(), self.value.op())
+        write!(f, "id:{} op:{}", self.value.id(), self.value.op_name())
     }
 }
 
