@@ -1,11 +1,17 @@
 use crate::lang::ast;
 
-// reuse from reticle ast for the time being
+// The main difference between Reticle and Reticle-asm are:
+// 1. Reticle-asm replace prim-instructions with asm-instructions
+// 2. Asm-instructions support location expressions
+// 3. Because of this, asm-instructions are used for doing placement
+
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;
 pub type LocTy = ast::Loc;
 pub type Port = ast::Port;
 pub type Sig = ast::Sig;
+pub type Expr = ast::Expr;
+pub type StdOp = ast::StdOp;
 
 #[derive(Clone, Debug)]
 pub enum LocExpr {
@@ -22,23 +28,26 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
-pub enum Expr {
-    Ref(Id, Ty),
-}
-
-#[derive(Clone, Debug)]
-pub struct Instr {
-    pub ty: Ty,
-    pub op: Id,
-    pub loc: Loc,
-    pub area: u32,
-    pub dst: Id,
-    pub params: Vec<Expr>,
+pub enum Instr {
+    Std {
+        id: Id,
+        ty: Ty,
+        op: StdOp,
+        attrs: Vec<Expr>,
+        params: Vec<Expr>,
+    },
+    Asm {
+        id: Id,
+        ty: Ty,
+        op: Id,
+        attrs: Vec<Expr>,
+        params: Vec<Expr>,
+        loc: Loc,
+    },
 }
 
 #[derive(Clone, Debug)]
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,
-    pub target: String,
 }

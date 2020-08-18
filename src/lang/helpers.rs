@@ -48,6 +48,28 @@ impl Ty {
     }
 }
 
+impl Loc {
+    pub fn new_hole() -> Loc {
+        Loc::Hole
+    }
+
+    pub fn new_lut() -> Loc {
+        Loc::Lut
+    }
+
+    pub fn new_dsp() -> Loc {
+        Loc::Dsp
+    }
+
+    pub fn new_lum() -> Loc {
+        Loc::Lum
+    }
+
+    pub fn new_ram() -> Loc {
+        Loc::Ram
+    }
+}
+
 impl Port {
     pub fn id(&self) -> Id {
         match self {

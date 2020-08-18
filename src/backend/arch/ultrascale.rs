@@ -1,4 +1,4 @@
-use crate::backend::target::descriptor::Descriptor;
+use crate::backend::target::Descriptor;
 use crate::backend::target::Target;
 use crate::util::file::read_to_string;
 use std::str::FromStr;
