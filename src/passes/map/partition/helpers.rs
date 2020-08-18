@@ -1,6 +1,14 @@
 use crate::passes::map::partition::tree::*;
 
 impl TreeNode {
+    pub fn new(id: &str, ty: TreeTy, op: TreeOp) -> TreeNode {
+        TreeNode {
+            id: id.to_string(),
+            ty,
+            op,
+        }
+    }
+
     pub fn new_input(id: &str, ty: TreeTy) -> TreeNode {
         TreeNode {
             id: id.to_string(),
