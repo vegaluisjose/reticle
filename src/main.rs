@@ -17,6 +17,9 @@ fn main() {
     use reticle::backend::target::Target;
     let descriptor = Ultrascale::default().to_descriptor();
     for tile in descriptor.tiles.iter() {
+        let mut instr = tile.instr.clone();
+        instr.set_id("x");
         println!("{}", tile.instr);
+        println!("{}", instr);
     }
 }
