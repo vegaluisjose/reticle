@@ -31,12 +31,12 @@ impl PrettyPrint for Instr {
             RcDoc::nil()
         } else {
             RcDoc::as_string(&self.id())
-                .append(RcDoc::space())
-                .append(RcDoc::text("="))
-                .append(RcDoc::space())
                 .append(RcDoc::text(":"))
                 .append(RcDoc::space())
                 .append(self.ty().to_doc())
+                .append(RcDoc::space())
+                .append(RcDoc::text("="))
+                .append(RcDoc::space())
         };
         let attrs = if self.attrs().is_empty() {
             RcDoc::nil()
