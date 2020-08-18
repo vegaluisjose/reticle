@@ -17,6 +17,6 @@ fn main() {
     use reticle::backend::target::Target;
     let descriptor = Ultrascale::default().to_descriptor();
     for tile in descriptor.tiles.iter() {
-        println!("{:?}", tile.instr);
+        println!("{}", tile.instr);
     }
 }

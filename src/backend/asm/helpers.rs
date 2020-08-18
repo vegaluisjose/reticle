@@ -16,38 +16,84 @@ impl Loc {
     }
 }
 
-// use crate::backend::asm::verilog::Module;
-// use crate::lang::ast as reticle;
-
-// impl Expr {
-//     pub fn new_ref(name: &str, ty: Ty) -> Expr {
-//         Expr::Ref(name.to_string(), ty)
-//     }
-
-//     pub fn id(&self) -> String {
-//         match self {
-//             Expr::Ref(id, _) => id.to_string(),
-//         }
-//     }
-// }
-
-// impl Instr {
-//     pub fn dst(&self) -> String {
-//         self.dst.to_string()
-//     }
-
-//     pub fn params(&self) -> &Vec<Expr> {
-//         &self.params
-//     }
-
-//     pub fn set_dst(&mut self, name: &str) {
-//         self.dst = name.to_string();
-//     }
-
-//     pub fn add_param(&mut self, expr: Expr) {
-//         self.params.push(expr);
-//     }
-// }
+impl Instr {
+    pub fn id(&self) -> String {
+        match self {
+            Instr::Std {
+                id,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+            } => id.to_string(),
+            Instr::Asm {
+                id,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => id.to_string(),
+        }
+    }
+    pub fn ty(&self) -> &Ty {
+        match self {
+            Instr::Std {
+                id: _,
+                ty,
+                op: _,
+                attrs: _,
+                params: _,
+            } => ty,
+            Instr::Asm {
+                id: _,
+                ty,
+                op: _,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => ty,
+        }
+    }
+    pub fn attrs(&self) -> &Vec<Expr> {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: _,
+                attrs,
+                params: _,
+            } => attrs,
+            Instr::Asm {
+                id: _,
+                ty: _,
+                op: _,
+                attrs,
+                params: _,
+                loc: _,
+            } => attrs,
+        }
+    }
+    pub fn params(&self) -> &Vec<Expr> {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+            } => params,
+            Instr::Asm {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+                loc: _,
+            } => params,
+        }
+    }
+}
 
 // impl Prog {
 //     pub fn new(prog: reticle::Prog, target: &str) -> Prog {
