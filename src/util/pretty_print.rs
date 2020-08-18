@@ -39,12 +39,8 @@ impl<'a, A> PrettyHelper<'a> for RcDoc<'a, A> {
     }
 }
 
-pub fn add_newline<'a>(iter: impl Iterator<Item = RcDoc<'a>>) -> RcDoc<'a> {
-    RcDoc::intersperse(iter, RcDoc::hardline())
-}
-
-pub fn add_space<'a>(iter: impl Iterator<Item = RcDoc<'a>>) -> RcDoc<'a> {
-    RcDoc::intersperse(iter, RcDoc::space())
+pub fn intersperse<'a>(iter: impl Iterator<Item = RcDoc<'a>>, separator: RcDoc<'a>) -> RcDoc<'a> {
+    RcDoc::intersperse(iter, separator)
 }
 
 pub fn block(body: RcDoc<()>) -> RcDoc<()> {
@@ -57,4 +53,8 @@ pub fn block(body: RcDoc<()>) -> RcDoc<()> {
 
 pub fn block_with_braces<'a>(name: RcDoc<'a>, body: RcDoc<'a>) -> RcDoc<'a> {
     name.append(RcDoc::space()).append(block(body).braces())
+}
+
+pub fn block_with_parens<'a>(name: RcDoc<'a>, body: RcDoc<'a>) -> RcDoc<'a> {
+    name.append(RcDoc::space()).append(block(body).parens())
 }
