@@ -1,6 +1,8 @@
 use crate::backend::asm::ast::*;
 use crate::backend::target::descriptor::*;
 use crate::backend::target::spec::*;
+use crate::lang::ast::PrimOp;
+use crate::passes::map::partition::tree::{Tree, TreeNode, TreeOp};
 use std::str::FromStr;
 
 impl From<SpecInstr> for Instr {
@@ -16,10 +18,102 @@ impl From<SpecInstr> for Instr {
     }
 }
 
+impl From<SpecInstr> for Tree {
+    fn from(spec_instr: SpecInstr) -> Self {
+        let mut tree = Tree::default();
+        let mut cnt: u32 = 0;
+        let mut stack_node: Vec<SpecExpr> = Vec::new();
+        let mut stack_id: Vec<u32> = Vec::new();
+        stack_node.push(spec_instr.expr.clone());
+        stack_id.push(cnt);
+        // create nodes
+        while !stack_node.is_empty() && !stack_id.is_empty() {
+            let expr = stack_node.pop().unwrap();
+            match expr {
+                SpecExpr::Input(ty, _) => {
+                    let name = cnt.to_string();
+                    let ty = Ty::from_str(&ty).unwrap();
+                    let node = TreeNode::new_input(&name, ty);
+                    let src_id = stack_id.pop().unwrap().to_string();
+                    let dst_id = cnt.to_string();
+                    tree.add_node(&name, node);
+                    tree.add_edge(&src_id, &dst_id);
+                    cnt += 1;
+                }
+                SpecExpr::UnOp(op, input) => {
+                    let name = cnt.to_string();
+                    let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+                    let primop = PrimOp::from_str(&op).unwrap();
+                    let op = TreeOp::from(primop);
+                    let node = TreeNode::new(&name, ty, op);
+                    tree.add_node(&name, node);
+                    // if it is not root
+                    if cnt > 0 {
+                        let src_id = stack_id.pop().unwrap().to_string();
+                        let dst_id = cnt.to_string();
+                        tree.add_edge(&src_id, &dst_id);
+                    } else {
+                        stack_id.pop();
+                    }
+                    stack_id.push(cnt);
+                    cnt += 1;
+                    stack_node.push(input.as_ref().clone());
+                }
+                SpecExpr::BinOp(op, lhs, rhs) => {
+                    let name = cnt.to_string();
+                    let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+                    let primop = PrimOp::from_str(&op).unwrap();
+                    let op = TreeOp::from(primop);
+                    let node = TreeNode::new(&name, ty, op);
+                    tree.add_node(&name, node);
+                    // if it is not root
+                    if cnt > 0 {
+                        let src_id = stack_id.pop().unwrap().to_string();
+                        let dst_id = cnt.to_string();
+                        tree.add_edge(&src_id, &dst_id);
+                    } else {
+                        stack_id.pop();
+                    }
+                    stack_id.push(cnt);
+                    stack_id.push(cnt);
+                    cnt += 1;
+                    stack_node.push(rhs.as_ref().clone());
+                    stack_node.push(lhs.as_ref().clone());
+                }
+                SpecExpr::TerOp(op, con, tru, fal) => {
+                    let name = cnt.to_string();
+                    let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+                    let primop = PrimOp::from_str(&op).unwrap();
+                    let op = TreeOp::from(primop);
+                    let node = TreeNode::new(&name, ty, op);
+                    tree.add_node(&name, node);
+                    // if it is not root
+                    if cnt > 0 {
+                        let src_id = stack_id.pop().unwrap().to_string();
+                        let dst_id = cnt.to_string();
+                        tree.add_edge(&src_id, &dst_id);
+                    } else {
+                        stack_id.pop();
+                    }
+                    stack_id.push(cnt);
+                    stack_id.push(cnt);
+                    stack_id.push(cnt);
+                    cnt += 1;
+                    stack_node.push(fal.as_ref().clone());
+                    stack_node.push(tru.as_ref().clone());
+                    stack_node.push(con.as_ref().clone());
+                }
+            }
+        }
+        tree
+    }
+}
+
 impl From<SpecInstr> for Tile {
     fn from(spec_instr: SpecInstr) -> Self {
         Tile {
-            instr: Instr::from(spec_instr),
+            instr: Instr::from(spec_instr.clone()),
+            pattern: Tree::from(spec_instr),
         }
     }
 }
@@ -35,22 +129,3 @@ impl From<Spec> for Descriptor {
         }
     }
 }
-
-// impl Expr {
-//     // pub fn to_sel_instr_mut(&self, instr: &mut Vec<sel::Instr>, op_ty: sel::Ty, op_loc: sel::Loc) {
-//     //     match self {
-//     //         Expr::Input(ty, loc) => {
-//     //             let op = sel::Op::In;
-//     //             let ty = sel::Ty::from_str(ty).unwrap();
-//     //             let inp_loc = sel::Loc::from_str(loc).unwrap();
-//     //             instr.push(sel::Instr::new(op, ty, inp_loc));
-//     //         }
-//     //         Expr::BinOp(op, lhs, rhs) => {
-//     //             let op = sel::Op::from_str(op).unwrap();
-//     //             instr.push(sel::Instr::new(op, op_ty.clone(), op_loc.clone()));
-//     //             lhs.to_sel_instr_mut(instr, op_ty.clone(), op_loc.clone());
-//     //             rhs.to_sel_instr_mut(instr, op_ty, op_loc);
-//     //         }
-//     //     }
-//     // }
-// }
