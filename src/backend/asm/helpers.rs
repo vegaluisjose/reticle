@@ -93,6 +93,25 @@ impl Instr {
             } => params,
         }
     }
+    pub fn set_id(&mut self, name: &str) {
+        match self {
+            Instr::Std {
+                id,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+            } => *id = name.to_string(),
+            Instr::Asm {
+                id,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => *id = name.to_string(),
+        }
+    }
 }
 
 // impl Prog {
