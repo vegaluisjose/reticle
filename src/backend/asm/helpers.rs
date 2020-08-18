@@ -112,6 +112,44 @@ impl Instr {
             } => *id = name.to_string(),
         }
     }
+    pub fn add_param(&mut self, expr: Expr) {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+            } => params.push(expr),
+            Instr::Asm {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params,
+                loc: _,
+            } => params.push(expr),
+        }
+    }
+    pub fn add_attr(&mut self, expr: Expr) {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op: _,
+                attrs,
+                params: _,
+            } => attrs.push(expr),
+            Instr::Asm {
+                id: _,
+                ty: _,
+                op: _,
+                attrs,
+                params: _,
+                loc: _,
+            } => attrs.push(expr),
+        }
+    }
 }
 
 // impl Prog {
