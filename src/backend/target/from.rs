@@ -1,7 +1,7 @@
-use crate::backend::asm::ast::*;
+use crate::backend::asm::ast::{Instr, Ty, Loc, LocTy};
 use crate::backend::target::descriptor::*;
 use crate::backend::target::spec::*;
-use crate::passes::map::partition::tree::{Tree, TreeNode, TreeOp};
+use crate::passes::map::partition::tree::{Tree, TreeNode, TreeOp, TreeTy};
 use std::str::FromStr;
 
 impl From<SpecInstr> for Instr {
@@ -31,7 +31,7 @@ impl From<SpecInstr> for Tree {
             match expr {
                 SpecExpr::Input(ty) => {
                     let name = cnt.to_string();
-                    let ty = Ty::from_str(&ty).unwrap();
+                    let ty = TreeTy::from_str(&ty).unwrap();
                     let node = TreeNode::new_input(&name, ty);
                     tree.add_node(&name, node);
                     let src_id = stack_id.pop().unwrap().to_string();
@@ -40,7 +40,7 @@ impl From<SpecInstr> for Tree {
                 }
                 SpecExpr::UnOp(op, input) => {
                     let name = cnt.to_string();
-                    let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+                    let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
                     let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
@@ -62,7 +62,7 @@ impl From<SpecInstr> for Tree {
                 }
                 SpecExpr::BinOp(op, lhs, rhs) => {
                     let name = cnt.to_string();
-                    let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+                    let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
                     let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
@@ -86,7 +86,7 @@ impl From<SpecInstr> for Tree {
                 }
                 SpecExpr::TerOp(op, con, tru, fal) => {
                     let name = cnt.to_string();
-                    let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+                    let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
                     let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
