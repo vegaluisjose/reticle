@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::{Instr, Ty, Loc, LocTy};
+use crate::backend::asm::ast::{Instr, Loc, LocTy, Ty};
 use crate::backend::target::descriptor::*;
 use crate::backend::target::spec::*;
 use crate::passes::map::partition::tree::{Tree, TreeNode, TreeOp, TreeTy};
