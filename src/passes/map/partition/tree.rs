@@ -1,5 +1,5 @@
-use crate::lang::ast::{PrimOp, Ty};
 use crate::backend::asm::ast::Instr;
+use crate::lang::ast::{PrimOp, Ty};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use std::collections::HashMap;

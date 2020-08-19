@@ -1,5 +1,5 @@
-use crate::passes::map::partition::tree::*;
 use crate::backend::asm::ast::Instr;
+use crate::passes::map::partition::tree::*;
 
 impl TreeNode {
     pub fn new(id: &str, ty: TreeTy, op: TreeOp) -> TreeNode {
