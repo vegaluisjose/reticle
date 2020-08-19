@@ -20,5 +20,6 @@ fn main() {
     for tile in descriptor.tiles.iter() {
         println!("instr:{}", tile.instr);
         println!("pattern:\n{}", tile.pattern);
+        println!("cost:{}", tile.pattern.estimate_cost());
     }
 }

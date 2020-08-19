@@ -1,5 +1,6 @@
 use crate::backend::asm::ast::Instr;
 use crate::passes::map::partition::tree::*;
+use petgraph::visit::Dfs;
 
 impl TreeNode {
     pub fn new(id: &str, ty: TreeTy, op: TreeOp) -> TreeNode {
@@ -54,6 +55,18 @@ impl TreeNode {
     pub fn id(&self) -> String {
         self.id.to_string()
     }
+
+    pub fn cost(&self) -> f32 {
+        self.cost
+    }
+
+    pub fn has_infinity_cost(&self) -> bool {
+        if self.cost == f32::INFINITY {
+            true
+        } else {
+            false
+        }
+    }
 }
 
 impl Tree {
@@ -86,5 +99,23 @@ impl Tree {
                 }
             }
         }
+    }
+
+    pub fn estimate_cost(&self) -> f32 {
+        let mut total: f32 = 0.0;
+        if let Some(start) = self.ctx.get(&self.root_id()) {
+            let mut dag_iter = Dfs::new(&self.graph, *start);
+            while let Some(ix) = dag_iter.next(&self.graph) {
+                if let Some(node) = self.graph.node_weight(ix) {
+                    if node.has_infinity_cost() {
+                        total = f32::INFINITY;
+                        break;
+                    } else {
+                        total += node.cost();
+                    }
+                }
+            }
+        }
+        total
     }
 }
