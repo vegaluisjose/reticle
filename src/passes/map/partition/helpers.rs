@@ -23,6 +23,18 @@ impl TreeNode {
 }
 
 impl Tree {
+    pub fn new(root: &str) -> Tree {
+        Tree {
+            root_id: root.to_string(),
+            graph: TreeGraph::new(),
+            ctx: TreeCtx::new(),
+        }
+    }
+
+    pub fn root_id(&self) -> String {
+        self.root_id.to_string()
+    }
+
     pub fn contains_node(&self, name: &str) -> bool {
         self.ctx.contains_key(name)
     }
