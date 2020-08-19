@@ -19,11 +19,7 @@ impl From<Instr> for TreeNode {
                 attrs: _,
                 params: _,
                 loc: _,
-            } => TreeNode {
-                id,
-                ty,
-                op: TreeOp::from(op),
-            },
+            } => TreeNode::new(&id, ty, TreeOp::from(op)),
             _ => panic!("Error: tree nodes only support prim instr"),
         }
     }

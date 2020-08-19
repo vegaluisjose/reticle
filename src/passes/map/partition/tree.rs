@@ -1,4 +1,5 @@
 use crate::lang::ast::{PrimOp, Ty};
+use crate::backend::asm::ast::Instr;
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use std::collections::HashMap;
@@ -23,6 +24,9 @@ pub struct TreeNode {
     pub id: TreeId,
     pub ty: TreeTy,
     pub op: TreeOp,
+    pub matched: bool,
+    pub instr: Option<Instr>,
+    pub cost: f32,
 }
 
 #[derive(Clone, Debug)]

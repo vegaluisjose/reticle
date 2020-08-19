@@ -1,4 +1,5 @@
 use crate::passes::map::partition::tree::*;
+use crate::backend::asm::ast::Instr;
 
 impl TreeNode {
     pub fn new(id: &str, ty: TreeTy, op: TreeOp) -> TreeNode {
@@ -6,6 +7,9 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op,
+            matched: false,
+            instr: None,
+            cost: std::f32::INFINITY,
         }
     }
 
@@ -14,7 +18,26 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op: TreeOp::Input,
+            matched: false,
+            instr: None,
+            cost: 0 as f32,
         }
+    }
+
+    pub fn is_matched(&self) -> bool {
+        self.matched
+    }
+
+    pub fn set_matched(&mut self) {
+        self.matched = true;
+    }
+
+    pub fn set_instr(&mut self, instr: Instr) {
+        self.instr = Some(instr);
+    }
+
+    pub fn clear_instr(&mut self) {
+        self.instr = None;
     }
 
     pub fn id(&self) -> String {
