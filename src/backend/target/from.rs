@@ -26,37 +26,40 @@ impl From<SpecInstr> for Tree {
         let mut stack_id: Vec<u32> = Vec::new();
         stack_node.push(spec_instr.expr.clone());
         stack_id.push(cnt);
-        // create nodes
         while !stack_node.is_empty() && !stack_id.is_empty() {
             let expr = stack_node.pop().unwrap();
+            let cost = spec_instr.delay();
             match expr {
                 SpecExpr::Input(ty) => {
                     let name = cnt.to_string();
                     let ty = Ty::from_str(&ty).unwrap();
                     let node = TreeNode::new_input(&name, ty);
+                    tree.add_node(&name, node);
                     let src_id = stack_id.pop().unwrap().to_string();
                     let dst_id = cnt.to_string();
-                    tree.add_node(&name, node);
                     tree.add_edge(&src_id, &dst_id);
-                    cnt += 1;
                 }
                 SpecExpr::UnOp(op, input) => {
                     let name = cnt.to_string();
                     let ty = Ty::from_str(&spec_instr.ty()).unwrap();
                     let primop = PrimOp::from_str(&op).unwrap();
                     let op = TreeOp::from(primop);
-                    let node = TreeNode::new(&name, ty, op);
+                    let node = if cnt == 0 {
+                        // root
+                        TreeNode::new_with_cost(&name, ty, op, cost)
+                    } else {
+                        TreeNode::new_with_cost(&name, ty, op, 0)
+                    };
                     tree.add_node(&name, node);
-                    // if it is not root
-                    if cnt > 0 {
+                    if cnt == 0 {
+                        // root
+                        stack_id.pop();
+                    } else {
                         let src_id = stack_id.pop().unwrap().to_string();
                         let dst_id = cnt.to_string();
                         tree.add_edge(&src_id, &dst_id);
-                    } else {
-                        stack_id.pop();
                     }
                     stack_id.push(cnt);
-                    cnt += 1;
                     stack_node.push(input.as_ref().clone());
                 }
                 SpecExpr::BinOp(op, lhs, rhs) => {
@@ -64,19 +67,23 @@ impl From<SpecInstr> for Tree {
                     let ty = Ty::from_str(&spec_instr.ty()).unwrap();
                     let primop = PrimOp::from_str(&op).unwrap();
                     let op = TreeOp::from(primop);
-                    let node = TreeNode::new(&name, ty, op);
+                    let node = if cnt == 0 {
+                        // root
+                        TreeNode::new_with_cost(&name, ty, op, cost)
+                    } else {
+                        TreeNode::new_with_cost(&name, ty, op, 0)
+                    };
                     tree.add_node(&name, node);
-                    // if it is not root
-                    if cnt > 0 {
+                    if cnt == 0 {
+                        // root
+                        stack_id.pop();
+                    } else {
                         let src_id = stack_id.pop().unwrap().to_string();
                         let dst_id = cnt.to_string();
                         tree.add_edge(&src_id, &dst_id);
-                    } else {
-                        stack_id.pop();
                     }
                     stack_id.push(cnt);
                     stack_id.push(cnt);
-                    cnt += 1;
                     stack_node.push(rhs.as_ref().clone());
                     stack_node.push(lhs.as_ref().clone());
                 }
@@ -85,25 +92,30 @@ impl From<SpecInstr> for Tree {
                     let ty = Ty::from_str(&spec_instr.ty()).unwrap();
                     let primop = PrimOp::from_str(&op).unwrap();
                     let op = TreeOp::from(primop);
-                    let node = TreeNode::new(&name, ty, op);
+                    let node = if cnt == 0 {
+                        // root
+                        TreeNode::new_with_cost(&name, ty, op, cost)
+                    } else {
+                        TreeNode::new_with_cost(&name, ty, op, 0)
+                    };
                     tree.add_node(&name, node);
-                    // if it is not root
-                    if cnt > 0 {
+                    if cnt == 0 {
+                        // root
+                        stack_id.pop();
+                    } else {
                         let src_id = stack_id.pop().unwrap().to_string();
                         let dst_id = cnt.to_string();
                         tree.add_edge(&src_id, &dst_id);
-                    } else {
-                        stack_id.pop();
                     }
                     stack_id.push(cnt);
                     stack_id.push(cnt);
                     stack_id.push(cnt);
-                    cnt += 1;
                     stack_node.push(fal.as_ref().clone());
                     stack_node.push(tru.as_ref().clone());
                     stack_node.push(con.as_ref().clone());
                 }
             }
+            cnt += 1;
         }
         tree
     }
