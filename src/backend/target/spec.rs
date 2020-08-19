@@ -4,7 +4,7 @@ use std::rc::Rc;
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(untagged)]
 pub enum SpecExpr {
-    Input(String, String),
+    Input(String),
     UnOp(String, Rc<SpecExpr>),
     BinOp(String, Rc<SpecExpr>, Rc<SpecExpr>),
     TerOp(String, Rc<SpecExpr>, Rc<SpecExpr>, Rc<SpecExpr>),

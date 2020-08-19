@@ -30,7 +30,7 @@ impl From<SpecInstr> for Tree {
         while !stack_node.is_empty() && !stack_id.is_empty() {
             let expr = stack_node.pop().unwrap();
             match expr {
-                SpecExpr::Input(ty, _) => {
+                SpecExpr::Input(ty) => {
                     let name = cnt.to_string();
                     let ty = Ty::from_str(&ty).unwrap();
                     let node = TreeNode::new_input(&name, ty);
