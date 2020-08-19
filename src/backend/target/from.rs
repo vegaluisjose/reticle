@@ -1,7 +1,6 @@
 use crate::backend::asm::ast::*;
 use crate::backend::target::descriptor::*;
 use crate::backend::target::spec::*;
-use crate::lang::ast::PrimOp;
 use crate::passes::map::partition::tree::{Tree, TreeNode, TreeOp};
 use std::str::FromStr;
 
@@ -42,8 +41,7 @@ impl From<SpecInstr> for Tree {
                 SpecExpr::UnOp(op, input) => {
                     let name = cnt.to_string();
                     let ty = Ty::from_str(&spec_instr.ty()).unwrap();
-                    let primop = PrimOp::from_str(&op).unwrap();
-                    let op = TreeOp::from(primop);
+                    let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
                         TreeNode::new_with_cost(&name, ty, op, cost)
@@ -65,8 +63,7 @@ impl From<SpecInstr> for Tree {
                 SpecExpr::BinOp(op, lhs, rhs) => {
                     let name = cnt.to_string();
                     let ty = Ty::from_str(&spec_instr.ty()).unwrap();
-                    let primop = PrimOp::from_str(&op).unwrap();
-                    let op = TreeOp::from(primop);
+                    let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
                         TreeNode::new_with_cost(&name, ty, op, cost)
@@ -90,8 +87,7 @@ impl From<SpecInstr> for Tree {
                 SpecExpr::TerOp(op, con, tru, fal) => {
                     let name = cnt.to_string();
                     let ty = Ty::from_str(&spec_instr.ty()).unwrap();
-                    let primop = PrimOp::from_str(&op).unwrap();
-                    let op = TreeOp::from(primop);
+                    let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
                         TreeNode::new_with_cost(&name, ty, op, cost)
