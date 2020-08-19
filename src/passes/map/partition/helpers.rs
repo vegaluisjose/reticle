@@ -9,7 +9,7 @@ impl TreeNode {
             op,
             matched: false,
             instr: None,
-            cost: std::f32::INFINITY,
+            cost: f32::INFINITY,
         }
     }
 
