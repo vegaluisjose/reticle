@@ -1,154 +1,154 @@
 {
    "isa":[
       {
-         "name":"dsp_i8_mul_i8_i8",
+         "name":"dsp_mul_i8_i8_i8",
          "cost": {"delay":4, "area": 1},
          "loc":"dsp",
          "ty":"i8",
          "expr":["mul", "i8", "i8"]
       },
       {
-         "name":"dsp_i8_add_i8_i8",
+         "name":"dsp_add_i8_i8_i8",
          "cost": {"delay":4, "area": 1},
          "loc":"dsp",
          "ty":"i8",
          "expr":["add", "i8", "i8"]
       },
       {
-         "name":"dsp_i8_add_reg_mul_i8_i8_bool_i8",
+         "name":"dsp_add_reg_mul_i8_i8_i8_bool_i8",
          "cost": {"delay":1, "area": 1},
          "loc":"dsp",
          "ty":"i8",
          "expr":["add", ["reg", ["mul", "i8", "i8"], "bool"], "i8"]
       },
       {
-         "name":"lut_i8_reg_i8_bool",
+         "name":"lut_reg_i8_i8_bool",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", "i8", "bool"]
       },
       {
-         "name":"lut_i8_add_i8_i8",
+         "name":"lut_add_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["add", "i8", "i8"]
       },
       {
-         "name":"lut_i8_sub_i8_i8",
+         "name":"lut_sub_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["sub", "i8", "i8"]
       },
       {
-         "name":"lut_i8_and_i8_i8",
+         "name":"lut_and_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["and", "i8", "i8"]
       },
       {
-         "name":"lut_i8_or_i8_i8",
+         "name":"lut_or_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["or", "i8", "i8"]
       },
       {
-         "name":"lut_i8_xor_i8_i8",
+         "name":"lut_xor_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["xor", "i8", "i8"]
       },
       {
-         "name":"lut_bool_eq_i8_i8",
+         "name":"lut_eq_bool_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["eq", "i8", "i8"]
       },
       {
-         "name":"lut_bool_neq_i8_i8",
+         "name":"lut_neq_bool_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["neq", "i8", "i8"]
       },
       {
-         "name":"lut_i8_mux_bool_i8_i8",
+         "name":"lut_mux_i8_bool_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["mux", "bool", "i8", "i8"]
       },
       {
-         "name":"lut_i8_reg_add_i8_i8_bool",
+         "name":"lut_reg_add_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["add", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_i8_reg_sub_i8_i8_bool",
+         "name":"lut_reg_sub_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["sub", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_i8_reg_and_i8_i8_bool",
+         "name":"lut_reg_and_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["and", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_i8_reg_or_i8_i8_bool",
+         "name":"lut_reg_or_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["or", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_i8_reg_xor_i8_i8_bool",
+         "name":"lut_reg_xor_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["xor", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_bool_reg_eq_i8_i8_bool",
+         "name":"lut_reg_eq_bool_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["reg", ["eq", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_bool_reg_neq_i8_i8_bool",
+         "name":"lut_reg_neq_bool_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["reg", ["neq", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_i8_reg_mux_bool_i8_i8_bool",
+         "name":"lut_reg_mux_bool_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["mux", "bool", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_bool_and_bool_bool",
+         "name":"lut_and_bool_bool_bool",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["and", "bool", "bool"]
       },
       {
-         "name":"lut_bool_or_bool_bool",
+         "name":"lut_or_bool_bool_bool",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
