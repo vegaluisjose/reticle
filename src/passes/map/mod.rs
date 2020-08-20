@@ -24,7 +24,7 @@ fn tree_match(pattern: Tree, input: Tree, input_index: TreeIx) -> bool {
     let pattern_index = pattern.root_index().unwrap();
     let pstack = tree_stack(pattern.graph().clone(), pattern_index);
     let istack = tree_stack(input.graph().clone(), input_index);
-    if pstack.len() != istack.len() {
+    if istack.len() < pstack.len() {
         false
     } else {
         let mut matched = true;
@@ -47,9 +47,7 @@ fn select(descriptor: Descriptor, input: Tree) {
             if !node.is_input() {
                 for tile in descriptor.tiles.iter() {
                     if tree_match(tile.pattern.clone(), input.clone(), ix) {
-                        println!("match with node:{} and pattern:{}", &node, &tile.instr);
-                    } else {
-                        println!("----> node:{} did not match", &node);
+                        println!("match with node:{} ~~with~~ pattern:{}", &node, &tile.instr);
                     }
                 }
             }
