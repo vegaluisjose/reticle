@@ -67,14 +67,14 @@
          "name":"lut_i8_eq",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
-         "ty":"i8",
+         "ty":"bool",
          "expr":["eq", "i8", "i8"]
       },
       {
          "name":"lut_i8_neq",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
-         "ty":"i8",
+         "ty":"bool",
          "expr":["neq", "i8", "i8"]
       },
       {
@@ -123,14 +123,14 @@
          "name":"lut_i8_reg_eq",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
-         "ty":"i8",
+         "ty":"bool",
          "expr":["reg", ["eq", "i8", "i8"], "bool"]
       },
       {
          "name":"lut_i8_reg_neq",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
-         "ty":"i8",
+         "ty":"bool",
          "expr":["reg", ["neq", "i8", "i8"], "bool"]
       },
       {

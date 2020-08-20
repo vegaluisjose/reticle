@@ -81,6 +81,7 @@ impl Tree {
     pub fn new(root: &str) -> Tree {
         Tree {
             root_id: root.to_string(),
+            root_index: None,
             graph: TreeGraph::new(),
             ctx: TreeCtx::new(),
         }
@@ -94,8 +95,8 @@ impl Tree {
         self.root_id.to_string()
     }
 
-    pub fn root_index(&self) -> Option<&TreeIx> {
-        self.get_node_index(&self.root_id())
+    pub fn root_index(&self) -> Option<TreeIx> {
+        self.root_index
     }
 
     pub fn get_node_index(&self, name: &str) -> Option<&TreeIx> {
@@ -108,6 +109,9 @@ impl Tree {
 
     pub fn add_node(&mut self, name: &str, node: TreeNode) {
         let ix = self.graph.add_node(node);
+        if name == self.root_id.as_str() && self.ctx.is_empty() {
+            self.root_index = Some(ix);
+        }
         self.ctx.insert(name.to_string(), ix);
     }
 
