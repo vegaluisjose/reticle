@@ -7,12 +7,12 @@ use crate::lang::ast::Prog;
 use crate::passes::map::dag::Dag;
 use crate::passes::map::partition::tree::{Tree, TreeGraph, TreeIx, TreeNode};
 use crate::passes::map::partition::Partition;
-use petgraph::visit::{Bfs, DfsPostOrder};
+use petgraph::visit::{Dfs, DfsPostOrder};
 
 fn tree_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();
-    let mut bfs = Bfs::new(&graph, start);
-    while let Some(ix) = bfs.next(&graph) {
+    let mut visit = Dfs::new(&graph, start);
+    while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             stack.push(node.clone());
         }
@@ -39,12 +39,12 @@ fn tree_match(pattern: Tree, input: Tree, input_index: TreeIx) -> bool {
 }
 
 fn select(descriptor: Descriptor, input: Tree) {
-    println!("root:{}", input.root_id());
     let start = input.root_index().unwrap();
     let mut dfs = DfsPostOrder::new(&input.graph(), start);
     while let Some(ix) = dfs.next(&input.graph) {
         if let Some(node) = input.graph.node_weight(ix) {
             if !node.is_input() {
+                println!("\nchecking node:{}", node);
                 for tile in descriptor.tiles.iter() {
                     if tree_match(tile.pattern.clone(), input.clone(), ix) {
                         println!("match with node:{} ~~with~~ pattern:{}", &node, &tile.instr);
@@ -60,7 +60,7 @@ pub fn example(prog: Prog) {
     let dag = Dag::from(prog);
     let partition = Partition::from(dag);
     for (_, tree) in partition.iter() {
-        println!("{}", tree);
+        println!("\n{}", tree);
         select(descriptor.clone(), tree.clone());
     }
 }
