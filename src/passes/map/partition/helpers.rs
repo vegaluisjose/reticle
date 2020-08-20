@@ -36,6 +36,18 @@ impl TreeNode {
         }
     }
 
+    pub fn is_input(&self) -> bool {
+        self.op == TreeOp::Input
+    }
+
+    pub fn ty(&self) -> &TreeTy {
+        &self.ty
+    }
+
+    pub fn op(&self) -> &TreeOp {
+        &self.op
+    }
+
     pub fn is_matched(&self) -> bool {
         self.matched
     }
@@ -74,8 +86,20 @@ impl Tree {
         }
     }
 
+    pub fn graph(&self) -> &TreeGraph {
+        &self.graph
+    }
+
     pub fn root_id(&self) -> String {
         self.root_id.to_string()
+    }
+
+    pub fn root_index(&self) -> Option<&TreeIx> {
+        self.get_node_index(&self.root_id())
+    }
+
+    pub fn get_node_index(&self, name: &str) -> Option<&TreeIx> {
+        self.ctx.get(name)
     }
 
     pub fn contains_node(&self, name: &str) -> bool {

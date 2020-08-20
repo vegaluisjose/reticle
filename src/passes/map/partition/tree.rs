@@ -10,7 +10,7 @@ pub type TreeIx = NodeIndex;
 pub type TreeGraph = Graph<TreeNode, TreeEdge>;
 pub type TreeCtx = HashMap<TreeId, TreeIx>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum TreeOp {
     Input,
     Prim(PrimOp),
