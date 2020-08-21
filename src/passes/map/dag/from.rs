@@ -21,16 +21,10 @@ impl From<Prog> for Dag {
         let mut dag = Dag::default();
         if let Some(def) = prog.defs().iter().next() {
             for input in def.inputs().iter() {
-                if !dag.contains_node_with_id(&input.id()) {
-                    let val = DagNodeValue::from(input.clone());
-                    dag.add_node(&input.id(), val);
-                }
+                dag.add_node(&input.id(), DagNodeValue::from(input.clone()));
             }
             for instr in def.body().iter() {
-                if !dag.contains_node_with_id(&instr.id()) {
-                    let val = DagNodeValue::from(instr.clone());
-                    dag.add_node(&instr.id(), val);
-                }
+                dag.add_node(&instr.id(), DagNodeValue::from(instr.clone()));
             }
             for instr in def.body().iter() {
                 for param in instr.params().iter() {
