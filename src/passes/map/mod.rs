@@ -47,7 +47,12 @@ fn select(descriptor: Descriptor, input: Tree) {
                 println!("\nchecking node:{}", node);
                 for tile in descriptor.tiles.iter() {
                     if tree_match(tile.pattern.clone(), input.clone(), ix) {
-                        println!("match with node:{} ~~with~~ pattern:{}", &node, &tile.instr);
+                        let pat_cost = tile.pattern.estimate_cost();
+                        let cur_cost = input.estimate_cost_from_index(ix);
+                        println!(
+                            "[match] node:{} cost:{} ~~with~~ instr:{} cost:{}",
+                            &node, cur_cost, &tile.instr, pat_cost
+                        );
                     }
                 }
             }
