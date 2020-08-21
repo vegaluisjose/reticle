@@ -99,10 +99,6 @@ impl Tree {
         self.root_index
     }
 
-    pub fn get_node_index(&self, name: &str) -> Option<&TreeIx> {
-        self.ctx.get(name)
-    }
-
     pub fn contains_node_with_id(&self, name: &str) -> bool {
         self.ctx.contains_key(name)
     }
