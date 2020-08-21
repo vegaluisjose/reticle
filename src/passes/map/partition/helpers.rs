@@ -103,7 +103,7 @@ impl Tree {
         self.ctx.get(name)
     }
 
-    pub fn contains_node(&self, name: &str) -> bool {
+    pub fn contains_node_with_id(&self, name: &str) -> bool {
         self.ctx.contains_key(name)
     }
 

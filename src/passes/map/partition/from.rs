@@ -39,7 +39,7 @@ impl From<Dag> for Partition {
                         src_node.set_visited();
                     }
                     if let Some(src_node) = dag.graph.node_weight(src_ix) {
-                        if !tree.contains_node(&src_node.id()) {
+                        if !tree.contains_node_with_id(&src_node.id()) {
                             tree.add_node(&src_node.id(), TreeNode::from(src_node.instr().clone()));
                         }
                         let incoming = dag.get_incoming_nodes(src_ix);

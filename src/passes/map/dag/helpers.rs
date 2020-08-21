@@ -96,7 +96,7 @@ impl Dag {
         self.ctx.insert(name.to_string(), ix);
     }
 
-    pub fn contains_node(&self, name: &str) -> bool {
+    pub fn contains_node_with_id(&self, name: &str) -> bool {
         self.ctx.contains_key(name)
     }
 

@@ -21,13 +21,13 @@ impl From<Prog> for Dag {
         let mut dag = Dag::default();
         if let Some(def) = prog.defs().iter().next() {
             for input in def.inputs().iter() {
-                if !dag.contains_node(&input.id()) {
+                if !dag.contains_node_with_id(&input.id()) {
                     let val = DagNodeValue::from(input.clone());
                     dag.add_node(&input.id(), val);
                 }
             }
             for instr in def.body().iter() {
-                if !dag.contains_node(&instr.id()) {
+                if !dag.contains_node_with_id(&instr.id()) {
                     let val = DagNodeValue::from(instr.clone());
                     dag.add_node(&instr.id(), val);
                 }
