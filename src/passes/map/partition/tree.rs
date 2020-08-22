@@ -29,7 +29,7 @@ pub struct TreeNode {
     pub cost: f32,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Default, Clone, Debug)]
 pub struct Tree {
     pub root_index: Option<TreeIx>,
     pub graph: TreeGraph,

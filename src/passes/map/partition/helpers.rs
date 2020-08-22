@@ -48,6 +48,10 @@ impl TreeNode {
         &self.op
     }
 
+    pub fn instr(&self) -> Option<&Instr> {
+        self.instr.as_ref()
+    }
+
     pub fn is_matched(&self) -> bool {
         self.matched
     }
@@ -75,10 +79,14 @@ impl TreeNode {
     pub fn has_infinity_cost(&self) -> bool {
         self.cost == f32::INFINITY
     }
+
+    pub fn set_cost(&mut self, cost: f32) {
+        self.cost = cost;
+    }
 }
 
 impl Tree {
-    pub fn new(root: &str) -> Tree {
+    pub fn new() -> Tree {
         Tree {
             root_index: None,
             graph: TreeGraph::new(),

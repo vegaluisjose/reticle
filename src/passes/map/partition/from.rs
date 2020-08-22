@@ -30,7 +30,7 @@ impl From<Dag> for Partition {
         let mut dag = dag;
         let mut partition = Partition::new();
         for (id, root) in dag.roots().clone().iter() {
-            let mut tree = Tree::new(&id);
+            let mut tree = Tree::new();
             let mut stack: Vec<DagIx> = Vec::new();
             stack.push(*root);
             while !stack.is_empty() {

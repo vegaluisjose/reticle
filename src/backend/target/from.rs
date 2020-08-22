@@ -20,7 +20,7 @@ impl From<SpecInstr> for Instr {
 impl From<SpecInstr> for Tree {
     fn from(spec_instr: SpecInstr) -> Self {
         let mut cnt: u32 = 0;
-        let mut tree = Tree::new(&cnt.to_string());
+        let mut tree = Tree::new();
         let mut stack_node: Vec<SpecExpr> = Vec::new();
         let mut stack_id: Vec<u32> = Vec::new();
         stack_node.push(spec_instr.expr.clone());
