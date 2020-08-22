@@ -1,3 +1,4 @@
+pub mod algo;
 pub mod display;
 pub mod from;
 pub mod from_str;
