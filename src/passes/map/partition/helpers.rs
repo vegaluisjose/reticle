@@ -14,14 +14,14 @@ impl TreeNode {
         }
     }
 
-    pub fn new_with_cost(id: &str, ty: TreeTy, op: TreeOp, cost: u32) -> TreeNode {
+    pub fn new_with_cost(id: &str, ty: TreeTy, op: TreeOp, cost: f32) -> TreeNode {
         TreeNode {
             id: id.to_string(),
             ty,
             op,
             matched: false,
             instr: None,
-            cost: cost as f32,
+            cost,
         }
     }
 

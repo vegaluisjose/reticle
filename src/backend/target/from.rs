@@ -27,7 +27,7 @@ impl From<SpecInstr> for Tree {
         stack_id.push(cnt);
         while !stack_node.is_empty() && !stack_id.is_empty() {
             let expr = stack_node.pop().unwrap();
-            let cost = spec_instr.delay();
+            let cost = spec_instr.delay() as f32;
             match expr {
                 SpecExpr::Input(ty) => {
                     let name = cnt.to_string();
@@ -46,7 +46,7 @@ impl From<SpecInstr> for Tree {
                         // root
                         TreeNode::new_with_cost(&name, ty, op, cost)
                     } else {
-                        TreeNode::new_with_cost(&name, ty, op, 0)
+                        TreeNode::new_with_cost(&name, ty, op, 0.0)
                     };
                     tree.add_node(&name, node);
                     if cnt == 0 {
@@ -68,7 +68,7 @@ impl From<SpecInstr> for Tree {
                         // root
                         TreeNode::new_with_cost(&name, ty, op, cost)
                     } else {
-                        TreeNode::new_with_cost(&name, ty, op, 0)
+                        TreeNode::new_with_cost(&name, ty, op, 0.0)
                     };
                     tree.add_node(&name, node);
                     if cnt == 0 {
@@ -92,7 +92,7 @@ impl From<SpecInstr> for Tree {
                         // root
                         TreeNode::new_with_cost(&name, ty, op, cost)
                     } else {
-                        TreeNode::new_with_cost(&name, ty, op, 0)
+                        TreeNode::new_with_cost(&name, ty, op, 0.0)
                     };
                     tree.add_node(&name, node);
                     if cnt == 0 {
