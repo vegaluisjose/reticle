@@ -1,5 +1,5 @@
 use crate::backend::target::{Descriptor, Tile};
-use crate::passes::map::partition::tree::{Tree, TreeGraph, TreeIx, TreeNode};
+use crate::passes::map::tree::{Tree, TreeGraph, TreeIx, TreeNode};
 use petgraph::visit::{Bfs, DfsPostOrder};
 use petgraph::Direction;
 use std::collections::HashSet;

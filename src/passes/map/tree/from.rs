@@ -1,7 +1,7 @@
 use crate::lang::ast::{Instr, PrimOp};
 use crate::passes::map::dag::{Dag, DagIx};
-use crate::passes::map::partition::tree::*;
-use crate::passes::map::partition::Partition;
+use crate::passes::map::tree::partition::Partition;
+use crate::passes::map::tree::*;
 
 impl From<PrimOp> for TreeOp {
     fn from(primop: PrimOp) -> Self {

@@ -1,7 +1,7 @@
 use crate::backend::asm::ast::{Instr, Loc, LocTy, Ty};
 use crate::backend::target::descriptor::*;
 use crate::backend::target::spec::*;
-use crate::passes::map::partition::tree::{Tree, TreeNode, TreeOp, TreeTy};
+use crate::passes::map::tree::{Tree, TreeNode, TreeOp, TreeTy};
 use std::str::FromStr;
 
 impl From<SpecInstr> for Instr {

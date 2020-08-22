@@ -1,5 +1,5 @@
 use crate::backend::asm::ast::Instr;
-use crate::passes::map::partition::tree::Tree;
+use crate::passes::map::tree::Tree;
 
 #[derive(Clone, Debug)]
 pub struct Tile {

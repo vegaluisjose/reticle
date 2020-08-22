@@ -1,5 +1,5 @@
 use crate::backend::asm::ast::Instr;
-use crate::passes::map::partition::tree::*;
+use crate::passes::map::tree::*;
 use petgraph::visit::Dfs;
 
 impl TreeNode {

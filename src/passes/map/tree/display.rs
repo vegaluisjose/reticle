@@ -1,4 +1,4 @@
-use crate::passes::map::partition::tree::*;
+use crate::passes::map::tree::*;
 use petgraph::dot::{Config, Dot};
 use std::fmt;
 
