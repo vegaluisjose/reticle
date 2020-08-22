@@ -31,7 +31,6 @@ pub struct TreeNode {
 
 #[derive(Clone, Debug)]
 pub struct Tree {
-    pub root_id: TreeId,
     pub root_index: Option<TreeIx>,
     pub graph: TreeGraph,
     pub ctx: TreeCtx,
