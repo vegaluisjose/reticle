@@ -1,6 +1,7 @@
-use crate::backend::asm::ast::{Expr, Instr};
+use crate::backend::asm::ast as asm;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::map::tree::{Tree, TreeGraph, TreeIx, TreeNode};
+use crate::passes::map::AsmInstrMap;
 use petgraph::visit::{Bfs, DfsPostOrder};
 use petgraph::Direction;
 use std::collections::HashSet;
@@ -123,15 +124,15 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
     output
 }
 
-pub fn tree_asm_gen(input: Tree, input_index: TreeIx, tile: Tile) -> Instr {
-    let mut instr: Instr = tile.instr().clone();
+pub fn asm_instr_gen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr {
+    let mut instr: asm::Instr = tile.instr().clone();
     let pattern = tile.pattern();
     let pattern_index = pattern.root_index().unwrap();
     let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
-    let mut params: Vec<Expr> = Vec::new();
+    let mut params: Vec<asm::Expr> = Vec::new();
     while let Some(ix) = visit.next(&input.graph) {
         if !discard.contains(&ix) {
             if let Some(pnode) = pstack_iter.next() {
@@ -141,7 +142,7 @@ pub fn tree_asm_gen(input: Tree, input_index: TreeIx, tile: Tile) -> Instr {
                         instr.set_id(&inode.id());
                     } else if pnode.is_input() {
                         // param
-                        params.push(Expr::Ref(inode.id(), inode.ty().clone()));
+                        params.push(asm::Expr::Ref(inode.id(), inode.ty().clone()));
                     }
                     if pnode.is_input() {
                         let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
@@ -162,15 +163,18 @@ pub fn tree_asm_gen(input: Tree, input_index: TreeIx, tile: Tile) -> Instr {
     instr
 }
 
-pub fn tree_asm_codegen(input: Tree) {
+pub fn tree_asm_codegen(input: Tree) -> AsmInstrMap {
+    let mut map: AsmInstrMap = AsmInstrMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
     let mut visit = DfsPostOrder::new(&graph, root_index);
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                println!("{}", tree_asm_gen(input.clone(), ix, tile.clone()));
+                let instr = asm_instr_gen(input.clone(), ix, tile.clone());
+                map.insert(instr.id(), instr);
             }
         }
     }
+    map
 }

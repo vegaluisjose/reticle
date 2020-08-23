@@ -152,37 +152,23 @@ impl Instr {
     }
 }
 
-// impl Prog {
-//     pub fn new(prog: reticle::Prog, target: &str) -> Prog {
-//         assert_eq!(target, "ultrascale", "Error: ultrascale support only");
-//         Prog {
-//             sig: prog.defs[0].sig.clone(),
-//             body: Vec::new(),
-//             target: target.to_string(),
-//         }
-//     }
+impl Prog {
+    pub fn new_with_signature(sig: Sig) -> Prog {
+        Prog {
+            sig,
+            body: Vec::new(),
+        }
+    }
 
-//     pub fn id(&self) -> String {
-//         self.sig.id()
-//     }
+    pub fn signature(&self) -> &Sig {
+        &self.sig
+    }
 
-//     pub fn inputs(&self) -> &Vec<Port> {
-//         self.sig.inputs()
-//     }
+    pub fn body(&self) -> &Vec<Instr> {
+        &self.body
+    }
 
-//     pub fn outputs(&self) -> &Vec<Port> {
-//         self.sig.outputs()
-//     }
-
-//     pub fn add_instr(&mut self, instr: Instr) {
-//         self.body.push(instr);
-//     }
-
-//     pub fn body(&self) -> &Vec<Instr> {
-//         &self.body
-//     }
-
-//     pub fn to_verilog(&self) -> Module {
-//         Module::from(self.clone())
-//     }
-// }
+    pub fn add_instr(&mut self, instr: Instr) {
+        self.body.push(instr);
+    }
+}
