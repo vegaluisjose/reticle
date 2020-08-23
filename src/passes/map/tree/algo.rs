@@ -37,7 +37,7 @@ pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Ve
                 }
             }
         }
-        if !pstack_iter.len() == 0 {
+        if pstack_iter.len() == 0 {
             break;
         }
     }
