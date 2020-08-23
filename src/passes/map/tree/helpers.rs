@@ -1,4 +1,5 @@
 use crate::backend::asm::ast::Instr;
+use crate::backend::target::Tile;
 use crate::passes::map::tree::*;
 use petgraph::visit::Dfs;
 
@@ -9,7 +10,7 @@ impl TreeNode {
             ty,
             op,
             matched: false,
-            instr: None,
+            tile: None,
             cost: f32::INFINITY,
         }
     }
@@ -20,7 +21,7 @@ impl TreeNode {
             ty,
             op,
             matched: false,
-            instr: None,
+            tile: None,
             cost,
         }
     }
@@ -31,7 +32,7 @@ impl TreeNode {
             ty,
             op: TreeOp::Input,
             matched: false,
-            instr: None,
+            tile: None,
             cost: 0 as f32,
         }
     }
@@ -49,7 +50,11 @@ impl TreeNode {
     }
 
     pub fn instr(&self) -> Option<&Instr> {
-        self.instr.as_ref()
+        if let Some(tile) = &self.tile {
+            Some(tile.instr())
+        } else {
+            None
+        }
     }
 
     pub fn is_matched(&self) -> bool {
@@ -60,12 +65,12 @@ impl TreeNode {
         self.matched = true;
     }
 
-    pub fn set_instr(&mut self, instr: Instr) {
-        self.instr = Some(instr);
+    pub fn set_tile(&mut self, tile: Tile) {
+        self.tile = Some(tile);
     }
 
-    pub fn clear_instr(&mut self) {
-        self.instr = None;
+    pub fn clear_tile(&mut self) {
+        self.tile = None;
     }
 
     pub fn id(&self) -> String {

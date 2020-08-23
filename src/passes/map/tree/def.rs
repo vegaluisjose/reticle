@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::Instr;
+use crate::backend::target::Tile;
 use crate::lang::ast::{PrimOp, Ty};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
@@ -25,7 +25,7 @@ pub struct TreeNode {
     pub ty: TreeTy,
     pub op: TreeOp,
     pub matched: bool,
-    pub instr: Option<Instr>,
+    pub tile: Option<Tile>,
     pub cost: f32,
 }
 

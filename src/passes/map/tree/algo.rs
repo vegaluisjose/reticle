@@ -82,7 +82,7 @@ pub fn tree_update(input: Tree, index: TreeIx, tile: Tile) -> Tree {
     let mut output = input;
     if let Some(node) = output.graph.node_weight_mut(index) {
         node.set_cost(tile.pattern.estimate_cost());
-        node.set_instr(tile.instr);
+        node.set_tile(tile);
     }
     output
 }
@@ -92,7 +92,7 @@ pub fn tree_reset(pattern: Tree, input: Tree, input_index: TreeIx) -> Tree {
     let matches = tree_matches_index(pattern, input, input_index);
     for index in matches.iter() {
         if let Some(node) = output.graph.node_weight_mut(*index) {
-            node.clear_instr();
+            node.clear_tile();
             node.set_cost(0.0);
         }
     }
