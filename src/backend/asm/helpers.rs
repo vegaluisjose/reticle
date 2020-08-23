@@ -17,6 +17,15 @@ impl Loc {
 }
 
 impl Instr {
+    pub fn new_std(id: &str, ty: Ty, op: StdOp) -> Instr {
+        Instr::Std {
+            id: id.to_string(),
+            ty,
+            op,
+            attrs: Vec::new(),
+            params: Vec::new(),
+        }
+    }
     pub fn id(&self) -> String {
         match self {
             Instr::Std {

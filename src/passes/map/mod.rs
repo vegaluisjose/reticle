@@ -27,6 +27,15 @@ pub fn map_asm(prog: Prog) -> asm::Prog {
     for (_, tree) in output.iter() {
         map.extend(tree_asm_codegen(tree.clone()));
     }
-    let sig = prog.defs()[0].signature();
-    asm::Prog::new_with_signature(sig.clone())
+    let sig = prog.defs()[0].signature().clone();
+    let body = prog.defs()[0].body().clone();
+    let mut asm = asm::Prog::new_with_signature(sig);
+    for instr in body.iter() {
+        if instr.is_std() {
+            asm.add_instr(asm::Instr::from(instr.clone()));
+        } else if let Some(asm_instr) = map.get(&instr.id()) {
+            asm.add_instr(asm_instr.clone());
+        }
+    }
+    asm
 }
