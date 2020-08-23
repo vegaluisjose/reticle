@@ -57,6 +57,10 @@ impl TreeNode {
         }
     }
 
+    pub fn tile(&self) -> Option<&Tile> {
+        self.tile.as_ref()
+    }
+
     pub fn is_matched(&self) -> bool {
         self.matched
     }

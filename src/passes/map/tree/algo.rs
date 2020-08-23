@@ -1,3 +1,4 @@
+use crate::backend::asm::ast::{Expr, Instr};
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::map::tree::{Tree, TreeGraph, TreeIx, TreeNode};
 use petgraph::visit::{Bfs, DfsPostOrder};
@@ -28,9 +29,9 @@ pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Ve
                 if !pnode.is_input() {
                     update.push(ix);
                 }
-                // discard childs if parent node in pattern is input
                 if pnode.is_input() {
                     let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+                    // discard childs if parent node in pattern is input
                     for c in childs {
                         discard.insert(c);
                     }
@@ -61,9 +62,9 @@ pub fn tree_match(pattern: Tree, input: Tree, input_index: TreeIx) -> bool {
                     if !pnode.is_input() && pnode.op() != inode.op() {
                         is_match = false;
                     }
-                    // discard childs if parent node in pattern is input
                     if pnode.is_input() {
                         let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+                        // discard childs if parent node in pattern is input
                         for c in childs {
                             discard.insert(c);
                         }
@@ -122,14 +123,53 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
     output
 }
 
-pub fn tree_codegen(input: Tree) {
+pub fn tree_asm_gen(input: Tree, input_index: TreeIx, tile: Tile) -> Instr {
+    let mut instr: Instr = tile.instr().clone();
+    let pattern = tile.pattern();
+    let pattern_index = pattern.root_index().unwrap();
+    let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
+    let mut pstack_iter = pstack.iter();
+    let mut visit = Bfs::new(&input.graph, input_index);
+    let mut discard: HashSet<TreeIx> = HashSet::new();
+    let mut params: Vec<Expr> = Vec::new();
+    while let Some(ix) = visit.next(&input.graph) {
+        if !discard.contains(&ix) {
+            if let Some(pnode) = pstack_iter.next() {
+                if let Some(inode) = input.graph.node_weight(ix) {
+                    if instr.id().is_empty() {
+                        // root
+                        instr.set_id(&inode.id());
+                    } else if pnode.is_input() {
+                        // param
+                        params.push(Expr::Ref(inode.id(), inode.ty().clone()));
+                    }
+                    if pnode.is_input() {
+                        let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+                        // discard childs if parent node in pattern is input
+                        for c in childs {
+                            discard.insert(c);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // bfs is right-to-left, so need to reverse it here
+    params.reverse();
+    for param in params.iter() {
+        instr.add_param(param.clone());
+    }
+    instr
+}
+
+pub fn tree_asm_codegen(input: Tree) {
     let root_index = input.root_index().unwrap();
-    let graph = input.graph;
+    let graph = input.graph.clone();
     let mut visit = DfsPostOrder::new(&graph, root_index);
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
-            if let Some(instr) = node.instr() {
-                println!("{}", instr);
+            if let Some(tile) = node.tile() {
+                println!("{}", tree_asm_gen(input.clone(), ix, tile.clone()));
             }
         }
     }
