@@ -71,7 +71,7 @@ pub fn tree_match(pattern: Tree, input: Tree, input_index: TreeIx) -> bool {
                 }
             }
         }
-        if !is_match || !pstack_iter.len() == 0 {
+        if !is_match || pstack_iter.len() == 0 {
             break;
         }
     }
