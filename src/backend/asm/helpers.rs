@@ -168,6 +168,18 @@ impl Prog {
         &self.body
     }
 
+    pub fn id(&self) -> String {
+        self.sig.id()
+    }
+
+    pub fn inputs(&self) -> &Vec<Port> {
+        &self.sig.inputs()
+    }
+
+    pub fn outputs(&self) -> &Vec<Port> {
+        &self.sig.outputs()
+    }
+
     pub fn add_instr(&mut self, instr: Instr) {
         self.body.push(instr);
     }

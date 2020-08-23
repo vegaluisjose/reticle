@@ -1,5 +1,5 @@
 use crate::backend::asm::ast::*;
-use crate::util::pretty_print::{intersperse, PrettyHelper, PrettyPrint};
+use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 use pretty::RcDoc;
 
 impl PrettyPrint for LocExpr {
@@ -81,40 +81,42 @@ impl PrettyPrint for Instr {
     }
 }
 
-// impl PrettyPrint for Prog {
-//     fn to_doc(&self) -> RcDoc<()> {
-//         let inputs_doc = RcDoc::intersperse(
-//             self.sig.inputs().iter().map(|i| i.to_doc()),
-//             RcDoc::text(",").append(RcDoc::space()),
-//         );
-//         let outputs_doc = RcDoc::intersperse(
-//             self.sig.outputs().iter().map(|o| o.to_doc()),
-//             RcDoc::text(",").append(RcDoc::space()),
-//         );
-//         let mut body_doc = RcDoc::nil();
-//         for instr in self.body().iter() {
-//             body_doc = body_doc
-//                 .append(RcDoc::hardline())
-//                 .append(instr.to_doc())
-//                 .append(RcDoc::text(";"));
-//         }
-//         body_doc = body_doc.nest(PRETTY_INDENT).group();
-//         RcDoc::text("def")
-//             .append(RcDoc::space())
-//             .append(RcDoc::as_string(self.sig.id()))
-//             .append(RcDoc::text("("))
-//             .append(inputs_doc)
-//             .append(RcDoc::text(")"))
-//             .append(RcDoc::space())
-//             .append(RcDoc::text("->"))
-//             .append(RcDoc::space())
-//             .append(RcDoc::text("("))
-//             .append(outputs_doc)
-//             .append(RcDoc::text(")"))
-//             .append(RcDoc::space())
-//             .append(RcDoc::text("{"))
-//             .append(body_doc)
-//             .append(RcDoc::hardline())
-//             .append(RcDoc::text("}"))
-//     }
-// }
+impl PrettyPrint for Prog {
+    fn to_doc(&self) -> RcDoc<()> {
+        let inputs = if self.inputs().is_empty() {
+            RcDoc::nil().parens()
+        } else {
+            intersperse(
+                self.inputs().iter().map(|x| x.to_doc()),
+                RcDoc::text(",").append(RcDoc::space()),
+            )
+            .parens()
+        };
+        let outputs = if self.outputs().is_empty() {
+            RcDoc::nil().parens()
+        } else {
+            intersperse(
+                self.outputs().iter().map(|x| x.to_doc()),
+                RcDoc::text(",").append(RcDoc::space()),
+            )
+            .parens()
+        };
+        let body = if self.body().is_empty() {
+            RcDoc::nil()
+        } else {
+            intersperse(
+                self.body().iter().map(|x| x.to_doc()),
+                RcDoc::text(";").append(RcDoc::hardline()),
+            )
+        };
+        let name = RcDoc::text("def")
+            .append(RcDoc::space())
+            .append(RcDoc::as_string(self.id()))
+            .append(inputs)
+            .append(RcDoc::space())
+            .append(RcDoc::text("->"))
+            .append(RcDoc::space())
+            .append(outputs);
+        block_with_braces(name, body)
+    }
+}
