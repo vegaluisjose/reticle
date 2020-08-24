@@ -6,7 +6,7 @@ use std::str::FromStr;
 
 impl From<SpecInstr> for Instr {
     fn from(spec_instr: SpecInstr) -> Self {
-        Instr::Asm {
+        Instr::Prim {
             id: String::new(),
             ty: Ty::from_str(&spec_instr.ty()).unwrap(),
             op: spec_instr.name(),

@@ -1,9 +1,8 @@
 use crate::lang::ast;
 
 // The main difference between Reticle and Reticle-asm are:
-// 1. Reticle-asm replace prim-instructions with asm-instructions
-// 2. Asm-instructions support location expressions
-// 3. Because of this, asm-instructions are used for doing placement
+// 1. Primitive instructions support location expressions
+// 2. Placement can be achieved by solving these location expressions
 
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;
@@ -36,7 +35,7 @@ pub enum Instr {
         attrs: Vec<Expr>,
         params: Vec<Expr>,
     },
-    Asm {
+    Prim {
         id: Id,
         ty: Ty,
         op: Id,

@@ -35,7 +35,7 @@ impl Instr {
                 attrs: _,
                 params: _,
             } => id.to_string(),
-            Instr::Asm {
+            Instr::Prim {
                 id,
                 ty: _,
                 op: _,
@@ -54,7 +54,7 @@ impl Instr {
                 attrs: _,
                 params: _,
             } => ty,
-            Instr::Asm {
+            Instr::Prim {
                 id: _,
                 ty,
                 op: _,
@@ -73,7 +73,7 @@ impl Instr {
                 attrs,
                 params: _,
             } => attrs,
-            Instr::Asm {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,
@@ -92,7 +92,7 @@ impl Instr {
                 attrs: _,
                 params,
             } => params,
-            Instr::Asm {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,
@@ -111,7 +111,7 @@ impl Instr {
                 attrs: _,
                 params: _,
             } => *id = name.to_string(),
-            Instr::Asm {
+            Instr::Prim {
                 id,
                 ty: _,
                 op: _,
@@ -130,7 +130,7 @@ impl Instr {
                 attrs: _,
                 params,
             } => params.push(expr),
-            Instr::Asm {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,
@@ -149,7 +149,7 @@ impl Instr {
                 attrs,
                 params: _,
             } => attrs.push(expr),
-            Instr::Asm {
+            Instr::Prim {
                 id: _,
                 ty: _,
                 op: _,
