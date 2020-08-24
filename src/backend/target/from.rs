@@ -121,7 +121,8 @@ impl From<SpecInstr> for Tile {
     fn from(spec_instr: SpecInstr) -> Self {
         Tile {
             instr: Instr::from(spec_instr.clone()),
-            pattern: Tree::from(spec_instr),
+            pattern: Tree::from(spec_instr.clone()),
+            loc: LocTy::from_str(&spec_instr.loc()).unwrap(),
         }
     }
 }
