@@ -9,7 +9,6 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op,
-            loc: TreeLoc::Hole,
             matched: false,
             tile: None,
             cost: f32::INFINITY,
@@ -21,7 +20,6 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op,
-            loc: TreeLoc::Hole,
             matched: false,
             tile: None,
             cost,
@@ -33,7 +31,6 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op: TreeOp::Input,
-            loc: TreeLoc::Hole,
             matched: false,
             tile: None,
             cost: 0 as f32,
@@ -50,10 +47,6 @@ impl TreeNode {
 
     pub fn op(&self) -> &TreeOp {
         &self.op
-    }
-
-    pub fn loc(&self) -> &TreeLoc {
-        &self.loc
     }
 
     pub fn instr(&self) -> Option<&Instr> {
@@ -74,10 +67,6 @@ impl TreeNode {
 
     pub fn set_matched(&mut self) {
         self.matched = true;
-    }
-
-    pub fn set_loc(&mut self, loc: TreeLoc) {
-        self.loc = loc;
     }
 
     pub fn set_tile(&mut self, tile: Tile) {
