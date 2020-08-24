@@ -7,6 +7,7 @@ fn main() {
     let analysis = map_analysis(prog_with_loc.clone());
     let asm = map_asm(prog.clone());
     assert_eq!(prog, map_clear(prog_with_loc.clone()));
+    assert_eq!(analysis.num_holes(), 0);
     println!("\n---reticle---\n{}", prog);
     println!("\n---reticle with loc---\n{}", prog_with_loc);
     println!("\n---reticle asm---\n{}", asm);
