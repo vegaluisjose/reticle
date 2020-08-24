@@ -49,7 +49,7 @@ impl Interpreter {
         let mut next = State::default();
         // eval one def in prog
         if let Some(def) = prog.defs().iter().next() {
-            // initialize registers with zero
+            // initialize registers
             for instr in def.body().iter() {
                 if instr.is_reg() {
                     let attrs = instr.attrs();
