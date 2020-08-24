@@ -1,3 +1,4 @@
+pub mod analysis;
 pub mod dag;
 pub mod tree;
 
@@ -39,6 +40,30 @@ pub fn map_loc(input_prog: Prog) -> Prog {
     let mut output_prog = Prog::default();
     output_prog.add_def(def);
     output_prog
+}
+
+pub fn map_analysis(input_prog: Prog) -> analysis::Analysis {
+    let mut analysis = analysis::Analysis::default();
+    let body = input_prog.defs()[0].body().clone();
+    for instr in body.iter() {
+        if instr.is_prim() {
+            analysis.inc_prim();
+            if instr.is_hole() {
+                analysis.inc_hole();
+            } else if instr.is_lut() {
+                analysis.inc_lut();
+            } else if instr.is_dsp() {
+                analysis.inc_dsp();
+            } else if instr.is_lum() {
+                analysis.inc_lum();
+            } else if instr.is_ram() {
+                analysis.inc_ram();
+            }
+        } else {
+            analysis.inc_std();
+        }
+    }
+    analysis
 }
 
 pub fn map_clear(input_prog: Prog) -> Prog {

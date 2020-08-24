@@ -273,6 +273,76 @@ impl Instr {
         }
     }
 
+    pub fn is_hole(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc,
+            } => *loc == Loc::Hole,
+            _ => panic!("Error: std ops don't support location"),
+        }
+    }
+
+    pub fn is_lut(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc,
+            } => *loc == Loc::Lut,
+            _ => panic!("Error: std ops don't support location"),
+        }
+    }
+
+    pub fn is_dsp(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc,
+            } => *loc == Loc::Dsp,
+            _ => panic!("Error: std ops don't support location"),
+        }
+    }
+
+    pub fn is_lum(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc,
+            } => *loc == Loc::Lum,
+            _ => panic!("Error: std ops don't support location"),
+        }
+    }
+
+    pub fn is_ram(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc,
+            } => *loc == Loc::Ram,
+            _ => panic!("Error: std ops don't support location"),
+        }
+    }
+
     pub fn clear_loc(&mut self) {
         match self {
             Instr::Prim {
