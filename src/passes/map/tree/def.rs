@@ -1,11 +1,12 @@
 use crate::backend::target::Tile;
-use crate::lang::ast::{PrimOp, Ty};
+use crate::lang::ast::{Loc, PrimOp, Ty};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use std::collections::HashMap;
 
 pub type TreeId = String;
 pub type TreeTy = Ty;
+pub type TreeLoc = Loc;
 pub type TreeIx = NodeIndex;
 pub type TreeGraph = Graph<TreeNode, TreeEdge>;
 pub type TreeCtx = HashMap<TreeId, TreeIx>;
@@ -24,6 +25,7 @@ pub struct TreeNode {
     pub id: TreeId,
     pub ty: TreeTy,
     pub op: TreeOp,
+    pub loc: TreeLoc,
     pub matched: bool,
     pub tile: Option<Tile>,
     pub cost: f32,
