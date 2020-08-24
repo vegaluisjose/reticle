@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 pub type InstrMap = HashMap<String, asm::Instr>;
-pub type LocMap = HashMap<String, asm::Loc>;
+pub type LocMap = HashMap<String, asm::LocTy>;
 
 pub fn tree_node_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();
@@ -176,6 +176,51 @@ pub fn tree_asm_codegen(input: Tree) -> InstrMap {
             if let Some(tile) = node.tile() {
                 let instr = asm_instr_gen(input.clone(), ix, tile.clone());
                 map.insert(instr.id(), instr);
+            }
+        }
+    }
+    map
+}
+
+pub fn subtree_locgen(input: Tree, input_index: TreeIx, tile: Tile) -> LocMap {
+    let loc = tile.loc().clone();
+    let pattern = tile.pattern();
+    let pattern_index = pattern.root_index().unwrap();
+    let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
+    let mut pstack_iter = pstack.iter();
+    let mut visit = Bfs::new(&input.graph, input_index);
+    let mut discard: HashSet<TreeIx> = HashSet::new();
+    let mut map = LocMap::new();
+    while let Some(ix) = visit.next(&input.graph) {
+        if !discard.contains(&ix) {
+            if let Some(pnode) = pstack_iter.next() {
+                if let Some(inode) = input.graph.node_weight(ix) {
+                    if !pnode.is_input() {
+                        map.insert(inode.id(), loc.clone());
+                    }
+                    if pnode.is_input() {
+                        let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+                        // discard childs if parent node in pattern is input
+                        for c in childs {
+                            discard.insert(c);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    map
+}
+
+pub fn tree_locgen(input: Tree) -> LocMap {
+    let mut map: LocMap = LocMap::new();
+    let root_index = input.root_index().unwrap();
+    let graph = input.graph.clone();
+    let mut visit = DfsPostOrder::new(&graph, root_index);
+    while let Some(ix) = visit.next(&graph) {
+        if let Some(node) = graph.node_weight(ix) {
+            if let Some(tile) = node.tile() {
+                map.extend(subtree_locgen(input.clone(), ix, tile.clone()));
             }
         }
     }

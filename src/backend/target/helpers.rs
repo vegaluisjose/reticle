@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::Instr;
+use crate::backend::asm::ast::{Instr, LocTy};
 use crate::backend::target::spec::*;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::map::tree::Tree;
@@ -10,6 +10,10 @@ impl Tile {
 
     pub fn pattern(&self) -> &Tree {
         &self.pattern
+    }
+
+    pub fn loc(&self) -> &LocTy {
+        &self.loc
     }
 }
 
