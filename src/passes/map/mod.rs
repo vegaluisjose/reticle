@@ -6,11 +6,8 @@ use crate::backend::asm::ast as asm;
 use crate::backend::target::Target;
 use crate::lang::ast::Prog;
 use crate::passes::map::dag::Dag;
-use crate::passes::map::tree::algo::{tree_asm_codegen, tree_selection};
+use crate::passes::map::tree::algo::{tree_asm_codegen, tree_selection, InstrMap};
 use crate::passes::map::tree::partition::Partition;
-use std::collections::HashMap;
-
-pub type AsmInstrMap = HashMap<String, asm::Instr>;
 
 pub fn map_asm(prog: Prog) -> asm::Prog {
     let descriptor = Ultrascale::default().to_descriptor();
@@ -23,7 +20,7 @@ pub fn map_asm(prog: Prog) -> asm::Prog {
             tree_selection(descriptor.clone(), tree.clone()),
         );
     }
-    let mut map: AsmInstrMap = AsmInstrMap::new();
+    let mut map: InstrMap = InstrMap::new();
     for (_, tree) in output.iter() {
         map.extend(tree_asm_codegen(tree.clone()));
     }

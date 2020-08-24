@@ -1,10 +1,13 @@
 use crate::backend::asm::ast as asm;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::map::tree::{Tree, TreeGraph, TreeIx, TreeNode};
-use crate::passes::map::AsmInstrMap;
 use petgraph::visit::{Bfs, DfsPostOrder};
 use petgraph::Direction;
+use std::collections::HashMap;
 use std::collections::HashSet;
+
+pub type InstrMap = HashMap<String, asm::Instr>;
+pub type LocMap = HashMap<String, asm::Loc>;
 
 pub fn tree_node_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();
@@ -163,8 +166,8 @@ pub fn asm_instr_gen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr
     instr
 }
 
-pub fn tree_asm_codegen(input: Tree) -> AsmInstrMap {
-    let mut map: AsmInstrMap = AsmInstrMap::new();
+pub fn tree_asm_codegen(input: Tree) -> InstrMap {
+    let mut map: InstrMap = InstrMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
     let mut visit = DfsPostOrder::new(&graph, root_index);
