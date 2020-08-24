@@ -1,3 +1,4 @@
+use crate::frontend::check::Check;
 use crate::frontend::infer::infer_expr_types;
 use crate::lang::ast::*;
 use crate::util::file::read_to_string;
@@ -184,7 +185,9 @@ pub fn parse(input_str: &str) -> Prog {
     let inputs = ReticleParser::parse(Rule::file, input_str).expect("Error: parsing inputs");
     let input = inputs.single().expect("Error: parsing root");
     let prog = ReticleParser::file(input).expect("Error: parsing file");
-    infer_expr_types(&prog)
+    let prog_infer = infer_expr_types(&prog);
+    prog_infer.check();
+    prog_infer
 }
 
 pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
