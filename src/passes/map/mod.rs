@@ -6,9 +6,7 @@ use crate::backend::asm::ast as asm;
 use crate::backend::target::Target;
 use crate::lang::ast::{Def, Prog};
 use crate::passes::map::dag::Dag;
-use crate::passes::map::tree::algo::{
-    tree_asm_codegen, tree_locgen, tree_selection, InstrMap, LocMap,
-};
+use crate::passes::map::tree::algo::{tree_codegen, tree_locgen, tree_selection, InstrMap, LocMap};
 use crate::passes::map::tree::partition::Partition;
 
 pub fn map_loc(input_prog: Prog) -> Prog {
@@ -56,7 +54,7 @@ pub fn map_asm(input_prog: Prog) -> asm::Prog {
     }
     let mut map: InstrMap = InstrMap::new();
     for (_, tree) in output_tree.iter() {
-        map.extend(tree_asm_codegen(tree.clone()));
+        map.extend(tree_codegen(tree.clone()));
     }
     let sig = input_prog.defs()[0].signature().clone();
     let body = input_prog.defs()[0].body().clone();

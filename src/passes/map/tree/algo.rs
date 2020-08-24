@@ -127,7 +127,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
     output
 }
 
-pub fn asm_instr_gen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr {
+pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr {
     let mut instr: asm::Instr = tile.instr().clone();
     let pattern = tile.pattern();
     let pattern_index = pattern.root_index().unwrap();
@@ -166,7 +166,7 @@ pub fn asm_instr_gen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr
     instr
 }
 
-pub fn tree_asm_codegen(input: Tree) -> InstrMap {
+pub fn tree_codegen(input: Tree) -> InstrMap {
     let mut map: InstrMap = InstrMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
@@ -174,7 +174,7 @@ pub fn tree_asm_codegen(input: Tree) -> InstrMap {
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                let instr = asm_instr_gen(input.clone(), ix, tile.clone());
+                let instr = subtree_codegen(input.clone(), ix, tile.clone());
                 map.insert(instr.id(), instr);
             }
         }
