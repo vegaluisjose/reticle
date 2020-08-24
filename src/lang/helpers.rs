@@ -273,6 +273,20 @@ impl Instr {
         }
     }
 
+    pub fn clear_loc(&mut self) {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc,
+            } => *loc = Loc::Hole,
+            _ => panic!("Error: std ops don't support location"),
+        }
+    }
+
     pub fn add_param(&mut self, expr: Expr) {
         match self {
             Instr::Std {

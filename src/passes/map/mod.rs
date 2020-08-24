@@ -41,6 +41,24 @@ pub fn map_loc(input_prog: Prog) -> Prog {
     output_prog
 }
 
+pub fn map_clear(input_prog: Prog) -> Prog {
+    let sig = input_prog.defs()[0].signature().clone();
+    let mut def = Def::new_with_signature(sig);
+    let body = input_prog.defs()[0].body().clone();
+    for instr in body.iter() {
+        if instr.is_prim() {
+            let mut instr_clear = instr.clone();
+            instr_clear.clear_loc();
+            def.add_instr(instr_clear);
+        } else {
+            def.add_instr(instr.clone());
+        }
+    }
+    let mut output_prog = Prog::default();
+    output_prog.add_def(def);
+    output_prog
+}
+
 pub fn map_asm(input_prog: Prog) -> asm::Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dag = Dag::from(input_prog.clone());

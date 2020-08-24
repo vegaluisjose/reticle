@@ -12,13 +12,13 @@ pub enum Ty {
     Vector(Rc<Ty>, u64),
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Expr {
     Int(i64),
     Ref(Id, Ty),
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Loc {
     Hole,
     Lut,
@@ -27,7 +27,7 @@ pub enum Loc {
     Ram,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum StdOp {
     Identity,
     Const,
@@ -35,7 +35,7 @@ pub enum StdOp {
     ShiftRight,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum PrimOp {
     Reg,
     Add,
@@ -57,7 +57,7 @@ pub enum PrimOp {
     Le,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Instr {
     Std {
         id: Id,
@@ -76,26 +76,26 @@ pub enum Instr {
     },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Port {
     Input { id: Id, ty: Ty },
     Output { id: Id, ty: Ty },
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Sig {
     pub id: Id,
     pub inputs: Vec<Port>,
     pub outputs: Vec<Port>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Def {
     pub sig: Sig,
     pub body: Vec<Instr>,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Prog {
     pub defs: Vec<Def>,
 }
