@@ -1,5 +1,5 @@
 use crate::lang::ast::*;
-use crate::util::pretty_print::{PrettyPrint, PRETTY_INDENT};
+use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 use pretty::RcDoc;
 
 impl PrettyPrint for Ty {
@@ -77,89 +77,57 @@ impl PrettyPrint for PrimOp {
 
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
+        let id = if self.id().is_empty() {
+            RcDoc::nil()
+        } else {
+            RcDoc::as_string(&self.id())
+                .append(RcDoc::text(":"))
+                .append(RcDoc::space())
+                .append(self.ty().to_doc())
+                .append(RcDoc::space())
+                .append(RcDoc::text("="))
+                .append(RcDoc::space())
+        };
+        let attrs = if self.attrs().is_empty() {
+            RcDoc::nil()
+        } else {
+            intersperse(
+                self.attrs().iter().map(|x| x.to_doc()),
+                RcDoc::text(",").append(RcDoc::space()),
+            )
+            .brackets()
+        };
+        let params = if self.params().is_empty() {
+            RcDoc::nil()
+        } else {
+            intersperse(
+                self.params().iter().map(|x| x.to_doc()),
+                RcDoc::text(",").append(RcDoc::space()),
+            )
+            .parens()
+        };
         match self {
             Instr::Prim {
-                id,
-                ty,
+                id: _,
+                ty: _,
                 op,
-                attrs,
-                params,
+                attrs: _,
+                params: _,
                 loc,
-            } => {
-                let out_doc = RcDoc::as_string(id)
-                    .append(RcDoc::text(":"))
-                    .append(RcDoc::space())
-                    .append(ty.to_doc())
-                    .append(RcDoc::space())
-                    .append(RcDoc::text("="))
-                    .append(RcDoc::space());
-                let attrs_doc = if attrs.is_empty() {
-                    RcDoc::nil()
-                } else {
-                    RcDoc::text("[")
-                        .append(RcDoc::intersperse(
-                            attrs.iter().map(|a| a.to_doc()),
-                            RcDoc::text(",").append(RcDoc::space()),
-                        ))
-                        .append(RcDoc::text("]"))
-                };
-                let params_doc = if params.is_empty() {
-                    RcDoc::text("(").append(RcDoc::text(")"))
-                } else {
-                    RcDoc::text("(")
-                        .append(RcDoc::intersperse(
-                            params.iter().map(|p| p.to_doc()),
-                            RcDoc::text(",").append(RcDoc::space()),
-                        ))
-                        .append(RcDoc::text(")"))
-                };
-                let loc_doc = RcDoc::text("@").append(loc.to_doc());
-                out_doc
-                    .append(op.to_doc())
-                    .append(attrs_doc)
-                    .append(params_doc)
-                    .append(RcDoc::space())
-                    .append(loc_doc)
-            }
+            } => id
+                .append(op.to_doc())
+                .append(attrs)
+                .append(params)
+                .append(RcDoc::space())
+                .append(RcDoc::text("@"))
+                .append(loc.to_doc()),
             Instr::Std {
-                id,
-                ty,
+                id: _,
+                ty: _,
                 op,
-                attrs,
-                params,
-            } => {
-                let out_doc = RcDoc::as_string(id)
-                    .append(RcDoc::text(":"))
-                    .append(RcDoc::space())
-                    .append(ty.to_doc())
-                    .append(RcDoc::space())
-                    .append(RcDoc::text("="))
-                    .append(RcDoc::space());
-                let attrs_doc = if attrs.is_empty() {
-                    RcDoc::nil()
-                } else {
-                    RcDoc::text("[")
-                        .append(RcDoc::intersperse(
-                            attrs.iter().map(|a| a.to_doc()),
-                            RcDoc::text(",").append(RcDoc::space()),
-                        ))
-                        .append(RcDoc::text("]"))
-                };
-                let params_doc = if params.is_empty() {
-                    RcDoc::text("(").append(RcDoc::text(")"))
-                } else {
-                    RcDoc::text("(")
-                        .append(RcDoc::intersperse(
-                            params.iter().map(|p| p.to_doc()),
-                            RcDoc::text(",").append(RcDoc::space()),
-                        ))
-                        .append(RcDoc::text(")"))
-                };
-                out_doc
-                    .append(op.to_doc())
-                    .append(attrs_doc)
-                    .append(params_doc)
-            }
+                attrs: _,
+                params: _,
+            } => id.append(op.to_doc()).append(attrs).append(params),
         }
     }
 }
@@ -181,39 +149,41 @@ impl PrettyPrint for Port {
 
 impl PrettyPrint for Def {
     fn to_doc(&self) -> RcDoc<()> {
-        let inputs_doc = RcDoc::intersperse(
-            self.sig.inputs().iter().map(|i| i.to_doc()),
-            RcDoc::text(",").append(RcDoc::space()),
-        );
-        let outputs_doc = RcDoc::intersperse(
-            self.sig.outputs().iter().map(|o| o.to_doc()),
-            RcDoc::text(",").append(RcDoc::space()),
-        );
-        let mut body_doc = RcDoc::nil();
-        for instr in self.body().iter() {
-            body_doc = body_doc
-                .append(RcDoc::hardline())
-                .append(instr.to_doc())
-                .append(RcDoc::text(";"));
-        }
-        body_doc = body_doc.nest(PRETTY_INDENT).group();
-        RcDoc::text("def")
+        let inputs = if self.inputs().is_empty() {
+            RcDoc::nil().parens()
+        } else {
+            intersperse(
+                self.inputs().iter().map(|x| x.to_doc()),
+                RcDoc::text(",").append(RcDoc::space()),
+            )
+            .parens()
+        };
+        let outputs = if self.outputs().is_empty() {
+            RcDoc::nil().parens()
+        } else {
+            intersperse(
+                self.outputs().iter().map(|x| x.to_doc()),
+                RcDoc::text(",").append(RcDoc::space()),
+            )
+            .parens()
+        };
+        let body = if self.body().is_empty() {
+            RcDoc::nil()
+        } else {
+            intersperse(
+                self.body().iter().map(|x| x.to_doc()),
+                RcDoc::text(";").append(RcDoc::hardline()),
+            )
+        };
+        let name = RcDoc::text("def")
             .append(RcDoc::space())
-            .append(RcDoc::as_string(self.sig.id()))
-            .append(RcDoc::text("("))
-            .append(inputs_doc)
-            .append(RcDoc::text(")"))
+            .append(RcDoc::as_string(self.id()))
+            .append(inputs)
             .append(RcDoc::space())
             .append(RcDoc::text("->"))
             .append(RcDoc::space())
-            .append(RcDoc::text("("))
-            .append(outputs_doc)
-            .append(RcDoc::text(")"))
-            .append(RcDoc::space())
-            .append(RcDoc::text("{"))
-            .append(body_doc)
-            .append(RcDoc::hardline())
-            .append(RcDoc::text("}"))
+            .append(outputs);
+        block_with_braces(name, body)
     }
 }
 
