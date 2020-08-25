@@ -17,6 +17,10 @@
 use reticle::backend::arch::ultrascale::prim::lut::Lut;
 
 pub fn main() {
-    let lut2 = Lut::new_lut2("i0");
-    println!("this is a lut ---> {}", lut2);
+    let mut lut2 = Lut::new_lut2("i0");
+    lut2.add_input("a0");
+    lut2.add_input("b0");
+    lut2.set_output("y");
+    lut2.set_init(6);
+    println!("{}", lut2);
 }
