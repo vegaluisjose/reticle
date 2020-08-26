@@ -25,9 +25,20 @@ pub fn lut_example() {
     println!("\n{}", lut2);
 }
 
-pub fn reg_example() {
+pub fn reg_fdre_example() {
     use reticle::backend::arch::ultrascale::reg::Reg;
     let mut reg = Reg::new_fdre("r0");
+    reg.set_clock("clock");
+    reg.set_reset("reset");
+    reg.set_en("en");
+    reg.set_input("a");
+    reg.set_output("y");
+    println!("\n{}", reg);
+}
+
+pub fn reg_fdse_example() {
+    use reticle::backend::arch::ultrascale::reg::Reg;
+    let mut reg = Reg::new_fdse("r1");
     reg.set_clock("clock");
     reg.set_reset("reset");
     reg.set_en("en");
@@ -39,5 +50,6 @@ pub fn reg_example() {
 fn main() {
     compiler_example();
     lut_example();
-    reg_example();
+    reg_fdre_example();
+    reg_fdse_example();
 }

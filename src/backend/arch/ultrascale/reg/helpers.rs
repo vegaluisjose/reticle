@@ -25,6 +25,18 @@ impl Reg {
             loc: None,
         }
     }
+    pub fn is_fdre(&self) -> bool {
+        match self.ty {
+            Ty::Fdre => true,
+            _ => false,
+        }
+    }
+    pub fn is_fdse(&self) -> bool {
+        match self.ty {
+            Ty::Fdse => true,
+            _ => false,
+        }
+    }
     pub fn id(&self) -> String {
         self.id.to_string()
     }
