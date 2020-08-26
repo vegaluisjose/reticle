@@ -17,6 +17,6 @@ impl fmt::Display for Ty {
 
 impl fmt::Display for Lut {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Verilog::Parallel::from(self.clone()))
+        write!(f, "{}", Verilog::Stmt::from(self.clone()))
     }
 }

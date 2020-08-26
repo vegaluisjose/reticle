@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::lut::*;
-use vast::v05::ast as Verilog;
+use vast::v05::ast as verilog;
 
 fn lut_width(ty: Ty) -> u32 {
     match ty {
@@ -11,19 +11,19 @@ fn lut_width(ty: Ty) -> u32 {
     }
 }
 
-impl From<Lut> for Verilog::Parallel {
+impl From<Lut> for verilog::Stmt {
     fn from(lut: Lut) -> Self {
-        let mut inst = Verilog::Instance::new(&lut.id(), &lut.ty().to_string());
+        let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
         inst.add_param(
             "INIT",
-            Verilog::Expr::new_ulit_dec(width, &lut.init().to_string()),
+            verilog::Expr::new_ulit_dec(width, &lut.init().to_string()),
         );
         for (i, input) in lut.inputs().iter().enumerate() {
             let port = format!("I{}", i);
-            inst.connect(&port, Verilog::Expr::new_ref(input));
+            inst.connect(&port, verilog::Expr::new_ref(input));
         }
-        inst.connect("O", Verilog::Expr::new_ref(&lut.output()));
-        Verilog::Parallel::from(inst)
+        inst.connect("O", verilog::Expr::new_ref(&lut.output()));
+        verilog::Stmt::from(inst)
     }
 }

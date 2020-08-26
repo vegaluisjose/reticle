@@ -1,4 +1,5 @@
 pub mod default;
+pub mod isa;
 pub mod lut;
 pub mod reg;
 pub mod target;
