@@ -171,7 +171,9 @@ impl PrettyPrint for Def {
             RcDoc::nil()
         } else {
             intersperse(
-                self.body().iter().map(|x| x.to_doc().append(RcDoc::text(";"))),
+                self.body()
+                    .iter()
+                    .map(|x| x.to_doc().append(RcDoc::text(";"))),
                 RcDoc::hardline(),
             )
         };
