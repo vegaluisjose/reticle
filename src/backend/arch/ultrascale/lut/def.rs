@@ -28,8 +28,8 @@ pub struct Loc {
 #[derive(Clone, Debug)]
 pub struct Lut {
     pub id: String,
-    pub init: u8,
     pub ty: Ty,
+    pub init: u8,
     pub inputs: Vec<String>,
     pub output: String,
     pub loc: Option<Loc>,
