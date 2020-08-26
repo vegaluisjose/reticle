@@ -1,6 +1,10 @@
 use crate::backend::asm::ast as asm;
 use vast::v05::ast as Verilog;
 
+pub trait ToVerilog {
+    fn to_verilog(&self) -> Verilog::Module;
+}
+
 fn to_verilog_port(port: asm::Port) -> Vec<Verilog::Port> {
     let mut ports: Vec<Verilog::Port> = Vec::new();
     match port {
@@ -46,5 +50,11 @@ impl From<asm::Prog> for Verilog::Module {
             module.add_port(port.clone());
         }
         module
+    }
+}
+
+impl ToVerilog for asm::Prog {
+    fn to_verilog(&self) -> Verilog::Module {
+        Verilog::Module::from(self.clone())
     }
 }

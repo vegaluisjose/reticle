@@ -1,13 +1,13 @@
+use reticle::backend::asm::verilog::ToVerilog;
 use reticle::frontend::parser::parse_from_file;
 use reticle::passes::map::{map_analysis, map_asm, map_clear, map_loc};
-use vast::v05::ast as Verilog;
 
 fn main() {
     let prog = parse_from_file("examples/basic/fsm.ret");
     let prog_with_loc = map_loc(prog.clone());
     let analysis = map_analysis(prog_with_loc.clone());
     let asm = map_asm(prog.clone());
-    let verilog = Verilog::Module::from(asm.clone());
+    let verilog = asm.to_verilog();
     assert_eq!(prog, map_clear(prog_with_loc.clone()));
     assert_eq!(analysis.num_holes(), 0);
     println!("\n---reticle---\n{}", prog);
