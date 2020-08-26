@@ -1,5 +1,6 @@
 pub mod default;
 pub mod lut;
+pub mod reg;
 pub mod target;
 
 pub struct Ultrascale {
