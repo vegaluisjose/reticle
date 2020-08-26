@@ -22,10 +22,22 @@ pub fn lut_example() {
     lut2.add_input("b0");
     lut2.set_output("y");
     lut2.set_init(6);
-    println!("{}", lut2);
+    println!("\n{}", lut2);
+}
+
+pub fn reg_example() {
+    use reticle::backend::arch::ultrascale::reg::Reg;
+    let mut reg = Reg::new_fdre("r0");
+    reg.set_clock("clock");
+    reg.set_reset("reset");
+    reg.set_en("en");
+    reg.set_input("a");
+    reg.set_output("y");
+    println!("\n{}", reg);
 }
 
 fn main() {
     compiler_example();
     lut_example();
+    reg_example();
 }

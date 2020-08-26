@@ -1,9 +1,9 @@
 use crate::backend::arch::ultrascale::reg::*;
 
 impl Reg {
-    pub fn new_fdre() -> Reg {
+    pub fn new_fdre(id: &str) -> Reg {
         Reg {
-            id: String::new(),
+            id: id.to_string(),
             ty: Ty::Fdre,
             clock: String::new(),
             reset: String::new(),
@@ -13,9 +13,9 @@ impl Reg {
             loc: None,
         }
     }
-    pub fn new_fdse() -> Reg {
+    pub fn new_fdse(id: &str) -> Reg {
         Reg {
-            id: String::new(),
+            id: id.to_string(),
             ty: Ty::Fdse,
             clock: String::new(),
             reset: String::new(),
@@ -25,8 +25,26 @@ impl Reg {
             loc: None,
         }
     }
-    pub fn set_id(&mut self, id: &str) {
-        self.id = id.to_string();
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+    pub fn ty(&self) -> &Ty {
+        &self.ty
+    }
+    pub fn clock(&self) -> String {
+        self.clock.to_string()
+    }
+    pub fn reset(&self) -> String {
+        self.reset.to_string()
+    }
+    pub fn en(&self) -> String {
+        self.en.to_string()
+    }
+    pub fn input(&self) -> String {
+        self.input.to_string()
+    }
+    pub fn output(&self) -> String {
+        self.output.to_string()
     }
     pub fn set_clock(&mut self, clock: &str) {
         self.clock = clock.to_string();
