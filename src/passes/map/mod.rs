@@ -14,16 +14,10 @@ pub fn map_loc(input_prog: Prog) -> Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dag = Dag::from(input_prog.clone());
     let input_tree = Partition::from(dag);
-    let mut output_tree = Partition::new();
-    for (id, tree) in input_tree.iter() {
-        output_tree.insert(
-            id.to_string(),
-            tree_selection(descriptor.clone(), tree.clone()),
-        );
-    }
     let mut map: LocMap = LocMap::new();
-    for (_, tree) in output_tree.iter() {
-        map.extend(tree_locgen(tree.clone()));
+    for (_, tree) in input_tree.iter() {
+        let output = tree_selection(descriptor.clone(), tree.clone());
+        map.extend(tree_locgen(output.clone()));
     }
     let sig = input_prog.defs()[0].signature().clone();
     let mut def = Def::new_with_signature(sig);
@@ -88,16 +82,10 @@ pub fn map_asm(input_prog: Prog) -> asm::Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dag = Dag::from(input_prog.clone());
     let input_tree = Partition::from(dag);
-    let mut output_tree = Partition::new();
-    for (id, tree) in input_tree.iter() {
-        output_tree.insert(
-            id.to_string(),
-            tree_selection(descriptor.clone(), tree.clone()),
-        );
-    }
     let mut map: InstrMap = InstrMap::new();
-    for (_, tree) in output_tree.iter() {
-        map.extend(tree_codegen(tree.clone()));
+    for (_, tree) in input_tree.iter() {
+        let output = tree_selection(descriptor.clone(), tree.clone());
+        map.extend(tree_codegen(output.clone()));
     }
     let sig = input_prog.defs()[0].signature().clone();
     let body = input_prog.defs()[0].body().clone();
