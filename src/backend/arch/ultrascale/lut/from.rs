@@ -11,7 +11,7 @@ fn lut_width(ty: Ty) -> u32 {
     }
 }
 
-impl From<Lut> for Verilog::Instance {
+impl From<Lut> for Verilog::Parallel {
     fn from(lut: Lut) -> Self {
         let mut inst = Verilog::Instance::new(&lut.id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
@@ -24,6 +24,6 @@ impl From<Lut> for Verilog::Instance {
             inst.connect(&port, Verilog::Expr::new_ref(input));
         }
         inst.connect("O", Verilog::Expr::new_ref(&lut.output()));
-        inst
+        Verilog::Parallel::from(inst)
     }
 }
