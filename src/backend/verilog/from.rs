@@ -1,10 +1,10 @@
-use crate::backend::asm::ast::*;
+use crate::backend::asm::ast as asm;
 use vast::v05::ast as Verilog;
 
-fn to_verilog_port(port: Port) -> Vec<Verilog::Port> {
+fn to_verilog_port(port: asm::Port) -> Vec<Verilog::Port> {
     let mut ports: Vec<Verilog::Port> = Vec::new();
     match port {
-        Port::Input { id, ty } => {
+        asm::Port::Input { id, ty } => {
             if ty.is_vector() {
                 for i in 0..ty.length() {
                     let name = format!("{}_{}", id, i);
@@ -16,7 +16,7 @@ fn to_verilog_port(port: Port) -> Vec<Verilog::Port> {
                 ports.push(port);
             }
         }
-        Port::Output { id, ty } => {
+        asm::Port::Output { id, ty } => {
             if ty.is_vector() {
                 for i in 0..ty.length() {
                     let name = format!("{}_{}", id, i);
@@ -32,8 +32,8 @@ fn to_verilog_port(port: Port) -> Vec<Verilog::Port> {
     ports
 }
 
-impl From<Prog> for Verilog::Module {
-    fn from(prog: Prog) -> Self {
+impl From<asm::Prog> for Verilog::Module {
+    fn from(prog: asm::Prog) -> Self {
         let mut ports: Vec<Verilog::Port> = Vec::new();
         for input in prog.inputs().iter() {
             ports.extend(to_verilog_port(input.clone()));
