@@ -85,6 +85,27 @@
          "expr":["mux", "bool", "i8", "i8"]
       },
       {
+         "name":"lut_and_bool_bool_bool",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["and", "bool", "bool"]
+      },
+      {
+         "name":"lut_or_bool_bool_bool",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["or", "bool", "bool"]
+      },
+      {
+         "name":"lut_xor_bool_bool_bool",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["or", "bool", "bool"]
+      },
+      {
          "name":"lut_reg_add_i8_i8_i8_bool",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
@@ -141,18 +162,25 @@
          "expr":["reg", ["mux", "bool", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_and_bool_bool_bool",
+         "name":"lut_reg_and_bool_bool_bool",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
-         "expr":["and", "bool", "bool"]
+         "expr":["reg", ["and", "bool", "bool"], "bool"]
       },
       {
-         "name":"lut_or_bool_bool_bool",
+         "name":"lut_reg_or_bool_bool_bool",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
-         "expr":["or", "bool", "bool"]
+         "expr":["reg", ["or", "bool", "bool"], "bool"]
+      },
+      {
+         "name":"lut_reg_xor_bool_bool_bool",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["reg", ["or", "bool", "bool"], "bool"]
       }
     ]
  }
