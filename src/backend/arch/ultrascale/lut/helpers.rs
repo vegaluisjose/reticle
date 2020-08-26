@@ -1,42 +1,4 @@
-use std::fmt;
-use vast::v05::ast::Instance;
-
-#[derive(Clone, Debug)]
-pub enum Ty {
-    Lut2,
-    Lut3,
-    Lut4,
-    Lut5,
-    Lut6,
-}
-
-#[derive(Clone, Debug)]
-pub struct Slice {
-    pub x: u32,
-    pub y: u32,
-}
-
-#[derive(Clone, Debug)]
-pub struct Bel {
-    pub letter: String,
-    pub number: u32,
-}
-
-#[derive(Clone, Debug)]
-pub struct Loc {
-    pub slice: Slice,
-    pub bel: Bel,
-}
-
-#[derive(Clone, Debug)]
-pub struct Lut {
-    pub id: String,
-    pub init: u8,
-    pub ty: Ty,
-    pub inputs: Vec<String>,
-    pub output: String,
-    pub loc: Option<Loc>,
-}
+use crate::backend::arch::ultrascale::lut::*;
 
 impl Lut {
     pub fn new_lut2(id: &str) -> Lut {
@@ -128,24 +90,5 @@ impl Lut {
 
     pub fn set_loc(&mut self, loc: Loc) {
         self.loc = Some(loc);
-    }
-}
-
-impl fmt::Display for Ty {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let name = match self {
-            Ty::Lut2 => "LUT2",
-            Ty::Lut3 => "LUT3",
-            Ty::Lut4 => "LUT4",
-            Ty::Lut5 => "LUT5",
-            Ty::Lut6 => "LUT6",
-        };
-        write!(f, "{}", name)
-    }
-}
-
-impl fmt::Display for Lut {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Instance::from(self.clone()))
     }
 }
