@@ -33,23 +33,17 @@ fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
     ports
 }
 
-// fn to_verilog_body(instr: asm::Instr) -> Vec<verilog::Stmt> {
-//     use crate::backend::arch::ultrascale::isa;
-//     if instr.is_prim() {
-//         match instr.prim_op().as_ref() {
-//             "lut_and_bool_bool_bool" => isa::lut_and_bool_bool_bool(instr),
-//             _ => vec![],
-//         }
-//     } else {
-//         vec![]
-//     }
-// }
-
-// impl ToVerilog for asm::Prog {
-//     fn to_verilog(&self) -> verilog::Module {
-//         verilog::Module::from(self.clone())
-//     }
-// }
+fn to_verilog_stmt(instr: asm::Instr) -> Vec<verilog::Stmt> {
+    use crate::backend::arch::ultrascale::isa;
+    if instr.is_prim() {
+        match instr.prim_op().as_ref() {
+            "lut_and_bool_bool_bool" => isa::lut_and_bool_bool_bool(instr),
+            _ => vec![],
+        }
+    } else {
+        vec![]
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct Assembler {
@@ -77,6 +71,13 @@ impl ToVerilog for Assembler {
         let mut module = verilog::Module::new(&self.prog().id());
         for port in ports.iter() {
             module.add_port(port.clone());
+        }
+        let mut body: Vec<verilog::Stmt> = Vec::new();
+        for instr in self.prog().body().iter() {
+            body.extend(to_verilog_stmt(instr.clone()));
+        }
+        for stmt in body.iter() {
+            module.add_stmt(stmt.clone());
         }
         module
     }
