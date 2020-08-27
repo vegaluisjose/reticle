@@ -1,8 +1,8 @@
 use crate::backend::arch::ultrascale::lut::*;
 
-impl Lut {
-    pub fn new_lut2() -> Lut {
-        Lut {
+impl LutPrim {
+    pub fn new_lut2() -> LutPrim {
+        LutPrim {
             id: String::new(),
             init: 0,
             ty: Ty::Lut2,
@@ -12,8 +12,8 @@ impl Lut {
         }
     }
 
-    pub fn new_lut3() -> Lut {
-        Lut {
+    pub fn new_lut3() -> LutPrim {
+        LutPrim {
             id: String::new(),
             init: 0,
             ty: Ty::Lut3,
@@ -23,8 +23,8 @@ impl Lut {
         }
     }
 
-    pub fn new_lut4() -> Lut {
-        Lut {
+    pub fn new_lut4() -> LutPrim {
+        LutPrim {
             id: String::new(),
             init: 0,
             ty: Ty::Lut4,
@@ -34,8 +34,8 @@ impl Lut {
         }
     }
 
-    pub fn new_lut5() -> Lut {
-        Lut {
+    pub fn new_lut5() -> LutPrim {
+        LutPrim {
             id: String::new(),
             init: 0,
             ty: Ty::Lut5,
@@ -45,8 +45,8 @@ impl Lut {
         }
     }
 
-    pub fn new_lut6() -> Lut {
-        Lut {
+    pub fn new_lut6() -> LutPrim {
+        LutPrim {
             id: String::new(),
             init: 0,
             ty: Ty::Lut6,

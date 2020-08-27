@@ -1,8 +1,8 @@
 use crate::backend::arch::ultrascale::reg::*;
 use crate::backend::verilog;
 
-impl From<Reg> for verilog::Parallel {
-    fn from(reg: Reg) -> Self {
+impl From<RegPrim> for verilog::Parallel {
+    fn from(reg: RegPrim) -> Self {
         let mut inst = verilog::Instance::new(&reg.id(), &reg.ty().to_string());
         inst.connect("C", verilog::Expr::new_ref(&reg.clock()));
         inst.connect("CE", verilog::Expr::new_ref(&reg.en()));

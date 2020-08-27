@@ -11,8 +11,8 @@ fn lut_width(ty: Ty) -> u32 {
     }
 }
 
-impl From<Lut> for verilog::Stmt {
-    fn from(lut: Lut) -> Self {
+impl From<LutPrim> for verilog::Stmt {
+    fn from(lut: LutPrim) -> Self {
         let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
         inst.add_param(

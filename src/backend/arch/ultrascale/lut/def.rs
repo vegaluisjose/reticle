@@ -26,7 +26,7 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
-pub struct Lut {
+pub struct LutPrim {
     pub id: String,
     pub ty: Ty,
     pub init: u8,

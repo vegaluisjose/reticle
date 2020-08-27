@@ -15,7 +15,7 @@ impl fmt::Display for Ty {
     }
 }
 
-impl fmt::Display for Lut {
+impl fmt::Display for LutPrim {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", verilog::Stmt::from(self.clone()))
     }
