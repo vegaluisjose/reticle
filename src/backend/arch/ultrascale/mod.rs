@@ -1,17 +1,9 @@
 pub mod assembler;
-pub mod default;
+mod def;
 pub mod isa;
 pub mod lut;
 pub mod prim;
 pub mod reg;
 pub mod target;
 
-pub struct Ultrascale {
-    pub spec: String,
-}
-
-impl Ultrascale {
-    fn spec(&self) -> String {
-        self.spec.to_string()
-    }
-}
+pub use def::*;
