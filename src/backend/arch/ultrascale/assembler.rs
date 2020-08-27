@@ -45,30 +45,6 @@ fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
 //     }
 // }
 
-// impl From<asm::Prog> for verilog::Module {
-//     fn from(prog: asm::Prog) -> Self {
-//         let mut ports: Vec<verilog::Port> = Vec::new();
-//         for input in prog.inputs().iter() {
-//             ports.extend(to_verilog_port(input.clone()));
-//         }
-//         for output in prog.outputs().iter() {
-//             ports.extend(to_verilog_port(output.clone()));
-//         }
-//         let mut body: Vec<verilog::Stmt> = Vec::new();
-//         for instr in prog.body().iter() {
-//             body.extend(to_verilog_body(instr.clone()));
-//         }
-//         let mut module = verilog::Module::new(&prog.id());
-//         for port in ports.iter() {
-//             module.add_port(port.clone());
-//         }
-//         for stmt in body.iter() {
-//             module.add_stmt(stmt.clone());
-//         }
-//         module
-//     }
-// }
-
 // impl ToVerilog for asm::Prog {
 //     fn to_verilog(&self) -> verilog::Module {
 //         verilog::Module::from(self.clone())
