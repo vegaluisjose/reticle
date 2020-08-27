@@ -4,7 +4,7 @@ impl LutPrim {
     pub fn new_lut2() -> LutPrim {
         LutPrim {
             id: String::new(),
-            init: 0,
+            init: "0".to_string(),
             ty: Ty::Lut2,
             inputs: Vec::new(),
             output: String::new(),
@@ -15,7 +15,7 @@ impl LutPrim {
     pub fn new_lut3() -> LutPrim {
         LutPrim {
             id: String::new(),
-            init: 0,
+            init: "0".to_string(),
             ty: Ty::Lut3,
             inputs: Vec::new(),
             output: String::new(),
@@ -26,7 +26,7 @@ impl LutPrim {
     pub fn new_lut4() -> LutPrim {
         LutPrim {
             id: String::new(),
-            init: 0,
+            init: "0".to_string(),
             ty: Ty::Lut4,
             inputs: Vec::new(),
             output: String::new(),
@@ -37,7 +37,7 @@ impl LutPrim {
     pub fn new_lut5() -> LutPrim {
         LutPrim {
             id: String::new(),
-            init: 0,
+            init: "0".to_string(),
             ty: Ty::Lut5,
             inputs: Vec::new(),
             output: String::new(),
@@ -48,7 +48,7 @@ impl LutPrim {
     pub fn new_lut6() -> LutPrim {
         LutPrim {
             id: String::new(),
-            init: 0,
+            init: "0".to_string(),
             ty: Ty::Lut6,
             inputs: Vec::new(),
             output: String::new(),
@@ -64,8 +64,8 @@ impl LutPrim {
         &self.ty
     }
 
-    pub fn init(&self) -> u8 {
-        self.init
+    pub fn init(&self) -> String {
+        self.init.to_string()
     }
 
     pub fn inputs(&self) -> &Vec<String> {
@@ -80,8 +80,8 @@ impl LutPrim {
         self.id = id.to_string();
     }
 
-    pub fn set_init(&mut self, value: u8) {
-        self.init = value;
+    pub fn set_init(&mut self, value: &str) {
+        self.init = value.to_string();
     }
 
     pub fn add_input(&mut self, name: &str) {

@@ -17,7 +17,7 @@ impl From<LutPrim> for verilog::Stmt {
         let width = lut_width(lut.ty().clone());
         inst.add_param(
             "INIT",
-            verilog::Expr::new_ulit_dec(width, &lut.init().to_string()),
+            verilog::Expr::new_ulit_dec(width, &lut.init()),
         );
         for (i, input) in lut.inputs().iter().enumerate() {
             let port = format!("I{}", i);

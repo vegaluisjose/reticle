@@ -20,7 +20,7 @@ impl ToBlock for LutAndBBB {
         lut.add_input(&self.instr.params()[0].id());
         lut.add_input(&self.instr.params()[1].id());
         lut.set_output(&self.instr.id());
-        lut.set_init(8);
+        lut.set_init("8");
         block.push(Prim::from(lut));
         block
     }

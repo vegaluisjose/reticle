@@ -29,7 +29,7 @@ pub struct Loc {
 pub struct LutPrim {
     pub id: String,
     pub ty: Ty,
-    pub init: u8,
+    pub init: String,
     pub inputs: Vec<String>,
     pub output: String,
     pub loc: Option<Loc>,
