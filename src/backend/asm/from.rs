@@ -1,4 +1,5 @@
 use crate::backend::asm::ast as asm;
+use crate::backend::verilog::{self, ToVerilog};
 use crate::lang::ast as lang;
 
 // only for std instructions
@@ -18,5 +19,13 @@ impl From<lang::Instr> for asm::Instr {
         } else {
             panic!("only std instr conversion supported")
         }
+    }
+}
+
+impl From<asm::Prog> for verilog::Module {
+    fn from(prog: asm::Prog) -> Self {
+        use crate::backend::arch::ultrascale::assembler::Assembler;
+        let assembler = Assembler::new(prog);
+        assembler.to_verilog()
     }
 }

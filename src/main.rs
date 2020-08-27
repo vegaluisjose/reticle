@@ -1,5 +1,5 @@
 pub fn demo() {
-    use reticle::backend::asm::verilog::Module;
+    use reticle::backend::verilog::Module;
     use reticle::frontend::parser::parse_from_file;
     use reticle::passes::map::{map_analysis, map_asm, map_clear, map_loc};
     let prog = parse_from_file("examples/basic/fsm.ret");

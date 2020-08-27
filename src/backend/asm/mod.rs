@@ -3,4 +3,3 @@ pub mod display;
 pub mod from;
 pub mod helpers;
 pub mod pretty_print;
-pub mod verilog;

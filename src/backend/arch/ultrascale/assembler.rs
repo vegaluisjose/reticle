@@ -1,6 +1,5 @@
 use crate::backend::asm::ast as asm;
-use crate::backend::asm::verilog::ToVerilog;
-use vast::v05::ast as verilog;
+use crate::backend::verilog::{self, ToVerilog};
 
 fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
     let mut ports: Vec<verilog::Port> = Vec::new();
