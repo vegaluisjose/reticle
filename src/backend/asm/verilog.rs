@@ -40,7 +40,7 @@ fn to_verilog_body(instr: asm::Instr) -> Vec<verilog::Stmt> {
     use crate::backend::arch::ultrascale::isa;
     if instr.is_prim() {
         match instr.prim_op().as_ref() {
-            "lut_and_bool_bool_bool" => isa::lut_and_bool_bool_bool(instr.clone()),
+            "lut_and_bool_bool_bool" => isa::lut_and_bool_bool_bool(instr),
             _ => vec![],
         }
     } else {
