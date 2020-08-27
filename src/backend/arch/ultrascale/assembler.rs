@@ -37,7 +37,7 @@ fn to_prim(instr: asm::Instr) -> Block {
     use crate::backend::arch::ultrascale::isa;
     if instr.is_prim() {
         match instr.prim_op().as_ref() {
-            "lut_and_bool_bool_bool" => isa::LutAndBBB::new(instr).to_block(),
+            "lut_and_b_b_b" => isa::LutAndBBB::new(instr).to_block(),
             _ => vec![],
         }
     } else {
