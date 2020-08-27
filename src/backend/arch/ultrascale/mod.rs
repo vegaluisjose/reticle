@@ -1,3 +1,4 @@
+pub mod assembler;
 pub mod default;
 pub mod isa;
 pub mod lut;
