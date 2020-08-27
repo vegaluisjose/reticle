@@ -1,18 +1,18 @@
 use crate::backend::arch::ultrascale::reg::*;
-use vast::v05::ast as Verilog;
+use crate::backend::verilog;
 
-impl From<Reg> for Verilog::Parallel {
+impl From<Reg> for verilog::Parallel {
     fn from(reg: Reg) -> Self {
-        let mut inst = Verilog::Instance::new(&reg.id(), &reg.ty().to_string());
-        inst.connect("C", Verilog::Expr::new_ref(&reg.clock()));
-        inst.connect("CE", Verilog::Expr::new_ref(&reg.en()));
-        inst.connect("D", Verilog::Expr::new_ref(&reg.input()));
-        inst.connect("Q", Verilog::Expr::new_ref(&reg.output()));
+        let mut inst = verilog::Instance::new(&reg.id(), &reg.ty().to_string());
+        inst.connect("C", verilog::Expr::new_ref(&reg.clock()));
+        inst.connect("CE", verilog::Expr::new_ref(&reg.en()));
+        inst.connect("D", verilog::Expr::new_ref(&reg.input()));
+        inst.connect("Q", verilog::Expr::new_ref(&reg.output()));
         if reg.is_fdre() {
-            inst.connect("R", Verilog::Expr::new_ref(&reg.reset()));
+            inst.connect("R", verilog::Expr::new_ref(&reg.reset()));
         } else {
-            inst.connect("S", Verilog::Expr::new_ref(&reg.reset()));
+            inst.connect("S", verilog::Expr::new_ref(&reg.reset()));
         }
-        Verilog::Parallel::from(inst)
+        verilog::Parallel::from(inst)
     }
 }

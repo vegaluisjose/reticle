@@ -1,6 +1,6 @@
 use crate::backend::arch::ultrascale::lut::Lut;
 use crate::backend::asm::ast as asm;
-use vast::v05::ast as verilog;
+use crate::backend::verilog;
 
 pub fn lut_and_bool_bool_bool(instr: asm::Instr) -> Vec<verilog::Stmt> {
     let mut body: Vec<verilog::Stmt> = Vec::new();

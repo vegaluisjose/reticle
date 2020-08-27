@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::lut::*;
-use vast::v05::ast as verilog;
+use crate::backend::verilog;
 
 fn lut_width(ty: Ty) -> u32 {
     match ty {

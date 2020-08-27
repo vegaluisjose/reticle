@@ -1,6 +1,6 @@
 use crate::backend::arch::ultrascale::reg::*;
+use crate::backend::verilog;
 use std::fmt;
-use vast::v05::ast as Verilog;
 
 impl fmt::Display for Ty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -14,6 +14,6 @@ impl fmt::Display for Ty {
 
 impl fmt::Display for Reg {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", Verilog::Parallel::from(self.clone()))
+        write!(f, "{}", verilog::Parallel::from(self.clone()))
     }
 }
