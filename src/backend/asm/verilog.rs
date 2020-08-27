@@ -38,19 +38,13 @@ fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
 
 fn to_verilog_body(instr: asm::Instr) -> Vec<verilog::Stmt> {
     use crate::backend::arch::ultrascale::isa;
-    match &instr {
-        asm::Instr::Prim {
-            id: _,
-            ty: _,
-            op,
-            attrs: _,
-            params: _,
-            loc: _,
-        } => match op.as_ref() {
+    if instr.is_prim() {
+        match instr.prim_op().as_ref() {
             "lut_and_bool_bool_bool" => isa::lut_and_bool_bool_bool(instr.clone()),
             _ => vec![],
-        },
-        _ => vec![],
+        }
+    } else {
+        vec![]
     }
 }
 

@@ -64,6 +64,44 @@ impl Instr {
             } => ty,
         }
     }
+    pub fn is_prim(&self) -> bool {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op: _,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => true,
+            _ => false,
+        }
+    }
+    pub fn prim_op(&self) -> String {
+        match self {
+            Instr::Prim {
+                id: _,
+                ty: _,
+                op,
+                attrs: _,
+                params: _,
+                loc: _,
+            } => op.to_string(),
+            _ => panic!("Error: std ops don't support prim op"),
+        }
+    }
+    pub fn std_op(&self) -> &StdOp {
+        match self {
+            Instr::Std {
+                id: _,
+                ty: _,
+                op,
+                attrs: _,
+                params: _,
+            } => op,
+            _ => panic!("Error: prim ops don't support std op"),
+        }
+    }
     pub fn attrs(&self) -> &Vec<Expr> {
         match self {
             Instr::Std {
