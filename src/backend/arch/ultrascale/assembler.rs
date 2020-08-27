@@ -1,3 +1,4 @@
+use crate::backend::arch::ultrascale::prim::Prim;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog::{self, ToVerilog};
 
@@ -32,7 +33,7 @@ fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
     ports
 }
 
-fn to_verilog_stmt(instr: asm::Instr) -> Vec<verilog::Stmt> {
+fn to_prim(instr: asm::Instr) -> Vec<Prim> {
     use crate::backend::arch::ultrascale::isa;
     if instr.is_prim() {
         match instr.prim_op().as_ref() {
@@ -71,13 +72,16 @@ impl ToVerilog for Assembler {
         for port in ports.iter() {
             module.add_port(port.clone());
         }
-        let mut body: Vec<verilog::Stmt> = Vec::new();
+        let mut prims: Vec<Prim> = Vec::new();
         for instr in self.prog().body().iter() {
-            body.extend(to_verilog_stmt(instr.clone()));
+            prims.extend(to_prim(instr.clone()));
         }
-        for stmt in body.iter() {
-            module.add_stmt(stmt.clone());
+        for prim in prims.iter() {
+            println!("{}", prim);
         }
+        // for stmt in body.iter() {
+        //     module.add_stmt(stmt.clone());
+        // }
         module
     }
 }

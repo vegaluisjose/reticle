@@ -2,6 +2,7 @@ pub mod assembler;
 pub mod default;
 pub mod isa;
 pub mod lut;
+pub mod prim;
 pub mod reg;
 pub mod target;
 
