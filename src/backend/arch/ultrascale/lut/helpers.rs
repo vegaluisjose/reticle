@@ -1,9 +1,9 @@
 use crate::backend::arch::ultrascale::lut::*;
 
 impl Lut {
-    pub fn new_lut2(id: &str) -> Lut {
+    pub fn new_lut2() -> Lut {
         Lut {
-            id: id.to_string(),
+            id: String::new(),
             init: 0,
             ty: Ty::Lut2,
             inputs: Vec::new(),
@@ -12,9 +12,9 @@ impl Lut {
         }
     }
 
-    pub fn new_lut3(id: &str) -> Lut {
+    pub fn new_lut3() -> Lut {
         Lut {
-            id: id.to_string(),
+            id: String::new(),
             init: 0,
             ty: Ty::Lut3,
             inputs: Vec::new(),
@@ -23,9 +23,9 @@ impl Lut {
         }
     }
 
-    pub fn new_lut4(id: &str) -> Lut {
+    pub fn new_lut4() -> Lut {
         Lut {
-            id: id.to_string(),
+            id: String::new(),
             init: 0,
             ty: Ty::Lut4,
             inputs: Vec::new(),
@@ -34,9 +34,9 @@ impl Lut {
         }
     }
 
-    pub fn new_lut5(id: &str) -> Lut {
+    pub fn new_lut5() -> Lut {
         Lut {
-            id: id.to_string(),
+            id: String::new(),
             init: 0,
             ty: Ty::Lut5,
             inputs: Vec::new(),
@@ -45,9 +45,9 @@ impl Lut {
         }
     }
 
-    pub fn new_lut6(id: &str) -> Lut {
+    pub fn new_lut6() -> Lut {
         Lut {
-            id: id.to_string(),
+            id: String::new(),
             init: 0,
             ty: Ty::Lut6,
             inputs: Vec::new(),
@@ -74,6 +74,10 @@ impl Lut {
 
     pub fn output(&self) -> String {
         self.output.to_string()
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
     }
 
     pub fn set_init(&mut self, value: u8) {
