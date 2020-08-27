@@ -6,3 +6,9 @@ pub enum Prim {
     Reg(RegPrim),
     Lut(LutPrim),
 }
+
+pub type Block = Vec<Prim>;
+
+pub trait ToBlock {
+    fn to_block(&self) -> Block;
+}
