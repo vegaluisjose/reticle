@@ -1,7 +1,7 @@
 use crate::backend::arch::ultrascale::reg::*;
 use crate::backend::verilog;
 
-impl From<RegPrim> for verilog::Parallel {
+impl From<RegPrim> for verilog::Stmt {
     fn from(reg: RegPrim) -> Self {
         let mut inst = verilog::Instance::new(&reg.id(), &reg.ty().to_string());
         inst.connect("C", verilog::Expr::new_ref(&reg.clock()));
@@ -13,6 +13,6 @@ impl From<RegPrim> for verilog::Parallel {
         } else {
             inst.connect("S", verilog::Expr::new_ref(&reg.reset()));
         }
-        verilog::Parallel::from(inst)
+        verilog::Stmt::from(inst)
     }
 }

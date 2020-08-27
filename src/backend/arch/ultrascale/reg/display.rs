@@ -14,6 +14,6 @@ impl fmt::Display for Ty {
 
 impl fmt::Display for RegPrim {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", verilog::Parallel::from(self.clone()))
+        write!(f, "{}", verilog::Stmt::from(self.clone()))
     }
 }

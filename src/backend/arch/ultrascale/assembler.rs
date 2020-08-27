@@ -45,14 +45,24 @@ fn to_prim(instr: asm::Instr) -> Block {
     }
 }
 
+fn instance_fmt(value: usize) -> String {
+    format!("_i_{}", value)
+}
+
 #[derive(Clone, Debug)]
 pub struct Assembler {
     pub prog: asm::Prog,
+    pub clock: String,
+    pub reset: String,
 }
 
 impl Assembler {
     pub fn new(prog: asm::Prog) -> Assembler {
-        Assembler { prog }
+        Assembler {
+            prog,
+            clock: "clock".to_string(),
+            reset: "reset".to_string(),
+        }
     }
     pub fn prog(&self) -> &asm::Prog {
         &self.prog
@@ -76,12 +86,16 @@ impl ToVerilog for Assembler {
         for instr in self.prog().body().iter() {
             prims.extend(to_prim(instr.clone()));
         }
-        for prim in prims.iter() {
-            println!("{}", prim);
+        for (i, prim) in prims.iter_mut().enumerate() {
+            prim.set_id(&instance_fmt(i));
+            if prim.is_reg() {
+                prim.set_clock(&self.clock);
+                prim.set_reset(&self.reset);
+            }
         }
-        // for stmt in body.iter() {
-        //     module.add_stmt(stmt.clone());
-        // }
+        for stmt in prims.iter() {
+            module.add_stmt(verilog::Stmt::from(stmt.clone()));
+        }
         module
     }
 }
