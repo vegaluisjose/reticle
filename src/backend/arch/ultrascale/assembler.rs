@@ -72,6 +72,8 @@ impl Assembler {
 impl ToVerilog for Assembler {
     fn to_verilog(&self) -> verilog::Module {
         let mut ports: Vec<verilog::Port> = Vec::new();
+        ports.push(verilog::Port::new_input(&self.clock, 1));
+        ports.push(verilog::Port::new_input(&self.reset, 1));
         for input in self.prog().inputs().iter() {
             ports.extend(to_verilog_port(input.clone()));
         }
