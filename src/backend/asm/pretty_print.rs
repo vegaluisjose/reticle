@@ -64,9 +64,8 @@ impl PrettyPrint for Instr {
                 params: _,
             } => id.append(op.to_doc()).append(attrs).append(params),
             Instr::Prim {
-                id: _,
-                ty: _,
                 op,
+                dst: _,
                 attrs: _,
                 params: _,
                 loc,

@@ -35,9 +35,8 @@ pub enum Instr {
         params: Vec<Expr>,
     },
     Prim {
-        id: Id,
-        ty: Ty,
         op: Id,
+        dst: Expr,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
         loc: Loc,

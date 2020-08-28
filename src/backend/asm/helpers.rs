@@ -34,13 +34,12 @@ impl Instr {
                 params: _,
             } => dst.id(),
             Instr::Prim {
-                id,
-                ty: _,
                 op: _,
+                dst,
                 attrs: _,
                 params: _,
                 loc: _,
-            } => id.to_string(),
+            } => dst.id(),
         }
     }
     pub fn ty(&self) -> &Ty {
@@ -52,34 +51,25 @@ impl Instr {
                 params: _,
             } => dst.ty(),
             Instr::Prim {
-                id: _,
-                ty,
                 op: _,
+                dst,
                 attrs: _,
                 params: _,
                 loc: _,
-            } => ty,
+            } => dst.ty(),
         }
     }
     pub fn is_prim(&self) -> bool {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => true,
+            Instr::Prim { .. } => true,
             _ => false,
         }
     }
     pub fn prim_op(&self) -> String {
         match self {
             Instr::Prim {
-                id: _,
-                ty: _,
                 op,
+                dst: _,
                 attrs: _,
                 params: _,
                 loc: _,
@@ -107,9 +97,8 @@ impl Instr {
                 params: _,
             } => attrs,
             Instr::Prim {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs,
                 params: _,
                 loc: _,
@@ -125,9 +114,8 @@ impl Instr {
                 params,
             } => params,
             Instr::Prim {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs: _,
                 params,
                 loc: _,
@@ -143,13 +131,12 @@ impl Instr {
                 params: _,
             } => dst.set_id(value),
             Instr::Prim {
-                id,
-                ty: _,
                 op: _,
+                dst,
                 attrs: _,
                 params: _,
                 loc: _,
-            } => *id = value.to_string(),
+            } => dst.set_id(value),
         }
     }
     pub fn add_param(&mut self, expr: Expr) {
@@ -161,9 +148,8 @@ impl Instr {
                 params,
             } => params.push(expr),
             Instr::Prim {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs: _,
                 params,
                 loc: _,
@@ -179,9 +165,8 @@ impl Instr {
                 params: _,
             } => attrs.push(expr),
             Instr::Prim {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs,
                 params: _,
                 loc: _,

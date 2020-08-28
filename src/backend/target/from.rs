@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::{Instr, Loc, LocTy, Ty};
+use crate::backend::asm::ast::{Expr, Instr, Loc, LocTy, Ty};
 use crate::backend::target::descriptor::*;
 use crate::backend::target::spec::*;
 use crate::passes::map::tree::{Tree, TreeNode, TreeOp, TreeTy};
@@ -7,9 +7,8 @@ use std::str::FromStr;
 impl From<SpecInstr> for Instr {
     fn from(spec_instr: SpecInstr) -> Self {
         Instr::Prim {
-            id: String::new(),
-            ty: Ty::from_str(&spec_instr.ty()).unwrap(),
             op: spec_instr.name(),
+            dst: Expr::new_ref("", Ty::from_str(&spec_instr.ty()).unwrap()),
             attrs: Vec::new(),
             params: Vec::new(),
             loc: Loc::new_with_hole(LocTy::from_str(&spec_instr.loc()).unwrap()),
