@@ -124,7 +124,7 @@ impl Assembler {
         }
         for instr in prog.body().iter() {
             if instr.is_prim() {
-                match instr.prim_op().as_ref() {
+                match instr.prim().op().as_ref() {
                     "lut_and_b_b_b" => isa::LutAndBBB::emit(self, instr.clone()),
                     _ => (),
                 }

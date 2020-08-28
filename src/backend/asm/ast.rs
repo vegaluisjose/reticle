@@ -27,7 +27,7 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
-pub struct StdInstr {
+pub struct InstrStd {
     pub op: StdOp,
     pub dst: Expr,
     pub attrs: Vec<Expr>,
@@ -35,7 +35,7 @@ pub struct StdInstr {
 }
 
 #[derive(Clone, Debug)]
-pub struct PrimInstr {
+pub struct InstrPrim {
     pub op: Id,
     pub dst: Expr,
     pub attrs: Vec<Expr>,
@@ -45,19 +45,8 @@ pub struct PrimInstr {
 
 #[derive(Clone, Debug)]
 pub enum Instr {
-    Std {
-        op: StdOp,
-        dst: Expr,
-        attrs: Vec<Expr>,
-        params: Vec<Expr>,
-    },
-    Prim {
-        op: Id,
-        dst: Expr,
-        attrs: Vec<Expr>,
-        params: Vec<Expr>,
-        loc: Loc,
-    },
+    Std(InstrStd),
+    Prim(InstrPrim),
 }
 
 #[derive(Clone, Debug)]

@@ -16,9 +16,9 @@ impl Loc {
     }
 }
 
-impl StdInstr {
-    pub fn new(op: StdOp) -> StdInstr {
-        StdInstr {
+impl InstrStd {
+    pub fn new(op: StdOp) -> InstrStd {
+        InstrStd {
             op,
             dst: Expr::new_ref("", Ty::Hole),
             attrs: Vec::new(),
@@ -71,9 +71,9 @@ impl StdInstr {
     }
 }
 
-impl PrimInstr {
-    pub fn new(loc: Loc) -> PrimInstr {
-        PrimInstr {
+impl InstrPrim {
+    pub fn new(loc: Loc) -> InstrPrim {
+        InstrPrim {
             op: String::new(),
             dst: Expr::new_ref("", Ty::Hole),
             attrs: Vec::new(),
@@ -136,160 +136,94 @@ impl PrimInstr {
 }
 
 impl Instr {
-    pub fn new_std(id: &str, ty: Ty, op: StdOp) -> Instr {
-        Instr::Std {
-            op,
-            dst: Expr::new_ref(id, ty),
-            attrs: Vec::new(),
-            params: Vec::new(),
-        }
-    }
     pub fn id(&self) -> String {
         match self {
-            Instr::Std {
-                op: _,
-                dst,
-                attrs: _,
-                params: _,
-            } => dst.id(),
-            Instr::Prim {
-                op: _,
-                dst,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => dst.id(),
+            Instr::Std(instr) => instr.dst_id(),
+            Instr::Prim(instr) => instr.dst_id(),
         }
     }
+
     pub fn ty(&self) -> &Ty {
         match self {
-            Instr::Std {
-                op: _,
-                dst,
-                attrs: _,
-                params: _,
-            } => dst.ty(),
-            Instr::Prim {
-                op: _,
-                dst,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => dst.ty(),
+            Instr::Std(instr) => instr.dst_ty(),
+            Instr::Prim(instr) => instr.dst_ty(),
         }
     }
+
+    pub fn prim(&self) -> &InstrPrim {
+        match self {
+            Instr::Prim(instr) => instr,
+            _ => panic!("Error: not a prim instruction"),
+        }
+    }
+
+    pub fn std(&self) -> &InstrStd {
+        match self {
+            Instr::Std(instr) => instr,
+            _ => panic!("Error: not a std instruction"),
+        }
+    }
+
     pub fn is_prim(&self) -> bool {
         match self {
-            Instr::Prim { .. } => true,
+            Instr::Prim(_) => true,
             _ => false,
         }
     }
-    pub fn prim_op(&self) -> String {
+
+    pub fn is_std(&self) -> bool {
         match self {
-            Instr::Prim {
-                op,
-                dst: _,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => op.to_string(),
-            _ => panic!("Error: std ops don't support prim op"),
+            Instr::Std(_) => true,
+            _ => false,
         }
     }
-    pub fn std_op(&self) -> &StdOp {
-        match self {
-            Instr::Std {
-                op,
-                dst: _,
-                attrs: _,
-                params: _,
-            } => op,
-            _ => panic!("Error: prim ops don't support std op"),
-        }
-    }
+
     pub fn attrs(&self) -> &Vec<Expr> {
         match self {
-            Instr::Std {
-                op: _,
-                dst: _,
-                attrs,
-                params: _,
-            } => attrs,
-            Instr::Prim {
-                op: _,
-                dst: _,
-                attrs,
-                params: _,
-                loc: _,
-            } => attrs,
+            Instr::Std(instr) => instr.attrs(),
+            Instr::Prim(instr) => instr.attrs(),
         }
     }
+
     pub fn params(&self) -> &Vec<Expr> {
         match self {
-            Instr::Std {
-                op: _,
-                dst: _,
-                attrs: _,
-                params,
-            } => params,
-            Instr::Prim {
-                op: _,
-                dst: _,
-                attrs: _,
-                params,
-                loc: _,
-            } => params,
+            Instr::Std(instr) => instr.params(),
+            Instr::Prim(instr) => instr.params(),
         }
     }
-    pub fn set_id(&mut self, value: &str) {
+
+    pub fn set_dst_id(&mut self, value: &str) {
         match self {
-            Instr::Std {
-                op: _,
-                dst,
-                attrs: _,
-                params: _,
-            } => dst.set_id(value),
-            Instr::Prim {
-                op: _,
-                dst,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => dst.set_id(value),
+            Instr::Std(instr) => instr.set_dst_id(value),
+            Instr::Prim(instr) => instr.set_dst_id(value),
         }
     }
+
+    pub fn set_dst_ty(&mut self, ty: Ty) {
+        match self {
+            Instr::Std(instr) => instr.set_dst_ty(ty),
+            Instr::Prim(instr) => instr.set_dst_ty(ty),
+        }
+    }
+
+    pub fn set_dst(&mut self, expr: Expr) {
+        match self {
+            Instr::Std(instr) => instr.set_dst(expr),
+            Instr::Prim(instr) => instr.set_dst(expr),
+        }
+    }
+
     pub fn add_param(&mut self, expr: Expr) {
         match self {
-            Instr::Std {
-                op: _,
-                dst: _,
-                attrs: _,
-                params,
-            } => params.push(expr),
-            Instr::Prim {
-                op: _,
-                dst: _,
-                attrs: _,
-                params,
-                loc: _,
-            } => params.push(expr),
+            Instr::Std(instr) => instr.add_param(expr),
+            Instr::Prim(instr) => instr.add_param(expr),
         }
     }
+
     pub fn add_attr(&mut self, expr: Expr) {
         match self {
-            Instr::Std {
-                op: _,
-                dst: _,
-                attrs,
-                params: _,
-            } => attrs.push(expr),
-            Instr::Prim {
-                op: _,
-                dst: _,
-                attrs,
-                params: _,
-                loc: _,
-            } => attrs.push(expr),
+            Instr::Std(instr) => instr.add_attr(expr),
+            Instr::Prim(instr) => instr.add_attr(expr),
         }
     }
 }

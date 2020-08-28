@@ -25,7 +25,7 @@ impl PrettyPrint for Loc {
     }
 }
 
-impl PrettyPrint for StdInstr {
+impl PrettyPrint for InstrStd {
     fn to_doc(&self) -> RcDoc<()> {
         let id = if self.dst_id().is_empty() {
             RcDoc::nil()
@@ -60,7 +60,7 @@ impl PrettyPrint for StdInstr {
     }
 }
 
-impl PrettyPrint for PrimInstr {
+impl PrettyPrint for InstrPrim {
     fn to_doc(&self) -> RcDoc<()> {
         let id = if self.dst_id().is_empty() {
             RcDoc::nil()
@@ -101,54 +101,9 @@ impl PrettyPrint for PrimInstr {
 
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
-        let id = if self.id().is_empty() {
-            RcDoc::nil()
-        } else {
-            RcDoc::as_string(&self.id())
-                .append(RcDoc::text(":"))
-                .append(RcDoc::space())
-                .append(self.ty().to_doc())
-                .append(RcDoc::space())
-                .append(RcDoc::text("="))
-                .append(RcDoc::space())
-        };
-        let attrs = if self.attrs().is_empty() {
-            RcDoc::nil()
-        } else {
-            intersperse(
-                self.attrs().iter().map(|x| x.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .brackets()
-        };
-        let params = if self.params().is_empty() {
-            RcDoc::nil()
-        } else {
-            intersperse(
-                self.params().iter().map(|x| x.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .parens()
-        };
         match self {
-            Instr::Std {
-                op,
-                dst: _,
-                attrs: _,
-                params: _,
-            } => id.append(op.to_doc()).append(attrs).append(params),
-            Instr::Prim {
-                op,
-                dst: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => id
-                .append(RcDoc::as_string(op))
-                .append(attrs)
-                .append(params)
-                .append(RcDoc::space())
-                .append(loc.to_doc()),
+            Instr::Std(instr) => instr.to_doc(),
+            Instr::Prim(instr) => instr.to_doc(),
         }
     }
 }

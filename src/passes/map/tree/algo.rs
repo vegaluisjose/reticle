@@ -128,7 +128,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
 }
 
 pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr {
-    let mut instr: asm::Instr = tile.instr().clone();
+    let mut instr: asm::InstrPrim = tile.instr().clone();
     let pattern = tile.pattern();
     let pattern_index = pattern.root_index().unwrap();
     let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
@@ -140,9 +140,9 @@ pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Ins
         if !discard.contains(&ix) {
             if let Some(pnode) = pstack_iter.next() {
                 if let Some(inode) = input.graph.node_weight(ix) {
-                    if instr.id().is_empty() {
+                    if instr.dst_id().is_empty() {
                         // root
-                        instr.set_id(&inode.id());
+                        instr.set_dst_id(&inode.id());
                     } else if pnode.is_input() {
                         // param
                         params.push(asm::Expr::Ref(inode.id(), inode.ty().clone()));
@@ -163,7 +163,7 @@ pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Ins
     for param in params.iter() {
         instr.add_param(param.clone());
     }
-    instr
+    asm::Instr::from(instr)
 }
 
 pub fn tree_codegen(input: Tree) -> InstrMap {

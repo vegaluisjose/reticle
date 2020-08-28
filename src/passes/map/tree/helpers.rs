@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::Instr;
+use crate::backend::asm::ast::InstrPrim;
 use crate::backend::target::Tile;
 use crate::passes::map::tree::*;
 use petgraph::visit::Dfs;
@@ -49,7 +49,7 @@ impl TreeNode {
         &self.op
     }
 
-    pub fn instr(&self) -> Option<&Instr> {
+    pub fn instr(&self) -> Option<&InstrPrim> {
         if let Some(tile) = &self.tile {
             Some(tile.instr())
         } else {
