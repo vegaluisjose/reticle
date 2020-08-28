@@ -1,102 +1,145 @@
-use crate::backend::arch::ultrascale::prim::{Block, ToBlock};
+use crate::backend::arch::ultrascale::isa;
 use crate::backend::asm::ast as asm;
-use crate::backend::verilog::{self, ToVerilog};
+use crate::backend::verilog;
+use std::collections::HashMap;
 
-fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
-    let mut ports: Vec<verilog::Port> = Vec::new();
-    match port {
-        asm::Port::Input { id, ty } => {
-            if ty.is_vector() {
-                for i in 0..ty.length() {
-                    let name = format!("{}_{}", id, i);
-                    let port = verilog::Port::new_input(&name, ty.width());
-                    ports.push(port);
-                }
-            } else {
-                let port = verilog::Port::new_input(&id, ty.width());
-                ports.push(port);
-            }
-        }
-        asm::Port::Output { id, ty } => {
-            if ty.is_vector() {
-                for i in 0..ty.length() {
-                    let name = format!("{}_{}", id, i);
-                    let port = verilog::Port::new_output(&name, ty.width());
-                    ports.push(port);
-                }
-            } else {
-                let port = verilog::Port::new_output(&id, ty.width());
-                ports.push(port);
-            }
-        }
-    }
-    ports
-}
+// fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
+//     let mut ports: Vec<verilog::Port> = Vec::new();
+//
+//     ports
+// }
 
-fn to_prim(instr: asm::Instr) -> Block {
-    use crate::backend::arch::ultrascale::isa;
-    if instr.is_prim() {
-        match instr.prim_op().as_ref() {
-            "lut_and_b_b_b" => isa::LutAndBBB::new(instr).to_block(),
-            _ => vec![],
-        }
-    } else {
-        vec![]
-    }
-}
-
-fn instance_fmt(value: usize) -> String {
-    format!("_i_{}", value)
+pub trait Emit {
+    fn emit(asm: &mut Assembler, instr: asm::Instr);
 }
 
 #[derive(Clone, Debug)]
 pub struct Assembler {
-    pub prog: asm::Prog,
     pub clock: String,
     pub reset: String,
+    pub map: HashMap<String, String>,
+    pub variables: u32,
+    pub instances: u32,
+    pub ports: Vec<verilog::Port>,
+    pub wires: Vec<verilog::Stmt>,
+    pub luts: Vec<verilog::Stmt>,
+}
+
+impl Default for Assembler {
+    fn default() -> Assembler {
+        Assembler {
+            clock: "clock".to_string(),
+            reset: "reset".to_string(),
+            map: HashMap::new(),
+            variables: 0,
+            instances: 0,
+            ports: Vec::new(),
+            wires: Vec::new(),
+            luts: Vec::new(),
+        }
+    }
 }
 
 impl Assembler {
-    pub fn new(prog: asm::Prog) -> Assembler {
-        Assembler {
-            prog,
-            clock: "clock".to_string(),
-            reset: "reset".to_string(),
+    pub fn clock(&self) -> String {
+        self.clock.to_string()
+    }
+    pub fn reset(&self) -> String {
+        self.reset.to_string()
+    }
+    pub fn ports(&self) -> &Vec<verilog::Port> {
+        &self.ports
+    }
+    pub fn wires(&self) -> &Vec<verilog::Stmt> {
+        &self.wires
+    }
+    pub fn luts(&self) -> &Vec<verilog::Stmt> {
+        &self.luts
+    }
+    pub fn new_instance_name(&mut self) -> String {
+        let name = format!("i{}", self.instances);
+        self.instances += 1;
+        name
+    }
+    pub fn new_variable_name(&mut self) -> String {
+        let name = format!("t{}", self.variables);
+        self.variables += 1;
+        name
+    }
+    pub fn update_variable(&mut self, old: &str, new: &str) {
+        self.map.insert(old.to_string(), new.to_string());
+    }
+    pub fn replace_variable(&mut self, name: &str) -> String {
+        if let Some(var) = self.map.get(name) {
+            var.to_string()
+        } else {
+            let tmp = self.new_variable_name();
+            self.update_variable(name, &tmp);
+            tmp
         }
     }
-    pub fn prog(&self) -> &asm::Prog {
-        &self.prog
+    pub fn add_wire(&mut self, wire: verilog::Stmt) {
+        self.wires.push(wire);
     }
-}
-
-impl ToVerilog for Assembler {
-    fn to_verilog(&self) -> verilog::Module {
-        let mut ports: Vec<verilog::Port> = Vec::new();
-        ports.push(verilog::Port::new_input(&self.clock, 1));
-        ports.push(verilog::Port::new_input(&self.reset, 1));
-        for input in self.prog().inputs().iter() {
-            ports.extend(to_verilog_port(input.clone()));
-        }
-        for output in self.prog().outputs().iter() {
-            ports.extend(to_verilog_port(output.clone()));
-        }
-        let mut module = verilog::Module::new(&self.prog().id());
-        for port in ports.iter() {
-            module.add_port(port.clone());
-        }
-        let mut prims: Block = Block::new();
-        for instr in self.prog().body().iter() {
-            prims.extend(to_prim(instr.clone()));
-        }
-        for (i, prim) in prims.iter_mut().enumerate() {
-            prim.set_id(&instance_fmt(i));
-            if prim.is_reg() {
-                prim.set_clock(&self.clock);
-                prim.set_reset(&self.reset);
+    pub fn add_lut(&mut self, lut: verilog::Stmt) {
+        self.luts.push(lut);
+    }
+    pub fn emit_clock_and_reset(&mut self) {
+        self.ports.push(verilog::Port::new_input(&self.clock(), 1));
+        self.ports.push(verilog::Port::new_input(&self.reset(), 1));
+    }
+    pub fn emit_port(&mut self, port: asm::Port) {
+        match port {
+            asm::Port::Input { id, ty } => {
+                if ty.is_vector() {
+                    for i in 0..ty.length() {
+                        let name = format!("{}_{}", id, i);
+                        let port = verilog::Port::new_input(&name, ty.width());
+                        self.ports.push(port);
+                    }
+                } else {
+                    let port = verilog::Port::new_input(&id, ty.width());
+                    self.ports.push(port);
+                }
+            }
+            asm::Port::Output { id, ty } => {
+                if ty.is_vector() {
+                    for i in 0..ty.length() {
+                        let name = format!("{}_{}", id, i);
+                        let port = verilog::Port::new_output(&name, ty.width());
+                        self.ports.push(port);
+                    }
+                } else {
+                    let port = verilog::Port::new_output(&id, ty.width());
+                    self.ports.push(port);
+                }
             }
         }
-        for stmt in prims.iter() {
-            module.add_stmt(verilog::Stmt::from(stmt.clone()));
+    }
+    pub fn emit(&mut self, prog: asm::Prog) -> verilog::Module {
+        self.emit_clock_and_reset();
+        for input in prog.inputs().iter() {
+            self.emit_port(input.clone());
+            self.update_variable(&input.id(), &input.id());
+        }
+        for output in prog.outputs().iter() {
+            self.emit_port(output.clone());
+            self.update_variable(&output.id(), &output.id());
+        }
+        for instr in prog.body().iter() {
+            if instr.is_prim() {
+                match instr.prim_op().as_ref() {
+                    "lut_and_b_b_b" => isa::LutAndBBB::emit(self, instr.clone()),
+                    _ => (),
+                }
+            }
+        }
+        let mut module = verilog::Module::new(&prog.id());
+        for port in self.ports().iter() {
+            module.add_port(port.clone());
+        }
+        for lut in self.luts().iter() {
+            module.add_stmt(lut.clone());
         }
         module
     }

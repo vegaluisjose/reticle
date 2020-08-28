@@ -1,27 +1,24 @@
+use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
 use crate::backend::arch::ultrascale::lut::LutPrim;
-use crate::backend::arch::ultrascale::prim::{Block, Prim, ToBlock};
 use crate::backend::asm::ast as asm;
+use crate::backend::verilog;
 
 #[derive(Clone, Debug)]
-pub struct LutAndBBB {
-    pub instr: asm::Instr,
-}
+pub struct LutAndBBB;
 
-impl LutAndBBB {
-    pub fn new(instr: asm::Instr) -> LutAndBBB {
-        LutAndBBB { instr }
-    }
-}
-
-impl ToBlock for LutAndBBB {
-    fn to_block(&self) -> Block {
-        let mut block = Block::new();
+impl Emit for LutAndBBB {
+    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+        let inst = asm.new_instance_name();
+        let params: Vec<String> = instr.params().into_iter().map(|x| x.id()).collect();
+        let in_0 = asm.replace_variable(&params[0]);
+        let in_1 = asm.replace_variable(&params[1]);
+        let out = asm.replace_variable(&instr.id());
         let mut lut = LutPrim::new_lut2();
-        lut.add_input(&self.instr.params()[0].id());
-        lut.add_input(&self.instr.params()[1].id());
-        lut.set_output(&self.instr.id());
         lut.set_init("8");
-        block.push(Prim::from(lut));
-        block
+        lut.set_id(&inst);
+        lut.add_input(&in_0);
+        lut.add_input(&in_1);
+        lut.set_output(&out);
+        asm.add_lut(verilog::Stmt::from(lut));
     }
 }
