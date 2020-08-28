@@ -3,12 +3,6 @@ use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 use std::collections::HashMap;
 
-// fn to_verilog_port(port: asm::Port) -> Vec<verilog::Port> {
-//     let mut ports: Vec<verilog::Port> = Vec::new();
-//
-//     ports
-// }
-
 pub trait Emit {
     fn emit(asm: &mut Assembler, instr: asm::Instr);
 }
