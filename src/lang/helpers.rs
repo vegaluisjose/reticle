@@ -73,15 +73,36 @@ impl Loc {
 impl Port {
     pub fn id(&self) -> Id {
         match self {
-            Port::Input { id, ty: _ } => id.to_string(),
-            Port::Output { id, ty: _ } => id.to_string(),
+            Port::Input(expr) => expr.id(),
+            Port::Output(expr) => expr.id(),
         }
     }
 
     pub fn ty(&self) -> &Ty {
         match self {
-            Port::Input { id: _, ty } => ty,
-            Port::Output { id: _, ty } => ty,
+            Port::Input(expr) => expr.ty(),
+            Port::Output(expr) => expr.ty(),
+        }
+    }
+
+    pub fn expr(&self) -> &Expr {
+        match self {
+            Port::Input(expr) => expr,
+            Port::Output(expr) => expr,
+        }
+    }
+
+    pub fn is_input(&self) -> bool {
+        match self {
+            Port::Input(_) => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_output(&self) -> bool {
+        match self {
+            Port::Output(_) => true,
+            _ => false,
         }
     }
 }
@@ -89,6 +110,10 @@ impl Port {
 impl Expr {
     pub fn new_ref(id: &str, ty: Ty) -> Expr {
         Expr::Ref(id.to_string(), ty)
+    }
+
+    pub fn new_int(value: i64) -> Expr {
+        Expr::Int(value)
     }
 
     pub fn set_id(&mut self, value: &str) {
@@ -439,19 +464,15 @@ impl Sig {
 
     pub fn add_input(&mut self, name: &str, ty: &str) {
         let ty = Ty::from_str(ty).unwrap();
-        let port = Port::Input {
-            id: name.to_string(),
-            ty,
-        };
+        let expr = Expr::new_ref(name, ty);
+        let port = Port::Input(expr);
         self.inputs.push(port);
     }
 
     pub fn add_output(&mut self, name: &str, ty: &str) {
         let ty = Ty::from_str(ty).unwrap();
-        let port = Port::Output {
-            id: name.to_string(),
-            ty,
-        };
+        let expr = Expr::new_ref(name, ty);
+        let port = Port::Output(expr);
         self.outputs.push(port);
     }
 }

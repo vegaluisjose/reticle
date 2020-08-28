@@ -85,31 +85,24 @@ impl Assembler {
         self.ports.push(verilog::Port::new_input(&self.reset(), 1));
     }
     pub fn emit_port(&mut self, port: asm::Port) {
-        match port {
-            asm::Port::Input { id, ty } => {
-                if ty.is_vector() {
-                    for i in 0..ty.length() {
-                        let name = format!("{}_{}", id, i);
-                        let port = verilog::Port::new_input(&name, ty.width());
-                        self.ports.push(port);
-                    }
+        let width = port.ty().width();
+        if port.ty().is_vector() {
+            for i in 0..port.ty().length() {
+                let name = format!("{}_{}", port.id(), i);
+                let vport = if port.is_input() {
+                    verilog::Port::new_input(&name, width)
                 } else {
-                    let port = verilog::Port::new_input(&id, ty.width());
-                    self.ports.push(port);
-                }
+                    verilog::Port::new_output(&name, width)
+                };
+                self.ports.push(vport);
             }
-            asm::Port::Output { id, ty } => {
-                if ty.is_vector() {
-                    for i in 0..ty.length() {
-                        let name = format!("{}_{}", id, i);
-                        let port = verilog::Port::new_output(&name, ty.width());
-                        self.ports.push(port);
-                    }
-                } else {
-                    let port = verilog::Port::new_output(&id, ty.width());
-                    self.ports.push(port);
-                }
-            }
+        } else {
+            let vport = if port.is_input() {
+                verilog::Port::new_input(&port.id(), width)
+            } else {
+                verilog::Port::new_output(&port.id(), width)
+            };
+            self.ports.push(vport);
         }
     }
     pub fn emit(&mut self, prog: asm::Prog) -> verilog::Module {

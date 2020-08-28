@@ -78,8 +78,8 @@ pub enum Instr {
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Port {
-    Input { id: Id, ty: Ty },
-    Output { id: Id, ty: Ty },
+    Input(Expr),
+    Output(Expr),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Hash)]

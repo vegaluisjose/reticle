@@ -46,8 +46,8 @@ impl ReticleParser {
     fn expr(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(n)] => Expr::Ref(n, Ty::Hole),
-            [number(n)] => Expr::Int(n),
+            [identifier(n)] => Expr::new_ref(&n, Ty::Hole),
+            [number(n)] => Expr::new_int(n),
         ))
     }
 
@@ -126,10 +126,7 @@ impl ReticleParser {
     fn input(input: Node) -> Result<Port> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(id), ty(ty)] => Port::Input {
-                id,
-                ty,
-            }
+            [identifier(id), ty(ty)] => Port::Input(Expr::new_ref(&id, ty))
         ))
     }
 
@@ -143,10 +140,7 @@ impl ReticleParser {
     fn output(input: Node) -> Result<Port> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(id), ty(ty)] => Port::Output {
-                id,
-                ty,
-            }
+            [identifier(id), ty(ty)] => Port::Output(Expr::new_ref(&id, ty))
         ))
     }
 
