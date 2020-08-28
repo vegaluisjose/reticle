@@ -54,7 +54,7 @@ attrs = { "[" ~ (expr ~ ("," ~ expr)*)? ~ "]" }
 
 params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
 
-instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ attrs? ~ params? ~ ";" }
+instr = { expr ~ "=" ~ op ~ attrs? ~ params? ~ ";" }
 
 instrs = { instr ~ (instr)* }
 

@@ -69,46 +69,46 @@ impl ReticleParser {
     fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [identifier(id), ty(ty), stdop(op), params(params)] => Instr::Std {
-                id,
-                ty,
+            [expr(expr), stdop(op), params(params)] => Instr::Std {
+                id: expr.id(),
+                ty: expr.ty().clone(),
                 op,
                 attrs: Vec::new(),
                 params,
             },
-            [identifier(id), ty(ty), stdop(op), attrs(attrs)] => Instr::Std {
-                id,
-                ty,
+            [expr(expr), stdop(op), attrs(attrs)] => Instr::Std {
+                id: expr.id(),
+                ty: expr.ty().clone(),
                 op,
                 attrs,
                 params: Vec::new(),
             },
-            [identifier(id), ty(ty), stdop(op), attrs(attrs), params(params)] => Instr::Std {
-                id,
-                ty,
+            [expr(expr), stdop(op), attrs(attrs), params(params)] => Instr::Std {
+                id: expr.id(),
+                ty: expr.ty().clone(),
                 op,
                 attrs,
                 params,
             },
-            [identifier(id), ty(ty), primop(op), params(params)] => Instr::Prim {
-                id,
-                ty,
+            [expr(expr), primop(op), params(params)] => Instr::Prim {
+                id: expr.id(),
+                ty: expr.ty().clone(),
                 op,
                 attrs: Vec::new(),
                 params,
                 loc: Loc::Hole,
             },
-            [identifier(id), ty(ty), primop(op), attrs(attrs)] => Instr::Prim {
-                id,
-                ty,
+            [expr(expr), primop(op), attrs(attrs)] => Instr::Prim {
+                id: expr.id(),
+                ty: expr.ty().clone(),
                 op,
                 attrs,
                 params: Vec::new(),
                 loc: Loc::Hole,
             },
-            [identifier(id), ty(ty), primop(op), attrs(attrs), params(params)] => Instr::Prim {
-                id,
-                ty,
+            [expr(expr), primop(op), attrs(attrs), params(params)] => Instr::Prim {
+                id: expr.id(),
+                ty: expr.ty().clone(),
                 op,
                 attrs,
                 params,
