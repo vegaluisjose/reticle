@@ -34,6 +34,8 @@ impl Default for Assembler {
     }
 }
 
+// remove this once I add another instruction to match
+#[allow(clippy::single_match)]
 impl Assembler {
     pub fn clock(&self) -> String {
         self.clock.to_string()

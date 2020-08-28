@@ -9,7 +9,7 @@ pub struct LutAndBBB;
 impl Emit for LutAndBBB {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let inst = asm.new_instance_name();
-        let params: Vec<String> = instr.params().into_iter().map(|x| x.id()).collect();
+        let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let in_0 = asm.replace_variable(&params[0]);
         let in_1 = asm.replace_variable(&params[1]);
         let out = asm.replace_variable(&instr.id());
