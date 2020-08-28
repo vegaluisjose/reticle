@@ -12,7 +12,7 @@ impl Emit for LutAndBBB {
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let in_0 = asm.replace_variable(&params[0]);
         let in_1 = asm.replace_variable(&params[1]);
-        let out = asm.replace_variable(&instr.id());
+        let out = asm.replace_variable(&instr.dst_id());
         let mut lut = LutPrim::new_lut2();
         lut.set_init("8");
         lut.set_id(&inst);

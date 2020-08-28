@@ -94,7 +94,7 @@ pub fn map_asm(input_prog: Prog) -> asm::Prog {
         if instr.is_std() {
             output_prog.add_instr(asm::Instr::from(instr.clone()));
         } else if let Some(asm_instr) = map.get(&instr.id()) {
-            output_prog.add_instr(asm_instr.clone());
+            output_prog.add_instr(asm::Instr::from(asm_instr.clone()));
         }
     }
     output_prog

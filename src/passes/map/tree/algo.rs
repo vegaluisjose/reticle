@@ -6,7 +6,7 @@ use petgraph::Direction;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-pub type InstrMap = HashMap<String, asm::Instr>;
+pub type InstrMap = HashMap<String, asm::InstrPrim>;
 pub type LocMap = HashMap<String, asm::LocTy>;
 
 pub fn tree_node_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
@@ -127,7 +127,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
     output
 }
 
-pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Instr {
+pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::InstrPrim {
     let mut instr: asm::InstrPrim = tile.instr().clone();
     let pattern = tile.pattern();
     let pattern_index = pattern.root_index().unwrap();
@@ -145,7 +145,7 @@ pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Ins
                         instr.set_dst_id(&inode.id());
                     } else if pnode.is_input() {
                         // param
-                        params.push(asm::Expr::Ref(inode.id(), inode.ty().clone()));
+                        params.push(asm::Expr::new_ref(&inode.id(), inode.ty().clone()));
                     }
                     if pnode.is_input() {
                         let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
@@ -163,7 +163,7 @@ pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Ins
     for param in params.iter() {
         instr.add_param(param.clone());
     }
-    asm::Instr::from(instr)
+    instr
 }
 
 pub fn tree_codegen(input: Tree) -> InstrMap {
@@ -175,7 +175,7 @@ pub fn tree_codegen(input: Tree) -> InstrMap {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
                 let instr = subtree_codegen(input.clone(), ix, tile.clone());
-                map.insert(instr.id(), instr);
+                map.insert(instr.dst_id(), instr);
             }
         }
     }
