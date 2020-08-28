@@ -94,7 +94,14 @@ impl Expr {
     pub fn set_id(&mut self, value: &str) {
         match self {
             Expr::Ref(id, _) => *id = value.to_string(),
-            _ => panic!("Error does not support Id"),
+            _ => panic!("Error: does not support Id"),
+        }
+    }
+
+    pub fn set_ty(&mut self, value: Ty) {
+        match self {
+            Expr::Ref(_, ty) => *ty = value,
+            _ => panic!("Error: does not support Ty"),
         }
     }
 
