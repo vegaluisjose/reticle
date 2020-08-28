@@ -26,11 +26,17 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
+pub enum Expr {
+    Ref(String),
+    Index(String, u32),
+}
+
+#[derive(Clone, Debug)]
 pub struct LutPrim {
     pub id: String,
     pub ty: Ty,
     pub init: String,
-    pub inputs: Vec<String>,
-    pub output: String,
+    pub inputs: Vec<Expr>,
+    pub output: Expr,
     pub loc: Option<Loc>,
 }

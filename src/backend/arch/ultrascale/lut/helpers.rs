@@ -1,5 +1,14 @@
 use crate::backend::arch::ultrascale::lut::*;
 
+impl Expr {
+    pub fn new_ref(name: &str) -> Expr {
+        Expr::Ref(name.to_string())
+    }
+    pub fn new_index(name: &str, index: u32) -> Expr {
+        Expr::Index(name.to_string(), index)
+    }
+}
+
 impl LutPrim {
     pub fn new_lut2() -> LutPrim {
         LutPrim {
@@ -7,7 +16,7 @@ impl LutPrim {
             init: "0".to_string(),
             ty: Ty::Lut2,
             inputs: Vec::new(),
-            output: String::new(),
+            output: Expr::default(),
             loc: None,
         }
     }
@@ -18,7 +27,7 @@ impl LutPrim {
             init: "0".to_string(),
             ty: Ty::Lut3,
             inputs: Vec::new(),
-            output: String::new(),
+            output: Expr::default(),
             loc: None,
         }
     }
@@ -29,7 +38,7 @@ impl LutPrim {
             init: "0".to_string(),
             ty: Ty::Lut4,
             inputs: Vec::new(),
-            output: String::new(),
+            output: Expr::default(),
             loc: None,
         }
     }
@@ -40,7 +49,7 @@ impl LutPrim {
             init: "0".to_string(),
             ty: Ty::Lut5,
             inputs: Vec::new(),
-            output: String::new(),
+            output: Expr::default(),
             loc: None,
         }
     }
@@ -51,7 +60,7 @@ impl LutPrim {
             init: "0".to_string(),
             ty: Ty::Lut6,
             inputs: Vec::new(),
-            output: String::new(),
+            output: Expr::default(),
             loc: None,
         }
     }
@@ -68,12 +77,12 @@ impl LutPrim {
         self.init.to_string()
     }
 
-    pub fn inputs(&self) -> &Vec<String> {
+    pub fn inputs(&self) -> &Vec<Expr> {
         &self.inputs
     }
 
-    pub fn output(&self) -> String {
-        self.output.to_string()
+    pub fn output(&self) -> &Expr {
+        &self.output
     }
 
     pub fn set_id(&mut self, id: &str) {
@@ -85,11 +94,19 @@ impl LutPrim {
     }
 
     pub fn add_input(&mut self, name: &str) {
-        self.inputs.push(name.to_string());
+        self.inputs.push(Expr::new_ref(name));
+    }
+
+    pub fn add_input_with_index(&mut self, name: &str, index: u32) {
+        self.inputs.push(Expr::new_index(name, index));
     }
 
     pub fn set_output(&mut self, name: &str) {
-        self.output = name.to_string();
+        self.output = Expr::new_ref(name);
+    }
+
+    pub fn set_output_with_index(&mut self, name: &str, index: u32) {
+        self.output = Expr::new_index(name, index);
     }
 
     pub fn set_loc(&mut self, loc: Loc) {

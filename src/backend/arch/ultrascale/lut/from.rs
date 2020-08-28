@@ -11,6 +11,15 @@ fn lut_width(ty: Ty) -> u32 {
     }
 }
 
+impl From<Expr> for verilog::Expr {
+    fn from(expr: Expr) -> Self {
+        match expr {
+            Expr::Ref(name) => verilog::Expr::new_ref(&name),
+            Expr::Index(name, index) => verilog::Expr::new_bit(&name, index as i32),
+        }
+    }
+}
+
 impl From<LutPrim> for verilog::Stmt {
     fn from(lut: LutPrim) -> Self {
         let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
@@ -18,9 +27,9 @@ impl From<LutPrim> for verilog::Stmt {
         inst.add_param("INIT", verilog::Expr::new_ulit_hex(width, &lut.init()));
         for (i, input) in lut.inputs().iter().enumerate() {
             let port = format!("I{}", i);
-            inst.connect(&port, verilog::Expr::new_ref(input));
+            inst.connect(&port, verilog::Expr::from(input.clone()));
         }
-        inst.connect("O", verilog::Expr::new_ref(&lut.output()));
+        inst.connect("O", verilog::Expr::from(lut.output().clone()));
         verilog::Stmt::from(inst)
     }
 }
