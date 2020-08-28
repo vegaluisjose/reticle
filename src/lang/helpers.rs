@@ -87,6 +87,17 @@ impl Port {
 }
 
 impl Expr {
+    pub fn new_ref(id: &str, ty: Ty) -> Expr {
+        Expr::Ref(id.to_string(), ty)
+    }
+
+    pub fn set_id(&mut self, value: &str) {
+        match self {
+            Expr::Ref(id, _) => *id = value.to_string(),
+            _ => panic!("Error does not support Id"),
+        }
+    }
+
     pub fn id(&self) -> Id {
         match self {
             Expr::Ref(n, _) => n.to_string(),

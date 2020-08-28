@@ -29,9 +29,8 @@ pub struct Loc {
 #[derive(Clone, Debug)]
 pub enum Instr {
     Std {
-        id: Id,
-        ty: Ty,
         op: StdOp,
+        dst: Expr,
         attrs: Vec<Expr>,
         params: Vec<Expr>,
     },

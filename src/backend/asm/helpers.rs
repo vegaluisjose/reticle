@@ -19,9 +19,8 @@ impl Loc {
 impl Instr {
     pub fn new_std(id: &str, ty: Ty, op: StdOp) -> Instr {
         Instr::Std {
-            id: id.to_string(),
-            ty,
             op,
+            dst: Expr::new_ref(id, ty),
             attrs: Vec::new(),
             params: Vec::new(),
         }
@@ -29,12 +28,11 @@ impl Instr {
     pub fn id(&self) -> String {
         match self {
             Instr::Std {
-                id,
-                ty: _,
                 op: _,
+                dst,
                 attrs: _,
                 params: _,
-            } => id.to_string(),
+            } => dst.id(),
             Instr::Prim {
                 id,
                 ty: _,
@@ -48,12 +46,11 @@ impl Instr {
     pub fn ty(&self) -> &Ty {
         match self {
             Instr::Std {
-                id: _,
-                ty,
                 op: _,
+                dst,
                 attrs: _,
                 params: _,
-            } => ty,
+            } => dst.ty(),
             Instr::Prim {
                 id: _,
                 ty,
@@ -93,9 +90,8 @@ impl Instr {
     pub fn std_op(&self) -> &StdOp {
         match self {
             Instr::Std {
-                id: _,
-                ty: _,
                 op,
+                dst: _,
                 attrs: _,
                 params: _,
             } => op,
@@ -105,9 +101,8 @@ impl Instr {
     pub fn attrs(&self) -> &Vec<Expr> {
         match self {
             Instr::Std {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs,
                 params: _,
             } => attrs,
@@ -124,9 +119,8 @@ impl Instr {
     pub fn params(&self) -> &Vec<Expr> {
         match self {
             Instr::Std {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs: _,
                 params,
             } => params,
@@ -140,15 +134,14 @@ impl Instr {
             } => params,
         }
     }
-    pub fn set_id(&mut self, name: &str) {
+    pub fn set_id(&mut self, value: &str) {
         match self {
             Instr::Std {
-                id,
-                ty: _,
                 op: _,
+                dst,
                 attrs: _,
                 params: _,
-            } => *id = name.to_string(),
+            } => dst.set_id(value),
             Instr::Prim {
                 id,
                 ty: _,
@@ -156,15 +149,14 @@ impl Instr {
                 attrs: _,
                 params: _,
                 loc: _,
-            } => *id = name.to_string(),
+            } => *id = value.to_string(),
         }
     }
     pub fn add_param(&mut self, expr: Expr) {
         match self {
             Instr::Std {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs: _,
                 params,
             } => params.push(expr),
@@ -181,9 +173,8 @@ impl Instr {
     pub fn add_attr(&mut self, expr: Expr) {
         match self {
             Instr::Std {
-                id: _,
-                ty: _,
                 op: _,
+                dst: _,
                 attrs,
                 params: _,
             } => attrs.push(expr),

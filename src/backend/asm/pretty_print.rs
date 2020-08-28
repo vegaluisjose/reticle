@@ -58,9 +58,8 @@ impl PrettyPrint for Instr {
         };
         match self {
             Instr::Std {
-                id: _,
-                ty: _,
                 op,
+                dst: _,
                 attrs: _,
                 params: _,
             } => id.append(op.to_doc()).append(attrs).append(params),
