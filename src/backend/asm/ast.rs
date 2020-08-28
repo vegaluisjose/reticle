@@ -36,11 +36,11 @@ pub struct StdInstr {
 
 #[derive(Clone, Debug)]
 pub struct PrimInstr {
-    op: Id,
-    dst: Expr,
-    attrs: Vec<Expr>,
-    params: Vec<Expr>,
-    loc: Loc,
+    pub op: Id,
+    pub dst: Expr,
+    pub attrs: Vec<Expr>,
+    pub params: Vec<Expr>,
+    pub loc: Loc,
 }
 
 #[derive(Clone, Debug)]
