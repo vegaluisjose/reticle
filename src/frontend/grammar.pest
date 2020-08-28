@@ -16,7 +16,9 @@ vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
 ty = { vector | int | bool }
 
-expr = { identifier | number }
+identifier_with_ty = _{ identifier ~ ":" ~ ty }
+
+expr = { identifier_with_ty | identifier | number }
 
 primop = {
     "reg" |
@@ -56,11 +58,11 @@ instr = { identifier ~ ":" ~ ty ~ "=" ~ op ~ attrs? ~ params? ~ ";" }
 
 instrs = { instr ~ (instr)* }
 
-input = { identifier ~ ":" ~ ty }
+input = { expr }
 
 inputs = { "(" ~ (input ~ ("," ~ input)*)? ~ ")" }
 
-output = { identifier ~ ":" ~ ty }
+output = { expr }
 
 outputs = { "->" ~ "(" ~ (output ~ ("," ~ output)*)? ~ ")" }
 
