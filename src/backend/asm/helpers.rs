@@ -16,6 +16,61 @@ impl Loc {
     }
 }
 
+impl StdInstr {
+    pub fn new(op: StdOp) -> StdInstr {
+        StdInstr {
+            op,
+            dst: Expr::new_ref("", Ty::Hole),
+            attrs: Vec::new(),
+            params: Vec::new(),
+        }
+    }
+
+    pub fn op(&self) -> &StdOp {
+        &self.op
+    }
+
+    pub fn dst(&self) -> &Expr {
+        &self.dst
+    }
+
+    pub fn attrs(&self) -> &Vec<Expr> {
+        &self.attrs
+    }
+
+    pub fn params(&self) -> &Vec<Expr> {
+        &self.params
+    }
+
+    pub fn dst_id(&self) -> String {
+        self.dst().id()
+    }
+
+    pub fn dst_ty(&self) -> &Ty {
+        &self.dst().ty()
+    }
+
+    pub fn set_dst_id(&mut self, id: &str) {
+        self.dst.set_id(id);
+    }
+
+    pub fn set_dst_ty(&mut self, ty: Ty) {
+        self.dst.set_ty(ty);
+    }
+
+    pub fn set_dst(&mut self, expr: Expr) {
+        self.dst = expr;
+    }
+
+    pub fn add_attr(&mut self, expr: Expr) {
+        self.attrs.push(expr);
+    }
+
+    pub fn add_param(&mut self, expr: Expr) {
+        self.params.push(expr);
+    }
+}
+
 impl Instr {
     pub fn new_std(id: &str, ty: Ty, op: StdOp) -> Instr {
         Instr::Std {
