@@ -1,44 +1,71 @@
 use crate::lang::ast::*;
 use std::collections::HashSet;
 
+// -- WIP --
 // this trait implements the invariant of instructions and programs in Reticle
-// so it can be invoked anywhere to check reticle programs
-// Still WIP
+// so it can be invoked anywhere to check reticle programs.
+// TODO: impl TypeCheckErrors
+
 pub trait Check {
     fn check(&self);
 }
 
-#[allow(clippy::single_match)]
-impl Check for InstrPrim {
+impl Check for InstrStd {
     fn check(&self) {
         match self.op {
-            PrimOp::Add => {
+            StdOp::Identity => {
                 assert!(
                     self.dst_ty() == self.params[0].ty(),
-                    "Error: [add] result type and param[0] type must match"
+                    "Error: instr dst type and first param type must match"
                 );
+            }
+            StdOp::ShiftLeft => {
                 assert!(
-                    self.dst_ty() == self.params[1].ty(),
-                    "Error: [add] result type and param[1] type must match"
+                    self.dst_ty() == self.params[0].ty(),
+                    "Error: instr dst type and first param type must match"
                 );
-                assert!(
-                    self.params.len() == 2,
-                    "Error: [add] support only two params"
-                );
-                assert!(self.attrs.is_empty(), "Error: [add] does not support attr");
-                assert!(!self.dst_id().is_empty(), "Error: [add] must have an id");
             }
             _ => (),
         }
     }
 }
 
-#[allow(clippy::single_match)]
+impl Check for InstrPrim {
+    fn check(&self) {
+        match self.op {
+            PrimOp::Add | PrimOp::Sub => {
+                assert!(
+                    self.dst_ty() == self.params[0].ty(),
+                    "Error: instr dst type and first param type must match"
+                );
+                assert!(
+                    self.dst_ty() == self.params[1].ty(),
+                    "Error: instr dst type and second param type must match"
+                );
+                assert!(
+                    self.params.len() == 2,
+                    "Error: instr support only two params"
+                );
+                assert!(self.attrs.is_empty(), "Error: instr does not support attr");
+                assert!(!self.dst_id().is_empty(), "Error: instr must have an id");
+            }
+            PrimOp::Equal | PrimOp::NotEqual => {
+                assert!(
+                    self.dst_ty() == &Ty::Bool,
+                    "Error: instr dst type must be bool"
+                );
+            }
+            _ => (),
+        }
+    }
+}
+
 impl Check for Instr {
     fn check(&self) {
+        assert!(self.dst().is_ref(), "Error: dst must be a reference");
         match self {
             Instr::Prim(instr) => instr.check(),
-            _ => (),
+            Instr::Std(instr) => instr.check(),
         }
     }
 }
