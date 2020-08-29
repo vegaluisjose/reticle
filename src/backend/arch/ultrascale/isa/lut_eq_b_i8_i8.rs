@@ -46,9 +46,9 @@ pub struct LutEqI8I8;
 impl EmitPrim for LutEqI8I8 {
     fn emit_prim(asm: &mut Assembler, _: asm::InstrPrim) {
         // let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        // let lhs = asm.replace_variable(&params[0]);
-        // let rhs = asm.replace_variable(&params[1]);
-        // let res = asm.replace_variable(&instr.dst_id());
+        // let lhs = asm.fresh_variable(&params[0]);
+        // let rhs = asm.fresh_variable(&params[1]);
+        // let res = asm.fresh_variable(&instr.dst_id());
         let mut lut_0 = LutPrim::new_lut6();
         let mut lut_1 = LutPrim::new_lut6();
         let mut lut_2 = LutPrim::new_lut6();

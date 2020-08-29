@@ -10,9 +10,9 @@ impl EmitPrim for LutAndBBB {
     fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim) {
         let id = asm.new_instance_name();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        let in_0 = asm.replace_variable(&params[0]);
-        let in_1 = asm.replace_variable(&params[1]);
-        let out = asm.replace_variable(&instr.dst_id());
+        let in_0 = asm.fresh_variable(&params[0]);
+        let in_1 = asm.fresh_variable(&params[1]);
+        let out = asm.fresh_variable(&instr.dst_id());
         let mut expr = instr.dst().clone();
         expr.set_id(&out);
         asm.emit_wire(expr);

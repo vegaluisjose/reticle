@@ -65,7 +65,7 @@ impl Assembler {
     pub fn update_variable(&mut self, old: &str, new: &str) {
         self.map.insert(old.to_string(), new.to_string());
     }
-    pub fn replace_variable(&mut self, name: &str) -> String {
+    pub fn fresh_variable(&mut self, name: &str) -> String {
         if let Some(var) = self.map.get(name) {
             var.to_string()
         } else {
