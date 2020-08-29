@@ -25,41 +25,6 @@ impl PrettyPrint for Loc {
     }
 }
 
-impl PrettyPrint for InstrStd {
-    fn to_doc(&self) -> RcDoc<()> {
-        let id = if self.dst_id().is_empty() {
-            RcDoc::nil()
-        } else {
-            RcDoc::as_string(&self.dst_id())
-                .append(RcDoc::text(":"))
-                .append(RcDoc::space())
-                .append(self.dst_ty().to_doc())
-                .append(RcDoc::space())
-                .append(RcDoc::text("="))
-                .append(RcDoc::space())
-        };
-        let attrs = if self.attrs().is_empty() {
-            RcDoc::nil()
-        } else {
-            intersperse(
-                self.attrs().iter().map(|x| x.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .brackets()
-        };
-        let params = if self.params().is_empty() {
-            RcDoc::nil()
-        } else {
-            intersperse(
-                self.params().iter().map(|x| x.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .parens()
-        };
-        id.append(self.op.to_doc()).append(attrs).append(params)
-    }
-}
-
 impl PrettyPrint for InstrPrim {
     fn to_doc(&self) -> RcDoc<()> {
         let id = if self.dst_id().is_empty() {

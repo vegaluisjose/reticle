@@ -10,7 +10,7 @@ pub type LocTy = ast::Loc;
 pub type Port = ast::Port;
 pub type Sig = ast::Sig;
 pub type Expr = ast::Expr;
-pub type StdOp = ast::StdOp;
+pub type InstrStd = ast::InstrStd;
 
 #[derive(Clone, Debug)]
 pub enum LocExpr {
@@ -24,14 +24,6 @@ pub struct Loc {
     pub ty: LocTy,
     pub x: LocExpr,
     pub y: LocExpr,
-}
-
-#[derive(Clone, Debug)]
-pub struct InstrStd {
-    pub op: StdOp,
-    pub dst: Expr,
-    pub attrs: Vec<Expr>,
-    pub params: Vec<Expr>,
 }
 
 #[derive(Clone, Debug)]

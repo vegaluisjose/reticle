@@ -57,6 +57,14 @@ pub enum PrimOp {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct InstrStd {
+    pub op: StdOp,
+    pub dst: Expr,
+    pub attrs: Vec<Expr>,
+    pub params: Vec<Expr>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Instr {
     Std {
         id: Id,
