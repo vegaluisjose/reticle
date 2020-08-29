@@ -150,6 +150,13 @@ impl Expr {
             _ => panic!("Error does not support value"),
         }
     }
+
+    pub fn is_ref(&self) -> bool {
+        match self {
+            Expr::Ref(_, _) => true,
+            _ => false,
+        }
+    }
 }
 
 impl Instr {

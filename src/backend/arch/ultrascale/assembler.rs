@@ -3,8 +3,8 @@ use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 use std::collections::HashMap;
 
-pub trait Emit {
-    fn emit(asm: &mut Assembler, instr: asm::Instr);
+pub trait EmitPrim {
+    fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim);
 }
 
 #[derive(Clone, Debug)]
@@ -84,6 +84,23 @@ impl Assembler {
         self.ports.push(verilog::Port::new_input(&self.clock(), 1));
         self.ports.push(verilog::Port::new_input(&self.reset(), 1));
     }
+    pub fn emit_wire(&mut self, expr: asm::Expr) {
+        if expr.is_ref() {
+            let width = expr.ty().width();
+            if expr.ty().is_vector() {
+                for i in 0..expr.ty().length() {
+                    let name = format!("{}_{}", expr.id(), i);
+                    let wire = verilog::Decl::new_wire(&name, width);
+                    self.add_wire(verilog::Stmt::from(wire));
+                }
+            } else {
+                let wire = verilog::Decl::new_wire(&expr.id(), width);
+                self.add_wire(verilog::Stmt::from(wire));
+            }
+        } else {
+            panic!("Error: only reference expr wire conversion allowed")
+        }
+    }
     pub fn emit_port(&mut self, port: asm::Port) {
         let width = port.ty().width();
         if port.ty().is_vector() {
@@ -117,8 +134,9 @@ impl Assembler {
         }
         for instr in prog.body().iter() {
             if instr.is_prim() {
-                match instr.prim().op().as_ref() {
-                    "lut_and_b_b_b" => isa::LutAndBBB::emit(self, instr.clone()),
+                let prim = instr.prim();
+                match prim.op().as_ref() {
+                    "lut_and_b_b_b" => isa::LutAndBBB::emit_prim(self, prim.clone()),
                     _ => (),
                 }
             }
@@ -126,6 +144,9 @@ impl Assembler {
         let mut module = verilog::Module::new(&prog.id());
         for port in self.ports().iter() {
             module.add_port(port.clone());
+        }
+        for wire in self.wires().iter() {
+            module.add_stmt(wire.clone());
         }
         for lut in self.luts().iter() {
             module.add_stmt(lut.clone());
