@@ -3,43 +3,6 @@ use crate::backend::arch::ultrascale::lut::LutPrim;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-// wire [7:0]a;
-// wire [7:0]b;
-// wire y;
-// wire y_INST_0_i_1_n_0;
-// wire y_INST_0_i_2_n_0;
-
-// LUT6 #(
-//   .INIT(64'h9009000000000000))
-//   y_INST_0
-//      (.I0(b[7]),
-//       .I1(a[7]),
-//       .I2(b[6]),
-//       .I3(a[6]),
-//       .I4(y_INST_0_i_1_n_0),
-//       .I5(y_INST_0_i_2_n_0),
-//       .O(y));
-// LUT6 #(
-//   .INIT(64'h9009000000009009))
-//   y_INST_0_i_1
-//      (.I0(a[3]),
-//       .I1(b[3]),
-//       .I2(b[5]),
-//       .I3(a[5]),
-//       .I4(b[4]),
-//       .I5(a[4]),
-//       .O(y_INST_0_i_1_n_0));
-// LUT6 #(
-//   .INIT(64'h9009000000009009))
-//   y_INST_0_i_2
-//      (.I0(a[0]),
-//       .I1(b[0]),
-//       .I2(b[2]),
-//       .I3(a[2]),
-//       .I4(b[1]),
-//       .I5(a[1]),
-//       .O(y_INST_0_i_2_n_0));
-
 #[derive(Clone, Debug)]
 pub struct LutEqBI8I8;
 
