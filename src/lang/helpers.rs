@@ -214,6 +214,70 @@ impl InstrStd {
     }
 }
 
+impl InstrPrim {
+    pub fn new(op: PrimOp) -> InstrPrim {
+        InstrPrim {
+            op,
+            dst: Expr::new_ref("", Ty::Hole),
+            attrs: Vec::new(),
+            params: Vec::new(),
+            loc: Loc::new_hole(),
+        }
+    }
+
+    pub fn op(&self) -> &PrimOp {
+        &self.op
+    }
+
+    pub fn dst(&self) -> &Expr {
+        &self.dst
+    }
+
+    pub fn attrs(&self) -> &Vec<Expr> {
+        &self.attrs
+    }
+
+    pub fn params(&self) -> &Vec<Expr> {
+        &self.params
+    }
+
+    pub fn loc(&self) -> &Loc {
+        &self.loc
+    }
+
+    pub fn dst_id(&self) -> String {
+        self.dst().id()
+    }
+
+    pub fn dst_ty(&self) -> &Ty {
+        &self.dst().ty()
+    }
+
+    pub fn set_op(&mut self, op: PrimOp) {
+        self.op = op;
+    }
+
+    pub fn set_dst_id(&mut self, id: &str) {
+        self.dst.set_id(id);
+    }
+
+    pub fn set_dst_ty(&mut self, ty: Ty) {
+        self.dst.set_ty(ty);
+    }
+
+    pub fn set_dst(&mut self, expr: Expr) {
+        self.dst = expr;
+    }
+
+    pub fn add_attr(&mut self, expr: Expr) {
+        self.attrs.push(expr);
+    }
+
+    pub fn add_param(&mut self, expr: Expr) {
+        self.params.push(expr);
+    }
+}
+
 impl Instr {
     pub fn id(&self) -> String {
         match self {
