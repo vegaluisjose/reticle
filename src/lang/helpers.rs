@@ -371,6 +371,13 @@ impl Instr {
         }
     }
 
+    pub fn dst(&self) -> &Expr {
+        match self {
+            Instr::Std(instr) => instr.dst(),
+            Instr::Prim(instr) => instr.dst(),
+        }
+    }
+
     pub fn loc(&self) -> &Loc {
         match self {
             Instr::Prim(instr) => instr.loc(),
