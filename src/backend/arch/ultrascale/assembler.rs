@@ -137,6 +137,7 @@ impl Assembler {
                 let prim = instr.prim();
                 match prim.op().as_ref() {
                     "lut_and_b_b_b" => isa::LutAndBBB::emit_prim(self, prim.clone()),
+                    "lut_eq_b_i8_i8" => isa::LutEqI8I8::emit_prim(self, prim.clone()),
                     _ => (),
                 }
             }
