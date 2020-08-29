@@ -17,22 +17,7 @@ impl From<asm::InstrPrim> for asm::Instr {
 // only for std instructions
 impl From<lang::Instr> for asm::Instr {
     fn from(instr: lang::Instr) -> Self {
-        if instr.is_std() {
-            let ty = instr.ty().clone();
-            let op = instr.std_op().clone();
-            let mut asm_instr = asm::InstrStd::new(op);
-            asm_instr.set_dst_id(&instr.id());
-            asm_instr.set_dst_ty(ty);
-            for attr in instr.attrs().iter() {
-                asm_instr.add_attr(attr.clone());
-            }
-            for param in instr.params().iter() {
-                asm_instr.add_param(param.clone());
-            }
-            asm::Instr::from(asm_instr)
-        } else {
-            panic!("only std instr conversion supported")
-        }
+        asm::Instr::from(instr.std().clone())
     }
 }
 

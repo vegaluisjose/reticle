@@ -151,57 +151,9 @@ impl PrettyPrint for InstrPrim {
 
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
-        let id = if self.id().is_empty() {
-            RcDoc::nil()
-        } else {
-            RcDoc::as_string(&self.id())
-                .append(RcDoc::text(":"))
-                .append(RcDoc::space())
-                .append(self.ty().to_doc())
-                .append(RcDoc::space())
-                .append(RcDoc::text("="))
-                .append(RcDoc::space())
-        };
-        let attrs = if self.attrs().is_empty() {
-            RcDoc::nil()
-        } else {
-            intersperse(
-                self.attrs().iter().map(|x| x.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .brackets()
-        };
-        let params = if self.params().is_empty() {
-            RcDoc::nil()
-        } else {
-            intersperse(
-                self.params().iter().map(|x| x.to_doc()),
-                RcDoc::text(",").append(RcDoc::space()),
-            )
-            .parens()
-        };
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op,
-                attrs: _,
-                params: _,
-                loc,
-            } => id
-                .append(op.to_doc())
-                .append(attrs)
-                .append(params)
-                .append(RcDoc::space())
-                .append(RcDoc::text("@"))
-                .append(loc.to_doc()),
-            Instr::Std {
-                id: _,
-                ty: _,
-                op,
-                attrs: _,
-                params: _,
-            } => id.append(op.to_doc()).append(attrs).append(params),
+            Instr::Std(instr) => instr.to_doc(),
+            Instr::Prim(instr) => instr.to_doc(),
         }
     }
 }

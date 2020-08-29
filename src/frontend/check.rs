@@ -9,29 +9,35 @@ pub trait Check {
 }
 
 #[allow(clippy::single_match)]
-impl Check for Instr {
+impl Check for InstrPrim {
     fn check(&self) {
-        match self {
-            Instr::Prim {
-                id,
-                ty,
-                op: PrimOp::Add,
-                attrs,
-                params,
-                loc: _,
-            } => {
+        match self.op {
+            PrimOp::Add => {
                 assert!(
-                    ty == params[0].ty(),
+                    self.dst_ty() == self.params[0].ty(),
                     "Error: [add] result type and param[0] type must match"
                 );
                 assert!(
-                    ty == params[1].ty(),
+                    self.dst_ty() == self.params[1].ty(),
                     "Error: [add] result type and param[1] type must match"
                 );
-                assert!(params.len() == 2, "Error: [add] support only two params");
-                assert!(attrs.is_empty(), "Error: [add] does not support attr");
-                assert!(!id.is_empty(), "Error: [add] must have an id");
+                assert!(
+                    self.params.len() == 2,
+                    "Error: [add] support only two params"
+                );
+                assert!(self.attrs.is_empty(), "Error: [add] does not support attr");
+                assert!(!self.dst_id().is_empty(), "Error: [add] must have an id");
             }
+            _ => (),
+        }
+    }
+}
+
+#[allow(clippy::single_match)]
+impl Check for Instr {
+    fn check(&self) {
+        match self {
+            Instr::Prim(instr) => instr.check(),
             _ => (),
         }
     }

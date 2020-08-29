@@ -68,6 +68,41 @@ impl Loc {
     pub fn new_ram() -> Loc {
         Loc::Ram
     }
+
+    pub fn is_lut(&self) -> bool {
+        match self {
+            Loc::Lut => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_lum(&self) -> bool {
+        match self {
+            Loc::Lum => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_dsp(&self) -> bool {
+        match self {
+            Loc::Dsp => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_ram(&self) -> bool {
+        match self {
+            Loc::Ram => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_hole(&self) -> bool {
+        match self {
+            Loc::Hole => true,
+            _ => false,
+        }
+    }
 }
 
 impl Port {
@@ -212,6 +247,10 @@ impl InstrStd {
     pub fn add_param(&mut self, expr: Expr) {
         self.params.push(expr);
     }
+
+    pub fn clear_params(&mut self) {
+        self.params.clear();
+    }
 }
 
 impl InstrPrim {
@@ -223,6 +262,33 @@ impl InstrPrim {
             params: Vec::new(),
             loc: Loc::new_hole(),
         }
+    }
+
+    pub fn is_reg(&self) -> bool {
+        match self.op() {
+            PrimOp::Reg => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_lut(&self) -> bool {
+        self.loc.is_lut()
+    }
+
+    pub fn is_lum(&self) -> bool {
+        self.loc.is_lum()
+    }
+
+    pub fn is_dsp(&self) -> bool {
+        self.loc.is_dsp()
+    }
+
+    pub fn is_ram(&self) -> bool {
+        self.loc.is_ram()
+    }
+
+    pub fn is_hole(&self) -> bool {
+        self.loc.is_hole()
     }
 
     pub fn op(&self) -> &PrimOp {
@@ -269,6 +335,10 @@ impl InstrPrim {
         self.dst = expr;
     }
 
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
+    }
+
     pub fn add_attr(&mut self, expr: Expr) {
         self.attrs.push(expr);
     }
@@ -276,293 +346,189 @@ impl InstrPrim {
     pub fn add_param(&mut self, expr: Expr) {
         self.params.push(expr);
     }
+
+    pub fn clear_params(&mut self) {
+        self.params.clear();
+    }
+
+    pub fn clear_loc(&mut self) {
+        self.loc = Loc::Hole;
+    }
 }
 
 impl Instr {
     pub fn id(&self) -> String {
         match self {
-            Instr::Std {
-                id,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-            } => id.to_string(),
-            Instr::Prim {
-                id,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => id.to_string(),
+            Instr::Std(instr) => instr.dst_id(),
+            Instr::Prim(instr) => instr.dst_id(),
         }
     }
 
     pub fn ty(&self) -> &Ty {
         match self {
-            Instr::Std {
-                id: _,
-                ty,
-                op: _,
-                attrs: _,
-                params: _,
-            } => ty,
-            Instr::Prim {
-                id: _,
-                ty,
-                op: _,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => ty,
-        }
-    }
-
-    pub fn params(&self) -> &Vec<Expr> {
-        match self {
-            Instr::Std {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params,
-            } => params,
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params,
-                loc: _,
-            } => params,
-        }
-    }
-
-    pub fn attrs(&self) -> &Vec<Expr> {
-        match self {
-            Instr::Std {
-                id: _,
-                ty: _,
-                op: _,
-                attrs,
-                params: _,
-            } => attrs,
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs,
-                params: _,
-                loc: _,
-            } => attrs,
-        }
-    }
-
-    pub fn prim_op(&self) -> &PrimOp {
-        match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => op,
-            _ => panic!("Error: std ops don't support prim op"),
-        }
-    }
-
-    pub fn std_op(&self) -> &StdOp {
-        match self {
-            Instr::Std {
-                id: _,
-                ty: _,
-                op,
-                attrs: _,
-                params: _,
-            } => op,
-            _ => panic!("Error: prim ops don't support std op"),
-        }
-    }
-
-    pub fn is_prim(&self) -> bool {
-        match self {
-            Instr::Prim { .. } => true,
-            Instr::Std { .. } => false,
-        }
-    }
-
-    pub fn is_std(&self) -> bool {
-        match self {
-            Instr::Prim { .. } => false,
-            Instr::Std { .. } => true,
-        }
-    }
-
-    pub fn is_reg(&self) -> bool {
-        match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: PrimOp::Reg,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => true,
-            _ => false,
+            Instr::Std(instr) => instr.dst_ty(),
+            Instr::Prim(instr) => instr.dst_ty(),
         }
     }
 
     pub fn loc(&self) -> &Loc {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => loc,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Prim(instr) => instr.loc(),
+            _ => panic!("Error: not a prim instruction"),
         }
     }
 
-    pub fn set_loc(&mut self, location: Loc) {
+    pub fn prim(&self) -> &InstrPrim {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc = location,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Prim(instr) => instr,
+            _ => panic!("Error: not a prim instruction"),
         }
     }
 
-    pub fn is_hole(&self) -> bool {
+    pub fn std(&self) -> &InstrStd {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc == Loc::Hole,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Std(instr) => instr,
+            _ => panic!("Error: not a std instruction"),
         }
     }
 
-    pub fn is_lut(&self) -> bool {
+    pub fn prim_op(&self) -> &PrimOp {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc == Loc::Lut,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Prim(instr) => instr.op(),
+            _ => panic!("Error: not a prim instruction"),
         }
     }
 
-    pub fn is_dsp(&self) -> bool {
+    pub fn std_op(&self) -> &StdOp {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc == Loc::Dsp,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Std(instr) => instr.op(),
+            _ => panic!("Error: not a std instruction"),
         }
     }
 
-    pub fn is_lum(&self) -> bool {
+    pub fn is_prim(&self) -> bool {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc == Loc::Lum,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Prim(_) => true,
+            _ => false,
         }
     }
 
-    pub fn is_ram(&self) -> bool {
+    pub fn is_std(&self) -> bool {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc == Loc::Ram,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Std(_) => true,
+            _ => false,
         }
     }
 
-    pub fn clear_loc(&mut self) {
+    pub fn is_reg(&self) -> bool {
         match self {
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params: _,
-                loc,
-            } => *loc = Loc::Hole,
-            _ => panic!("Error: std ops don't support location"),
+            Instr::Prim(instr) => instr.is_reg(),
+            _ => false,
+        }
+    }
+
+    pub fn attrs(&self) -> &Vec<Expr> {
+        match self {
+            Instr::Std(instr) => instr.attrs(),
+            Instr::Prim(instr) => instr.attrs(),
+        }
+    }
+
+    pub fn params(&self) -> &Vec<Expr> {
+        match self {
+            Instr::Std(instr) => instr.params(),
+            Instr::Prim(instr) => instr.params(),
+        }
+    }
+
+    pub fn set_dst_id(&mut self, value: &str) {
+        match self {
+            Instr::Std(instr) => instr.set_dst_id(value),
+            Instr::Prim(instr) => instr.set_dst_id(value),
+        }
+    }
+
+    pub fn set_dst_ty(&mut self, ty: Ty) {
+        match self {
+            Instr::Std(instr) => instr.set_dst_ty(ty),
+            Instr::Prim(instr) => instr.set_dst_ty(ty),
+        }
+    }
+
+    pub fn set_dst(&mut self, expr: Expr) {
+        match self {
+            Instr::Std(instr) => instr.set_dst(expr),
+            Instr::Prim(instr) => instr.set_dst(expr),
         }
     }
 
     pub fn add_param(&mut self, expr: Expr) {
         match self {
-            Instr::Std {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params,
-            } => params.push(expr),
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params,
-                loc: _,
-            } => params.push(expr),
+            Instr::Std(instr) => instr.add_param(expr),
+            Instr::Prim(instr) => instr.add_param(expr),
+        }
+    }
+
+    pub fn add_attr(&mut self, expr: Expr) {
+        match self {
+            Instr::Std(instr) => instr.add_attr(expr),
+            Instr::Prim(instr) => instr.add_attr(expr),
+        }
+    }
+
+    pub fn set_loc(&mut self, loc: Loc) {
+        match self {
+            Instr::Prim(instr) => instr.set_loc(loc),
+            _ => panic!("Error: not a prim instruction"),
         }
     }
 
     pub fn clear_params(&mut self) {
         match self {
-            Instr::Std {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params,
-            } => params.clear(),
-            Instr::Prim {
-                id: _,
-                ty: _,
-                op: _,
-                attrs: _,
-                params,
-                loc: _,
-            } => params.clear(),
+            Instr::Prim(instr) => instr.clear_params(),
+            Instr::Std(instr) => instr.clear_params(),
+        }
+    }
+
+    pub fn clear_loc(&mut self) {
+        match self {
+            Instr::Prim(instr) => instr.clear_loc(),
+            _ => panic!("Error: not a prim instruction"),
+        }
+    }
+
+    pub fn is_lut(&self) -> bool {
+        match self {
+            Instr::Prim(instr) => instr.is_lut(),
+            _ => false,
+        }
+    }
+
+    pub fn is_lum(&self) -> bool {
+        match self {
+            Instr::Prim(instr) => instr.is_lum(),
+            _ => false,
+        }
+    }
+
+    pub fn is_dsp(&self) -> bool {
+        match self {
+            Instr::Prim(instr) => instr.is_dsp(),
+            _ => false,
+        }
+    }
+
+    pub fn is_ram(&self) -> bool {
+        match self {
+            Instr::Prim(instr) => instr.is_ram(),
+            _ => false,
+        }
+    }
+
+    pub fn is_hole(&self) -> bool {
+        match self {
+            Instr::Prim(instr) => instr.is_hole(),
+            _ => false,
         }
     }
 }

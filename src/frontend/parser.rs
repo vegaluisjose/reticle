@@ -69,51 +69,51 @@ impl ReticleParser {
     fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(expr), stdop(op), params(params)] => Instr::Std {
-                id: expr.id(),
-                ty: expr.ty().clone(),
-                op,
-                attrs: Vec::new(),
-                params,
-            },
-            [expr(expr), stdop(op), attrs(attrs)] => Instr::Std {
-                id: expr.id(),
-                ty: expr.ty().clone(),
-                op,
-                attrs,
-                params: Vec::new(),
-            },
-            [expr(expr), stdop(op), attrs(attrs), params(params)] => Instr::Std {
-                id: expr.id(),
-                ty: expr.ty().clone(),
-                op,
-                attrs,
-                params,
-            },
-            [expr(expr), primop(op), params(params)] => Instr::Prim {
-                id: expr.id(),
-                ty: expr.ty().clone(),
-                op,
-                attrs: Vec::new(),
-                params,
-                loc: Loc::Hole,
-            },
-            [expr(expr), primop(op), attrs(attrs)] => Instr::Prim {
-                id: expr.id(),
-                ty: expr.ty().clone(),
-                op,
-                attrs,
-                params: Vec::new(),
-                loc: Loc::Hole,
-            },
-            [expr(expr), primop(op), attrs(attrs), params(params)] => Instr::Prim {
-                id: expr.id(),
-                ty: expr.ty().clone(),
-                op,
-                attrs,
-                params,
-                loc: Loc::Hole,
-            },
+            [expr(dst), stdop(op), params(params)] => Instr::from(
+                InstrStd {
+                    op,
+                    dst,
+                    attrs: Vec::new(),
+                    params,
+                }),
+            [expr(dst), stdop(op), attrs(attrs)] => Instr::from(
+                InstrStd {
+                    op,
+                    dst,
+                    attrs,
+                    params: Vec::new(),
+                }),
+            [expr(dst), stdop(op), attrs(attrs), params(params)] => Instr::from(
+                InstrStd {
+                    op,
+                    dst,
+                    attrs,
+                    params,
+                }),
+            [expr(dst), primop(op), params(params)] => Instr::from(
+                InstrPrim {
+                    op,
+                    dst,
+                    attrs: Vec::new(),
+                    params,
+                    loc: Loc::Hole,
+                }),
+            [expr(dst), primop(op), attrs(attrs)] => Instr::from(
+                InstrPrim {
+                    op,
+                    dst,
+                    attrs,
+                    params: Vec::new(),
+                    loc: Loc::Hole,
+                }),
+            [expr(dst), primop(op), attrs(attrs), params(params)] => Instr::from(
+                InstrPrim {
+                    op,
+                    dst,
+                    attrs,
+                    params,
+                    loc: Loc::Hole,
+                }),
         ))
     }
 

@@ -11,17 +11,11 @@ impl From<PrimOp> for TreeOp {
 
 impl From<Instr> for TreeNode {
     fn from(instr: Instr) -> Self {
-        match instr {
-            Instr::Prim {
-                id,
-                ty,
-                op,
-                attrs: _,
-                params: _,
-                loc: _,
-            } => TreeNode::new(&id, ty, TreeOp::from(op)),
-            _ => panic!("Error: tree nodes only support prim instr"),
-        }
+        TreeNode::new(
+            &instr.id(),
+            instr.ty().clone(),
+            TreeOp::from(instr.prim_op().clone()),
+        )
     }
 }
 
