@@ -95,6 +95,13 @@ impl Instr {
         }
     }
 
+    pub fn dst(&self) -> &Expr {
+        match self {
+            Instr::Std(instr) => instr.dst(),
+            Instr::Prim(instr) => instr.dst(),
+        }
+    }
+
     pub fn prim(&self) -> &InstrPrim {
         match self {
             Instr::Prim(instr) => instr,
