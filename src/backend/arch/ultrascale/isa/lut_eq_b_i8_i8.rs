@@ -41,9 +41,9 @@ use crate::backend::verilog;
 //       .O(y_INST_0_i_2_n_0));
 
 #[derive(Clone, Debug)]
-pub struct LutEqI8I8;
+pub struct LutEqBI8I8;
 
-impl EmitPrim for LutEqI8I8 {
+impl EmitPrim for LutEqBI8I8 {
     fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim) {
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let lhs = asm.fresh_variable(&params[0]);
