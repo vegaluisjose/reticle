@@ -13,9 +13,6 @@ impl EmitPrim for LutAndBBB {
         let in_0 = asm.fresh_variable(&params[0]);
         let in_1 = asm.fresh_variable(&params[1]);
         let out = asm.fresh_variable(&instr.dst_id());
-        let mut expr = instr.dst().clone();
-        expr.set_id(&out);
-        asm.emit_wire(expr);
         let mut lut = LutPrim::new_lut2();
         lut.set_init("8");
         lut.set_id(&id);

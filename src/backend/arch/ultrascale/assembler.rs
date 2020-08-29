@@ -1,7 +1,7 @@
 use crate::backend::arch::ultrascale::isa;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 pub trait EmitPrim {
     fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim);
@@ -11,12 +11,13 @@ pub trait EmitPrim {
 pub struct Assembler {
     pub clock: String,
     pub reset: String,
-    pub map: HashMap<String, String>,
+    pub variable_map: HashMap<String, String>,
     pub variables: u32,
     pub instances: u32,
     pub ports: Vec<verilog::Port>,
     pub wires: Vec<verilog::Stmt>,
     pub luts: Vec<verilog::Stmt>,
+    pub output_set: HashSet<String>,
 }
 
 impl Default for Assembler {
@@ -24,12 +25,13 @@ impl Default for Assembler {
         Assembler {
             clock: "clock".to_string(),
             reset: "reset".to_string(),
-            map: HashMap::new(),
+            variable_map: HashMap::new(),
             variables: 0,
             instances: 0,
             ports: Vec::new(),
             wires: Vec::new(),
             luts: Vec::new(),
+            output_set: HashSet::new(),
         }
     }
 }
@@ -63,16 +65,22 @@ impl Assembler {
         name
     }
     pub fn update_variable(&mut self, old: &str, new: &str) {
-        self.map.insert(old.to_string(), new.to_string());
+        self.variable_map.insert(old.to_string(), new.to_string());
     }
     pub fn fresh_variable(&mut self, name: &str) -> String {
-        if let Some(var) = self.map.get(name) {
+        if let Some(var) = self.variable_map.get(name) {
             var.to_string()
         } else {
             let tmp = self.new_variable_name();
             self.update_variable(name, &tmp);
             tmp
         }
+    }
+    pub fn add_output(&mut self, name: &str) {
+        self.output_set.insert(name.to_string());
+    }
+    pub fn is_output(&mut self, name: &str) -> bool {
+        self.output_set.contains(name)
     }
     pub fn add_wire(&mut self, wire: verilog::Stmt) {
         self.wires.push(wire);
@@ -85,20 +93,17 @@ impl Assembler {
         self.ports.push(verilog::Port::new_input(&self.reset(), 1));
     }
     pub fn emit_wire(&mut self, expr: asm::Expr) {
-        if expr.is_ref() {
-            let width = expr.ty().width();
-            if expr.ty().is_vector() {
-                for i in 0..expr.ty().length() {
-                    let name = format!("{}_{}", expr.id(), i);
-                    let wire = verilog::Decl::new_wire(&name, width);
-                    self.add_wire(verilog::Stmt::from(wire));
-                }
-            } else {
-                let wire = verilog::Decl::new_wire(&expr.id(), width);
+        let width = expr.ty().width();
+        let id = self.fresh_variable(&expr.id());
+        if expr.ty().is_vector() {
+            for i in 0..expr.ty().length() {
+                let name = format!("{}_{}", &id, i);
+                let wire = verilog::Decl::new_wire(&name, width);
                 self.add_wire(verilog::Stmt::from(wire));
             }
         } else {
-            panic!("Error: only reference expr wire conversion allowed")
+            let wire = verilog::Decl::new_wire(&id, width);
+            self.add_wire(verilog::Stmt::from(wire));
         }
     }
     pub fn emit_port(&mut self, port: asm::Port) {
@@ -131,8 +136,12 @@ impl Assembler {
         for output in prog.outputs().iter() {
             self.emit_port(output.clone());
             self.update_variable(&output.id(), &output.id());
+            self.add_output(&output.id());
         }
         for instr in prog.body().iter() {
+            if !self.is_output(&instr.dst().id()) {
+                self.emit_wire(instr.dst().clone());
+            }
             if instr.is_prim() {
                 let prim = instr.prim();
                 match prim.op().as_ref() {
