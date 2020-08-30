@@ -1,6 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, EmitPrim};
-use crate::backend::arch::ultrascale::lut::Lut;
-use crate::backend::arch::ultrascale::reg::Reg;
+use crate::backend::arch::ultrascale::prim::ast::{Lut, Reg};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
