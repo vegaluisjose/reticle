@@ -778,9 +778,9 @@ module test_dsp_add_reg_mul_8 (
     dsp_add_reg_mul #(.width(width)) dut (clock, reset, a, b, c, en, y);
 
     // xilinx gsr requires some time to be fully initialized, which affects/delays
-    // the time when registers start saving data
+    // the time when registers start saving data. It takes 5000 cycles to init at 1ps time resolution
     always @(posedge clock) begin
-        if (!reset && (cycles == 32'd8)) begin
+        if (!reset && (cycles == 32'd5000)) begin
             assert (y == y_ref) $display("[PASS] test_dsp_add_reg_mul_width_8 res:%d exp:%d", $signed(y), $signed(y_ref));
                 else $error("[FAIL] test_dsp_add_reg_mul_width_8 res:%d exp:%d", $signed(y), $signed(y_ref));
         end
@@ -844,9 +844,9 @@ module test();
         end
     end
 
-    // run for 10 cycles
+    // run for 5010 cycles, gsr takes 5k cycles to init at 1ps
     always @(posedge clock) begin
-        if (cycles == 32'd10) begin
+        if (cycles == 32'd5010) begin
             $finish;
         end
     end
