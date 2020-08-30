@@ -79,15 +79,15 @@ impl Interpreter {
                     let value = instr.eval(&curr);
                     curr.add_temp(&instr.id(), value);
                 }
-                // run register instr and update register values
+                // run register instr
                 for instr in instr_register.iter() {
                     let value = instr.eval(&curr);
                     next.add_reg(&instr.id(), value);
                 }
-                // write and check outputs
+                // check outputs
                 for output in def.outputs().iter() {
                     let exp = trace.deq(&output.id());
-                    // store results depending on whether they are regs or temps
+                    // get output from regs or wires
                     let res = if curr.is_reg(&output.id()) {
                         curr.get_reg(&output.id())
                     } else {
@@ -106,7 +106,7 @@ impl Interpreter {
                         self.failed = true;
                     }
                 }
-                // update environment
+                // update regs
                 curr.update_regs_from_state(&next);
             }
             self.finished = true;
