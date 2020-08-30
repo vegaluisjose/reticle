@@ -17,7 +17,7 @@ xvlog:
 	xvlog --sv --incr --relax -f tcl/sim.tcl
 
 xelab:
-	xelab --snapshot test -R -L unisims_ver glbl test
+	xelab --snapshot test --timescale 1ps/1ps -R -L unisims_ver glbl test
 
 $(OUT_DIR):
 	mkdir -p $@

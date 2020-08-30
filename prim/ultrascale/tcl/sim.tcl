@@ -25,3 +25,4 @@ ${LIB_DIR}/lut_sub_w32.v
 ${LIB_DIR}/dsp_add_mul.v
 ${LIB_DIR}/dsp_add_reg_mul.v
 ${LIB_DIR}/dsp_add_add_add_mul.v
+${LIB_DIR}/lut_eq_b_i8_i8.v

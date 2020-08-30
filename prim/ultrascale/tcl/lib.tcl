@@ -23,3 +23,4 @@ read_verilog -sv $lib_dir/lut_sub_w32.v
 read_verilog -sv $lib_dir/dsp_add_mul.v
 read_verilog -sv $lib_dir/dsp_add_reg_mul.v
 read_verilog -sv $lib_dir/dsp_add_add_add_mul.v
+read_verilog -sv $lib_dir/lut_eq_b_i8_i8.v

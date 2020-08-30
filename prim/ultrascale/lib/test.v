@@ -820,6 +820,34 @@ module test_dsp_add_add_add_mul (
 
 endmodule
 
+module test_lut_eq_b_i8_i8 (
+    input        clock,
+    input        reset,
+    input [31:0] cycles
+);
+    localparam width = 8;
+
+    logic [width-1:0] a;
+    logic [width-1:0] b;
+    logic y;
+    logic y_ref;
+
+    assign a = 8'hab;
+    assign b = 8'hcb;
+
+    assign y_ref = a == b;
+
+    lut_eq_b_i8_i8 dut (a, b, y);
+
+    always @(posedge clock) begin
+        if (!reset && (cycles == 32'd0)) begin
+            assert (y == y_ref) $display("[PASS] test_lut_eq_b_i8_i8 res:%d exp:%d", y, y_ref);
+                else $error("[FAIL] test_lut_eq_b_i8_i8 res:%d exp:%d", y, y_ref);
+        end
+    end
+
+endmodule
+
 module test();
     logic clock = 1'b0;
     logic reset;
@@ -877,5 +905,6 @@ module test();
     test_dsp_add_mul_8       t23 (clock, reset, cycles);
     test_dsp_add_reg_mul_8   t24 (clock, reset, cycles);
     test_dsp_add_add_add_mul t25 (clock, reset, cycles);
+    test_lut_eq_b_i8_i8      t26 (clock, reset, cycles);
 
 endmodule
