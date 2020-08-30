@@ -18,6 +18,7 @@ pub struct Assembler {
     pub wires: Vec<verilog::Stmt>,
     pub regs: Vec<verilog::Stmt>,
     pub luts: Vec<verilog::Stmt>,
+    pub stds: Vec<verilog::Stmt>,
     pub output_set: HashSet<String>,
 }
 
@@ -33,6 +34,7 @@ impl Default for Assembler {
             wires: Vec::new(),
             regs: Vec::new(),
             luts: Vec::new(),
+            stds: Vec::new(),
             output_set: HashSet::new(),
         }
     }
@@ -42,34 +44,47 @@ impl Assembler {
     pub fn clock(&self) -> String {
         self.clock.to_string()
     }
+
     pub fn reset(&self) -> String {
         self.reset.to_string()
     }
+
     pub fn ports(&self) -> &Vec<verilog::Port> {
         &self.ports
     }
+
     pub fn wires(&self) -> &Vec<verilog::Stmt> {
         &self.wires
     }
+
     pub fn luts(&self) -> &Vec<verilog::Stmt> {
         &self.luts
     }
+
     pub fn regs(&self) -> &Vec<verilog::Stmt> {
         &self.regs
     }
+
+    pub fn stds(&self) -> &Vec<verilog::Stmt> {
+        &self.stds
+    }
+
     pub fn new_instance_name(&mut self) -> String {
         let name = format!("i{}", self.instances);
         self.instances += 1;
         name
     }
+
     pub fn new_variable_name(&mut self) -> String {
         let name = format!("t{}", self.variables);
         self.variables += 1;
         name
     }
+
     pub fn update_variable(&mut self, old: &str, new: &str) {
         self.variable_map.insert(old.to_string(), new.to_string());
     }
+
     pub fn fresh_variable(&mut self, name: &str) -> String {
         if let Some(var) = self.variable_map.get(name) {
             var.to_string()
@@ -79,25 +94,36 @@ impl Assembler {
             tmp
         }
     }
+
     pub fn add_output(&mut self, name: &str) {
         self.output_set.insert(name.to_string());
     }
+
     pub fn is_output(&mut self, name: &str) -> bool {
         self.output_set.contains(name)
     }
+
     pub fn add_wire(&mut self, wire: verilog::Stmt) {
         self.wires.push(wire);
     }
+
     pub fn add_reg(&mut self, reg: verilog::Stmt) {
         self.regs.push(reg);
     }
+
     pub fn add_lut(&mut self, lut: verilog::Stmt) {
         self.luts.push(lut);
     }
+
+    pub fn add_std(&mut self, std: verilog::Stmt) {
+        self.stds.push(std);
+    }
+
     pub fn emit_clock_and_reset(&mut self) {
         self.ports.push(verilog::Port::new_input(&self.clock(), 1));
         self.ports.push(verilog::Port::new_input(&self.reset(), 1));
     }
+
     pub fn emit_wire(&mut self, expr: asm::Expr) {
         let width = expr.ty().width();
         let id = self.fresh_variable(&expr.id());
@@ -112,6 +138,7 @@ impl Assembler {
             self.add_wire(verilog::Stmt::from(wire));
         }
     }
+
     pub fn emit_port(&mut self, port: asm::Port) {
         let width = port.ty().width();
         if port.ty().is_vector() {
@@ -133,6 +160,7 @@ impl Assembler {
             self.ports.push(vport);
         }
     }
+
     pub fn emit(&mut self, prog: asm::Prog) -> verilog::Module {
         self.emit_clock_and_reset();
         for input in prog.inputs().iter() {
@@ -160,6 +188,8 @@ impl Assembler {
                     }
                     _ => (),
                 }
+            } else {
+                self.add_std(verilog::Stmt::from(instr.std().clone()));
             }
         }
         let mut module = verilog::Module::new(&prog.id());
@@ -174,6 +204,9 @@ impl Assembler {
         }
         for reg in self.regs().iter() {
             module.add_stmt(reg.clone());
+        }
+        for std in self.stds().iter() {
+            module.add_stmt(std.clone());
         }
         module
     }

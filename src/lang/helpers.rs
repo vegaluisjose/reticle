@@ -220,6 +220,14 @@ impl InstrStd {
         &self.params
     }
 
+    pub fn indexed_attr(&self, index: usize) -> &Expr {
+        &self.attrs[index]
+    }
+
+    pub fn indexed_param(&self, index: usize) -> &Expr {
+        &self.params[index]
+    }
+
     pub fn dst_id(&self) -> String {
         self.dst().id()
     }
@@ -305,6 +313,14 @@ impl InstrPrim {
 
     pub fn params(&self) -> &Vec<Expr> {
         &self.params
+    }
+
+    pub fn indexed_attr(&self, index: usize) -> &Expr {
+        &self.attrs[index]
+    }
+
+    pub fn indexed_param(&self, index: usize) -> &Expr {
+        &self.params[index]
     }
 
     pub fn loc(&self) -> &Loc {
@@ -445,6 +461,20 @@ impl Instr {
         match self {
             Instr::Std(instr) => instr.params(),
             Instr::Prim(instr) => instr.params(),
+        }
+    }
+
+    pub fn indexed_attr(&self, index: usize) -> &Expr {
+        match self {
+            Instr::Std(instr) => instr.indexed_attr(index),
+            Instr::Prim(instr) => instr.indexed_attr(index),
+        }
+    }
+
+    pub fn indexed_param(&self, index: usize) -> &Expr {
+        match self {
+            Instr::Std(instr) => instr.indexed_param(index),
+            Instr::Prim(instr) => instr.indexed_param(index),
         }
     }
 
