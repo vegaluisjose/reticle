@@ -9,9 +9,9 @@ impl Expr {
     }
 }
 
-impl LutPrim {
-    pub fn new_lut2() -> LutPrim {
-        LutPrim {
+impl Lut {
+    pub fn new_lut2() -> Lut {
+        Lut {
             id: String::new(),
             init: "0".to_string(),
             ty: Ty::Lut2,
@@ -21,8 +21,8 @@ impl LutPrim {
         }
     }
 
-    pub fn new_lut3() -> LutPrim {
-        LutPrim {
+    pub fn new_lut3() -> Lut {
+        Lut {
             id: String::new(),
             init: "0".to_string(),
             ty: Ty::Lut3,
@@ -32,8 +32,8 @@ impl LutPrim {
         }
     }
 
-    pub fn new_lut4() -> LutPrim {
-        LutPrim {
+    pub fn new_lut4() -> Lut {
+        Lut {
             id: String::new(),
             init: "0".to_string(),
             ty: Ty::Lut4,
@@ -43,8 +43,8 @@ impl LutPrim {
         }
     }
 
-    pub fn new_lut5() -> LutPrim {
-        LutPrim {
+    pub fn new_lut5() -> Lut {
+        Lut {
             id: String::new(),
             init: "0".to_string(),
             ty: Ty::Lut5,
@@ -54,8 +54,8 @@ impl LutPrim {
         }
     }
 
-    pub fn new_lut6() -> LutPrim {
-        LutPrim {
+    pub fn new_lut6() -> Lut {
+        Lut {
             id: String::new(),
             init: "0".to_string(),
             ty: Ty::Lut6,

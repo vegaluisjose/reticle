@@ -1,8 +1,8 @@
 use crate::backend::arch::ultrascale::reg::*;
 
-impl RegPrim {
-    pub fn new_fdre() -> RegPrim {
-        RegPrim {
+impl Reg {
+    pub fn new_fdre() -> Reg {
+        Reg {
             id: String::new(),
             ty: Ty::Fdre,
             clock: String::new(),
@@ -13,8 +13,8 @@ impl RegPrim {
             loc: None,
         }
     }
-    pub fn new_fdse() -> RegPrim {
-        RegPrim {
+    pub fn new_fdse() -> Reg {
+        Reg {
             id: String::new(),
             ty: Ty::Fdse,
             clock: String::new(),

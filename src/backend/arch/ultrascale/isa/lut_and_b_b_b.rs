@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, EmitPrim};
-use crate::backend::arch::ultrascale::lut::LutPrim;
+use crate::backend::arch::ultrascale::lut::Lut;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
@@ -13,7 +13,7 @@ impl EmitPrim for LutAndBBB {
         let in_0 = asm.fresh_variable(&params[0]);
         let in_1 = asm.fresh_variable(&params[1]);
         let out = asm.fresh_variable(&instr.dst_id());
-        let mut lut = LutPrim::new_lut2();
+        let mut lut = Lut::new_lut2();
         lut.set_init("8");
         lut.set_id(&id);
         lut.add_input(&in_0);

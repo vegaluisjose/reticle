@@ -32,7 +32,7 @@ pub enum Expr {
 }
 
 #[derive(Clone, Debug)]
-pub struct LutPrim {
+pub struct Lut {
     pub id: String,
     pub ty: Ty,
     pub init: String,

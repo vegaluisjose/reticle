@@ -16,6 +16,7 @@ pub struct Assembler {
     pub instances: u32,
     pub ports: Vec<verilog::Port>,
     pub wires: Vec<verilog::Stmt>,
+    pub regs: Vec<verilog::Stmt>,
     pub luts: Vec<verilog::Stmt>,
     pub output_set: HashSet<String>,
 }
@@ -30,14 +31,13 @@ impl Default for Assembler {
             instances: 0,
             ports: Vec::new(),
             wires: Vec::new(),
+            regs: Vec::new(),
             luts: Vec::new(),
             output_set: HashSet::new(),
         }
     }
 }
 
-// remove this once I add another instruction to match
-#[allow(clippy::single_match)]
 impl Assembler {
     pub fn clock(&self) -> String {
         self.clock.to_string()
@@ -53,6 +53,9 @@ impl Assembler {
     }
     pub fn luts(&self) -> &Vec<verilog::Stmt> {
         &self.luts
+    }
+    pub fn regs(&self) -> &Vec<verilog::Stmt> {
+        &self.regs
     }
     pub fn new_instance_name(&mut self) -> String {
         let name = format!("i{}", self.instances);
@@ -84,6 +87,9 @@ impl Assembler {
     }
     pub fn add_wire(&mut self, wire: verilog::Stmt) {
         self.wires.push(wire);
+    }
+    pub fn add_reg(&mut self, reg: verilog::Stmt) {
+        self.regs.push(reg);
     }
     pub fn add_lut(&mut self, lut: verilog::Stmt) {
         self.luts.push(lut);
@@ -161,6 +167,9 @@ impl Assembler {
         }
         for lut in self.luts().iter() {
             module.add_stmt(lut.clone());
+        }
+        for reg in self.regs().iter() {
+            module.add_stmt(reg.clone());
         }
         module
     }

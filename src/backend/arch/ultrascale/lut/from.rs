@@ -20,8 +20,8 @@ impl From<Expr> for verilog::Expr {
     }
 }
 
-impl From<LutPrim> for verilog::Stmt {
-    fn from(lut: LutPrim) -> Self {
+impl From<Lut> for verilog::Stmt {
+    fn from(lut: Lut) -> Self {
         let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
         inst.add_param("INIT", verilog::Expr::new_ulit_hex(width, &lut.init()));

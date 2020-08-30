@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, EmitPrim};
-use crate::backend::arch::ultrascale::lut::LutPrim;
+use crate::backend::arch::ultrascale::lut::Lut;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
@@ -16,9 +16,9 @@ impl EmitPrim for LutEqBI8I8 {
         let wire_1_name = asm.new_variable_name();
         let wire_0 = verilog::Decl::new_wire(&wire_0_name, 1);
         let wire_1 = verilog::Decl::new_wire(&wire_1_name, 1);
-        let mut lut_0 = LutPrim::new_lut6();
-        let mut lut_1 = LutPrim::new_lut6();
-        let mut lut_2 = LutPrim::new_lut6();
+        let mut lut_0 = Lut::new_lut6();
+        let mut lut_1 = Lut::new_lut6();
+        let mut lut_2 = Lut::new_lut6();
         lut_0.set_id(&asm.new_instance_name());
         lut_1.set_id(&asm.new_instance_name());
         lut_2.set_id(&asm.new_instance_name());

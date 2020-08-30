@@ -23,7 +23,7 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
-pub struct RegPrim {
+pub struct Reg {
     pub id: String,
     pub ty: Ty,
     pub clock: String,
