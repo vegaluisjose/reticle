@@ -154,6 +154,9 @@ impl Assembler {
                     "lut_and_b_b_b" => isa::LutAndBBB::emit_prim(self, prim.clone()),
                     "lut_eq_b_i8_i8" => isa::LutEqBI8I8::emit_prim(self, prim.clone()),
                     "lut_mux_i8_b_i8_i8" => isa::LutMuxI8BI8I8::emit_prim(self, prim.clone()),
+                    "lut_reg_mux_i8_b_i8_i8_b" => {
+                        isa::LutRegMuxI8BI8I8B::emit_prim(self, prim.clone())
+                    }
                     _ => (),
                 }
             }

@@ -23,13 +23,19 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
+pub enum Expr {
+    Ref(String),
+    Index(String, u32),
+}
+
+#[derive(Clone, Debug)]
 pub struct Reg {
     pub id: String,
     pub ty: Ty,
-    pub clock: String,
-    pub reset: String,
-    pub en: String,
-    pub input: String,
-    pub output: String,
+    pub clock: Expr,
+    pub reset: Expr,
+    pub en: Expr,
+    pub input: Expr,
+    pub output: Expr,
     pub loc: Option<Loc>,
 }

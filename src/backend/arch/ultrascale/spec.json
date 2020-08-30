@@ -155,7 +155,7 @@
          "expr":["reg", ["neq", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_reg_mux_b_i8_i8_i8_b",
+         "name":"lut_reg_mux_i8_b_i8_i8_b",
          "cost": {"delay":4, "area": 1},
          "loc":"lut",
          "ty":"i8",
