@@ -8,17 +8,16 @@ pub struct LutAndBBB;
 
 impl EmitPrim for LutAndBBB {
     fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim) {
-        let id = asm.new_instance_name();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        let in_0 = asm.fresh_variable(&params[0]);
-        let in_1 = asm.fresh_variable(&params[1]);
-        let out = asm.fresh_variable(&instr.dst_id());
+        let lhs = asm.fresh_variable(&params[0]);
+        let rhs = asm.fresh_variable(&params[1]);
+        let res = asm.fresh_variable(&instr.dst_id());
         let mut lut = Lut::new_lut2();
         lut.set_init("8");
-        lut.set_id(&id);
-        lut.add_input(&in_0);
-        lut.add_input(&in_1);
-        lut.set_output(&out);
+        lut.set_id(&asm.new_instance_name());
+        lut.add_input(&lhs);
+        lut.add_input(&rhs);
+        lut.set_output(&res);
         asm.add_lut(verilog::Stmt::from(lut));
     }
 }
