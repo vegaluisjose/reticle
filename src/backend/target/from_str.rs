@@ -1,5 +1,5 @@
-use crate::backend::target::descriptor::Descriptor;
 use crate::backend::target::spec::Spec;
+use crate::backend::target::Descriptor;
 use std::str::FromStr;
 
 impl FromStr for Descriptor {
