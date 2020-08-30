@@ -20,13 +20,14 @@ impl PrettyPrint for Ty {
 
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
-        match self {
+        let loc = match self {
             Loc::Hole => RcDoc::text("??"),
             Loc::Lut => RcDoc::text("lut"),
             Loc::Lum => RcDoc::text("lum"),
             Loc::Dsp => RcDoc::text("dsp"),
             Loc::Ram => RcDoc::text("ram"),
-        }
+        };
+        RcDoc::text("@").append(loc)
     }
 }
 
