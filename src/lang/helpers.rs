@@ -373,7 +373,7 @@ impl InstrPrim {
 }
 
 impl Instr {
-    pub fn id(&self) -> String {
+    pub fn dst_id(&self) -> String {
         match self {
             Instr::Std(instr) => instr.dst_id(),
             Instr::Prim(instr) => instr.dst_id(),

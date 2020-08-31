@@ -8,7 +8,7 @@ impl DagNodeValue {
         match self {
             DagNodeValue::Inp(port) => port.id(),
             DagNodeValue::Out(port) => port.id(),
-            DagNodeValue::Ins(instr) => instr.id(),
+            DagNodeValue::Ins(instr) => instr.dst_id(),
         }
     }
 

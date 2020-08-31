@@ -12,7 +12,7 @@ impl From<PrimOp> for TreeOp {
 impl From<Instr> for TreeNode {
     fn from(instr: Instr) -> Self {
         TreeNode::new(
-            &instr.id(),
+            &instr.dst_id(),
             instr.ty().clone(),
             TreeOp::from(instr.prim_op().clone()),
         )

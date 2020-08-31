@@ -24,11 +24,11 @@ impl From<Prog> for Dag {
                 dag.add_node(&input.id(), DagNodeValue::from(input.clone()));
             }
             for instr in def.body().iter() {
-                dag.add_node(&instr.id(), DagNodeValue::from(instr.clone()));
+                dag.add_node(&instr.dst_id(), DagNodeValue::from(instr.clone()));
             }
             for instr in def.body().iter() {
                 for param in instr.params().iter() {
-                    dag.add_edge(&param.id(), &instr.id());
+                    dag.add_edge(&param.id(), &instr.dst_id());
                 }
             }
         }

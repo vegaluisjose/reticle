@@ -109,7 +109,7 @@ impl Eval for Instr {
                     if en == Value::new_scalar(1) {
                         mask(state.get(&self.indexed_param(0).id()), self.ty())
                     } else {
-                        mask(state.get(&self.id()), self.ty())
+                        mask(state.get(&self.dst_id()), self.ty())
                     }
                 }
                 PrimOp::Add => {

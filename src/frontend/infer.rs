@@ -20,10 +20,10 @@ fn build_env_from_def(def: &Def) -> Env {
     }
     // add instr values
     for instr in def.body().iter() {
-        if let Some(ty) = env.insert(instr.id(), instr.ty().clone()) {
+        if let Some(ty) = env.insert(instr.dst_id(), instr.ty().clone()) {
             panic!(
                 "Error: instr id {} was already defined with type {}",
-                instr.id(),
+                instr.dst_id(),
                 ty
             );
         }

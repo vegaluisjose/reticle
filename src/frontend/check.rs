@@ -84,7 +84,7 @@ impl Check for Prog {
             for instr in def.body().iter() {
                 instr.check();
                 if instr.is_reg() {
-                    env.insert(instr.id());
+                    env.insert(instr.dst_id());
                     registers.push(instr.clone());
                 }
             }
@@ -104,7 +104,7 @@ impl Check for Prog {
                         }
                     }
                     if ready {
-                        env.insert(instr.id());
+                        env.insert(instr.dst_id());
                     }
                 }
             }
@@ -119,7 +119,7 @@ impl Check for Prog {
                         )
                     );
                 }
-                env.insert(instr.id());
+                env.insert(instr.dst_id());
             }
             // register instruction must have params in env
             for instr in registers.iter() {

@@ -25,7 +25,7 @@ pub fn map_loc(input_prog: Prog) -> Prog {
     for instr in body.iter() {
         if instr.is_std() {
             def.add_instr(instr.clone());
-        } else if let Some(loc) = map.get(&instr.id()) {
+        } else if let Some(loc) = map.get(&instr.dst_id()) {
             let mut instr_with_loc = instr.clone();
             instr_with_loc.set_loc(loc.clone());
             def.add_instr(instr_with_loc);
@@ -93,7 +93,7 @@ pub fn map_asm(input_prog: Prog) -> asm::Prog {
     for instr in body.iter() {
         if instr.is_std() {
             output_prog.add_instr(asm::Instr::from(instr.clone()));
-        } else if let Some(asm_instr) = map.get(&instr.id()) {
+        } else if let Some(asm_instr) = map.get(&instr.dst_id()) {
             output_prog.add_instr(asm::Instr::from(asm_instr.clone()));
         }
     }

@@ -48,9 +48,9 @@ impl Interpreter {
                     let attrs = instr.attrs();
                     if instr.ty().is_vector() {
                         let values: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
-                        curr.add_reg(&instr.id(), Value::from(values));
+                        curr.add_reg(&instr.dst_id(), Value::from(values));
                     } else {
-                        curr.add_reg(&instr.id(), Value::new_scalar(attrs[0].value()));
+                        curr.add_reg(&instr.dst_id(), Value::new_scalar(attrs[0].value()));
                     }
                 }
             }
@@ -69,7 +69,7 @@ impl Interpreter {
                         instr_register.push(instr.clone());
                     } else if instr.is_ready(&curr) {
                         let value = instr.eval(&curr);
-                        curr.add_temp(&instr.id(), value);
+                        curr.add_temp(&instr.dst_id(), value);
                     } else {
                         instr_unresolved.push(instr.clone());
                     }
@@ -77,12 +77,12 @@ impl Interpreter {
                 // run unresolved instr
                 for instr in instr_unresolved.iter() {
                     let value = instr.eval(&curr);
-                    curr.add_temp(&instr.id(), value);
+                    curr.add_temp(&instr.dst_id(), value);
                 }
                 // run register instr
                 for instr in instr_register.iter() {
                     let value = instr.eval(&curr);
-                    next.add_reg(&instr.id(), value);
+                    next.add_reg(&instr.dst_id(), value);
                 }
                 // check outputs
                 for output in def.outputs().iter() {
