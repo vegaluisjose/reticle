@@ -43,6 +43,14 @@ impl InstrPrim {
         &self.params
     }
 
+    pub fn has_attrs(&self) -> bool {
+        !self.attrs.is_empty()
+    }
+
+    pub fn has_params(&self) -> bool {
+        !self.params.is_empty()
+    }
+
     pub fn indexed_param(&self, index: usize) -> &Expr {
         &self.params[index]
     }
