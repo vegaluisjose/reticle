@@ -33,8 +33,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_reg() {
-        let prog = parse_from_file("examples/isa/scalar/reg.ret");
+    fn test_register() {
+        let prog = parse_from_file("examples/isa/scalar/register.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 9);
         trace.enq_scalar("a", 0);

@@ -186,6 +186,7 @@ impl Assembler {
                     "lut_reg_mux_i8_b_i8_i8_b" => {
                         isa::LutRegMuxI8BI8I8B::emit_prim(self, prim.clone())
                     }
+                    "lut_reg_i8_i8_b" => isa::LutRegI8I8B::emit_prim(self, prim.clone()),
                     _ => (),
                 }
             } else {
