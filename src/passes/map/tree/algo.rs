@@ -136,10 +136,12 @@ pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Ins
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
     let mut params: Vec<asm::Expr> = Vec::new();
+    let mut attrs: Vec<asm::Expr> = Vec::new();
     while let Some(ix) = visit.next(&input.graph) {
         if !discard.contains(&ix) {
             if let Some(pnode) = pstack_iter.next() {
                 if let Some(inode) = input.graph.node_weight(ix) {
+                    attrs.extend(inode.attrs().clone());
                     if instr.dst_id().is_empty() {
                         // root
                         instr.set_dst_id(&inode.id());
@@ -159,7 +161,11 @@ pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::Ins
         }
     }
     // bfs is right-to-left, so need to reverse it here
+    attrs.reverse();
     params.reverse();
+    for attr in attrs.iter() {
+        instr.add_attr(attr.clone());
+    }
     for param in params.iter() {
         instr.add_param(param.clone());
     }
