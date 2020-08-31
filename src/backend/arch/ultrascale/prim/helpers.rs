@@ -1,6 +1,13 @@
 use crate::backend::arch::ultrascale::prim::ast::*;
 
 impl Expr {
+    pub fn is_default(&self) -> bool {
+        match self {
+            Expr::Ref(name) => name.is_empty(),
+            _ => false,
+        }
+    }
+
     pub fn new_ref(name: &str) -> Expr {
         Expr::Ref(name.to_string())
     }
@@ -283,6 +290,7 @@ impl Dsp {
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
+            en: Expr::default(),
         }
     }
     pub fn new_vector(op: DspOp, length: u8) -> Dsp {
@@ -292,6 +300,7 @@ impl Dsp {
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
+            en: Expr::default(),
         }
     }
 
@@ -315,6 +324,10 @@ impl Dsp {
         &self.reset
     }
 
+    pub fn en(&self) -> &Expr {
+        &self.en
+    }
+
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
     }
@@ -325,5 +338,9 @@ impl Dsp {
 
     pub fn set_reset(&mut self, reset: &str) {
         self.reset = Expr::new_ref(reset);
+    }
+
+    pub fn set_en(&mut self, en: &str) {
+        self.en = Expr::new_ref(en);
     }
 }

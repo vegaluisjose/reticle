@@ -73,6 +73,35 @@ impl From<Dsp> for verilog::Stmt {
         inst.connect("RSTINMODE", verilog::Expr::from(dsp.reset().clone()));
         inst.connect("RSTM", verilog::Expr::from(dsp.reset().clone()));
         inst.connect("RSTP", verilog::Expr::from(dsp.reset().clone()));
+        if dsp.en().is_default() {
+            inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
+        } else {
+            inst.connect("CEA1", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEA2", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEAD", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEALUMODE", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEB1", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEB2", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEC", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CECARRYIN", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CECTRL", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CED", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEINMODE", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEM", verilog::Expr::from(dsp.en().clone()));
+            inst.connect("CEP", verilog::Expr::from(dsp.en().clone()));
+        }
         match dsp.op() {
             DspOp::Add => {
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));

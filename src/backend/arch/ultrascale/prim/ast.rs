@@ -97,4 +97,5 @@ pub struct Dsp {
     pub id: String,
     pub clock: Expr,
     pub reset: Expr,
+    pub en: Expr,
 }
