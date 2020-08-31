@@ -37,6 +37,15 @@ impl From<Lut> for verilog::Stmt {
 impl From<Reg> for verilog::Stmt {
     fn from(reg: Reg) -> Self {
         let mut inst = verilog::Instance::new(&reg.id(), &reg.ty().to_string());
+        inst.add_param("IS_C_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_D_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        if reg.is_fdre() {
+            inst.add_param("INIT", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.add_param("IS_R_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        } else {
+            inst.add_param("INIT", verilog::Expr::new_ulit_bin(1, "1"));
+            inst.add_param("IS_S_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        }
         inst.connect("C", verilog::Expr::from(reg.clock().clone()));
         inst.connect("CE", verilog::Expr::from(reg.en().clone()));
         inst.connect("D", verilog::Expr::from(reg.input().clone()));
