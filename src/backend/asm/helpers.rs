@@ -43,6 +43,14 @@ impl InstrPrim {
         &self.params
     }
 
+    pub fn indexed_param(&self, index: usize) -> &Expr {
+        &self.params[index]
+    }
+
+    pub fn indexed_attr(&self, index: usize) -> &Expr {
+        &self.attrs[index]
+    }
+
     pub fn loc(&self) -> &Loc {
         &self.loc
     }

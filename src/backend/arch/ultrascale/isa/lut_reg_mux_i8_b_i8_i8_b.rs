@@ -1,5 +1,6 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, EmitPrim};
-use crate::backend::arch::ultrascale::prim::ast::{Lut, Reg};
+use crate::backend::arch::ultrascale::prim::ast::Lut;
+use crate::backend::arch::ultrascale::prim::helpers::regs_from_init;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
@@ -16,21 +17,24 @@ impl EmitPrim for LutRegMuxI8BI8I8B {
         let res = asm.fresh_variable(&instr.dst_id());
         let wire_name = asm.new_variable_name();
         let wire = verilog::Decl::new_wire(&wire_name, 8);
-        for i in 0..8 {
+        // FIXME:
+        // let regs = regs_from_init(instr.dst_ty().width(), instr.indexed_attr(0).value());
+        let regs = regs_from_init(instr.dst_ty().width(), 0);
+        for (i, reg) in regs.iter().enumerate() {
             let mut lut = Lut::new_lut3();
             lut.set_id(&asm.new_instance_name());
             lut.set_init("ac");
-            lut.add_input_with_index(&tru, i);
-            lut.add_input_with_index(&fal, i);
+            lut.add_input_with_index(&tru, i as u32);
+            lut.add_input_with_index(&fal, i as u32);
             lut.add_input(&con);
-            lut.set_output_with_index(&wire_name, i);
-            let mut reg = Reg::new_fdre();
+            lut.set_output_with_index(&wire_name, i as u32);
+            let mut reg = reg.clone();
             reg.set_id(&asm.new_instance_name());
             reg.set_clock(&asm.clock());
             reg.set_reset(&asm.reset());
             reg.set_en(&en);
-            reg.set_input_with_index(&wire_name, i);
-            reg.set_output_with_index(&res, i);
+            reg.set_input_with_index(&wire_name, i as u32);
+            reg.set_output_with_index(&res, i as u32);
             asm.add_lut(verilog::Stmt::from(lut));
             asm.add_reg(verilog::Stmt::from(reg));
         }
