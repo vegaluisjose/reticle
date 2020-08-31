@@ -9,3 +9,8 @@ pub fn read_to_string<P: AsRef<Path>>(path: P) -> String {
         .expect("Error: reading the file");
     contents
 }
+
+pub fn write_to_file<P: AsRef<Path>>(path: P, contents: &str) {
+    let mut file = File::create(path).expect("Error: cannot create a file");
+    file.write_all(contents.as_bytes()).expect("Error: writing the file");
+}
