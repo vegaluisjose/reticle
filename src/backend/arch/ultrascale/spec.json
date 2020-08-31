@@ -22,6 +22,13 @@
          "expr":["add", ["reg", ["mul", "i8", "i8"], "bool"], "i8"]
       },
       {
+         "name":"dsp_vadd_i8v4_i8v4_i8v4",
+         "cost": {"delay":4, "area": 1},
+         "loc":"dsp",
+         "ty":"i8<4>",
+         "expr":["add", "i8<4>", "i8<4>"]
+      },
+      {
          "name":"lut_reg_i8_i8_b",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
