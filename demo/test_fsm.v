@@ -53,18 +53,11 @@ module test_fsm();
                     end
                 end
                 3: begin
-                    step <= 4;
-                    start <= 1'b0;
-                    done <= 1'b0;
                     if (state != 0) begin
                         $error("Throw error");
                         $finish;
                     end
                     $finish;
-                end
-                default: begin
-                    start <= 1'b0;
-                    done <= 1'b0;
                 end
             endcase
         end
