@@ -95,4 +95,6 @@ pub struct Dsp {
     pub ty: DspTy,
     pub op: DspOp,
     pub id: String,
+    pub clock: Expr,
+    pub reset: Expr,
 }

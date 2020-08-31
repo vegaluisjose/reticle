@@ -281,6 +281,8 @@ impl Dsp {
             op,
             ty: DspTy::Scalar,
             id: String::new(),
+            clock: Expr::default(),
+            reset: Expr::default(),
         }
     }
     pub fn new_vector(op: DspOp, length: u8) -> Dsp {
@@ -288,6 +290,8 @@ impl Dsp {
             op,
             ty: DspTy::Vector(length),
             id: String::new(),
+            clock: Expr::default(),
+            reset: Expr::default(),
         }
     }
 
@@ -303,7 +307,23 @@ impl Dsp {
         &self.ty
     }
 
+    pub fn clock(&self) -> &Expr {
+        &self.clock
+    }
+
+    pub fn reset(&self) -> &Expr {
+        &self.reset
+    }
+
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
+    }
+
+    pub fn set_clock(&mut self, clock: &str) {
+        self.clock = Expr::new_ref(clock);
+    }
+
+    pub fn set_reset(&mut self, reset: &str) {
+        self.reset = Expr::new_ref(reset);
     }
 }

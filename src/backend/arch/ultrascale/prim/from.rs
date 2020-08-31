@@ -62,6 +62,17 @@ impl From<Reg> for verilog::Stmt {
 impl From<Dsp> for verilog::Stmt {
     fn from(dsp: Dsp) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
+        inst.connect("CLK", verilog::Expr::from(dsp.clock().clone()));
+        inst.connect("RSTA", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTALLCARRYIN", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTALUMODE", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTB", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTC", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTCTRL", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTD", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTINMODE", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTM", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTP", verilog::Expr::from(dsp.reset().clone()));
         match dsp.op() {
             DspOp::Add => {
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
