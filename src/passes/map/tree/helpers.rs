@@ -9,6 +9,7 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op,
+            attrs: Vec::new(),
             matched: false,
             tile: None,
             cost: f32::INFINITY,
@@ -20,6 +21,7 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op,
+            attrs: Vec::new(),
             matched: false,
             tile: None,
             cost,
@@ -31,6 +33,7 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op: TreeOp::Input,
+            attrs: Vec::new(),
             matched: false,
             tile: None,
             cost: 0 as f32,
@@ -65,18 +68,6 @@ impl TreeNode {
         self.matched
     }
 
-    pub fn set_matched(&mut self) {
-        self.matched = true;
-    }
-
-    pub fn set_tile(&mut self, tile: Tile) {
-        self.tile = Some(tile);
-    }
-
-    pub fn clear_tile(&mut self) {
-        self.tile = None;
-    }
-
     pub fn id(&self) -> String {
         self.id.to_string()
     }
@@ -89,8 +80,32 @@ impl TreeNode {
         self.cost == f32::INFINITY
     }
 
+    pub fn attrs(&self) -> &Vec<TreeExpr> {
+        &self.attrs
+    }
+
+    pub fn indexed_attr(&self, index: usize) -> &TreeExpr {
+        &self.attrs[index]
+    }
+
+    pub fn add_attr(&mut self, expr: TreeExpr) {
+        self.attrs.push(expr);
+    }
+
     pub fn set_cost(&mut self, cost: f32) {
         self.cost = cost;
+    }
+
+    pub fn set_matched(&mut self) {
+        self.matched = true;
+    }
+
+    pub fn set_tile(&mut self, tile: Tile) {
+        self.tile = Some(tile);
+    }
+
+    pub fn clear_tile(&mut self) {
+        self.tile = None;
     }
 }
 
