@@ -1,13 +1,7 @@
-use reticle::frontend::parser::parse_from_file;
-use reticle::passes::map::{map_analysis, map_asm, map_loc};
+use reticle::backend::arch::ultrascale::prim::ast::{Dsp, DspOp};
 
 fn main() {
-    let prog = parse_from_file("examples/isa/scalar/reg.ret");
-    let prog_with_loc = map_loc(prog.clone());
-    let analysis = map_analysis(prog_with_loc.clone());
-    let asm = map_asm(prog.clone());
-    println!("\n{}\n", prog);
-    println!("\n{}\n", prog_with_loc);
-    println!("\n{}\n", asm);
-    println!("\n{}\n", analysis);
+    let mut dsp = Dsp::new_scalar(DspOp::Add);
+    dsp.set_id("i0");
+    println!("{}", dsp);
 }

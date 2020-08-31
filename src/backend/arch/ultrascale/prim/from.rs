@@ -58,3 +58,10 @@ impl From<Reg> for verilog::Stmt {
         verilog::Stmt::from(inst)
     }
 }
+
+impl From<Dsp> for verilog::Stmt {
+    fn from(dsp: Dsp) -> Self {
+        let inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
+        verilog::Stmt::from(inst)
+    }
+}

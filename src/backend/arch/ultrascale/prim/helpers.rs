@@ -235,3 +235,67 @@ pub fn regs_from_init(width: u64, init: i64) -> Vec<Reg> {
     }
     regs
 }
+
+impl DspOp {
+    pub fn is_add(&self) -> bool {
+        match self {
+            DspOp::Add => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_sub(&self) -> bool {
+        match self {
+            DspOp::Sub => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_mul(&self) -> bool {
+        match self {
+            DspOp::Mul => true,
+            _ => false,
+        }
+    }
+}
+
+impl DspTy {
+    pub fn is_scalar(&self) -> bool {
+        match self {
+            DspTy::Scalar => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_vector(&self) -> bool {
+        match self {
+            DspTy::Vector(_) => true,
+            _ => false,
+        }
+    }
+}
+
+impl Dsp {
+    pub fn new_scalar(op: DspOp) -> Dsp {
+        Dsp {
+            op,
+            ty: DspTy::Scalar,
+            id: String::new(),
+        }
+    }
+    pub fn new_vector(op: DspOp, length: u8) -> Dsp {
+        Dsp {
+            op,
+            ty: DspTy::Vector(length),
+            id: String::new(),
+        }
+    }
+
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+}

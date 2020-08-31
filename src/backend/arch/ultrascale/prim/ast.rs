@@ -76,3 +76,23 @@ pub struct Reg {
     pub output: Expr,
     pub loc: Option<Loc>,
 }
+
+#[derive(Clone, Debug)]
+pub enum DspOp {
+    Add,
+    Sub,
+    Mul,
+}
+
+#[derive(Clone, Debug)]
+pub enum DspTy {
+    Scalar,
+    Vector(u8),
+}
+
+#[derive(Clone, Debug)]
+pub struct Dsp {
+    pub ty: DspTy,
+    pub op: DspOp,
+    pub id: String,
+}

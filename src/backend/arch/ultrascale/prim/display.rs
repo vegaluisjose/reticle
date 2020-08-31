@@ -36,3 +36,9 @@ impl fmt::Display for Reg {
         write!(f, "{}", verilog::Stmt::from(self.clone()))
     }
 }
+
+impl fmt::Display for Dsp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", verilog::Stmt::from(self.clone()))
+    }
+}
