@@ -61,7 +61,27 @@ impl From<Reg> for verilog::Stmt {
 
 impl From<Dsp> for verilog::Stmt {
     fn from(dsp: Dsp) -> Self {
-        let inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
+        let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
+        match dsp.op() {
+            DspOp::Add => {
+                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
+                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
+                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110011"));
+            }
+            DspOp::Sub => {
+                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0011"));
+                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
+                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110011"));
+            }
+            _ => (),
+        }
+        match dsp.ty() {
+            DspTy::Scalar => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
+            DspTy::Vector(2) => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
+            DspTy::Vector(3) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
+            DspTy::Vector(4) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
+            DspTy::Vector(_) => unimplemented!(),
+        }
         verilog::Stmt::from(inst)
     }
 }
