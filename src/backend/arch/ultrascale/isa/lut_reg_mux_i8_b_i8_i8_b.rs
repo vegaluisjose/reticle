@@ -17,9 +17,7 @@ impl EmitPrim for LutRegMuxI8BI8I8B {
         let res = asm.fresh_variable(&instr.dst_id());
         let wire_name = asm.new_variable_name();
         let wire = verilog::Decl::new_wire(&wire_name, 8);
-        // FIXME:
-        // let regs = regs_from_init(instr.dst_ty().width(), instr.indexed_attr(0).value());
-        let regs = regs_from_init(instr.dst_ty().width(), 0);
+        let regs = regs_from_init(instr.dst_ty().width(), instr.indexed_attr(0).value());
         for (i, reg) in regs.iter().enumerate() {
             let mut lut = Lut::new_lut3();
             lut.set_id(&asm.new_instance_name());
