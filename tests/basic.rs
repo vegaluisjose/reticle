@@ -15,7 +15,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -34,7 +34,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -54,7 +54,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -70,7 +70,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -92,7 +92,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -147,7 +147,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -163,7 +163,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -193,7 +193,7 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -219,6 +219,6 @@ mod test_basic {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 }

@@ -22,11 +22,11 @@ impl Default for Interpreter {
 }
 
 impl Interpreter {
-    pub fn is_finished(&self) -> bool {
+    pub fn has_finished(&self) -> bool {
         self.finished
     }
 
-    pub fn is_failed(&self) -> bool {
+    pub fn has_failed(&self) -> bool {
         self.failed
     }
 

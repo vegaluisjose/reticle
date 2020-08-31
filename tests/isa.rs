@@ -17,7 +17,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -29,7 +29,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -48,7 +48,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -61,7 +61,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -74,7 +74,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -87,7 +87,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -99,7 +99,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -112,7 +112,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -125,7 +125,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -138,7 +138,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -151,7 +151,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -164,7 +164,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -177,7 +177,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -195,7 +195,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -208,7 +208,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -221,7 +221,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -234,7 +234,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -247,7 +247,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -260,7 +260,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -273,7 +273,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -285,7 +285,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -297,7 +297,7 @@ mod test_scalar_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 }
 
@@ -316,7 +316,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -335,7 +335,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -348,7 +348,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -361,7 +361,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -374,7 +374,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -386,7 +386,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -399,7 +399,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -412,7 +412,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -425,7 +425,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -438,7 +438,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -451,7 +451,7 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 
     #[test]
@@ -464,6 +464,6 @@ mod test_vector_isa {
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
-            .is_failed());
+            .has_failed());
     }
 }
