@@ -46,7 +46,7 @@ impl Interpreter {
             for instr in def.body().iter() {
                 if instr.is_reg() {
                     let attrs = instr.attrs();
-                    if instr.ty().is_vector() {
+                    if instr.dst_ty().is_vector() {
                         let values: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
                         curr.add_reg(&instr.dst_id(), Value::from(values));
                     } else {

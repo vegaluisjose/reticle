@@ -380,7 +380,7 @@ impl Instr {
         }
     }
 
-    pub fn ty(&self) -> &Ty {
+    pub fn dst_ty(&self) -> &Ty {
         match self {
             Instr::Std(instr) => instr.dst_ty(),
             Instr::Prim(instr) => instr.dst_ty(),
