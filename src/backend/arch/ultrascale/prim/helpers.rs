@@ -295,6 +295,14 @@ impl Dsp {
         self.id.to_string()
     }
 
+    pub fn op(&self) -> &DspOp {
+        &self.op
+    }
+
+    pub fn ty(&self) -> &DspTy {
+        &self.ty
+    }
+
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
     }
