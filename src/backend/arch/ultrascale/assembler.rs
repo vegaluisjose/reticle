@@ -1,4 +1,5 @@
 use crate::backend::arch::ultrascale::isa;
+use crate::backend::arch::ultrascale::prim::ast::{Gnd, Vcc};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 use std::collections::{HashMap, HashSet};
@@ -11,6 +12,8 @@ pub trait EmitPrim {
 pub struct Assembler {
     pub clock: String,
     pub reset: String,
+    pub vcc: String,
+    pub gnd: String,
     pub variable_map: HashMap<String, String>,
     pub variables: u32,
     pub num_instances: u32,
@@ -26,6 +29,8 @@ impl Default for Assembler {
         Assembler {
             clock: "clock".to_string(),
             reset: "reset".to_string(),
+            vcc: "vcc".to_string(),
+            gnd: "gnd".to_string(),
             variable_map: HashMap::new(),
             variables: 0,
             num_instances: 0,
@@ -45,6 +50,14 @@ impl Assembler {
 
     pub fn reset(&self) -> String {
         self.reset.to_string()
+    }
+
+    pub fn vcc(&self) -> String {
+        self.vcc.to_string()
+    }
+
+    pub fn gnd(&self) -> String {
+        self.gnd.to_string()
     }
 
     pub fn ports(&self) -> &Vec<verilog::Port> {
@@ -114,6 +127,15 @@ impl Assembler {
         self.ports.push(verilog::Port::new_input(&self.reset(), 1));
     }
 
+    pub fn emit_vcc_and_gnd(&mut self) {
+        let mut vcc = Vcc::default();
+        let mut gnd = Gnd::default();
+        vcc.set_output(&self.vcc());
+        gnd.set_output(&self.gnd());
+        self.add_instance(verilog::Stmt::from(vcc));
+        self.add_instance(verilog::Stmt::from(gnd));
+    }
+
     pub fn emit_wire(&mut self, expr: asm::Expr) {
         let width = expr.ty().width();
         let id = self.fresh_variable(&expr.id());
@@ -153,6 +175,7 @@ impl Assembler {
 
     pub fn emit(&mut self, prog: asm::Prog) -> verilog::Module {
         self.emit_clock_and_reset();
+        self.emit_vcc_and_gnd();
         for input in prog.inputs().iter() {
             self.emit_port(input.clone());
             self.update_variable(&input.id(), &input.id());

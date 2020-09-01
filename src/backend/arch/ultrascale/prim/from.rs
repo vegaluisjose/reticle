@@ -188,3 +188,19 @@ impl From<Dsp> for verilog::Stmt {
         verilog::Stmt::from(inst)
     }
 }
+
+impl From<Vcc> for verilog::Stmt {
+    fn from(vcc: Vcc) -> Self {
+        let mut inst = verilog::Instance::new(&vcc.id(), "VCC");
+        inst.connect("P", verilog::Expr::from(vcc.output().clone()));
+        verilog::Stmt::from(inst)
+    }
+}
+
+impl From<Gnd> for verilog::Stmt {
+    fn from(gnd: Gnd) -> Self {
+        let mut inst = verilog::Instance::new(&gnd.id(), "GND");
+        inst.connect("G", verilog::Expr::from(gnd.output().clone()));
+        verilog::Stmt::from(inst)
+    }
+}

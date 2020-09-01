@@ -344,3 +344,53 @@ impl Dsp {
         self.en = Expr::new_ref(en);
     }
 }
+
+impl Vcc {
+    pub fn new(id: &str) -> Vcc {
+        Vcc {
+            id: id.to_string(),
+            output: Expr::default(),
+        }
+    }
+
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn output(&self) -> &Expr {
+        &self.output
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+
+    pub fn set_output(&mut self, output: &str) {
+        self.output = Expr::new_ref(output);
+    }
+}
+
+impl Gnd {
+    pub fn new(id: &str) -> Gnd {
+        Gnd {
+            id: id.to_string(),
+            output: Expr::default(),
+        }
+    }
+
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn output(&self) -> &Expr {
+        &self.output
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+
+    pub fn set_output(&mut self, output: &str) {
+        self.output = Expr::new_ref(output);
+    }
+}

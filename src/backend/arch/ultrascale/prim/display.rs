@@ -42,3 +42,15 @@ impl fmt::Display for Dsp {
         write!(f, "{}", verilog::Stmt::from(self.clone()))
     }
 }
+
+impl fmt::Display for Vcc {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", verilog::Stmt::from(self.clone()))
+    }
+}
+
+impl fmt::Display for Gnd {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", verilog::Stmt::from(self.clone()))
+    }
+}

@@ -99,3 +99,15 @@ pub struct Dsp {
     pub reset: Expr,
     pub en: Expr,
 }
+
+#[derive(Clone, Debug)]
+pub struct Vcc {
+    pub id: String,
+    pub output: Expr,
+}
+
+#[derive(Clone, Debug)]
+pub struct Gnd {
+    pub id: String,
+    pub output: Expr,
+}
