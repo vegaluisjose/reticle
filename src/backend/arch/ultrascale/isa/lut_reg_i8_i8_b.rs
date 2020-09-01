@@ -21,7 +21,7 @@ impl EmitPrim for LutRegI8I8B {
             reg.set_en(&en);
             reg.set_input_with_index(&val, i as u32);
             reg.set_output_with_index(&res, i as u32);
-            asm.add_reg(verilog::Stmt::from(reg));
+            asm.add_instance(verilog::Stmt::from(reg));
         }
     }
 }

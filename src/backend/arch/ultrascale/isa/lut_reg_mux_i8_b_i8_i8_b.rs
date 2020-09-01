@@ -33,8 +33,8 @@ impl EmitPrim for LutRegMuxI8BI8I8B {
             reg.set_en(&en);
             reg.set_input_with_index(&wire_name, i as u32);
             reg.set_output_with_index(&res, i as u32);
-            asm.add_lut(verilog::Stmt::from(lut));
-            asm.add_reg(verilog::Stmt::from(reg));
+            asm.add_instance(verilog::Stmt::from(lut));
+            asm.add_instance(verilog::Stmt::from(reg));
         }
         asm.add_wire(verilog::Stmt::from(wire));
     }

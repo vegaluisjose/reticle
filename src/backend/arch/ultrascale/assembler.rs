@@ -13,12 +13,11 @@ pub struct Assembler {
     pub reset: String,
     pub variable_map: HashMap<String, String>,
     pub variables: u32,
-    pub instances: u32,
+    pub num_instances: u32,
     pub ports: Vec<verilog::Port>,
     pub wires: Vec<verilog::Stmt>,
-    pub regs: Vec<verilog::Stmt>,
-    pub luts: Vec<verilog::Stmt>,
-    pub stds: Vec<verilog::Stmt>,
+    pub instances: Vec<verilog::Stmt>,
+    pub assignments: Vec<verilog::Stmt>,
     pub output_set: HashSet<String>,
 }
 
@@ -29,12 +28,11 @@ impl Default for Assembler {
             reset: "reset".to_string(),
             variable_map: HashMap::new(),
             variables: 0,
-            instances: 0,
+            num_instances: 0,
             ports: Vec::new(),
             wires: Vec::new(),
-            regs: Vec::new(),
-            luts: Vec::new(),
-            stds: Vec::new(),
+            instances: Vec::new(),
+            assignments: Vec::new(),
             output_set: HashSet::new(),
         }
     }
@@ -57,21 +55,17 @@ impl Assembler {
         &self.wires
     }
 
-    pub fn luts(&self) -> &Vec<verilog::Stmt> {
-        &self.luts
+    pub fn instances(&self) -> &Vec<verilog::Stmt> {
+        &self.instances
     }
 
-    pub fn regs(&self) -> &Vec<verilog::Stmt> {
-        &self.regs
-    }
-
-    pub fn stds(&self) -> &Vec<verilog::Stmt> {
-        &self.stds
+    pub fn assignments(&self) -> &Vec<verilog::Stmt> {
+        &self.assignments
     }
 
     pub fn new_instance_name(&mut self) -> String {
-        let name = format!("i{}", self.instances);
-        self.instances += 1;
+        let name = format!("i{}", self.num_instances);
+        self.num_instances += 1;
         name
     }
 
@@ -107,16 +101,12 @@ impl Assembler {
         self.wires.push(wire);
     }
 
-    pub fn add_reg(&mut self, reg: verilog::Stmt) {
-        self.regs.push(reg);
+    pub fn add_instance(&mut self, instance: verilog::Stmt) {
+        self.instances.push(instance);
     }
 
-    pub fn add_lut(&mut self, lut: verilog::Stmt) {
-        self.luts.push(lut);
-    }
-
-    pub fn add_std(&mut self, std: verilog::Stmt) {
-        self.stds.push(std);
+    pub fn add_assignment(&mut self, assignment: verilog::Stmt) {
+        self.assignments.push(assignment);
     }
 
     pub fn emit_clock_and_reset(&mut self) {
@@ -190,7 +180,7 @@ impl Assembler {
                     _ => (),
                 }
             } else {
-                self.add_std(verilog::Stmt::from(instr.std().clone()));
+                self.add_assignment(verilog::Stmt::from(instr.std().clone()));
             }
         }
         let mut module = verilog::Module::new(&prog.id());
@@ -200,14 +190,11 @@ impl Assembler {
         for wire in self.wires().iter() {
             module.add_stmt(wire.clone());
         }
-        for lut in self.luts().iter() {
-            module.add_stmt(lut.clone());
+        for instance in self.instances().iter() {
+            module.add_stmt(instance.clone());
         }
-        for reg in self.regs().iter() {
-            module.add_stmt(reg.clone());
-        }
-        for std in self.stds().iter() {
-            module.add_stmt(std.clone());
+        for assignment in self.assignments().iter() {
+            module.add_stmt(assignment.clone());
         }
         module
     }

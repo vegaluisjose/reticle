@@ -18,6 +18,6 @@ impl EmitPrim for LutAndBBB {
         lut.add_input(&lhs);
         lut.add_input(&rhs);
         lut.set_output(&res);
-        asm.add_lut(verilog::Stmt::from(lut));
+        asm.add_instance(verilog::Stmt::from(lut));
     }
 }

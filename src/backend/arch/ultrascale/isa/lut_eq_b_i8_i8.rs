@@ -48,8 +48,8 @@ impl EmitPrim for LutEqBI8I8 {
         lut_2.set_output(&wire_1_name);
         asm.add_wire(verilog::Stmt::from(wire_0));
         asm.add_wire(verilog::Stmt::from(wire_1));
-        asm.add_lut(verilog::Stmt::from(lut_0));
-        asm.add_lut(verilog::Stmt::from(lut_1));
-        asm.add_lut(verilog::Stmt::from(lut_2));
+        asm.add_instance(verilog::Stmt::from(lut_0));
+        asm.add_instance(verilog::Stmt::from(lut_1));
+        asm.add_instance(verilog::Stmt::from(lut_2));
     }
 }

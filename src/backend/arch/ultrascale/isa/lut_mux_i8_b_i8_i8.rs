@@ -21,7 +21,7 @@ impl EmitPrim for LutMuxI8BI8I8 {
             lut.add_input_with_index(&fal, i);
             lut.add_input(&con);
             lut.set_output_with_index(&res, i);
-            asm.add_lut(verilog::Stmt::from(lut));
+            asm.add_instance(verilog::Stmt::from(lut));
         }
     }
 }

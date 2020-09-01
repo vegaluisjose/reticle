@@ -22,7 +22,7 @@ impl State {
         self.inputs.insert(id.to_string(), value);
     }
 
-    pub fn add_reg(&mut self, id: &str, value: Value) {
+    pub fn add_instance(&mut self, id: &str, value: Value) {
         self.regs.insert(id.to_string(), value);
     }
 

@@ -48,9 +48,9 @@ impl Interpreter {
                     let attrs = instr.attrs();
                     if instr.dst_ty().is_vector() {
                         let values: Vec<i64> = attrs.iter().map(|x| x.value()).collect();
-                        curr.add_reg(&instr.dst_id(), Value::from(values));
+                        curr.add_instance(&instr.dst_id(), Value::from(values));
                     } else {
-                        curr.add_reg(&instr.dst_id(), Value::new_scalar(attrs[0].value()));
+                        curr.add_instance(&instr.dst_id(), Value::new_scalar(attrs[0].value()));
                     }
                 }
             }
@@ -82,7 +82,7 @@ impl Interpreter {
                 // run register instr
                 for instr in instr_register.iter() {
                     let value = instr.eval(&curr);
-                    next.add_reg(&instr.dst_id(), value);
+                    next.add_instance(&instr.dst_id(), value);
                 }
                 // check outputs
                 for output in def.outputs().iter() {
