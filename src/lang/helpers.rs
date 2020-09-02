@@ -26,6 +26,13 @@ impl Ty {
         }
     }
 
+    pub fn is_scalar(&self) -> bool {
+        match self {
+            Ty::Vector(_, _) => false,
+            _ => true,
+        }
+    }
+
     pub fn is_uint(&self) -> bool {
         match self {
             Ty::UInt(_) => true,
@@ -236,6 +243,14 @@ impl InstrStd {
         &self.dst().ty()
     }
 
+    pub fn is_vector(&self) -> bool {
+        self.dst_ty().is_vector()
+    }
+
+    pub fn is_scalar(&self) -> bool {
+        self.dst_ty().is_scalar()
+    }
+
     pub fn set_dst_id(&mut self, id: &str) {
         self.dst.set_id(id);
     }
@@ -297,6 +312,14 @@ impl InstrPrim {
 
     pub fn is_hole(&self) -> bool {
         self.loc.is_hole()
+    }
+
+    pub fn is_vector(&self) -> bool {
+        self.dst_ty().is_vector()
+    }
+
+    pub fn is_scalar(&self) -> bool {
+        self.dst_ty().is_scalar()
     }
 
     pub fn op(&self) -> &PrimOp {
@@ -384,6 +407,20 @@ impl Instr {
         match self {
             Instr::Std(instr) => instr.dst_ty(),
             Instr::Prim(instr) => instr.dst_ty(),
+        }
+    }
+
+    pub fn is_scalar(&self) -> bool {
+        match self {
+            Instr::Std(instr) => instr.is_scalar(),
+            Instr::Prim(instr) => instr.is_scalar(),
+        }
+    }
+
+    pub fn is_vector(&self) -> bool {
+        match self {
+            Instr::Std(instr) => instr.is_vector(),
+            Instr::Prim(instr) => instr.is_vector(),
         }
     }
 

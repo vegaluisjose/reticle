@@ -71,6 +71,14 @@ impl InstrPrim {
         &self.dst().ty()
     }
 
+    pub fn is_vector(&self) -> bool {
+        self.dst_ty().is_vector()
+    }
+
+    pub fn is_scalar(&self) -> bool {
+        self.dst_ty().is_scalar()
+    }
+
     pub fn set_op(&mut self, op: &str) {
         self.op = op.to_string();
     }
@@ -108,6 +116,20 @@ impl Instr {
         match self {
             Instr::Std(instr) => instr.dst_ty(),
             Instr::Prim(instr) => instr.dst_ty(),
+        }
+    }
+
+    pub fn is_scalar(&self) -> bool {
+        match self {
+            Instr::Std(instr) => instr.is_scalar(),
+            Instr::Prim(instr) => instr.is_scalar(),
+        }
+    }
+
+    pub fn is_vector(&self) -> bool {
+        match self {
+            Instr::Std(instr) => instr.is_vector(),
+            Instr::Prim(instr) => instr.is_vector(),
         }
     }
 
