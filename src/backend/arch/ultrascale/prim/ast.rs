@@ -98,6 +98,9 @@ pub struct Dsp {
     pub clock: Expr,
     pub reset: Expr,
     pub en: Expr,
+    pub lefts: Vec<Expr>,
+    pub rights: Vec<Expr>,
+    pub outputs: Vec<Expr>,
 }
 
 #[derive(Clone, Debug)]

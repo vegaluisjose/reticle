@@ -290,6 +290,9 @@ impl Dsp {
             clock: Expr::default(),
             reset: Expr::default(),
             en: Expr::default(),
+            lefts: Vec::new(),
+            rights: Vec::new(),
+            outputs: Vec::new(),
         }
     }
     pub fn new_vector(op: DspOp, width: u64, length: u64) -> Dsp {
@@ -300,6 +303,9 @@ impl Dsp {
             clock: Expr::default(),
             reset: Expr::default(),
             en: Expr::default(),
+            lefts: Vec::new(),
+            rights: Vec::new(),
+            outputs: Vec::new(),
         }
     }
 
@@ -327,6 +333,18 @@ impl Dsp {
         &self.en
     }
 
+    pub fn left_inputs(&self) -> &Vec<Expr> {
+        &self.lefts
+    }
+
+    pub fn right_inputs(&self) -> &Vec<Expr> {
+        &self.rights
+    }
+
+    pub fn outputs(&self) -> &Vec<Expr> {
+        &self.outputs
+    }
+
     pub fn width(&self) -> u64 {
         self.ty.width()
     }
@@ -349,6 +367,18 @@ impl Dsp {
 
     pub fn set_en(&mut self, en: &str) {
         self.en = Expr::new_ref(en);
+    }
+
+    pub fn add_left_input(&mut self, input: &str) {
+        self.lefts.push(Expr::new_ref(input));
+    }
+
+    pub fn add_right_input(&mut self, input: &str) {
+        self.rights.push(Expr::new_ref(input));
+    }
+
+    pub fn add_output(&mut self, output: &str) {
+        self.outputs.push(Expr::new_ref(output));
     }
 }
 
