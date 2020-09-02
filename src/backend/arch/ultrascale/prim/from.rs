@@ -185,6 +185,32 @@ impl From<Dsp> for verilog::Stmt {
         inst.add_param("MREG", verilog::Expr::new_int(0));
         inst.add_param("OPMODEREG", verilog::Expr::new_int(0));
         inst.add_param("PREG", verilog::Expr::new_int(0));
+        // default input values
+        inst.connect("ACIN", verilog::Expr::new_ulit_dec(30, "0"));
+        inst.connect("BCIN", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("CARRYCASCIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("MULTSIGNIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("PCIN", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("CARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CARRYINSEL", verilog::Expr::new_ulit_dec(3, "0"));
+        inst.connect("D", verilog::Expr::new_ulit_dec(18, "0"));
+        // unused outputs
+        inst.connect("ACOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("BCOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("CARRYCASCOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("MULTSIGNOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("PCOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("OVERFLOW", verilog::Expr::from(Expr::default()));
+        inst.connect("PATTERNBDETECT", verilog::Expr::from(Expr::default()));
+        inst.connect("PATTERNDETECT", verilog::Expr::from(Expr::default()));
+        inst.connect("UNDERFLOW", verilog::Expr::from(Expr::default()));
+        inst.connect("CARRYOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("XOROUT", verilog::Expr::from(Expr::default()));
+        // these are the ones to be changed
+        inst.connect("A", verilog::Expr::from(Expr::default())); // input
+        inst.connect("B", verilog::Expr::from(Expr::default())); // input
+        inst.connect("C", verilog::Expr::from(Expr::default())); // input
+        inst.connect("P", verilog::Expr::from(Expr::default())); // output
         verilog::Stmt::from(inst)
     }
 }
