@@ -15,7 +15,7 @@ impl From<Expr> for verilog::Expr {
     fn from(expr: Expr) -> Self {
         match expr {
             Expr::Ref(name) => verilog::Expr::new_ref(&name),
-            Expr::Index(name, index) => verilog::Expr::new_bit(&name, index as i32),
+            Expr::Index(name, index) => verilog::Expr::new_index_bit(&name, index as i32),
         }
     }
 }
