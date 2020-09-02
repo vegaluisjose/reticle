@@ -118,7 +118,9 @@ impl From<Dsp> for verilog::Stmt {
             _ => (),
         }
         match dsp.ty() {
-            DspTy::Scalar(w) if *w <= 48 => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
+            DspTy::Scalar(w) if *w <= 48 => {
+                inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48"))
+            }
             DspTy::Vector(_, 2) => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
             DspTy::Vector(_, 3) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
             DspTy::Vector(_, 4) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),

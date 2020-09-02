@@ -276,7 +276,7 @@ impl DspTy {
     pub fn length(&self) -> u64 {
         match self {
             DspTy::Vector(_, l) => *l,
-            _ => panic!("Error: scalar does not support length")
+            _ => panic!("Error: scalar does not support length"),
         }
     }
 }
