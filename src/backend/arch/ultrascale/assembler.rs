@@ -4,8 +4,8 @@ use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 use std::collections::{HashMap, HashSet};
 
-pub trait EmitPrim {
-    fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim);
+pub trait Emit {
+    fn emit(asm: &mut Assembler, instr: asm::Instr);
 }
 
 #[derive(Clone, Debug)]
@@ -190,20 +190,20 @@ impl Assembler {
                 self.emit_wire(instr.dst().clone());
             }
             if instr.is_prim() {
-                let prim = instr.prim();
-                match prim.op().as_ref() {
-                    "lut_and_b_b_b" => isa::LutAndBBB::emit_prim(self, prim.clone()),
-                    "lut_or_b_b_b" => isa::LutOrBBB::emit_prim(self, prim.clone()),
-                    "lut_eq_b_i8_i8" => isa::LutEqBI8I8::emit_prim(self, prim.clone()),
-                    "lut_mux_i8_b_i8_i8" => isa::LutMuxI8BI8I8::emit_prim(self, prim.clone()),
-                    "lut_reg_mux_i8_b_i8_i8_b" => {
-                        isa::LutRegMuxI8BI8I8B::emit_prim(self, prim.clone())
-                    }
-                    "lut_reg_i8_i8_b" => isa::LutRegI8I8B::emit_prim(self, prim.clone()),
+                match instr.prim().op().as_ref() {
+                    "lut_and_b_b_b" => isa::LutAndBBB::emit(self, instr.clone()),
+                    "lut_or_b_b_b" => isa::LutOrBBB::emit(self, instr.clone()),
+                    "lut_eq_b_i8_i8" => isa::LutEqBI8I8::emit(self, instr.clone()),
+                    "lut_mux_i8_b_i8_i8" => isa::LutMuxI8BI8I8::emit(self, instr.clone()),
+                    "lut_reg_mux_i8_b_i8_i8_b" => isa::LutRegMuxI8BI8I8B::emit(self, instr.clone()),
+                    "lut_reg_i8_i8_b" => isa::LutRegI8I8B::emit(self, instr.clone()),
                     _ => (),
                 }
             } else {
-                self.add_assignment(verilog::Stmt::from(instr.std().clone()));
+                match instr.std().op() {
+                    asm::StdOp::Const => isa::Constant::emit(self, instr.clone()),
+                    _ => self.add_assignment(verilog::Stmt::from(instr.std().clone())),
+                }
             }
         }
         let mut module = verilog::Module::new(&prog.id());

@@ -13,4 +13,4 @@ regex = "1.3.9"
 pest = "2.0"
 pest_derive = "2.0"
 pest_consume = "1.0.5"
-vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "f4160ca10e8a1825296ec85c09ebe378587bc747" }
+vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "e65bf0567b715f58d50b0fe36747576b0fd5153f" }

@@ -379,3 +379,47 @@ impl Gnd {
         self.output = Expr::new_ref(output);
     }
 }
+
+impl Const {
+    pub fn new(width: u64, value: i64) -> Const {
+        Const {
+            id: String::new(),
+            gnd: Expr::default(),
+            vcc: Expr::default(),
+            width,
+            value,
+        }
+    }
+
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn gnd(&self) -> &Expr {
+        &self.gnd
+    }
+
+    pub fn vcc(&self) -> &Expr {
+        &self.vcc
+    }
+
+    pub fn width(&self) -> u64 {
+        self.width
+    }
+
+    pub fn value(&self) -> i64 {
+        self.value
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+
+    pub fn set_gnd(&mut self, gnd: &str) {
+        self.gnd = Expr::new_ref(gnd);
+    }
+
+    pub fn set_vcc(&mut self, vcc: &str) {
+        self.vcc = Expr::new_ref(vcc);
+    }
+}

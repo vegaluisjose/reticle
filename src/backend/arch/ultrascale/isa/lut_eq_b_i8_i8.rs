@@ -1,4 +1,4 @@
-use crate::backend::arch::ultrascale::assembler::{Assembler, EmitPrim};
+use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
 use crate::backend::arch::ultrascale::prim::ast::Lut;
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
@@ -6,8 +6,9 @@ use crate::backend::verilog;
 #[derive(Clone, Debug)]
 pub struct LutEqBI8I8;
 
-impl EmitPrim for LutEqBI8I8 {
-    fn emit_prim(asm: &mut Assembler, instr: asm::InstrPrim) {
+impl Emit for LutEqBI8I8 {
+    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+        let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let lhs = asm.fresh_variable(&params[0]);
         let rhs = asm.fresh_variable(&params[1]);

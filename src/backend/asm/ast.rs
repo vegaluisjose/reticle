@@ -10,6 +10,7 @@ pub type LocTy = ast::Loc;
 pub type Port = ast::Port;
 pub type Sig = ast::Sig;
 pub type Expr = ast::Expr;
+pub type StdOp = ast::StdOp;
 pub type InstrStd = ast::InstrStd;
 
 #[derive(Clone, Debug)]
