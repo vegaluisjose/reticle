@@ -345,6 +345,18 @@ impl Dsp {
         &self.outputs
     }
 
+    pub fn indexed_left_input(&self, index: usize) -> &Expr {
+        &self.lefts[index]
+    }
+
+    pub fn indexed_right_input(&self, index: usize) -> &Expr {
+        &self.rights[index]
+    }
+
+    pub fn indexed_output_input(&self, index: usize) -> &Expr {
+        &self.outputs[index]
+    }
+
     pub fn width(&self) -> u64 {
         self.ty.width()
     }
