@@ -22,7 +22,7 @@ impl From<lang::InstrStd> for verilog::Stmt {
                 verilog::Stmt::from(assign)
             }
             lang::StdOp::Const => {
-                if instr.dst_ty().is_vector() {
+                if instr.is_vector() {
                     unimplemented!()
                 } else {
                     let attr = &instr.indexed_attr(0).value();

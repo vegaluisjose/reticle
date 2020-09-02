@@ -61,7 +61,7 @@ impl Eval for Instr {
             match self.std().op() {
                 StdOp::Identity => state.get(&self.indexed_param(0).id()),
                 StdOp::Const => {
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let val: Vec<i64> = self.attrs().iter().map(|x| x.value()).collect();
                         mask(Value::from(val), self.dst_ty())
                     } else {
@@ -71,7 +71,7 @@ impl Eval for Instr {
                 StdOp::ShiftLeft => {
                     let val: Vec<i64> = self.attrs().iter().map(|x| x.value()).collect();
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let rhs = mask(Value::from(val), self.dst_ty());
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
@@ -86,7 +86,7 @@ impl Eval for Instr {
                 StdOp::ShiftRight => {
                     let val: Vec<i64> = self.attrs().iter().map(|x| x.value()).collect();
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let rhs = mask(Value::from(val), self.dst_ty());
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
@@ -115,7 +115,7 @@ impl Eval for Instr {
                 PrimOp::Add => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(a + b);
@@ -128,7 +128,7 @@ impl Eval for Instr {
                 PrimOp::Sub => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(a - b);
@@ -141,7 +141,7 @@ impl Eval for Instr {
                 PrimOp::Mul => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(a * b);
@@ -153,7 +153,7 @@ impl Eval for Instr {
                 }
                 PrimOp::Not => {
                     let input = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for i in input.get_vector().iter() {
                             res.push(!i);
@@ -166,7 +166,7 @@ impl Eval for Instr {
                 PrimOp::And => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(a & b);
@@ -179,7 +179,7 @@ impl Eval for Instr {
                 PrimOp::Nand => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(!(a & b));
@@ -192,7 +192,7 @@ impl Eval for Instr {
                 PrimOp::Or => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(a | b);
@@ -205,7 +205,7 @@ impl Eval for Instr {
                 PrimOp::Nor => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(!(a | b));
@@ -218,7 +218,7 @@ impl Eval for Instr {
                 PrimOp::Xor => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(a ^ b);
@@ -231,7 +231,7 @@ impl Eval for Instr {
                 PrimOp::Xnor => {
                     let lhs = mask(state.get(&self.indexed_param(0).id()), self.dst_ty());
                     let rhs = mask(state.get(&self.indexed_param(1).id()), self.dst_ty());
-                    if self.dst_ty().is_vector() {
+                    if self.is_vector() {
                         let mut res = Value::new_vector();
                         for (a, b) in lhs.get_vector().iter().zip(rhs.get_vector().iter()) {
                             res.push(!(a ^ b));

@@ -9,7 +9,7 @@ pub struct Constant;
 impl Emit for Constant {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let instr = instr.std().clone();
-        assert!(!instr.dst_ty().is_vector()); // temporary check for only scalars
+        assert!(!instr.is_vector()); // temporary check for only scalars
         let value = instr.indexed_attr(0).value();
         let width = instr.dst_ty().width();
         let mut constant = Const::new(width, value);
