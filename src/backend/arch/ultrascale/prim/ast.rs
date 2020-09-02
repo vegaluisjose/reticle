@@ -86,8 +86,8 @@ pub enum DspOp {
 
 #[derive(Clone, Debug)]
 pub enum DspTy {
-    Scalar,
-    Vector(u8),
+    Scalar(u64),
+    Vector(u64, u64),
 }
 
 #[derive(Clone, Debug)]
