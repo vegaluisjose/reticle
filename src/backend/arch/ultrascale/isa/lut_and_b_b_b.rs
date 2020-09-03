@@ -10,9 +10,9 @@ impl Emit for LutAndBBB {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        let lhs = asm.fresh_variable(&params[0]);
-        let rhs = asm.fresh_variable(&params[1]);
-        let res = asm.fresh_variable(&instr.dst_id());
+        let lhs = asm.fresh_scalar_variable(&params[0]);
+        let rhs = asm.fresh_scalar_variable(&params[1]);
+        let res = asm.fresh_scalar_variable(&instr.dst_id());
         let mut lut = Lut::new_lut2();
         lut.set_init("8");
         lut.set_id(&asm.new_instance_name());

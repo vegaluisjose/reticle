@@ -11,11 +11,11 @@ impl Emit for LutRegMuxI8BI8I8B {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        let con = asm.fresh_variable(&params[0]);
-        let tru = asm.fresh_variable(&params[1]);
-        let fal = asm.fresh_variable(&params[2]);
-        let en = asm.fresh_variable(&params[3]);
-        let res = asm.fresh_variable(&instr.dst_id());
+        let con = asm.fresh_scalar_variable(&params[0]);
+        let tru = asm.fresh_scalar_variable(&params[1]);
+        let fal = asm.fresh_scalar_variable(&params[2]);
+        let en = asm.fresh_scalar_variable(&params[3]);
+        let res = asm.fresh_scalar_variable(&instr.dst_id());
         let wire_name = asm.new_variable_name();
         let wire = verilog::Decl::new_wire(&wire_name, 8);
         let regs = regs_from_init(instr.dst_ty().width(), instr.indexed_attr(0).value());

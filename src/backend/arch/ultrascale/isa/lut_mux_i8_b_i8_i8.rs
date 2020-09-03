@@ -10,10 +10,10 @@ impl Emit for LutMuxI8BI8I8 {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        let con = asm.fresh_variable(&params[0]);
-        let tru = asm.fresh_variable(&params[1]);
-        let fal = asm.fresh_variable(&params[2]);
-        let res = asm.fresh_variable(&instr.dst_id());
+        let con = asm.fresh_scalar_variable(&params[0]);
+        let tru = asm.fresh_scalar_variable(&params[1]);
+        let fal = asm.fresh_scalar_variable(&params[2]);
+        let res = asm.fresh_scalar_variable(&instr.dst_id());
         for i in 0..8 {
             let mut lut = Lut::new_lut3();
             lut.set_id(&asm.new_instance_name());

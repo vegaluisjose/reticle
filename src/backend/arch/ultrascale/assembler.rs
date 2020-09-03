@@ -111,18 +111,18 @@ impl Assembler {
         name
     }
 
-    pub fn update_variable(&mut self, old: &str, new: &str) {
+    pub fn update_scalar_variable(&mut self, old: &str, new: &str) {
         let name = Name::new_scalar(old);
         self.variable_map.insert(name, new.to_string());
     }
 
-    pub fn fresh_variable(&mut self, name: &str) -> String {
+    pub fn fresh_scalar_variable(&mut self, name: &str) -> String {
         let key = Name::new_scalar(name);
         if let Some(var) = self.variable_map.get(&key) {
             var.to_string()
         } else {
             let tmp = self.new_variable_name();
-            self.update_variable(name, &tmp);
+            self.update_scalar_variable(name, &tmp);
             tmp
         }
     }
@@ -163,7 +163,7 @@ impl Assembler {
 
     pub fn emit_wire(&mut self, expr: asm::Expr) {
         let width = expr.ty().width();
-        let id = self.fresh_variable(&expr.id());
+        let id = self.fresh_scalar_variable(&expr.id());
         if expr.ty().is_vector() {
             for i in 0..expr.ty().length() {
                 let name = format!("{}_{}", &id, i);
@@ -203,11 +203,11 @@ impl Assembler {
         self.emit_vcc_and_gnd();
         for input in prog.inputs().iter() {
             self.emit_port(input.clone());
-            self.update_variable(&input.id(), &input.id());
+            self.update_scalar_variable(&input.id(), &input.id());
         }
         for output in prog.outputs().iter() {
             self.emit_port(output.clone());
-            self.update_variable(&output.id(), &output.id());
+            self.update_scalar_variable(&output.id(), &output.id());
             self.add_output(&output.id());
         }
         for instr in prog.body().iter() {

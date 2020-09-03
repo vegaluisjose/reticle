@@ -13,7 +13,7 @@ impl Emit for Constant {
         let value = instr.indexed_attr(0).value();
         let width = instr.dst_ty().width();
         let mut constant = Const::new(width, value);
-        let res = asm.fresh_variable(&instr.dst_id());
+        let res = asm.fresh_scalar_variable(&instr.dst_id());
         constant.set_id(&res);
         constant.set_gnd(&asm.gnd());
         constant.set_vcc(&asm.vcc());
