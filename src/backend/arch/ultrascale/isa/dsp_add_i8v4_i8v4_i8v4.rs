@@ -5,6 +5,7 @@ use crate::backend::verilog;
 
 fn vector_input_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: u64) {
     let wire = verilog::Decl::new_wire(dst_name, width);
+    asm.add_wire(verilog::Stmt::from(wire));
     let mut concat = verilog::ExprConcat::default();
     // fix all of this later
     // dsp-length
@@ -19,8 +20,22 @@ fn vector_input_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: 
     let src_expr = verilog::Expr::from(concat);
     let dst_expr = verilog::Expr::new_ref(dst_name);
     let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
-    asm.add_wire(verilog::Stmt::from(wire));
     asm.add_assignment(verilog::Stmt::from(assign));
+}
+
+fn vector_output_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: u64) {
+    let wire = verilog::Decl::new_wire(dst_name, width);
+    asm.add_wire(verilog::Stmt::from(wire));
+    // dsp-length
+    for i in 0..4 {
+        let name = asm.fresh_vector_variable(dst_name, i);
+        let lo = verilog::Expr::new_int((i * 12) as i32);
+        let hi = verilog::Expr::new_int((i * 12 + 8 - 1) as i32);
+        let src_expr = verilog::Expr::new_slice(src_name, hi, lo);
+        let dst_expr = verilog::Expr::new_ref(&name);
+        let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
+        asm.add_assignment(verilog::Stmt::from(assign));
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -40,10 +55,9 @@ impl Emit for DspAddI8V4I8V4I8V4 {
         dsp.set_left(&left_wire_name);
         dsp.set_right(&right_wire_name);
         dsp.set_output(&output_wire_name);
-        let output_wire = verilog::Decl::new_wire(&output_wire_name, dsp.width());
         vector_input_gen(asm, &left_wire_name, &params[0], dsp.width());
         vector_input_gen(asm, &right_wire_name, &params[1], dsp.width());
-        asm.add_wire(verilog::Stmt::from(output_wire));
+        vector_output_gen(asm, &instr.dst_id(), &output_wire_name, dsp.width());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
