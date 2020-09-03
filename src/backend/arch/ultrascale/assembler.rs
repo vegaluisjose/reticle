@@ -183,14 +183,14 @@ impl Assembler {
 
     pub fn emit_wire(&mut self, expr: asm::Expr) {
         let width = expr.ty().width();
-        let id = self.fresh_scalar_variable(&expr.id());
         if expr.ty().is_vector() {
             for i in 0..expr.ty().length() {
-                let name = emit_vector_index(&id, i);
-                let wire = verilog::Decl::new_wire(&name, width);
+                let id = self.fresh_vector_variable(&expr.id(), i);
+                let wire = verilog::Decl::new_wire(&id, width);
                 self.add_wire(verilog::Stmt::from(wire));
             }
         } else {
+            let id = self.fresh_scalar_variable(&expr.id());
             let wire = verilog::Decl::new_wire(&id, width);
             self.add_wire(verilog::Stmt::from(wire));
         }
