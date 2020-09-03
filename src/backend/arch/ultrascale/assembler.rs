@@ -249,6 +249,7 @@ impl Assembler {
                     "lut_mux_i8_b_i8_i8" => isa::LutMuxI8BI8I8::emit(self, instr.clone()),
                     "lut_reg_mux_i8_b_i8_i8_b" => isa::LutRegMuxI8BI8I8B::emit(self, instr.clone()),
                     "lut_reg_i8_i8_b" => isa::LutRegI8I8B::emit(self, instr.clone()),
+                    "dsp_add_i8v4_i8v4_i8v4" => isa::DspAddI8V4I8V4I8V4::emit(self, instr.clone()),
                     _ => (),
                 }
             } else {
