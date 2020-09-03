@@ -6,7 +6,7 @@ sep = _{ "_" | "-"}
 
 identifier = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
-number = @{ ASCII_DIGIT+ }
+number = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
 int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
