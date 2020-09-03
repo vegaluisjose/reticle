@@ -134,6 +134,34 @@ impl Port {
         }
     }
 
+    pub fn width(&self) -> u64 {
+        match self {
+            Port::Input(expr) => expr.ty().width(),
+            Port::Output(expr) => expr.ty().width(),
+        }
+    }
+
+    pub fn length(&self) -> u64 {
+        match self {
+            Port::Input(expr) => expr.ty().length(),
+            Port::Output(expr) => expr.ty().length(),
+        }
+    }
+
+    pub fn is_vector(&self) -> bool {
+        match self {
+            Port::Input(expr) => expr.ty().is_vector(),
+            Port::Output(expr) => expr.ty().is_vector(),
+        }
+    }
+
+    pub fn is_scalar(&self) -> bool {
+        match self {
+            Port::Input(expr) => expr.ty().is_scalar(),
+            Port::Output(expr) => expr.ty().is_scalar(),
+        }
+    }
+
     pub fn is_input(&self) -> bool {
         match self {
             Port::Input(_) => true,
