@@ -31,6 +31,10 @@ impl Name {
     }
 }
 
+fn emit_vector_index(name: &str, index: u64) -> String {
+    format!("{}_{}", name, index)
+}
+
 #[derive(Clone, Debug)]
 pub struct Assembler {
     pub clock: String,
@@ -116,6 +120,11 @@ impl Assembler {
         self.variable_map.insert(name, new.to_string());
     }
 
+    pub fn update_vector_variable(&mut self, old_id: &str, old_index: u64, new: &str) {
+        let name = Name::new_vector(old_id, old_index);
+        self.variable_map.insert(name, new.to_string());
+    }
+
     pub fn fresh_scalar_variable(&mut self, name: &str) -> String {
         let key = Name::new_scalar(name);
         if let Some(var) = self.variable_map.get(&key) {
@@ -123,6 +132,17 @@ impl Assembler {
         } else {
             let tmp = self.new_variable_name();
             self.update_scalar_variable(name, &tmp);
+            tmp
+        }
+    }
+
+    pub fn fresh_vector_variable(&mut self, name: &str, index: u64) -> String {
+        let key = Name::new_vector(name, index);
+        if let Some(var) = self.variable_map.get(&key) {
+            var.to_string()
+        } else {
+            let tmp = self.new_variable_name();
+            self.update_vector_variable(name, index, &tmp);
             tmp
         }
     }
@@ -166,7 +186,7 @@ impl Assembler {
         let id = self.fresh_scalar_variable(&expr.id());
         if expr.ty().is_vector() {
             for i in 0..expr.ty().length() {
-                let name = format!("{}_{}", &id, i);
+                let name = emit_vector_index(&id, i);
                 let wire = verilog::Decl::new_wire(&name, width);
                 self.add_wire(verilog::Stmt::from(wire));
             }
@@ -180,7 +200,7 @@ impl Assembler {
         let width = port.ty().width();
         if port.ty().is_vector() {
             for i in 0..port.ty().length() {
-                let name = format!("{}_{}", port.id(), i);
+                let name = emit_vector_index(&port.id(), i);
                 let vport = if port.is_input() {
                     verilog::Port::new_input(&name, width)
                 } else {
@@ -203,7 +223,14 @@ impl Assembler {
         self.emit_vcc_and_gnd();
         for input in prog.inputs().iter() {
             self.emit_port(input.clone());
-            self.update_scalar_variable(&input.id(), &input.id());
+            if input.is_vector() {
+                for i in 0..input.length() {
+                    let name = emit_vector_index(&input.id(), i);
+                    self.update_vector_variable(&input.id(), i, &name);
+                }
+            } else {
+                self.update_scalar_variable(&input.id(), &input.id());
+            }
         }
         for output in prog.outputs().iter() {
             self.emit_port(output.clone());
