@@ -1,6 +1,13 @@
 use crate::backend::arch::ultrascale::prim::ast::*;
 
 impl Expr {
+    pub fn id(&self) -> String {
+        match self {
+            Expr::Ref(name) => name.to_string(),
+            Expr::Index(name, _) => name.to_string(),
+        }
+    }
+
     pub fn is_default(&self) -> bool {
         match self {
             Expr::Ref(name) => name.is_empty(),
@@ -254,58 +261,53 @@ impl DspOp {
 impl DspTy {
     pub fn is_scalar(&self) -> bool {
         match self {
-            DspTy::Scalar(_) => true,
+            DspTy::Scalar => true,
             _ => false,
         }
     }
 
     pub fn is_vector(&self) -> bool {
         match self {
-            DspTy::Vector(_, _) => true,
+            DspTy::Vector(_) => true,
             _ => false,
-        }
-    }
-
-    pub fn width(&self) -> u64 {
-        match self {
-            DspTy::Scalar(w) => *w,
-            DspTy::Vector(w, _) => *w,
         }
     }
 
     pub fn length(&self) -> u64 {
         match self {
-            DspTy::Vector(_, l) => *l,
+            DspTy::Vector(l) => *l,
             _ => panic!("Error: scalar does not support length"),
         }
     }
 }
 
 impl Dsp {
-    pub fn new_scalar(op: DspOp, width: u64) -> Dsp {
+    pub fn new_scalar(op: DspOp) -> Dsp {
         Dsp {
             op,
-            ty: DspTy::Scalar(width),
+            ty: DspTy::Scalar,
+            width: 48,
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
             en: Expr::default(),
-            lefts: Vec::new(),
-            rights: Vec::new(),
-            outputs: Vec::new(),
+            left: Expr::default(),
+            right: Expr::default(),
+            output: Expr::default(),
         }
     }
-    pub fn new_vector(op: DspOp, width: u64, length: u64) -> Dsp {
+    pub fn new_vector(op: DspOp, length: u64) -> Dsp {
         Dsp {
             op,
-            ty: DspTy::Vector(width, length),
+            ty: DspTy::Vector(length),
+            width: 48,
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
             en: Expr::default(),
-            lefts: Vec::new(),
-            rights: Vec::new(),
-            outputs: Vec::new(),
+            left: Expr::default(),
+            right: Expr::default(),
+            output: Expr::default(),
         }
     }
 
@@ -333,32 +335,20 @@ impl Dsp {
         &self.en
     }
 
-    pub fn left_inputs(&self) -> &Vec<Expr> {
-        &self.lefts
+    pub fn left(&self) -> &Expr {
+        &self.left
     }
 
-    pub fn right_inputs(&self) -> &Vec<Expr> {
-        &self.rights
+    pub fn right(&self) -> &Expr {
+        &self.right
     }
 
-    pub fn outputs(&self) -> &Vec<Expr> {
-        &self.outputs
-    }
-
-    pub fn indexed_left_input(&self, index: usize) -> &Expr {
-        &self.lefts[index]
-    }
-
-    pub fn indexed_right_input(&self, index: usize) -> &Expr {
-        &self.rights[index]
-    }
-
-    pub fn indexed_output_input(&self, index: usize) -> &Expr {
-        &self.outputs[index]
+    pub fn output(&self) -> &Expr {
+        &self.output
     }
 
     pub fn width(&self) -> u64 {
-        self.ty.width()
+        self.width
     }
 
     pub fn length(&self) -> u64 {
@@ -381,16 +371,16 @@ impl Dsp {
         self.en = Expr::new_ref(en);
     }
 
-    pub fn add_left_input(&mut self, input: &str) {
-        self.lefts.push(Expr::new_ref(input));
+    pub fn set_left(&mut self, left: &str) {
+        self.left = Expr::new_ref(left);
     }
 
-    pub fn add_right_input(&mut self, input: &str) {
-        self.rights.push(Expr::new_ref(input));
+    pub fn set_right(&mut self, right: &str) {
+        self.right = Expr::new_ref(right);
     }
 
-    pub fn add_output(&mut self, output: &str) {
-        self.outputs.push(Expr::new_ref(output));
+    pub fn set_output(&mut self, output: &str) {
+        self.output = Expr::new_ref(output);
     }
 }
 

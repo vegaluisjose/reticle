@@ -86,21 +86,22 @@ pub enum DspOp {
 
 #[derive(Clone, Debug)]
 pub enum DspTy {
-    Scalar(u64),
-    Vector(u64, u64),
+    Scalar,
+    Vector(u64),
 }
 
 #[derive(Clone, Debug)]
 pub struct Dsp {
     pub ty: DspTy,
+    pub width: u64,
     pub op: DspOp,
     pub id: String,
     pub clock: Expr,
     pub reset: Expr,
     pub en: Expr,
-    pub lefts: Vec<Expr>,
-    pub rights: Vec<Expr>,
-    pub outputs: Vec<Expr>,
+    pub left: Expr,
+    pub right: Expr,
+    pub output: Expr,
 }
 
 #[derive(Clone, Debug)]

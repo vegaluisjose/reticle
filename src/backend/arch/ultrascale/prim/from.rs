@@ -118,12 +118,10 @@ impl From<Dsp> for verilog::Stmt {
             _ => (),
         }
         match dsp.ty() {
-            DspTy::Scalar(w) if *w <= 48 => {
-                inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48"))
-            }
-            DspTy::Vector(_, 2) => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
-            DspTy::Vector(_, 3) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
-            DspTy::Vector(_, 4) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
+            DspTy::Scalar => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
+            DspTy::Vector(2) => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
+            DspTy::Vector(3) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
+            DspTy::Vector(4) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
             _ => unimplemented!(),
         }
         // default params
@@ -208,11 +206,24 @@ impl From<Dsp> for verilog::Stmt {
         inst.connect("UNDERFLOW", verilog::Expr::from(Expr::default()));
         inst.connect("CARRYOUT", verilog::Expr::from(Expr::default()));
         inst.connect("XOROUT", verilog::Expr::from(Expr::default()));
-        // these are the ones to be changed
-        inst.connect("A", verilog::Expr::from(Expr::default())); // input
-        inst.connect("B", verilog::Expr::from(Expr::default())); // input
-        inst.connect("C", verilog::Expr::from(Expr::default())); // input
-        inst.connect("P", verilog::Expr::from(Expr::default())); // output
+        inst.connect(
+            "A",
+            verilog::Expr::new_slice(
+                &dsp.right().id(),
+                verilog::Expr::new_int(47),
+                verilog::Expr::new_int(18),
+            ),
+        );
+        inst.connect(
+            "B",
+            verilog::Expr::new_slice(
+                &dsp.right().id(),
+                verilog::Expr::new_int(17),
+                verilog::Expr::new_int(0),
+            ),
+        );
+        inst.connect("C", verilog::Expr::from(dsp.left().clone()));
+        inst.connect("P", verilog::Expr::from(dsp.output().clone())); // output
         verilog::Stmt::from(inst)
     }
 }
