@@ -1,4 +1,0 @@
-def vadd_one(a: i8<4>) -> (y: i8<4>) {
-    t0: i8<4> = const[1, 1, 1, 1];
-    y: i8<4> = add(t0, a);
-}

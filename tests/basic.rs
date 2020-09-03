@@ -8,10 +8,10 @@ mod test_basic {
 
     #[test]
     fn test_vadd_one() {
-        let prog = parse_from_file("examples/basic/vadd_one.ret");
+        let prog = parse_from_file("examples/basic/vadd_const.ret");
         let mut trace = Trace::default();
         trace.enq_vector("a", vec![-4, 2, 0, 1]);
-        trace.enq_vector("y", vec![-3, 3, 1, 2]);
+        trace.enq_vector("y", vec![-2, -2, 5, -2]);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
