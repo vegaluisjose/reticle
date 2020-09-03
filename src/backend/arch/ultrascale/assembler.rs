@@ -8,13 +8,36 @@ pub trait Emit {
     fn emit(asm: &mut Assembler, instr: asm::Instr);
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum Name {
+    Scalar(String),
+    Vector(String, u64),
+}
+
+impl Name {
+    pub fn new_scalar(id: &str) -> Name {
+        Name::Scalar(id.to_string())
+    }
+
+    pub fn new_vector(id: &str, index: u64) -> Name {
+        Name::Vector(id.to_string(), index)
+    }
+
+    pub fn id(&self) -> String {
+        match self {
+            Name::Scalar(id) => id.to_string(),
+            Name::Vector(id, _) => id.to_string(),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Assembler {
     pub clock: String,
     pub reset: String,
     pub vcc: String,
     pub gnd: String,
-    pub variable_map: HashMap<String, String>,
+    pub variable_map: HashMap<Name, String>,
     pub variables: u32,
     pub num_instances: u32,
     pub ports: Vec<verilog::Port>,
@@ -89,11 +112,13 @@ impl Assembler {
     }
 
     pub fn update_variable(&mut self, old: &str, new: &str) {
-        self.variable_map.insert(old.to_string(), new.to_string());
+        let name = Name::new_scalar(old);
+        self.variable_map.insert(name, new.to_string());
     }
 
     pub fn fresh_variable(&mut self, name: &str) -> String {
-        if let Some(var) = self.variable_map.get(name) {
+        let key = Name::new_scalar(name);
+        if let Some(var) = self.variable_map.get(&key) {
             var.to_string()
         } else {
             let tmp = self.new_variable_name();
