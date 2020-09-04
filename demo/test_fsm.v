@@ -30,7 +30,7 @@ module test_fsm();
                     start <= 1'b1;
                     done <= 1'b0;
                     if (state != 0) begin
-                        $error("Throw error");
+                        $error("Error");
                         $finish;
                     end
                 end
@@ -39,7 +39,7 @@ module test_fsm();
                     start <= 1'b0;
                     done <= 1'b1;
                     if (state != 0) begin
-                        $error("Throw error");
+                        $error("Error");
                         $finish;
                     end
                 end
@@ -48,13 +48,13 @@ module test_fsm();
                     start <= 1'b0;
                     done <= 1'b0;
                     if (state != 1) begin
-                        $error("Throw error");
+                        $error("Error");
                         $finish;
                     end
                 end
                 3: begin
                     if (state != 0) begin
-                        $error("Throw error");
+                        $error("Error");
                         $finish;
                     end
                     $finish;
