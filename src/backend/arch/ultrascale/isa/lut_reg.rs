@@ -4,9 +4,9 @@ use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
 #[derive(Clone, Debug)]
-pub struct LutRegI8I8B;
+pub struct LutReg;
 
-impl Emit for LutRegI8I8B {
+impl Emit for LutReg {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
