@@ -16,5 +16,6 @@ pub fn demo(input: &str, output: &str) {
 
 pub fn main() {
     demo("examples/basic/fsm.ret", "demo/fsm.v");
+    demo("examples/basic/vadd_const.ret", "demo/vadd_const.v");
     demo("examples/isa/scalar/register.ret", "demo/register.v");
 }
