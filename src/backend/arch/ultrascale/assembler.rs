@@ -177,6 +177,10 @@ impl Assembler {
         let mut gnd = Gnd::default();
         vcc.set_output(&self.vcc());
         gnd.set_output(&self.gnd());
+        let vcc_wire = verilog::Decl::new_wire(&self.vcc, 1);
+        let gnd_wire = verilog::Decl::new_wire(&self.gnd, 1);
+        self.add_wire(verilog::Stmt::from(vcc_wire));
+        self.add_wire(verilog::Stmt::from(gnd_wire));
         self.add_instance(verilog::Stmt::from(vcc));
         self.add_instance(verilog::Stmt::from(gnd));
     }
@@ -234,7 +238,14 @@ impl Assembler {
         }
         for output in prog.outputs().iter() {
             self.emit_port(output.clone());
-            self.update_scalar_variable(&output.id(), &output.id());
+            if output.is_vector() {
+                for i in 0..output.length() {
+                    let name = emit_vector_index(&output.id(), i);
+                    self.update_vector_variable(&output.id(), i, &name);
+                }
+            } else {
+                self.update_scalar_variable(&output.id(), &output.id());
+            }
             self.add_output(&output.id());
         }
         for instr in prog.body().iter() {

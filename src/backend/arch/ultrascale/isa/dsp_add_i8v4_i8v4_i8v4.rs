@@ -24,7 +24,7 @@ fn vector_input_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: 
 }
 
 fn vector_output_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: u64) {
-    let wire = verilog::Decl::new_wire(dst_name, width);
+    let wire = verilog::Decl::new_wire(src_name, width);
     asm.add_wire(verilog::Stmt::from(wire));
     // dsp-length
     for i in 0..4 {
