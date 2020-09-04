@@ -3,39 +3,40 @@ use crate::backend::arch::ultrascale::prim::ast::{Dsp, DspOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-fn vector_input_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: u64) {
-    let wire = verilog::Decl::new_wire(dst_name, width);
-    asm.add_wire(verilog::Stmt::from(wire));
+fn vector_input_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: usize, pad: usize) {
     let mut concat = verilog::ExprConcat::default();
-    // fix all of this later
-    // dsp-length
-    for i in 0..4 {
-        let name = asm.fresh_vector_variable(src_name, i);
+    let length = instr.dst_ty().length();
+    for i in 0..length {
+        let name = asm.fresh_vector_variable(&instr.indexed_param(index).id(), i);
         concat.add_expr(verilog::Expr::new_ref(&name));
-        // dsp-width / dsp-length - op-width
-        for _ in 0..4 {
+        for _ in 0..pad {
             concat.add_expr(verilog::Expr::new_ref(&asm.gnd()));
         }
     }
     let src_expr = verilog::Expr::from(concat);
-    let dst_expr = verilog::Expr::new_ref(dst_name);
+    let dst_expr = verilog::Expr::new_ref(wire);
     let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-fn vector_output_gen(asm: &mut Assembler, dst_name: &str, src_name: &str, width: u64) {
-    let wire = verilog::Decl::new_wire(src_name, width);
-    asm.add_wire(verilog::Stmt::from(wire));
-    // dsp-length
-    for i in 0..4 {
-        let name = asm.fresh_vector_variable(dst_name, i);
+fn vector_output_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str) {
+    let length = instr.dst_ty().length();
+    for i in 0..length {
+        let name = asm.fresh_vector_variable(&instr.dst_id(), i);
         let lo = verilog::Expr::new_int((i * 12) as i32);
         let hi = verilog::Expr::new_int((i * 12 + 8 - 1) as i32);
-        let src_expr = verilog::Expr::new_slice(src_name, hi, lo);
+        let src_expr = verilog::Expr::new_slice(wire, hi, lo);
         let dst_expr = verilog::Expr::new_ref(&name);
         let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
         asm.add_assignment(verilog::Stmt::from(assign));
     }
+}
+
+fn vector_wire_gen(asm: &mut Assembler, width: u64) -> String {
+    let name = asm.new_variable_name();
+    let wire = verilog::Decl::new_wire(&name, width);
+    asm.add_wire(verilog::Stmt::from(wire));
+    name
 }
 
 #[derive(Clone, Debug)]
@@ -43,21 +44,19 @@ pub struct DspAddI8V4I8V4I8V4;
 
 impl Emit for DspAddI8V4I8V4I8V4 {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
-        let instr = instr.prim().clone();
-        let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let mut dsp = Dsp::new_vector(DspOp::Add, instr.dst_ty().length());
-        let left_wire_name = asm.new_variable_name();
-        let right_wire_name = asm.new_variable_name();
-        let output_wire_name = asm.new_variable_name();
+        let left = vector_wire_gen(asm, dsp.width());
+        let right = vector_wire_gen(asm, dsp.width());
+        let output = vector_wire_gen(asm, dsp.width());
         dsp.set_id(&asm.new_instance_name());
         dsp.set_clock(&asm.clock());
         dsp.set_reset(&asm.reset());
-        dsp.set_left(&left_wire_name);
-        dsp.set_right(&right_wire_name);
-        dsp.set_output(&output_wire_name);
-        vector_input_gen(asm, &left_wire_name, &params[0], dsp.width());
-        vector_input_gen(asm, &right_wire_name, &params[1], dsp.width());
-        vector_output_gen(asm, &instr.dst_id(), &output_wire_name, dsp.width());
+        dsp.set_left(&left);
+        dsp.set_right(&right);
+        dsp.set_output(&output);
+        vector_input_gen(asm, instr.clone(), &left, 0, 4);
+        vector_input_gen(asm, instr.clone(), &right, 1, 4);
+        vector_output_gen(asm, instr, &output);
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }

@@ -182,6 +182,20 @@ impl Instr {
         }
     }
 
+    pub fn indexed_param(&self, index: usize) -> &Expr {
+        match self {
+            Instr::Std(instr) => instr.indexed_param(index),
+            Instr::Prim(instr) => instr.indexed_param(index),
+        }
+    }
+
+    pub fn indexed_attr(&self, index: usize) -> &Expr {
+        match self {
+            Instr::Std(instr) => instr.indexed_attr(index),
+            Instr::Prim(instr) => instr.indexed_attr(index),
+        }
+    }
+
     pub fn set_dst_id(&mut self, value: &str) {
         match self {
             Instr::Std(instr) => instr.set_dst_id(value),
