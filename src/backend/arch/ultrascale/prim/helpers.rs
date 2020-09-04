@@ -364,6 +364,10 @@ impl Dsp {
         self.word
     }
 
+    pub fn pad(&self) -> u64 {
+        self.width / self.word
+    }
+
     pub fn length(&self) -> u64 {
         self.ty.length()
     }
