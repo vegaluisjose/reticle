@@ -1,12 +1,19 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::Lut;
+use crate::backend::arch::ultrascale::prim::ast::{Lut, Reg};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-#[derive(Clone, Debug)]
-pub struct LutEqBI8I8;
+fn has_reg(op: &str) -> bool {
+    match op {
+        "lut_eq_b_i8_i8" => false,
+        _ => unimplemented!(),
+    }
+}
 
-impl Emit for LutEqBI8I8 {
+#[derive(Clone, Debug)]
+pub struct LutEq;
+
+impl Emit for LutEq {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
@@ -32,7 +39,6 @@ impl Emit for LutEqBI8I8 {
         lut_0.add_input_with_index(&lhs, 6);
         lut_0.add_input(&wire_0_name);
         lut_0.add_input(&wire_1_name);
-        lut_0.set_output(&res);
         lut_1.add_input_with_index(&lhs, 3);
         lut_1.add_input_with_index(&rhs, 3);
         lut_1.add_input_with_index(&rhs, 5);
@@ -47,6 +53,27 @@ impl Emit for LutEqBI8I8 {
         lut_2.add_input_with_index(&rhs, 1);
         lut_2.add_input_with_index(&lhs, 1);
         lut_2.set_output(&wire_1_name);
+        let has_reg = has_reg(&instr.op());
+        if has_reg {
+            let wire_r_name = asm.new_variable_name();
+            let wire_r = verilog::Decl::new_wire(&wire_r_name, 1);
+            asm.add_wire(verilog::Stmt::from(wire_r));
+            lut_0.set_output(&wire_r_name);
+            let mut reg = if instr.indexed_attr(0).value() == 0 {
+                Reg::new_fdre()
+            } else {
+                Reg::new_fdse()
+            };
+            let en = asm.fresh_scalar_variable(&params[3]);
+            reg.set_id(&asm.new_instance_name());
+            reg.set_clock(&asm.clock());
+            reg.set_reset(&asm.reset());
+            reg.set_en(&en);
+            reg.set_input(&wire_r_name);
+            reg.set_output(&res);
+        } else {
+            lut_0.set_output(&res);
+        }
         asm.add_wire(verilog::Stmt::from(wire_0));
         asm.add_wire(verilog::Stmt::from(wire_1));
         asm.add_instance(verilog::Stmt::from(lut_0));
