@@ -286,7 +286,6 @@ impl Dsp {
         Dsp {
             op,
             ty: DspTy::Scalar,
-            width: 48,
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
@@ -294,13 +293,21 @@ impl Dsp {
             left: Expr::default(),
             right: Expr::default(),
             output: Expr::default(),
+            width: 48,
+            word: 48,
         }
     }
     pub fn new_vector(op: DspOp, length: u64) -> Dsp {
+        let word = match length {
+            1 => 48,
+            2 => 24,
+            3 => 12,
+            4 => 12,
+            _ => unimplemented!(),
+        };
         Dsp {
             op,
             ty: DspTy::Vector(length),
-            width: 48,
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
@@ -308,6 +315,8 @@ impl Dsp {
             left: Expr::default(),
             right: Expr::default(),
             output: Expr::default(),
+            width: 48,
+            word,
         }
     }
 
@@ -349,6 +358,10 @@ impl Dsp {
 
     pub fn width(&self) -> u64 {
         self.width
+    }
+
+    pub fn word(&self) -> u64 {
+        self.word
     }
 
     pub fn length(&self) -> u64 {

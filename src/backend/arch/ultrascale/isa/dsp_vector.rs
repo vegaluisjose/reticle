@@ -3,7 +3,7 @@ use crate::backend::arch::ultrascale::prim::ast::{Dsp, DspOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-fn vector_input_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: usize, pad: usize) {
+fn vector_input_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: usize, pad: u64) {
     let mut concat = verilog::ExprConcat::default();
     let length = instr.dst_ty().length();
     for i in 0..length {
@@ -55,9 +55,10 @@ impl Emit for DspVector {
         dsp.set_left(&left);
         dsp.set_right(&right);
         dsp.set_output(&output);
-        vector_input_gen(asm, instr.clone(), &left, 0, 4);
-        vector_input_gen(asm, instr.clone(), &right, 1, 4);
-        vector_output_gen(asm, instr, &output, 12);
+        let pad = dsp.width() / dsp.word();
+        vector_input_gen(asm, instr.clone(), &left, 0, pad);
+        vector_input_gen(asm, instr.clone(), &right, 1, pad);
+        vector_output_gen(asm, instr, &output, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
