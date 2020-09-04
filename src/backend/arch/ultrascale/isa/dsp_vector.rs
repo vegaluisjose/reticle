@@ -41,9 +41,9 @@ fn vector_wire_gen(asm: &mut Assembler, width: u64) -> String {
 }
 
 #[derive(Clone, Debug)]
-pub struct DspAddI8V4I8V4I8V4;
+pub struct DspVector;
 
-impl Emit for DspAddI8V4I8V4I8V4 {
+impl Emit for DspVector {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let mut dsp = Dsp::new_vector(DspOp::Add, instr.dst_ty().length());
         let left = vector_wire_gen(asm, dsp.width());
