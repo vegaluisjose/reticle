@@ -255,7 +255,7 @@ impl Assembler {
             if instr.is_prim() {
                 match instr.prim().op().as_ref() {
                     "lut_and_b_b_b" => isa::LutAnd::emit(self, instr.clone()),
-                    "lut_or_b_b_b" => isa::LutOrBBB::emit(self, instr.clone()),
+                    "lut_or_b_b_b" => isa::LutOr::emit(self, instr.clone()),
                     "lut_eq_b_i8_i8" => isa::LutEqBI8I8::emit(self, instr.clone()),
                     "lut_mux_i8_b_i8_i8" => isa::LutMux::emit(self, instr.clone()),
                     "lut_reg_mux_i8_b_i8_i8_b" => isa::LutMux::emit(self, instr.clone()),
