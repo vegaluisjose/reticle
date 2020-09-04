@@ -19,12 +19,13 @@ fn vector_input_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: u
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-fn vector_output_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str) {
+fn vector_output_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, word_width: u64) {
     let length = instr.dst_ty().length();
+    let dst_width = instr.dst_ty().width();
     for i in 0..length {
         let name = asm.fresh_vector_variable(&instr.dst_id(), i);
-        let lo = verilog::Expr::new_int((i * 12) as i32);
-        let hi = verilog::Expr::new_int((i * 12 + 8 - 1) as i32);
+        let lo = verilog::Expr::new_int((i * word_width) as i32);
+        let hi = verilog::Expr::new_int((i * word_width + dst_width - 1) as i32);
         let src_expr = verilog::Expr::new_slice(wire, hi, lo);
         let dst_expr = verilog::Expr::new_ref(&name);
         let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
@@ -56,7 +57,7 @@ impl Emit for DspAddI8V4I8V4I8V4 {
         dsp.set_output(&output);
         vector_input_gen(asm, instr.clone(), &left, 0, 4);
         vector_input_gen(asm, instr.clone(), &right, 1, 4);
-        vector_output_gen(asm, instr, &output);
+        vector_output_gen(asm, instr, &output, 12);
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
