@@ -7,7 +7,7 @@ mod test_basic {
     use super::*;
 
     #[test]
-    fn test_vadd_one() {
+    fn test_vadd_const() {
         let prog = parse_from_file("examples/basic/vadd_const.ret");
         let mut trace = Trace::default();
         trace.enq_vector("a", vec![-4, 2, 0, 1]);
