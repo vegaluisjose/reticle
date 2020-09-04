@@ -254,14 +254,14 @@ impl Assembler {
             }
             if instr.is_prim() {
                 match instr.prim().op().as_ref() {
-                    "lut_and_b_b_b" => isa::LutAndBBB::emit(self, instr.clone()),
+                    "lut_and_b_b_b" => isa::LutAnd::emit(self, instr.clone()),
                     "lut_or_b_b_b" => isa::LutOrBBB::emit(self, instr.clone()),
                     "lut_eq_b_i8_i8" => isa::LutEqBI8I8::emit(self, instr.clone()),
-                    "lut_mux_i8_b_i8_i8" => isa::LutMuxI8BI8I8::emit(self, instr.clone()),
-                    "lut_reg_mux_i8_b_i8_i8_b" => isa::LutRegMuxI8BI8I8B::emit(self, instr.clone()),
+                    "lut_mux_i8_b_i8_i8" => isa::LutMux::emit(self, instr.clone()),
+                    "lut_reg_mux_i8_b_i8_i8_b" => isa::LutMux::emit(self, instr.clone()),
                     "lut_reg_i8_i8_b" => isa::LutReg::emit(self, instr.clone()),
                     "dsp_add_i8v4_i8v4_i8v4" => isa::DspVector::emit(self, instr.clone()),
-                    _ => (),
+                    _ => unimplemented!(),
                 }
             } else {
                 match instr.std().op() {
