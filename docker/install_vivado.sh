@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VIVADO_BIN=Xilinx_Unified_2020.1_0602_1208_Lin64.bin
+VIVADO_BIN=$1
 
 chmod +x $VIVADO_BIN
 

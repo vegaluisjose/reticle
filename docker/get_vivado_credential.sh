@@ -1,6 +1,7 @@
 #!/bin/bash
 
-VIVADO_BIN=Xilinx_Unified_2020.1_0602_1208_Lin64.bin
+VIVADO_BIN=$1
+WORKSPACE_DIR=$2
 
 chmod +x $VIVADO_BIN
 
@@ -9,4 +10,8 @@ docker build -t "vivado-credential" \
 --build-arg USER_ID=$(id -u) \
 --build-arg VIVADO_BIN=$VIVADO_BIN .
 
-docker run --rm -i -t -v "$(pwd)":/home/vivado/workspace "vivado-credential" /bin/bash /tmp/auth.sh
+docker run --rm -i -t \
+-v $PWD:$WORKSPACE_DIR \
+-w $WORKSPACE_DIR \
+"vivado-credential" \
+bash --login auth.sh $WORKSPACE_DIR
