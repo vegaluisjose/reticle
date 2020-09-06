@@ -2,13 +2,20 @@
 
 set -eo pipefail
 
-WORKSPACE_DIR=/home/vivado/workspace
+# command variable can be empty to run locally
+CARGO_CMD=`docker run --rm \
+--user "$(id -u)":"$(id -g)" \
+-v "$PWD":/usr/src/myapp \
+-w /usr/src/myapp "reticle-rust"`
 
-cargo run --bin regression
-cd ci
+function test_ci {
+    res=source "$1" "$2"
+    if [ $res ] ; then
+       echo -e "\033[01;31m[Fail] $1"
+    else
+       echo -e "\033[01;32m[Pass] $1"
+    fi
+}
 
-docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh fsm
-docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh register
-docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh vadd_const
-
-cd ../
+test_ci "ci/ci_lint.sh" $CARGO_CMD
+test_ci "ci/ci_interpreter.sh" $CARGO_CMD
