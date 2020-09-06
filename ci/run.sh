@@ -4,7 +4,7 @@ set -eo pipefail
 
 WORKSPACE_DIR=/home/vivado/workspace
 
-cargo run --bin ci
+cargo run --bin regression
 cd ci
 
 docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh fsm
