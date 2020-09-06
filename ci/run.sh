@@ -1,15 +1,14 @@
 #!/bin/bash
 
-set -e
-set -u
-set -o pipefail
+set -eo pipefail
 
 WORKSPACE_DIR=/home/vivado/workspace
 
-cd ../
-cargo run --bin demo
-cd demo
+cargo run --bin ci
+cd ci
 
 docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh fsm
 docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh register
 docker run --rm --pid=host -v $PWD:$WORKSPACE_DIR -w $WORKSPACE_DIR "vivado" bash --login xsim.sh vadd_const
+
+cd ../
