@@ -1,10 +1,8 @@
 #!/bin/bash
 
-set -eox pipefail
+set -eo pipefail
 
-# eval "$DOCKER_RUST" cargo --version
+DOCKER_RUST=$1
 
-$DOCKER_RUST cargo --version
-
-# $CARGO_CMD cargo clippy --all-targets --all-features -- -D warnings
-# $CARGO_CMD cargo fmt -- --check
+$DOCKER_RUST cargo clippy --all-targets --all-features -- -D warnings
+$DOCKER_RUST cargo fmt -- --check
