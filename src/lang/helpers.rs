@@ -724,11 +724,15 @@ impl Def {
 }
 
 impl Prog {
-    pub fn add_def(&mut self, def: Def) {
-        self.defs.push(def);
-    }
-
     pub fn defs(&self) -> &Vec<Def> {
         &self.defs
+    }
+
+    pub fn indexed_def(&self, index: usize) -> &Def {
+        &self.defs[index]
+    }
+
+    pub fn add_def(&mut self, def: Def) {
+        self.defs.push(def);
     }
 }
