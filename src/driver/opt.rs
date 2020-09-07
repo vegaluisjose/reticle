@@ -19,13 +19,26 @@ pub struct Opt {
     pub backend: Backend,
 
     // check if assembly has still unresolved locations, performance hit
-    #[structopt(short = "c", long = "check", parse(try_from_str), default_value = "true")]
+    #[structopt(
+        short = "c",
+        long = "check",
+        parse(try_from_str),
+        default_value = "true"
+    )]
     pub check: bool,
+
+    // Backend
+    #[structopt(short = "o", long = "output", parse(from_os_str))]
+    pub output: Option<PathBuf>,
 }
 
 impl Opt {
     pub fn input(&self) -> &Path {
         &self.input
+    }
+
+    pub fn output(&self) -> Option<&PathBuf> {
+        self.output.as_ref()
     }
 
     pub fn check(&self) -> bool {
