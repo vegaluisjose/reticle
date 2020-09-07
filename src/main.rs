@@ -1,3 +1,6 @@
+use reticle::driver::Driver;
+
 fn main() {
-    println!("hello");
+    let driver = Driver::default();
+    println!("{:?}", driver.opts());
 }
