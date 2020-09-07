@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eo pipefail
+set -eox pipefail
 
 DOCKER_RUST=$(docker run --rm \
 --pid=host \
