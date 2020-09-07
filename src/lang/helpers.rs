@@ -706,6 +706,10 @@ impl Def {
         &self.sig.outputs()
     }
 
+    pub fn body_mut(&mut self) -> &mut Vec<Instr> {
+        &mut self.body
+    }
+
     pub fn add_sig(&mut self, sig: Sig) {
         self.sig = sig;
     }
@@ -721,6 +725,14 @@ impl Def {
     pub fn add_instr(&mut self, instr: Instr) {
         self.body.push(instr);
     }
+
+    pub fn clear_loc(&mut self) {
+        for instr in self.body_mut().iter_mut() {
+            if instr.is_prim() {
+                instr.clear_loc();
+            }
+        }
+    }
 }
 
 impl Prog {
@@ -732,7 +744,17 @@ impl Prog {
         &self.defs[index]
     }
 
+    pub fn defs_mut(&mut self) -> &mut Vec<Def> {
+        &mut self.defs
+    }
+
     pub fn add_def(&mut self, def: Def) {
         self.defs.push(def);
+    }
+
+    pub fn clear_loc(&mut self) {
+        for def in self.defs_mut().iter_mut() {
+            def.clear_loc()
+        }
     }
 }
