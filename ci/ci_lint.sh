@@ -12,7 +12,7 @@ set -eox pipefail
 
 CMD=$(date)
 
-$CMD
+echo $CMD
 
 # $CARGO_CMD cargo clippy --all-targets --all-features -- -D warnings
 # $CARGO_CMD cargo fmt -- --check
