@@ -1,5 +1,5 @@
 use std::fmt;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use structopt::StructOpt;
 
@@ -19,8 +19,47 @@ pub struct Opt {
     pub backend: Backend,
 }
 
+impl Opt {
+    pub fn input(&self) -> &Path {
+        &self.input
+    }
+
+    pub fn backend(&self) -> &Backend {
+        &self.backend
+    }
+
+    pub fn is_reticle_backend(&self) -> bool {
+        match self.backend() {
+            Backend::Reticle => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_loc_backend(&self) -> bool {
+        match self.backend() {
+            Backend::Loc => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_asm_backend(&self) -> bool {
+        match self.backend() {
+            Backend::Asm => true,
+            _ => false,
+        }
+    }
+
+    pub fn is_verilog_backend(&self) -> bool {
+        match self.backend() {
+            Backend::Verilog => true,
+            _ => false,
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum Backend {
+    Reticle,
     Loc,
     Asm,
     Verilog,
@@ -28,13 +67,14 @@ pub enum Backend {
 
 impl Default for Backend {
     fn default() -> Backend {
-        Backend::Verilog
+        Backend::Reticle
     }
 }
 
 impl fmt::Display for Backend {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let backend = match self {
+            Backend::Reticle => "reticle",
             Backend::Loc => "loc",
             Backend::Asm => "asm",
             Backend::Verilog => "verilog",
@@ -47,6 +87,7 @@ impl FromStr for Backend {
     type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
+            "reticle" => Ok(Backend::Reticle),
             "loc" => Ok(Backend::Loc),
             "asm" => Ok(Backend::Asm),
             "verilog" => Ok(Backend::Verilog),

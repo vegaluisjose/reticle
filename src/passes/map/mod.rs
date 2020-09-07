@@ -66,7 +66,10 @@ pub fn locgen(input_prog: Prog) -> Prog {
 pub fn check_pass(input: Prog) {
     let mut output = locgen(input.clone());
     output.clear_loc();
-    assert_eq!(input, output, "Error: program mismatch");
+    assert_eq!(
+        input, output,
+        "Error: program still has unresolved locations"
+    );
 }
 
 pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
