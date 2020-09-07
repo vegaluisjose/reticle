@@ -1,5 +1,6 @@
 use crate::backend::asm::ast as asm;
 use crate::lang::ast as lang;
+use crate::passes::map::asmgen;
 
 impl From<asm::InstrStd> for asm::Instr {
     fn from(std: asm::InstrStd) -> Self {
@@ -13,7 +14,13 @@ impl From<asm::InstrPrim> for asm::Instr {
     }
 }
 
-// only for std instructions
+impl From<lang::Prog> for asm::Prog {
+    fn from(prog: lang::Prog) -> Self {
+        // always check for now
+        asmgen(prog, true)
+    }
+}
+
 impl From<lang::Instr> for asm::Instr {
     fn from(instr: lang::Instr) -> Self {
         asm::Instr::from(instr.std().clone())

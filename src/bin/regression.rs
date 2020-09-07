@@ -1,11 +1,11 @@
+use reticle::backend::asm::ast as asm;
 use reticle::backend::verilog::Module;
 use reticle::frontend::parser::parse_from_file;
-use reticle::passes::map::asmgen;
 use reticle::util::file::write_to_file;
 
 pub fn compile(input: &str, output: &str) {
     let prog = parse_from_file(input);
-    let asm = asmgen(prog, true);
+    let asm = asm::Prog::from(prog);
     let verilog = Module::from(asm);
     write_to_file(output, &verilog.to_string());
 }
