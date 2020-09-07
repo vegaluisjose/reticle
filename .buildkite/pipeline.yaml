@@ -2,4 +2,6 @@ steps:
   - label: "ci"
     command: |
       source ci/run.sh
+    env:
+      DOCKER_RUST: "docker run --rm --pid=host --user "$(id -u)":"$(id -g)" -v "$PWD":/usr/src/myapp -w /usr/src/myapp "reticle-rust""
     timeout_in_minutes: 60

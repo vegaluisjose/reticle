@@ -2,8 +2,6 @@
 
 set -eox pipefail
 
-DOCKER_RUST=$(docker run --rm --pid=host --user "$(id -u)":"$(id -g)" -v "$PWD":/usr/src/myapp -w /usr/src/myapp "reticle-rust")
-
 # eval "$DOCKER_RUST" cargo --version
 
 $DOCKER_RUST cargo --version
