@@ -36,10 +36,10 @@ impl Driver {
             let prog_with_loc = locgen(prog);
             println!("{}", prog_with_loc);
         } else if self.opts().is_asm_backend() {
-            let asm = asmgen(prog, true);
+            let asm = asmgen(prog, self.opts().check());
             println!("{}", asm);
         } else if self.opts().is_verilog_backend() {
-            let asm = asmgen(prog, true);
+            let asm = asmgen(prog, self.opts().check());
             let verilog = Module::from(asm);
             println!("{}", verilog);
         }

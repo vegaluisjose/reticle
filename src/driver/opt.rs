@@ -17,11 +17,19 @@ pub struct Opt {
     // Backend
     #[structopt(short = "b", long = "backend", default_value)]
     pub backend: Backend,
+
+    // check if assembly has still unresolved locations, performance hit
+    #[structopt(short = "c", long = "check", parse(try_from_str), default_value = "true")]
+    pub check: bool,
 }
 
 impl Opt {
     pub fn input(&self) -> &Path {
         &self.input
+    }
+
+    pub fn check(&self) -> bool {
+        self.check
     }
 
     pub fn backend(&self) -> &Backend {
