@@ -10,7 +10,31 @@ use crate::passes::map::dag::Dag;
 use crate::passes::map::tree::algo::{tree_codegen, tree_locgen, tree_selection, InstrMap, LocMap};
 use crate::passes::map::tree::partition::Partition;
 
-pub fn map_loc(input_prog: Prog) -> Prog {
+pub fn analysis(input_prog: Prog) -> analysis::Analysis {
+    let mut analysis = analysis::Analysis::default();
+    let body = input_prog.defs()[0].body().clone();
+    for instr in body.iter() {
+        if instr.is_prim() {
+            analysis.inc_prim();
+            if instr.is_hole() {
+                analysis.inc_hole();
+            } else if instr.is_lut() {
+                analysis.inc_lut();
+            } else if instr.is_dsp() {
+                analysis.inc_dsp();
+            } else if instr.is_lum() {
+                analysis.inc_lum();
+            } else if instr.is_ram() {
+                analysis.inc_ram();
+            }
+        } else {
+            analysis.inc_std();
+        }
+    }
+    analysis
+}
+
+pub fn locgen(input_prog: Prog) -> Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dag = Dag::from(input_prog.clone());
     let input_tree = Partition::from(dag);
@@ -36,49 +60,19 @@ pub fn map_loc(input_prog: Prog) -> Prog {
     output_prog
 }
 
-pub fn map_analysis(input_prog: Prog) -> analysis::Analysis {
-    let mut analysis = analysis::Analysis::default();
-    let body = input_prog.defs()[0].body().clone();
-    for instr in body.iter() {
-        if instr.is_prim() {
-            analysis.inc_prim();
-            if instr.is_hole() {
-                analysis.inc_hole();
-            } else if instr.is_lut() {
-                analysis.inc_lut();
-            } else if instr.is_dsp() {
-                analysis.inc_dsp();
-            } else if instr.is_lum() {
-                analysis.inc_lum();
-            } else if instr.is_ram() {
-                analysis.inc_ram();
-            }
-        } else {
-            analysis.inc_std();
-        }
-    }
-    analysis
+// for testing purposes. The invariant is a program
+// should be the same after compiling location and
+// clearing them.
+pub fn check_pass(input: Prog) {
+    let mut output = locgen(input.clone());
+    output.clear_loc();
+    assert_eq!(input, output, "Error: program mismatch");
 }
 
-pub fn map_clear(input_prog: Prog) -> Prog {
-    let sig = input_prog.defs()[0].signature().clone();
-    let mut def = Def::new_with_signature(sig);
-    let body = input_prog.defs()[0].body().clone();
-    for instr in body.iter() {
-        if instr.is_prim() {
-            let mut instr_clear = instr.clone();
-            instr_clear.clear_loc();
-            def.add_instr(instr_clear);
-        } else {
-            def.add_instr(instr.clone());
-        }
+pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
+    if check {
+        check_pass(input_prog.clone());
     }
-    let mut output_prog = Prog::default();
-    output_prog.add_def(def);
-    output_prog
-}
-
-pub fn map_asm(input_prog: Prog) -> asm::Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dag = Dag::from(input_prog.clone());
     let input_tree = Partition::from(dag);
