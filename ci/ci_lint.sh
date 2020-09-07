@@ -6,9 +6,7 @@ DOCKER_RUST=$(docker run --rm --pid=host --user "$(id -u)":"$(id -g)" -v "$PWD":
 
 # eval "$DOCKER_RUST" cargo --version
 
-CMD=$($DOCKER_RUST cargo --version)
-
-echo $CMD
+$DOCKER_RUST cargo --version
 
 # $CARGO_CMD cargo clippy --all-targets --all-features -- -D warnings
 # $CARGO_CMD cargo fmt -- --check
