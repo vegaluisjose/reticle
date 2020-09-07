@@ -28,7 +28,7 @@ module test_vadd_const();
             case (step)
                 0: begin
                     if (y_0 != -8'd2 | y_1 != -8'd2 | y_2 != 8'd5 | y_3 != -8'd2) begin
-                        $error("Error");
+                        $display("~~FAIL~~");
                         $finish;
                     end
                     $finish;

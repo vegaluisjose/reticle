@@ -30,7 +30,7 @@ module test_register();
                     a <= 8'd0;
                     en <= 1'b0;
                     if (y != 3) begin
-                        $error("Error");
+                        $display("~~FAIL~~");
                         $finish;
                     end
                 end
@@ -39,13 +39,13 @@ module test_register();
                     a <= 8'd0;
                     en <= 1'b0;
                     if (y != 9) begin
-                        $error("Error");
+                        $display("~~FAIL~~");
                         $finish;
                     end
                 end
                 2: begin
                     if (y != 9) begin
-                        $error("Error");
+                        $display("~~FAIL~~");
                         $finish;
                     end
                     $finish;
