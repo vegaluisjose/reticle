@@ -12,7 +12,7 @@ use crate::passes::map::tree::partition::Partition;
 
 pub fn analysis(input_prog: Prog) -> analysis::Analysis {
     let mut analysis = analysis::Analysis::default();
-    let body = input_prog.defs()[0].body().clone();
+    let body = input_prog.indexed_def(0).body().clone();
     for instr in body.iter() {
         if instr.is_prim() {
             analysis.inc_prim();
@@ -43,9 +43,9 @@ pub fn locgen(input_prog: Prog) -> Prog {
         let output = tree_selection(descriptor.clone(), tree.clone());
         map.extend(tree_locgen(output.clone()));
     }
-    let sig = input_prog.defs()[0].signature().clone();
+    let sig = input_prog.indexed_def(0).signature().clone();
     let mut def = Def::new_with_signature(sig);
-    let body = input_prog.defs()[0].body().clone();
+    let body = input_prog.indexed_def(0).body().clone();
     for instr in body.iter() {
         if instr.is_std() {
             def.add_instr(instr.clone());
@@ -81,8 +81,8 @@ pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
         let output = tree_selection(descriptor.clone(), tree.clone());
         map.extend(tree_codegen(output.clone()));
     }
-    let sig = input_prog.defs()[0].signature().clone();
-    let body = input_prog.defs()[0].body().clone();
+    let sig = input_prog.indexed_def(0).signature().clone();
+    let body = input_prog.indexed_def(0).body().clone();
     let mut output_prog = asm::Prog::new_with_signature(sig);
     for instr in body.iter() {
         if instr.is_std() {
