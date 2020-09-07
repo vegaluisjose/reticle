@@ -4,13 +4,13 @@ use std::rc::Rc;
 use std::str::FromStr;
 
 impl FromStr for Ty {
-    type Err = ();
+    type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let re_uint = Regex::new(r"^u([[:alnum:]]+)$").unwrap();
         let re_sint = Regex::new(r"^i([[:alnum:]]+)$").unwrap();
         let re_uvec = Regex::new(r"^u([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
         let re_svec = Regex::new(r"^i([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
-        let mut ty = Err(());
+        let mut ty = Err(format!("Error: {} is not valid type", input));
         let caps;
         if input == "bool" {
             ty = Ok(Ty::Bool);
@@ -56,7 +56,7 @@ impl FromStr for Ty {
 }
 
 impl FromStr for PrimOp {
-    type Err = ();
+    type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "reg" => Ok(PrimOp::Reg),
@@ -77,26 +77,26 @@ impl FromStr for PrimOp {
             "lt" => Ok(PrimOp::Lt),
             "ge" => Ok(PrimOp::Ge),
             "le" => Ok(PrimOp::Le),
-            _ => panic!("Error: FromStr to PrimOp conversion"),
+            _ => Err(format!("Error: {} is not valid primitive operation", input)),
         }
     }
 }
 
 impl FromStr for StdOp {
-    type Err = ();
+    type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "id" => Ok(StdOp::Identity),
             "const" => Ok(StdOp::Const),
             "shl" => Ok(StdOp::ShiftLeft),
             "shr" => Ok(StdOp::ShiftRight),
-            _ => panic!("Error: FromStr to StdOp conversion"),
+            _ => Err(format!("Error: {} is not valid standard operation", input)),
         }
     }
 }
 
 impl FromStr for Loc {
-    type Err = ();
+    type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "??" => Ok(Loc::Hole),
@@ -104,7 +104,7 @@ impl FromStr for Loc {
             "lum" => Ok(Loc::Lum),
             "dsp" => Ok(Loc::Dsp),
             "ram" => Ok(Loc::Ram),
-            _ => panic!("Error: FromStr to Loc conversion"),
+            _ => Err(format!("Error: {} is not valid location", input)),
         }
     }
 }
