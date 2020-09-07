@@ -2,6 +2,6 @@
 
 set -eo pipefail
 
-CARGO_CMD=$1
+DOCKER_RUST=$1
 
-$CARGO_CMD cargo test
+$DOCKER_RUST cargo test

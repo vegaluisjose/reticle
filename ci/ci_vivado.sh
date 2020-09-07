@@ -17,9 +17,9 @@ function test_vivado {
     fi
 }
 
-test_vivado "register" $WORKSPACE_DIR $OUT_DIR
-test_vivado "fsm" $WORKSPACE_DIR $OUT_DIR
-test_vivado "vadd_const" $WORKSPACE_DIR $OUT_DIR
+test_vivado "register" "$WORKSPACE_DIR" "$OUT_DIR"
+test_vivado "fsm" "$WORKSPACE_DIR" "$OUT_DIR"
+test_vivado "vadd_const" "$WORKSPACE_DIR" "$OUT_DIR"
 
 echo -en "\033[0m"
 echo "Number of failed Vivado tests:$test_fail"

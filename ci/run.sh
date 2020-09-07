@@ -10,6 +10,6 @@ DOCKER_RUST="docker run --rm \
 -w /usr/src/myapp "reticle-rust""
 
 source "ci/ci_lint.sh" "$DOCKER_RUST"
-# source "ci/ci_interpreter.sh" $CARGO_CMD
-# source "ci/ci_compiler.sh" $CARGO_CMD
-# source "ci/ci_vivado.sh"
+source "ci/ci_interpreter.sh" "$DOCKER_RUST"
+source "ci/ci_compiler.sh" "$DOCKER_RUST"
+source "ci/ci_vivado.sh"
