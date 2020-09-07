@@ -9,7 +9,7 @@ CARGO_CMD=`docker run --rm \
 -v "$PWD":/usr/src/myapp \
 -w /usr/src/myapp "reticle-rust"`
 
-source "ci/ci_lint.sh" $CARGO_CMD
+source "ci/ci_lint.sh"
 # source "ci/ci_interpreter.sh" $CARGO_CMD
 # source "ci/ci_compiler.sh" $CARGO_CMD
 # source "ci/ci_vivado.sh"
