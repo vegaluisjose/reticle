@@ -4,6 +4,7 @@ set -eo pipefail
 
 # command variable can be empty to run locally
 CARGO_CMD=`docker run --rm \
+--pid=host \
 --user "$(id -u)":"$(id -g)" \
 -v "$PWD":/usr/src/myapp \
 -w /usr/src/myapp "reticle-rust"`
