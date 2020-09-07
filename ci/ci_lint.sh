@@ -8,7 +8,7 @@ DOCKER_RUST=$(docker run --rm --pid=host --user "$(id -u)":"$(id -g)" -v "$PWD":
 
 # CMD=$(date)
 
-echo $DOCKER_RUST
+eval $DOCKER_RUST
 
 # $CARGO_CMD cargo clippy --all-targets --all-features -- -D warnings
 # $CARGO_CMD cargo fmt -- --check
