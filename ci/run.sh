@@ -9,7 +9,7 @@ CARGO_CMD=`docker run --rm \
 -v "$PWD":/usr/src/myapp \
 -w /usr/src/myapp "reticle-rust"`
 
-function test_ci {
+function run_ci {
     res=source "$1" "$2"
     if [ $res ] ; then
        echo -e "\033[01;31m[Fail] $1"
@@ -18,5 +18,6 @@ function test_ci {
     fi
 }
 
-test_ci "ci/ci_lint.sh" $CARGO_CMD
-test_ci "ci/ci_interpreter.sh" $CARGO_CMD
+run_ci "ci/ci_lint.sh" $CARGO_CMD
+run_ci "ci/ci_interpreter.sh" $CARGO_CMD
+run_ci "ci/ci_compiler.sh" $CARGO_CMD
