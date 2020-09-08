@@ -22,7 +22,7 @@ If wants to try the compiler without docker, then the compiler just requires Rus
 # Compiling to reticle asm
 ./target/release/reticle examples/basic/fsm.ret -b asm
 # Compiling to reticle verilog
-./target/release/reticle examples/basic/fsm.ret -b asm
+./target/release/reticle examples/basic/fsm.ret -b verilog
 # Check reticle options
 ./target/release/reticle -h
 ```
