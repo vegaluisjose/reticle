@@ -29,7 +29,7 @@ If wants to try the compiler without docker, then the compiler just requires Rus
 
 ## Run interpreter
 
-Run `cargo test` to execute the regression that tests traces to `examples` programs
+Run `cargo test` to execute the regression on all `examples` programs
 
 ## Run continuous integration
 
