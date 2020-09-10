@@ -12,7 +12,7 @@ pip install pytest==6.0.1
 pip install pytest-pycodestyle==2.2.0
 
 # run ci tests
-pytest --pycodestyle ci/ -v -r s
+pytest --pycodestyle ci/ -x -v -r s
 
 # deactivate virtual environment
 deactivate
