@@ -2,5 +2,5 @@ steps:
   - label: "ci"
     command: |
       # run ci
-      source ci/new.sh
+      source ci/run.sh
     timeout_in_minutes: 60
