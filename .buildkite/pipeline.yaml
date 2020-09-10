@@ -1,5 +1,8 @@
 steps:
   - label: "ci"
     command: |
+      # run new ci
+      source ci/new.sh
+      # run legacy ci (this will be moved to pytest)
       source ci/run.sh
     timeout_in_minutes: 60
