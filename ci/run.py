@@ -19,13 +19,9 @@ docker_user_opt = "{}:{}".format(
     group.stdout.decode("utf-8").strip("\n"),
 )
 
-docker_rust_mount_opt = "{}:{}".format(
-    rust_manifest_dir, docker_rust_workdir
-)
+docker_rust_mount_opt = "{}:{}".format(rust_manifest_dir, docker_rust_workdir)
 
-docker_vivado_mount_opt = "{}:{}".format(
-    ci_dir, docker_vivado_workdir
-)
+docker_vivado_mount_opt = "{}:{}".format(ci_dir, docker_vivado_workdir)
 
 docker_rust_cmd = [
     "docker",
@@ -58,6 +54,25 @@ docker_vivado_cmd = [
 ]
 
 vivado_fail_pattern = re.compile(".*~~FAIL~~.*", re.DOTALL)
+
+reticle_examples = [
+    pytest.param(
+        "examples/isa/scalar/register.ret",
+        "ci/register.v",
+        id="register",
+    ),
+    pytest.param(
+        "examples/basic/fsm.ret",
+        "ci/fsm.v",
+        id="fsm",
+    ),
+    pytest.param(
+        "examples/basic/vadd_const.ret",
+        "ci/vadd_const.v",
+        id="vadd_const",
+    ),
+]
+
 vivado_sim_tests = ["register", "fsm", "vadd_const"]
 
 
@@ -97,42 +112,15 @@ def test_reticle_compiler_build(docker):
     sp.run(cmd, check=True)
 
 
-def test_reticle_examples_isa_scalar_register(docker):
+@pytest.mark.parametrize("inp,out", reticle_examples)
+def test_reticle_example(docker, inp: str, out: str):
     cmd = [
         "./target/release/reticle",
-        "examples/isa/scalar/register.ret",
+        inp,
         "-b",
         "verilog",
         "-o",
-        "ci/register.v",
-    ]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
-
-
-def test_reticle_examples_basic_fsm(docker):
-    cmd = [
-        "./target/release/reticle",
-        "examples/basic/fsm.ret",
-        "-b",
-        "verilog",
-        "-o",
-        "ci/fsm.v",
-    ]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
-
-
-def test_reticle_examples_basic_vadd_const(docker):
-    cmd = [
-        "./target/release/reticle",
-        "examples/basic/vadd_const.ret",
-        "-b",
-        "verilog",
-        "-o",
-        "ci/vadd_const.v",
+        out,
     ]
     if docker:
         cmd = docker_rust_cmd + cmd
@@ -140,7 +128,7 @@ def test_reticle_examples_basic_vadd_const(docker):
 
 
 @pytest.mark.parametrize("test_name", vivado_sim_tests)
-def test_vivado_sim(docker, test_name: str):
+def test_reticle_verilog(docker, test_name: str):
     cmd = [
         "vivado_sim.sh",
         test_name,
