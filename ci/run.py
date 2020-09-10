@@ -12,7 +12,7 @@ docker_user_opt = "{}:{}".format(
     user.stdout.decode("utf-8").strip("\n"),
     group.stdout.decode("utf-8").strip("\n"),
 )
-docker_mount_opt = "{}:{}".format(
+docker_rust_mount_opt = "{}:{}".format(
     rust_manifest_dir, docker_rust_workdir
 )
 
@@ -25,7 +25,7 @@ docker_rust_cmd = [
     "--user",
     docker_user_opt,
     "-v",
-    docker_mount_opt,
+    docker_rust_mount_opt,
     "-w",
     docker_rust_workdir,
     "reticle-rust",
