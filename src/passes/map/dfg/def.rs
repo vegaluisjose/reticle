@@ -3,31 +3,31 @@ use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use std::collections::HashMap;
 
-pub type DagId = String;
-pub type DagIx = NodeIndex;
-pub type DagGraph = Graph<DagNode, DagEdge>;
-pub type DagCtx = HashMap<DagId, DagIx>;
+pub type DfgId = String;
+pub type DfgIx = NodeIndex;
+pub type DfgGraph = Graph<DfgNode, DfgEdge>;
+pub type DfgCtx = HashMap<DfgId, DfgIx>;
 
 #[derive(Clone, Debug)]
-pub enum DagNodeValue {
+pub enum DfgNodeValue {
     Inp(Port),
     Out(Port),
     Ins(Instr),
 }
 
 #[derive(Clone, Debug)]
-pub struct DagNode {
-    pub value: DagNodeValue,
+pub struct DfgNode {
+    pub value: DfgNodeValue,
     pub visited: bool,
     pub root: bool,
 }
 
 #[derive(Default, Clone, Debug)]
-pub struct DagEdge;
+pub struct DfgEdge;
 
 #[derive(Clone, Debug)]
-pub struct Dag {
-    pub graph: DagGraph,
-    pub ctx: DagCtx,
-    pub roots: DagCtx,
+pub struct Dfg {
+    pub graph: DfgGraph,
+    pub ctx: DfgCtx,
+    pub roots: DfgCtx,
 }

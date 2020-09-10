@@ -1,22 +1,22 @@
 use crate::lang::ast::{Instr, Prog};
-use crate::passes::map::dag::*;
+use crate::passes::map::dfg::*;
 use petgraph::visit::Dfs;
 use petgraph::Direction;
 
-impl DagNodeValue {
+impl DfgNodeValue {
     pub fn id(&self) -> String {
         match self {
-            DagNodeValue::Inp(port) => port.id(),
-            DagNodeValue::Out(port) => port.id(),
-            DagNodeValue::Ins(instr) => instr.dst_id(),
+            DfgNodeValue::Inp(port) => port.id(),
+            DfgNodeValue::Out(port) => port.id(),
+            DfgNodeValue::Ins(instr) => instr.dst_id(),
         }
     }
 
     pub fn op_name(&self) -> String {
         match self {
-            DagNodeValue::Inp(_) => "in".to_string(),
-            DagNodeValue::Out(_) => "out".to_string(),
-            DagNodeValue::Ins(instr) => {
+            DfgNodeValue::Inp(_) => "in".to_string(),
+            DfgNodeValue::Out(_) => "out".to_string(),
+            DfgNodeValue::Ins(instr) => {
                 if instr.is_std() {
                     instr.std_op().to_string()
                 } else {
@@ -28,29 +28,29 @@ impl DagNodeValue {
 
     pub fn is_std(&self) -> bool {
         match self {
-            DagNodeValue::Ins(instr) => instr.is_std(),
+            DfgNodeValue::Ins(instr) => instr.is_std(),
             _ => false,
         }
     }
 
     pub fn is_prim(&self) -> bool {
         match self {
-            DagNodeValue::Ins(instr) => instr.is_prim(),
+            DfgNodeValue::Ins(instr) => instr.is_prim(),
             _ => false,
         }
     }
 
     pub fn instr(&self) -> &Instr {
         match self {
-            DagNodeValue::Ins(instr) => instr,
+            DfgNodeValue::Ins(instr) => instr,
             _ => panic!("Error: not an instruction"),
         }
     }
 }
 
-impl DagNode {
-    pub fn new(value: DagNodeValue) -> DagNode {
-        DagNode {
+impl DfgNode {
+    pub fn new(value: DfgNodeValue) -> DfgNode {
+        DfgNode {
             value,
             visited: false,
             root: false,
@@ -90,9 +90,9 @@ impl DagNode {
     }
 }
 
-impl Dag {
-    pub fn add_node(&mut self, name: &str, value: DagNodeValue) {
-        let ix = self.graph.add_node(DagNode::new(value));
+impl Dfg {
+    pub fn add_node(&mut self, name: &str, value: DfgNodeValue) {
+        let ix = self.graph.add_node(DfgNode::new(value));
         self.ctx.insert(name.to_string(), ix);
     }
 
@@ -100,7 +100,7 @@ impl Dag {
         self.ctx.contains_key(name)
     }
 
-    pub fn get_node_index(&self, name: &str) -> Option<&DagIx> {
+    pub fn get_node_index(&self, name: &str) -> Option<&DfgIx> {
         self.ctx.get(name)
     }
 
@@ -108,18 +108,18 @@ impl Dag {
         if let Some(from_ix) = self.ctx.get(from) {
             if let Some(to_ix) = self.ctx.get(to) {
                 if self.graph.find_edge(*from_ix, *to_ix).is_none() {
-                    self.graph.add_edge(*from_ix, *to_ix, DagEdge::default());
+                    self.graph.add_edge(*from_ix, *to_ix, DfgEdge::default());
                 }
             }
         }
     }
 
-    pub fn roots(&self) -> &DagCtx {
+    pub fn roots(&self) -> &DfgCtx {
         &self.roots
     }
 
     pub fn find_roots(&mut self, prog: &Prog) {
-        let mut roots = DagCtx::new();
+        let mut roots = DfgCtx::new();
         // find roots, roots are:
         // 1. Instructions that are primitives (no std)
         // 2. Nodes that have a fanout greater than one (reuse) or are zero (output)
@@ -154,8 +154,8 @@ impl Dag {
         self.roots = roots;
     }
 
-    pub fn get_incoming_nodes(&self, ix: DagIx) -> DagCtx {
-        let mut ctx = DagCtx::new();
+    pub fn get_incoming_nodes(&self, ix: DfgIx) -> DfgCtx {
+        let mut ctx = DfgCtx::new();
         let neighbors = self.graph.neighbors_directed(ix, Direction::Incoming);
         for nix in neighbors {
             if let Some(node) = self.graph.node_weight(nix) {

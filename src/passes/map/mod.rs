@@ -1,12 +1,12 @@
 pub mod analysis;
-pub mod dag;
+pub mod dfg;
 pub mod tree;
 
 use crate::backend::arch::ultrascale::Ultrascale;
 use crate::backend::asm::ast as asm;
 use crate::backend::target::Target;
 use crate::lang::ast::{Def, Prog};
-use crate::passes::map::dag::Dag;
+use crate::passes::map::dfg::Dfg;
 use crate::passes::map::tree::algo::{tree_codegen, tree_locgen, tree_selection, InstrMap, LocMap};
 use crate::passes::map::tree::partition::Partition;
 
@@ -36,8 +36,8 @@ pub fn analysis(input_prog: Prog) -> analysis::Analysis {
 
 pub fn locgen(input_prog: Prog) -> Prog {
     let descriptor = Ultrascale::default().to_descriptor();
-    let dag = Dag::from(input_prog.clone());
-    let input_tree = Partition::from(dag);
+    let dfg = Dfg::from(input_prog.clone());
+    let input_tree = Partition::from(dfg);
     let mut map: LocMap = LocMap::new();
     for (_, tree) in input_tree.iter() {
         let output = tree_selection(descriptor.clone(), tree.clone());
@@ -77,8 +77,8 @@ pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
         check_pass(input_prog.clone());
     }
     let descriptor = Ultrascale::default().to_descriptor();
-    let dag = Dag::from(input_prog.clone());
-    let input_tree = Partition::from(dag);
+    let dfg = Dfg::from(input_prog.clone());
+    let input_tree = Partition::from(dfg);
     let mut map: InstrMap = InstrMap::new();
     for (_, tree) in input_tree.iter() {
         let output = tree_selection(descriptor.clone(), tree.clone());
