@@ -3,3 +3,7 @@ debug/
 Cargo.lock
 .DS_Store
 venv
+*.log
+*.pb
+__pycache__/
+*.cpython.*
