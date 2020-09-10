@@ -1,7 +1,9 @@
 import subprocess as sp
 import pathlib
+import os
 
-cwd = pathlib.Path(__file__).parent.absolute()
+ci_dir = pathlib.Path(__file__).parent.absolute()
+rust_manifest_dir = os.path.abspath(os.path.join(ci_dir, ".."))
 user = sp.run(["id", "-u"], check=True, stdout=sp.PIPE)
 group = sp.run(["id", "-g"], check=True, stdout=sp.PIPE)
 
@@ -11,7 +13,7 @@ docker_user_opt = "{}:{}".format(
     group.stdout.decode("utf-8").strip("\n"),
 )
 docker_mount_opt = "{}:{}".format(
-    "/Users/vega/z/code/reticle", docker_rust_workdir
+    rust_manifest_dir, docker_rust_workdir
 )
 
 
