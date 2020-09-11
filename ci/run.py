@@ -4,6 +4,16 @@ import os
 import re
 import pytest
 
+"""
+Warning
+The following tests are required to be executed in order:
+    test_reticle_compiler_build
+    test_reticle_example
+    test_reticle_verilog
+this is not a good idea in general, because tests should
+be self contained. FIXME: whenever there is time
+"""
+
 ci_dir = pathlib.Path(__file__).parent.absolute()
 out_dir = os.path.abspath(os.path.join(ci_dir, "out"))
 rust_manifest_dir = os.path.abspath(os.path.join(ci_dir, ".."))
