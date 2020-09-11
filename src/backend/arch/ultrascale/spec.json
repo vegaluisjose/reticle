@@ -16,7 +16,7 @@
       },
       {
          "name":"dsp_add_reg_mul_i8_i8_i8_b_i8",
-         "cost": {"delay":1, "area": 1},
+         "cost": {"delay":4, "area": 1},
          "loc":"dsp",
          "ty":"i8",
          "expr":["add", ["reg", ["mul", "i8", "i8"], "bool"], "i8"]
