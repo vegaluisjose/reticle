@@ -40,12 +40,20 @@ fn vector_wire_gen(asm: &mut Assembler, width: u64) -> String {
     name
 }
 
+fn vector_op_gen(instr: &asm::Instr) -> DspOp {
+    match instr.prim().op().as_ref() {
+        "dsp_add_i8v4_i8v4_i8v4" => DspOp::Add,
+        _ => unimplemented!(),
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct DspVector;
 
 impl Emit for DspVector {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
-        let mut dsp = Dsp::new_vector(DspOp::Add, instr.dst_ty().length());
+        let op = vector_op_gen(&instr);
+        let mut dsp = Dsp::new_vector(op, instr.dst_ty().length());
         let left = vector_wire_gen(asm, dsp.width());
         let right = vector_wire_gen(asm, dsp.width());
         let output = vector_wire_gen(asm, dsp.width());
