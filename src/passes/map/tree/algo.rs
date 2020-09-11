@@ -114,7 +114,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
                 for tile in descriptor.tiles.iter() {
                     if tree_match(tile.pattern.clone(), input.clone(), ix) {
                         let pat_cost = tile.pattern.estimate_cost();
-                        let cur_cost = input.estimate_cost_from_index(ix);
+                        let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
                             output = tree_reset(tile.pattern.clone(), output.clone(), ix);
                             output = tree_update(output.clone(), ix, tile.clone());
