@@ -5,6 +5,7 @@ import re
 import pytest
 
 ci_dir = pathlib.Path(__file__).parent.absolute()
+out_dir = os.path.abspath(os.path.join(ci_dir, "out"))
 rust_manifest_dir = os.path.abspath(os.path.join(ci_dir, ".."))
 
 user = sp.run(["id", "-u"], check=True, stdout=sp.PIPE)
@@ -76,14 +77,14 @@ reticle_examples = [
 vivado_sim_tests = ["register", "fsm", "vadd_const"]
 
 
-def test_reticle_fmt(docker):
+def test_reticle_fmt(docker: bool):
     cmd = ["cargo", "fmt", "--", "--check"]
     if docker:
         cmd = docker_rust_cmd + cmd
     sp.run(cmd, check=True)
 
 
-def test_reticle_clippy(docker):
+def test_reticle_clippy(docker: bool):
     cmd = [
         "cargo",
         "clippy",
@@ -98,7 +99,7 @@ def test_reticle_clippy(docker):
     sp.run(cmd, check=True)
 
 
-def test_reticle_interpreter(docker):
+def test_reticle_interpreter(docker: bool):
     cmd = ["cargo", "test"]
     if docker:
         cmd = docker_rust_cmd + cmd
@@ -113,7 +114,7 @@ def test_reticle_compiler_build(docker):
 
 
 @pytest.mark.parametrize("inp,out", reticle_examples)
-def test_reticle_example(docker, inp: str, out: str):
+def test_reticle_example(docker: bool, inp: str, out: str):
     cmd = [
         "./target/release/reticle",
         inp,
@@ -127,13 +128,19 @@ def test_reticle_example(docker, inp: str, out: str):
     sp.run(cmd, check=True)
 
 
-@pytest.mark.parametrize("test_name", vivado_sim_tests)
-def test_reticle_verilog(docker, test_name: str):
+@pytest.mark.parametrize("name", vivado_sim_tests)
+def test_reticle_verilog(docker: bool, name: str):
+    wd = docker_vivado_workdir if docker else str(ci_dir)
+    od = docker_vivado_outdir if docker else str(out_dir)
+    test_name = "test_{}".format(name)
+    test_file = "{}/{}.v".format(wd, test_name)
+    dut_file = "{}/{}.v".format(wd, name)
     cmd = [
         "vivado_sim.sh",
         test_name,
-        docker_vivado_workdir,
-        docker_vivado_outdir,
+        test_file,
+        dut_file,
+        od,
     ]
     if docker:
         cmd = docker_vivado_cmd + cmd
