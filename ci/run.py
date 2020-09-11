@@ -106,7 +106,7 @@ def test_reticle_interpreter(docker: bool):
     sp.run(cmd, check=True)
 
 
-def test_reticle_compiler_build(docker):
+def test_reticle_compiler_build(docker: bool):
     cmd = ["cargo", "build", "--release"]
     if docker:
         cmd = docker_rust_cmd + cmd
