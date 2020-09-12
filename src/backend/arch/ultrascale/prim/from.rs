@@ -66,6 +66,7 @@ impl From<DspVector> for verilog::Stmt {
         let reset = dsp.get_input("reset").clone();
         let a = dsp.get_input("a").clone();
         let b = dsp.get_input("b").clone();
+        let y = dsp.get_output("y").clone();
         inst.connect("CLK", verilog::Expr::from(clock));
         inst.connect("RSTA", verilog::Expr::from(reset.clone()));
         inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
@@ -92,25 +93,18 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
         match dsp.op() {
-            DspOp::Add => {
+            DspVectorOp::Add => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
                 inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110011"));
             }
-            DspOp::Sub => {
+            DspVectorOp::Sub => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0011"));
                 inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110011"));
             }
-            DspOp::AddRegMul => {
-                inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
-                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
-                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
-                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
-            }
-            _ => (),
         }
         match dsp.length() {
             1 => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
@@ -218,7 +212,7 @@ impl From<DspVector> for verilog::Stmt {
             ),
         );
         inst.connect("C", verilog::Expr::from(a));
-        inst.connect("P", verilog::Expr::from(dsp.output().clone())); // output
+        inst.connect("P", verilog::Expr::from(y));
         verilog::Stmt::from(inst)
     }
 }

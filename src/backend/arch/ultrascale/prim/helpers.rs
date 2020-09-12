@@ -236,31 +236,24 @@ impl Reg {
     }
 }
 
-impl DspOp {
+impl DspVectorOp {
     pub fn is_add(&self) -> bool {
         match self {
-            DspOp::Add => true,
+            DspVectorOp::Add => true,
             _ => false,
         }
     }
 
     pub fn is_sub(&self) -> bool {
         match self {
-            DspOp::Sub => true,
-            _ => false,
-        }
-    }
-
-    pub fn is_mul(&self) -> bool {
-        match self {
-            DspOp::Mul => true,
+            DspVectorOp::Sub => true,
             _ => false,
         }
     }
 }
 
 impl DspVector {
-    pub fn new(op: DspOp, length: u64) -> DspVector {
+    pub fn new(op: DspVectorOp, length: u64) -> DspVector {
         let word = match length {
             1 => 48,
             2 => 24,
@@ -274,12 +267,6 @@ impl DspVector {
             attrs: HashSet::new(),
             inputs: HashMap::new(),
             outputs: HashMap::new(),
-            clock: Expr::default(),
-            reset: Expr::default(),
-            en: Expr::default(),
-            left: Expr::default(),
-            right: Expr::default(),
-            output: Expr::default(),
             width: 48,
             length,
             word,
@@ -290,7 +277,7 @@ impl DspVector {
         self.id.to_string()
     }
 
-    pub fn op(&self) -> &DspOp {
+    pub fn op(&self) -> &DspVectorOp {
         &self.op
     }
 
@@ -318,30 +305,6 @@ impl DspVector {
         self.length
     }
 
-    pub fn clock(&self) -> &Expr {
-        &self.clock
-    }
-
-    pub fn reset(&self) -> &Expr {
-        &self.reset
-    }
-
-    pub fn en(&self) -> &Expr {
-        &self.en
-    }
-
-    pub fn left(&self) -> &Expr {
-        &self.left
-    }
-
-    pub fn right(&self) -> &Expr {
-        &self.right
-    }
-
-    pub fn output(&self) -> &Expr {
-        &self.output
-    }
-
     pub fn width(&self) -> u64 {
         self.width
     }
@@ -362,36 +325,12 @@ impl DspVector {
         self.attrs.insert(attr.to_string());
     }
 
-    pub fn set_input_new(&mut self, key: &str, value: &str) {
+    pub fn set_input(&mut self, key: &str, value: &str) {
         self.inputs.insert(key.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_output_new(&mut self, key: &str, value: &str) {
+    pub fn set_output(&mut self, key: &str, value: &str) {
         self.outputs.insert(key.to_string(), Expr::new_ref(value));
-    }
-
-    pub fn set_clock(&mut self, clock: &str) {
-        self.clock = Expr::new_ref(clock);
-    }
-
-    pub fn set_reset(&mut self, reset: &str) {
-        self.reset = Expr::new_ref(reset);
-    }
-
-    pub fn set_en(&mut self, en: &str) {
-        self.en = Expr::new_ref(en);
-    }
-
-    pub fn set_left(&mut self, left: &str) {
-        self.left = Expr::new_ref(left);
-    }
-
-    pub fn set_right(&mut self, right: &str) {
-        self.right = Expr::new_ref(right);
-    }
-
-    pub fn set_output(&mut self, output: &str) {
-        self.output = Expr::new_ref(output);
     }
 }
 

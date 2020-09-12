@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{DspOp, DspVector};
+use crate::backend::arch::ultrascale::prim::ast::{DspVector, DspVectorOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
@@ -40,9 +40,9 @@ fn emit_vector_wire(asm: &mut Assembler, width: u64) -> String {
     name
 }
 
-fn emit_vector_op(instr: &asm::Instr) -> DspOp {
+fn emit_vector_op(instr: &asm::Instr) -> DspVectorOp {
     match instr.prim().op().as_ref() {
-        "dsp_add_i8v4_i8v4_i8v4" => DspOp::Add,
+        "dsp_add_i8v4_i8v4_i8v4" => DspVectorOp::Add,
         _ => unimplemented!(),
     }
 }
@@ -56,16 +56,16 @@ impl Emit for DspVectorArith {
         let mut dsp = DspVector::new(op, instr.dst_ty().length());
         let a = emit_vector_wire(asm, dsp.width());
         let b = emit_vector_wire(asm, dsp.width());
-        let output = emit_vector_wire(asm, dsp.width());
+        let y = emit_vector_wire(asm, dsp.width());
         dsp.set_id(&asm.new_instance_name());
-        dsp.set_input_new("clock", &asm.clock());
-        dsp.set_input_new("reset", &asm.reset());
-        dsp.set_input_new("a", &a);
-        dsp.set_input_new("b", &b);
-        dsp.set_output(&output);
+        dsp.set_input("clock", &asm.clock());
+        dsp.set_input("reset", &asm.reset());
+        dsp.set_input("a", &a);
+        dsp.set_input("b", &b);
+        dsp.set_output("y", &y);
         emit_vector_input(asm, instr.clone(), &a, 0, dsp.pad());
         emit_vector_input(asm, instr.clone(), &b, 1, dsp.pad());
-        emit_vector_output(asm, instr, &output, dsp.word());
+        emit_vector_output(asm, instr, &y, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }

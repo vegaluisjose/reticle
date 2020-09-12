@@ -80,29 +80,29 @@ pub struct Reg {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DspOp {
+pub enum DspScalarOp {
     Add,
     Sub,
     Mul,
     AddRegMul,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum DspVectorOp {
+    Add,
+    Sub,
+}
+
 #[derive(Clone, Debug)]
 pub struct DspVector {
-    pub op: DspOp,
+    pub op: DspVectorOp,
     pub id: String,
-    pub attrs: HashSet<String>,
-    pub inputs: HashMap<String, Expr>,
-    pub outputs: HashMap<String, Expr>,
-    pub clock: Expr,
-    pub reset: Expr,
-    pub en: Expr,
-    pub left: Expr,
-    pub right: Expr,
-    pub output: Expr,
     pub width: u64,
     pub length: u64,
     pub word: u64,
+    pub attrs: HashSet<String>,
+    pub inputs: HashMap<String, Expr>,
+    pub outputs: HashMap<String, Expr>,
 }
 
 #[derive(Clone, Debug)]
