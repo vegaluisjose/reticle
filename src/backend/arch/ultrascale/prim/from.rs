@@ -67,7 +67,9 @@ impl From<DspVector> for verilog::Stmt {
         let a = dsp.get_input("a").clone();
         let b = dsp.get_input("b").clone();
         let y = dsp.get_output("y").clone();
+        // clock
         inst.connect("CLK", verilog::Expr::from(clock));
+        // resets
         inst.connect("RSTA", verilog::Expr::from(reset.clone()));
         inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
         inst.connect("RSTALUMODE", verilog::Expr::from(reset.clone()));
