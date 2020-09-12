@@ -84,7 +84,7 @@ def build_docker_vivado_cmd():
     cmd.append("--user")
     cmd.append(docker_bind_opt(get_user_id(), get_group_id()))
     cmd.append("-v")
-    cmd.append(docker_bind_opt(get_ci_dir(), get_docker_vivado_dir()))
+    cmd.append(docker_bind_opt(get_root_dir(), get_docker_vivado_dir()))
     cmd.append("-w")
     cmd.append(get_docker_vivado_dir())
     cmd.append("vivado")
@@ -118,10 +118,12 @@ def check_vivado_fail(stdout: str):
 def run_vivado_sim(docker: bool, infile: str):
     name = get_example_name(infile)
     test_name = "test_{}".format(name)
-    dut = "{}.v".format(name)
-    test = "{}.v".format(test_name)
+    wd = "ci"
+    script = os.path.join(wd, "vivado_sim.sh")
+    dut = os.path.join(wd, "{}.v".format(name))
+    test = os.path.join(wd, "{}.v".format(name))
     cmd = []
-    cmd.append("vivado_sim.sh")
+    cmd.append(get_vivado_path(docker, script))
     cmd.append(test_name)
     cmd.append(get_vivado_path(docker, test))
     cmd.append(get_vivado_path(docker, dut))
