@@ -394,11 +394,11 @@ impl Vcc {
         }
     }
 
-    pub fn id(&self) -> String {
+    pub fn get_id(&self) -> String {
         self.id.to_string()
     }
 
-    pub fn output(&self) -> &Expr {
+    pub fn get_output(&self) -> &Expr {
         &self.output
     }
 
@@ -419,11 +419,11 @@ impl Gnd {
         }
     }
 
-    pub fn id(&self) -> String {
+    pub fn get_id(&self) -> String {
         self.id.to_string()
     }
 
-    pub fn output(&self) -> &Expr {
+    pub fn get_output(&self) -> &Expr {
         &self.output
     }
 
