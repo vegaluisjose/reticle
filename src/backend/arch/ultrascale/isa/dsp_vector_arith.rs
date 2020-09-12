@@ -48,9 +48,9 @@ fn emit_vector_op(instr: &asm::Instr) -> DspOp {
 }
 
 #[derive(Clone, Debug)]
-pub struct DspVector;
+pub struct DspVectorArith;
 
-impl Emit for DspVector {
+impl Emit for DspVectorArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_vector_op(&instr);
         let mut dsp = Dsp::new_vector(op, instr.dst_ty().length());
