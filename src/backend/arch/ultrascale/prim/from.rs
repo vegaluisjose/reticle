@@ -73,34 +73,25 @@ impl From<Dsp> for verilog::Stmt {
         inst.connect("RSTINMODE", verilog::Expr::from(dsp.reset().clone()));
         inst.connect("RSTM", verilog::Expr::from(dsp.reset().clone()));
         inst.connect("RSTP", verilog::Expr::from(dsp.reset().clone()));
+        // clock enable
+        inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
         if dsp.en().is_default() {
-            inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
+            inst.add_param("MREG", verilog::Expr::new_int(0));
             inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
-            inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
         } else {
-            inst.connect("CEA1", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEA2", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEAD", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEALUMODE", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEB1", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEB2", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEC", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CECARRYIN", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CECTRL", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CED", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEINMODE", verilog::Expr::from(dsp.en().clone()));
+            inst.add_param("MREG", verilog::Expr::new_int(1));
             inst.connect("CEM", verilog::Expr::from(dsp.en().clone()));
-            inst.connect("CEP", verilog::Expr::from(dsp.en().clone()));
         }
         match dsp.op() {
             DspOp::Add => {
@@ -114,6 +105,12 @@ impl From<Dsp> for verilog::Stmt {
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0011"));
                 inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110011"));
+            }
+            DspOp::AddRegMul => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
+                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
+                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
+                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
             }
             _ => (),
         }
@@ -182,7 +179,6 @@ impl From<Dsp> for verilog::Stmt {
         inst.add_param("CREG", verilog::Expr::new_int(0));
         inst.add_param("DREG", verilog::Expr::new_int(0));
         inst.add_param("INMODEREG", verilog::Expr::new_int(0));
-        inst.add_param("MREG", verilog::Expr::new_int(0));
         inst.add_param("OPMODEREG", verilog::Expr::new_int(0));
         inst.add_param("PREG", verilog::Expr::new_int(0));
         // default input values
