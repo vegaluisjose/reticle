@@ -1,5 +1,5 @@
 mod constant;
-mod dsp_scalar;
+mod dsp_scalar_arith;
 mod dsp_vector_arith;
 mod lut_and;
 mod lut_eq;
@@ -8,7 +8,7 @@ mod lut_or;
 mod lut_reg;
 
 pub use constant::*;
-pub use dsp_scalar::*;
+pub use dsp_scalar_arith::*;
 pub use dsp_vector_arith::*;
 pub use lut_and::*;
 pub use lut_eq::*;

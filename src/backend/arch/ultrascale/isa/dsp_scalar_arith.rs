@@ -4,7 +4,7 @@ use crate::backend::asm::ast as asm;
 // use crate::backend::verilog;
 
 #[derive(Clone, Debug)]
-pub struct DspScalar;
+pub struct DspScalarArith;
 
 // fn emit_scalar_op(instr: &asm::Instr) -> DspVectorOp {
 //     match instr.prim().op().as_ref() {
@@ -13,6 +13,6 @@ pub struct DspScalar;
 //     }
 // }
 
-impl Emit for DspScalar {
+impl Emit for DspScalarArith {
     fn emit(_: &mut Assembler, _: asm::Instr) {}
 }

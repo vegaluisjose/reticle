@@ -236,6 +236,62 @@ impl Reg {
     }
 }
 
+impl DspScalar {
+    pub fn new(op: DspScalarOp) -> DspScalar {
+        DspScalar {
+            op,
+            id: String::new(),
+            attrs: HashSet::new(),
+            inputs: HashMap::new(),
+            outputs: HashMap::new(),
+        }
+    }
+
+    pub fn has_attr(&self, attr: &str) -> bool {
+        self.attrs.contains(attr)
+    }
+
+    pub fn get_id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn get_op(&self) -> &DspScalarOp {
+        &self.op
+    }
+
+    pub fn get_input(&self, input: &str) -> &Expr {
+        if let Some(expr) = self.inputs.get(input) {
+            expr
+        } else {
+            panic!("Error: dsp vector input does not exist")
+        }
+    }
+
+    pub fn get_output(&self, output: &str) -> &Expr {
+        if let Some(expr) = self.outputs.get(output) {
+            expr
+        } else {
+            panic!("Error: dsp vector output does not exist")
+        }
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+
+    pub fn set_attr_new(&mut self, attr: &str) {
+        self.attrs.insert(attr.to_string());
+    }
+
+    pub fn set_input(&mut self, key: &str, value: &str) {
+        self.inputs.insert(key.to_string(), Expr::new_ref(value));
+    }
+
+    pub fn set_output(&mut self, key: &str, value: &str) {
+        self.outputs.insert(key.to_string(), Expr::new_ref(value));
+    }
+}
+
 impl DspVectorOp {
     pub fn is_add(&self) -> bool {
         match self {
@@ -264,12 +320,12 @@ impl DspVector {
         DspVector {
             op,
             id: String::new(),
-            attrs: HashSet::new(),
-            inputs: HashMap::new(),
-            outputs: HashMap::new(),
             width: 48,
             length,
             word,
+            attrs: HashSet::new(),
+            inputs: HashMap::new(),
+            outputs: HashMap::new(),
         }
     }
 

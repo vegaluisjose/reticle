@@ -37,6 +37,12 @@ impl fmt::Display for Reg {
     }
 }
 
+impl fmt::Display for DspScalar {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", verilog::Stmt::from(self.clone()))
+    }
+}
+
 impl fmt::Display for DspVector {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", verilog::Stmt::from(self.clone()))

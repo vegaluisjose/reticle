@@ -87,6 +87,15 @@ pub enum DspScalarOp {
     AddRegMul,
 }
 
+#[derive(Clone, Debug)]
+pub struct DspScalar {
+    pub op: DspScalarOp,
+    pub id: String,
+    pub attrs: HashSet<String>,
+    pub inputs: HashMap<String, Expr>,
+    pub outputs: HashMap<String, Expr>,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspVectorOp {
     Add,

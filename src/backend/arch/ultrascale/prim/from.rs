@@ -217,6 +217,28 @@ impl From<DspVector> for verilog::Stmt {
     }
 }
 
+impl From<DspScalar> for verilog::Stmt {
+    fn from(dsp: DspScalar) -> Self {
+        let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
+        let clock = dsp.get_input("clock").clone();
+        let reset = dsp.get_input("reset").clone();
+        // clock
+        inst.connect("CLK", verilog::Expr::from(clock));
+        // resets
+        inst.connect("RSTA", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTALUMODE", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTB", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTC", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTCTRL", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTD", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTM", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTP", verilog::Expr::from(reset));
+        verilog::Stmt::from(inst)
+    }
+}
+
 impl From<Vcc> for verilog::Stmt {
     fn from(vcc: Vcc) -> Self {
         let mut inst = verilog::Instance::new(&vcc.id(), "VCC");
