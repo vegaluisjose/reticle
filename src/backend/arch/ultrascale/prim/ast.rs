@@ -1,3 +1,5 @@
+use std::collections::{HashMap, HashSet};
+
 #[derive(Clone, Debug)]
 pub enum Expr {
     Ref(String),
@@ -89,6 +91,9 @@ pub enum DspOp {
 pub struct DspVector {
     pub op: DspOp,
     pub id: String,
+    pub attrs: HashSet<String>,
+    pub inputs: HashMap<String, Expr>,
+    pub outputs: HashMap<String, Expr>,
     pub clock: Expr,
     pub reset: Expr,
     pub en: Expr,

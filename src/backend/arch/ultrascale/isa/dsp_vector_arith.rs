@@ -58,7 +58,7 @@ impl Emit for DspVectorArith {
         let right = emit_vector_wire(asm, dsp.width());
         let output = emit_vector_wire(asm, dsp.width());
         dsp.set_id(&asm.new_instance_name());
-        dsp.set_clock(&asm.clock());
+        dsp.set_input_new(&asm.clock());
         dsp.set_reset(&asm.reset());
         dsp.set_left(&left);
         dsp.set_right(&right);

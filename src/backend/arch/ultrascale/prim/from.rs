@@ -62,7 +62,8 @@ impl From<Reg> for verilog::Stmt {
 impl From<DspVector> for verilog::Stmt {
     fn from(dsp: DspVector) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
-        inst.connect("CLK", verilog::Expr::from(dsp.clock().clone()));
+        let clock = dsp.get_input("clock").clone();
+        inst.connect("CLK", verilog::Expr::from(clock));
         inst.connect("RSTA", verilog::Expr::from(dsp.reset().clone()));
         inst.connect("RSTALLCARRYIN", verilog::Expr::from(dsp.reset().clone()));
         inst.connect("RSTALUMODE", verilog::Expr::from(dsp.reset().clone()));
