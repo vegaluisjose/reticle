@@ -3,7 +3,7 @@ use crate::backend::arch::ultrascale::prim::ast::{Dsp, DspOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-fn vector_input_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: usize, pad: u64) {
+fn emit_vector_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: usize, pad: u64) {
     let mut concat = verilog::ExprConcat::default();
     let length = instr.dst_ty().length();
     for i in 0..length {
@@ -19,7 +19,7 @@ fn vector_input_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: u
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-fn vector_output_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64) {
+fn emit_vector_output(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64) {
     let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
     for i in 0..length {
@@ -33,14 +33,14 @@ fn vector_output_gen(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u
     }
 }
 
-fn vector_wire_gen(asm: &mut Assembler, width: u64) -> String {
+fn emit_vector_wire(asm: &mut Assembler, width: u64) -> String {
     let name = asm.new_variable_name();
     let wire = verilog::Decl::new_wire(&name, width);
     asm.add_wire(verilog::Stmt::from(wire));
     name
 }
 
-fn vector_op_gen(instr: &asm::Instr) -> DspOp {
+fn emit_vector_op(instr: &asm::Instr) -> DspOp {
     match instr.prim().op().as_ref() {
         "dsp_add_i8v4_i8v4_i8v4" => DspOp::Add,
         _ => unimplemented!(),
@@ -52,20 +52,20 @@ pub struct DspVector;
 
 impl Emit for DspVector {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
-        let op = vector_op_gen(&instr);
+        let op = emit_vector_op(&instr);
         let mut dsp = Dsp::new_vector(op, instr.dst_ty().length());
-        let left = vector_wire_gen(asm, dsp.width());
-        let right = vector_wire_gen(asm, dsp.width());
-        let output = vector_wire_gen(asm, dsp.width());
+        let left = emit_vector_wire(asm, dsp.width());
+        let right = emit_vector_wire(asm, dsp.width());
+        let output = emit_vector_wire(asm, dsp.width());
         dsp.set_id(&asm.new_instance_name());
         dsp.set_clock(&asm.clock());
         dsp.set_reset(&asm.reset());
         dsp.set_left(&left);
         dsp.set_right(&right);
         dsp.set_output(&output);
-        vector_input_gen(asm, instr.clone(), &left, 0, dsp.pad());
-        vector_input_gen(asm, instr.clone(), &right, 1, dsp.pad());
-        vector_output_gen(asm, instr, &output, dsp.word());
+        emit_vector_input(asm, instr.clone(), &left, 0, dsp.pad());
+        emit_vector_input(asm, instr.clone(), &right, 1, dsp.pad());
+        emit_vector_output(asm, instr, &output, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
