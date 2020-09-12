@@ -13,7 +13,7 @@ pip install pytest-pycodestyle==2.2.0
 
 # run ci tests
 pytest --pycodestyle -x -v ci
-pytest -x -v ci/run.py
+pytest -x -v ci/run.py --use-docker
 
 # deactivate virtual environment
 deactivate

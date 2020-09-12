@@ -1,161 +1,182 @@
 import subprocess as sp
-import pathlib
 import os
 import re
 import pytest
 
-"""
-Warning
-The following tests are required to be executed in order:
-    test_reticle_compiler_build
-    test_reticle_example
-    test_reticle_verilog
-this is not a good idea in general, because tests should
-be self contained. FIXME: whenever there is time
-"""
 
-ci_dir = pathlib.Path(__file__).parent.absolute()
-out_dir = os.path.abspath(os.path.join(ci_dir, "out"))
-rust_manifest_dir = os.path.abspath(os.path.join(ci_dir, ".."))
-
-user = sp.run(["id", "-u"], check=True, stdout=sp.PIPE)
-group = sp.run(["id", "-g"], check=True, stdout=sp.PIPE)
-
-docker_rust_workdir = "/usr/src/myapp"
-docker_vivado_workdir = "/home/vivado/workspace"
-docker_vivado_outdir = "/home/vivado/output"
-
-docker_user_opt = "{}:{}".format(
-    user.stdout.decode("utf-8").strip("\n"),
-    group.stdout.decode("utf-8").strip("\n"),
-)
-
-docker_rust_mount_opt = "{}:{}".format(rust_manifest_dir, docker_rust_workdir)
-
-docker_vivado_mount_opt = "{}:{}".format(ci_dir, docker_vivado_workdir)
-
-docker_rust_cmd = [
-    "docker",
-    "run",
-    "--rm",
-    "--pid=host",
-    "--user",
-    docker_user_opt,
-    "-v",
-    docker_rust_mount_opt,
-    "-w",
-    docker_rust_workdir,
-    "reticle-rust",
+examples = [
+    "examples/isa/scalar/register.ret",
+    "examples/basic/fsm.ret",
+    "examples/basic/vadd_const.ret",
 ]
 
-docker_vivado_cmd = [
-    "docker",
-    "run",
-    "--rm",
-    "--pid=host",
-    "--user",
-    docker_user_opt,
-    "-v",
-    docker_vivado_mount_opt,
-    "-w",
-    docker_vivado_workdir,
-    "vivado",
-    "bash",
-    "--login",
-]
 
-vivado_fail_pattern = re.compile(".*~~FAIL~~.*", re.DOTALL)
+def get_ci_dir():
+    return os.path.dirname(os.path.abspath(os.path.expanduser(__file__)))
 
-reticle_examples = [
-    pytest.param(
-        "examples/isa/scalar/register.ret",
-        "ci/register.v",
-        id="register",
-    ),
-    pytest.param(
-        "examples/basic/fsm.ret",
-        "ci/fsm.v",
-        id="fsm",
-    ),
-    pytest.param(
-        "examples/basic/vadd_const.ret",
-        "ci/vadd_const.v",
-        id="vadd_const",
-    ),
-]
 
-vivado_sim_tests = ["register", "fsm", "vadd_const"]
+def get_root_dir():
+    return os.path.abspath(os.path.join(get_ci_dir(), ".."))
+
+
+def get_docker_vivado_dir():
+    return os.path.join("/home/vivado/workspace")
+
+
+def get_docker_rust_dir():
+    return os.path.join("/usr/src/myapp")
+
+
+def get_rust_path(docker: bool, path: str):
+    basedir = get_docker_rust_dir() if docker is True else get_root_dir()
+    return os.path.join(basedir, path)
+
+
+def get_vivado_path(docker: bool, path: str):
+    basedir = get_docker_vivado_dir() if docker is True else get_root_dir()
+    return os.path.join(basedir, path)
+
+
+def get_id(opt: str) -> str:
+    cp = sp.run(["id", opt], check=True, stdout=sp.PIPE)
+    return cp.stdout.decode("utf-8").strip("\n")
+
+
+def get_user_id() -> str:
+    return get_id("-u")
+
+
+def get_group_id() -> str:
+    return get_id("-g")
+
+
+def get_example_name(path: str) -> str:
+    file, ext = os.path.splitext(path)
+    return os.path.basename(file)
+
+
+def docker_bind_opt(src: str, dst: str) -> str:
+    return "{}:{}".format(src, dst)
+
+
+def build_docker_rust_cmd():
+    cmd = []
+    cmd.append("docker")
+    cmd.append("run")
+    cmd.append("--rm")
+    cmd.append("--pid=host")
+    cmd.append("--user")
+    cmd.append(docker_bind_opt(get_user_id(), get_group_id()))
+    cmd.append("-v")
+    cmd.append(docker_bind_opt(get_root_dir(), get_docker_rust_dir()))
+    cmd.append("-w")
+    cmd.append(get_docker_rust_dir())
+    cmd.append("reticle-rust")
+    return cmd
+
+
+def build_docker_vivado_cmd():
+    cmd = []
+    cmd.append("docker")
+    cmd.append("run")
+    cmd.append("--rm")
+    cmd.append("--pid=host")
+    cmd.append("--user")
+    cmd.append(docker_bind_opt(get_user_id(), get_group_id()))
+    cmd.append("-v")
+    cmd.append(docker_bind_opt(get_ci_dir(), get_docker_vivado_dir()))
+    cmd.append("-w")
+    cmd.append(get_docker_vivado_dir())
+    cmd.append("vivado")
+    cmd.append("bash")
+    cmd.append("--login")
+    return cmd
+
+
+def run_rust(docker: bool, cmd):
+    if docker is True:
+        cmd = build_docker_rust_cmd() + cmd
+    sp.run(cmd, check=True)
+
+
+def run_vivado(docker: bool, cmd):
+    if docker is True:
+        cmd = build_docker_vivado_cmd() + cmd
+    cp = sp.run(cmd, check=True, stdout=sp.PIPE)
+    return cp.stdout.decode("utf-8")
+
+
+def check_vivado_fail(stdout: str):
+    pattern = re.compile(".*~~FAIL~~.*", re.DOTALL)
+    if pattern.match(stdout) is None:
+        return True
+    else:
+        print(stdout)
+        return False
+
+
+def run_vivado_sim(docker: bool, infile: str):
+    name = get_example_name(infile)
+    test_name = "test_{}".format(name)
+    dut = "{}.v".format(name)
+    test = "{}.v".format(test_name)
+    cmd = []
+    cmd.append("vivado_sim.sh")
+    cmd.append(test_name)
+    cmd.append(get_vivado_path(docker, test))
+    cmd.append(get_vivado_path(docker, dut))
+    cmd.append(get_vivado_path(docker, "output"))
+    return check_vivado_fail(run_vivado(docker, cmd))
+
+
+def build_reticle(docker: bool):
+    cmd = []
+    cmd.append("cargo")
+    cmd.append("build")
+    cmd.append("--release")
+    run_rust(docker, cmd)
+
+
+def reticle_to_verilog(docker: bool, infile: str, outdir: str):
+    build_reticle(docker)
+    filename = "{}.v".format(get_example_name(infile))
+    outfile = os.path.join(outdir, filename)
+    cmd = []
+    cmd.append(get_rust_path(docker, "target/release/reticle"))
+    cmd.append(get_rust_path(docker, infile))
+    cmd.append("-b")
+    cmd.append("verilog")
+    cmd.append("-o")
+    cmd.append(get_rust_path(docker, outfile))
+    run_rust(docker, cmd)
 
 
 def test_reticle_fmt(docker: bool):
-    cmd = ["cargo", "fmt", "--", "--check"]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
+    cmd = []
+    cmd.append("cargo")
+    cmd.append("fmt")
+    cmd.append("--")
+    cmd.append("--check")
+    run_rust(docker, cmd)
 
 
 def test_reticle_clippy(docker: bool):
-    cmd = [
-        "cargo",
-        "clippy",
-        "--all-targets",
-        "--all-features",
-        "--",
-        "-D",
-        "warnings",
-    ]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
+    cmd = []
+    cmd.append("cargo")
+    cmd.append("clippy")
+    cmd.append("--all-targets")
+    cmd.append("--all-features")
+    cmd.append("--")
+    cmd.append("-D")
+    cmd.append("warnings")
+    run_rust(docker, cmd)
 
 
-def test_reticle_interpreter(docker: bool):
-    cmd = ["cargo", "test"]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
+def test_reticle_build(docker: bool):
+    build_reticle(docker)
 
 
-def test_reticle_compiler_build(docker: bool):
-    cmd = ["cargo", "build", "--release"]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
-
-
-@pytest.mark.parametrize("inp,out", reticle_examples)
-def test_reticle_example(docker: bool, inp: str, out: str):
-    cmd = [
-        "./target/release/reticle",
-        inp,
-        "-b",
-        "verilog",
-        "-o",
-        out,
-    ]
-    if docker:
-        cmd = docker_rust_cmd + cmd
-    sp.run(cmd, check=True)
-
-
-@pytest.mark.parametrize("name", vivado_sim_tests)
-def test_reticle_verilog(docker: bool, name: str):
-    wd = docker_vivado_workdir if docker else str(ci_dir)
-    od = docker_vivado_outdir if docker else str(out_dir)
-    test_name = "test_{}".format(name)
-    test_file = "{}/{}.v".format(wd, test_name)
-    dut_file = "{}/{}.v".format(wd, name)
-    cmd = [
-        "vivado_sim.sh",
-        test_name,
-        test_file,
-        dut_file,
-        od,
-    ]
-    if docker:
-        cmd = docker_vivado_cmd + cmd
-    cp = sp.run(cmd, check=True, stdout=sp.PIPE)
-    stdout = cp.stdout.decode("utf-8")
-    if vivado_fail_pattern.match(stdout):
-        print(stdout)
-        assert 0
+@pytest.mark.parametrize("example", examples)
+def test_reticle_compiler(docker: bool, example: str):
+    reticle_to_verilog(docker, example, "ci")
+    assert run_vivado_sim(docker, example)

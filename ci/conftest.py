@@ -3,13 +3,15 @@ import pytest
 
 def pytest_addoption(parser):
     parser.addoption(
-        "--docker",
-        action="store",
-        default="True",
-        help="enable or disable docker for ci",
+        "--use-docker",
+        action="store_true",
+        help="use docker, default is disable",
     )
 
 
 @pytest.fixture
 def docker(request):
-    return request.config.getoption("--docker")
+    if request.config.getoption("--use-docker"):
+        return True
+    else:
+        return False
