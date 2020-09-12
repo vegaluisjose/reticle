@@ -2,6 +2,11 @@
 
 set -eo pipefail
 
+# create a directory for cargo registry, so
+# dependencies can be cached when running rust
+# inside docker
+mkdir -p $PWD/.cargo/registry
+
 # create virtual environment
 python3 -m venv venv
 source venv/bin/activate

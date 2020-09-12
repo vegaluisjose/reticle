@@ -19,12 +19,20 @@ def get_root_dir():
     return os.path.abspath(os.path.join(get_ci_dir(), ".."))
 
 
+def get_registry_dir():
+    return os.path.join(get_root_dir(), ".cargo/registry")
+
+
 def get_docker_vivado_dir():
     return os.path.join("/home/vivado/workspace")
 
 
 def get_docker_rust_dir():
     return os.path.join("/usr/src/myapp")
+
+
+def get_docker_rust_registry_dir():
+    return os.path.join("/usr/local/cargo/registry")
 
 
 def get_rust_path(docker: bool, path: str):
@@ -69,6 +77,10 @@ def build_docker_rust_cmd():
     cmd.append(docker_bind_opt(get_user_id(), get_group_id()))
     cmd.append("-v")
     cmd.append(docker_bind_opt(get_root_dir(), get_docker_rust_dir()))
+    cmd.append("-v")
+    cmd.append(
+        docker_bind_opt(get_registry_dir(), get_docker_rust_registry_dir())
+    )
     cmd.append("-w")
     cmd.append(get_docker_rust_dir())
     cmd.append("reticle-rust")
