@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{Dsp, DspOp};
+use crate::backend::arch::ultrascale::prim::ast::{DspOp, DspVector};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
@@ -17,7 +17,7 @@ impl Emit for DspScalar {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_scalar_op(&instr);
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
-        let mut dsp = Dsp::new_scalar(op.clone());
+        let mut dsp = DspVector::new(op.clone(), 1);
         dsp.set_id(&asm.new_instance_name());
         dsp.set_clock(&asm.clock());
         dsp.set_reset(&asm.reset());

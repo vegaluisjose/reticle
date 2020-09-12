@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{Dsp, DspOp};
+use crate::backend::arch::ultrascale::prim::ast::{DspOp, DspVector};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
@@ -53,7 +53,7 @@ pub struct DspVectorArith;
 impl Emit for DspVectorArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_vector_op(&instr);
-        let mut dsp = Dsp::new_vector(op, instr.dst_ty().length());
+        let mut dsp = DspVector::new(op, instr.dst_ty().length());
         let left = emit_vector_wire(asm, dsp.width());
         let right = emit_vector_wire(asm, dsp.width());
         let output = emit_vector_wire(asm, dsp.width());

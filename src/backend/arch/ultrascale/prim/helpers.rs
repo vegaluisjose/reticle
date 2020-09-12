@@ -258,46 +258,8 @@ impl DspOp {
     }
 }
 
-impl DspTy {
-    pub fn is_scalar(&self) -> bool {
-        match self {
-            DspTy::Scalar => true,
-            _ => false,
-        }
-    }
-
-    pub fn is_vector(&self) -> bool {
-        match self {
-            DspTy::Vector(_) => true,
-            _ => false,
-        }
-    }
-
-    pub fn length(&self) -> u64 {
-        match self {
-            DspTy::Vector(l) => *l,
-            _ => panic!("Error: scalar does not support length"),
-        }
-    }
-}
-
-impl Dsp {
-    pub fn new_scalar(op: DspOp) -> Dsp {
-        Dsp {
-            op,
-            ty: DspTy::Scalar,
-            id: String::new(),
-            clock: Expr::default(),
-            reset: Expr::default(),
-            en: Expr::default(),
-            left: Expr::default(),
-            right: Expr::default(),
-            output: Expr::default(),
-            width: 48,
-            word: 48,
-        }
-    }
-    pub fn new_vector(op: DspOp, length: u64) -> Dsp {
+impl DspVector {
+    pub fn new(op: DspOp, length: u64) -> DspVector {
         let word = match length {
             1 => 48,
             2 => 24,
@@ -305,9 +267,8 @@ impl Dsp {
             4 => 12,
             _ => unimplemented!(),
         };
-        Dsp {
+        DspVector {
             op,
-            ty: DspTy::Vector(length),
             id: String::new(),
             clock: Expr::default(),
             reset: Expr::default(),
@@ -316,6 +277,7 @@ impl Dsp {
             right: Expr::default(),
             output: Expr::default(),
             width: 48,
+            length,
             word,
         }
     }
@@ -328,8 +290,8 @@ impl Dsp {
         &self.op
     }
 
-    pub fn ty(&self) -> &DspTy {
-        &self.ty
+    pub fn length(&self) -> u64 {
+        self.length
     }
 
     pub fn clock(&self) -> &Expr {
@@ -366,10 +328,6 @@ impl Dsp {
 
     pub fn pad(&self) -> u64 {
         self.width / self.word
-    }
-
-    pub fn length(&self) -> u64 {
-        self.ty.length()
     }
 
     pub fn set_id(&mut self, id: &str) {

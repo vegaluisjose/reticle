@@ -85,15 +85,8 @@ pub enum DspOp {
     AddRegMul,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DspTy {
-    Scalar,
-    Vector(u64),
-}
-
 #[derive(Clone, Debug)]
-pub struct Dsp {
-    pub ty: DspTy,
+pub struct DspVector {
     pub op: DspOp,
     pub id: String,
     pub clock: Expr,
@@ -103,6 +96,7 @@ pub struct Dsp {
     pub right: Expr,
     pub output: Expr,
     pub width: u64,
+    pub length: u64,
     pub word: u64,
 }
 

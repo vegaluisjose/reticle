@@ -59,8 +59,8 @@ impl From<Reg> for verilog::Stmt {
     }
 }
 
-impl From<Dsp> for verilog::Stmt {
-    fn from(dsp: Dsp) -> Self {
+impl From<DspVector> for verilog::Stmt {
+    fn from(dsp: DspVector) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
         inst.connect("CLK", verilog::Expr::from(dsp.clock().clone()));
         inst.connect("RSTA", verilog::Expr::from(dsp.reset().clone()));
@@ -114,11 +114,11 @@ impl From<Dsp> for verilog::Stmt {
             }
             _ => (),
         }
-        match dsp.ty() {
-            DspTy::Scalar => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
-            DspTy::Vector(2) => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
-            DspTy::Vector(3) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
-            DspTy::Vector(4) => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
+        match dsp.length() {
+            1 => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
+            2 => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
+            3 => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
+            4 => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
             _ => unimplemented!(),
         }
         // default params
