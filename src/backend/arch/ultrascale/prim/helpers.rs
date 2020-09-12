@@ -313,10 +313,6 @@ impl DspVector {
         self.word
     }
 
-    pub fn pad(&self) -> u64 {
-        self.width / self.word
-    }
-
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
     }

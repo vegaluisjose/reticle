@@ -3,9 +3,11 @@ use crate::backend::arch::ultrascale::prim::ast::{DspVector, DspVectorOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-fn emit_vector_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, index: usize, pad: u64) {
+fn emit_vector_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64, index: usize) {
     let mut concat = verilog::ExprConcat::default();
     let length = instr.dst_ty().length();
+    let width = instr.dst_ty().width();
+    let pad = word - width;
     for i in 0..length {
         let name = asm.fresh_vector_variable(&instr.indexed_param(index).id(), i);
         concat.add_expr(verilog::Expr::new_ref(&name));
@@ -63,8 +65,8 @@ impl Emit for DspVectorArith {
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
         dsp.set_output("y", &y);
-        emit_vector_input(asm, instr.clone(), &a, 0, dsp.pad());
-        emit_vector_input(asm, instr.clone(), &b, 1, dsp.pad());
+        emit_vector_input(asm, instr.clone(), &a, dsp.word(), 0);
+        emit_vector_input(asm, instr.clone(), &b, dsp.word(), 1);
         emit_vector_output(asm, instr, &y, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
