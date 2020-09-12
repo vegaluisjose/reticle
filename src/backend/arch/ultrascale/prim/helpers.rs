@@ -329,16 +329,28 @@ impl DspVector {
         }
     }
 
-    pub fn id(&self) -> String {
-        self.id.to_string()
-    }
-
     pub fn op(&self) -> &DspVectorOp {
         &self.op
     }
 
+    pub fn length(&self) -> u64 {
+        self.length
+    }
+
+    pub fn width(&self) -> u64 {
+        self.width
+    }
+
+    pub fn word(&self) -> u64 {
+        self.word
+    }
+
     pub fn has_attr(&self, attr: &str) -> bool {
         self.attrs.contains(attr)
+    }
+
+    pub fn get_id(&self) -> String {
+        self.id.to_string()
     }
 
     pub fn get_input(&self, input: &str) -> &Expr {
@@ -355,18 +367,6 @@ impl DspVector {
         } else {
             panic!("Error: dsp vector output does not exist")
         }
-    }
-
-    pub fn length(&self) -> u64 {
-        self.length
-    }
-
-    pub fn width(&self) -> u64 {
-        self.width
-    }
-
-    pub fn word(&self) -> u64 {
-        self.word
     }
 
     pub fn set_id(&mut self, id: &str) {

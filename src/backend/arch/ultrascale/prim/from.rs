@@ -61,7 +61,7 @@ impl From<Reg> for verilog::Stmt {
 
 impl From<DspVector> for verilog::Stmt {
     fn from(dsp: DspVector) -> Self {
-        let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
+        let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
         let clock = dsp.get_input("clock").clone();
         let reset = dsp.get_input("reset").clone();
         let a = dsp.get_input("a").clone();
