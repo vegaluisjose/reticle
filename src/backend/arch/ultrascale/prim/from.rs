@@ -63,17 +63,18 @@ impl From<DspVector> for verilog::Stmt {
     fn from(dsp: DspVector) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
         let clock = dsp.get_input("clock").clone();
+        let reset = dsp.get_input("reset").clone();
         inst.connect("CLK", verilog::Expr::from(clock));
-        inst.connect("RSTA", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTALLCARRYIN", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTALUMODE", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTB", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTC", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTCTRL", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTD", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTINMODE", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTM", verilog::Expr::from(dsp.reset().clone()));
-        inst.connect("RSTP", verilog::Expr::from(dsp.reset().clone()));
+        inst.connect("RSTA", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTALUMODE", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTB", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTC", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTCTRL", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTD", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTM", verilog::Expr::from(reset.clone()));
+        inst.connect("RSTP", verilog::Expr::from(reset));
         // clock enable
         inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
@@ -87,13 +88,7 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
-        if dsp.en().is_default() {
-            inst.add_param("MREG", verilog::Expr::new_int(0));
-            inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
-        } else {
-            inst.add_param("MREG", verilog::Expr::new_int(1));
-            inst.connect("CEM", verilog::Expr::from(dsp.en().clone()));
-        }
+        inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
         match dsp.op() {
             DspOp::Add => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
@@ -182,6 +177,7 @@ impl From<DspVector> for verilog::Stmt {
         inst.add_param("INMODEREG", verilog::Expr::new_int(0));
         inst.add_param("OPMODEREG", verilog::Expr::new_int(0));
         inst.add_param("PREG", verilog::Expr::new_int(0));
+        inst.add_param("MREG", verilog::Expr::new_int(0));
         // default input values
         inst.connect("ACIN", verilog::Expr::new_ulit_dec(30, "0"));
         inst.connect("BCIN", verilog::Expr::new_ulit_dec(18, "0"));

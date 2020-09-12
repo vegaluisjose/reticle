@@ -362,13 +362,12 @@ impl DspVector {
         self.attrs.insert(attr.to_string());
     }
 
-    pub fn set_input_new(&mut self, input: &str) {
-        self.inputs.insert(input.to_string(), Expr::new_ref(input));
+    pub fn set_input_new(&mut self, key: &str, value: &str) {
+        self.inputs.insert(key.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_output_new(&mut self, output: &str) {
-        self.outputs
-            .insert(output.to_string(), Expr::new_ref(output));
+    pub fn set_output_new(&mut self, key: &str, value: &str) {
+        self.outputs.insert(key.to_string(), Expr::new_ref(value));
     }
 
     pub fn set_clock(&mut self, clock: &str) {
