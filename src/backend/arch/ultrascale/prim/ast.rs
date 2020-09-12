@@ -81,10 +81,7 @@ pub struct Reg {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspScalarOp {
-    Add,
-    Sub,
-    Mul,
-    AddRegMul,
+    MulAdd,
 }
 
 #[derive(Clone, Debug)]
