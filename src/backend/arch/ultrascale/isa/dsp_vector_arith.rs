@@ -54,17 +54,17 @@ impl Emit for DspVectorArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_vector_op(&instr);
         let mut dsp = DspVector::new(op, instr.dst_ty().length());
-        let left = emit_vector_wire(asm, dsp.width());
-        let right = emit_vector_wire(asm, dsp.width());
+        let a = emit_vector_wire(asm, dsp.width());
+        let b = emit_vector_wire(asm, dsp.width());
         let output = emit_vector_wire(asm, dsp.width());
         dsp.set_id(&asm.new_instance_name());
         dsp.set_input_new("clock", &asm.clock());
         dsp.set_input_new("reset", &asm.reset());
-        dsp.set_left(&left);
-        dsp.set_right(&right);
+        dsp.set_input_new("a", &a);
+        dsp.set_input_new("b", &b);
         dsp.set_output(&output);
-        emit_vector_input(asm, instr.clone(), &left, 0, dsp.pad());
-        emit_vector_input(asm, instr.clone(), &right, 1, dsp.pad());
+        emit_vector_input(asm, instr.clone(), &a, 0, dsp.pad());
+        emit_vector_input(asm, instr.clone(), &b, 1, dsp.pad());
         emit_vector_output(asm, instr, &output, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }

@@ -64,6 +64,8 @@ impl From<DspVector> for verilog::Stmt {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
         let clock = dsp.get_input("clock").clone();
         let reset = dsp.get_input("reset").clone();
+        let a = dsp.get_input("a").clone();
+        let b = dsp.get_input("b").clone();
         inst.connect("CLK", verilog::Expr::from(clock));
         inst.connect("RSTA", verilog::Expr::from(reset.clone()));
         inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
@@ -202,7 +204,7 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect(
             "A",
             verilog::Expr::new_slice(
-                &dsp.right().id(),
+                &b.id(),
                 verilog::Expr::new_int(47),
                 verilog::Expr::new_int(18),
             ),
@@ -210,12 +212,12 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect(
             "B",
             verilog::Expr::new_slice(
-                &dsp.right().id(),
+                &b.id(),
                 verilog::Expr::new_int(17),
                 verilog::Expr::new_int(0),
             ),
         );
-        inst.connect("C", verilog::Expr::from(dsp.left().clone()));
+        inst.connect("C", verilog::Expr::from(a));
         inst.connect("P", verilog::Expr::from(dsp.output().clone())); // output
         verilog::Stmt::from(inst)
     }
