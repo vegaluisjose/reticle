@@ -247,16 +247,16 @@ impl DspScalar {
         }
     }
 
+    pub fn op(&self) -> &DspScalarOp {
+        &self.op
+    }
+
     pub fn has_attr(&self, attr: &str) -> bool {
         self.attrs.contains(attr)
     }
 
     pub fn get_id(&self) -> String {
         self.id.to_string()
-    }
-
-    pub fn get_op(&self) -> &DspScalarOp {
-        &self.op
     }
 
     pub fn get_input(&self, input: &str) -> &Expr {
