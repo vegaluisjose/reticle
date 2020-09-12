@@ -7,3 +7,4 @@ venv
 *.pb
 __pycache__/
 *.cpython.*
+.cargo/
