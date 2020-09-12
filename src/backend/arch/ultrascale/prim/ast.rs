@@ -77,14 +77,15 @@ pub struct Reg {
     pub loc: Option<Loc>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspOp {
     Add,
     Sub,
     Mul,
+    AddRegMul,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspTy {
     Scalar,
     Vector(u64),
