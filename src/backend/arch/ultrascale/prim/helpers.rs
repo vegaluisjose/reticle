@@ -279,7 +279,7 @@ impl DspScalar {
         self.id = id.to_string();
     }
 
-    pub fn set_attr_new(&mut self, attr: &str) {
+    pub fn set_attr(&mut self, attr: &str) {
         self.attrs.insert(attr.to_string());
     }
 
@@ -373,7 +373,7 @@ impl DspVector {
         self.id = id.to_string();
     }
 
-    pub fn set_attr_new(&mut self, attr: &str) {
+    pub fn set_attr(&mut self, attr: &str) {
         self.attrs.insert(attr.to_string());
     }
 
