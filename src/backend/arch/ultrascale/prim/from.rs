@@ -37,7 +37,7 @@ impl From<Lut> for verilog::Stmt {
 impl From<Reg> for verilog::Stmt {
     fn from(reg: Reg) -> Self {
         let output = reg.get_output("y");
-        let mut inst = verilog::Instance::new(&reg.id(), &reg.ty().to_string());
+        let mut inst = verilog::Instance::new(&reg.get_id(), &reg.ty().to_string());
         inst.add_param("IS_C_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_D_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         if reg.is_fdre() {

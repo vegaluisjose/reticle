@@ -173,7 +173,7 @@ impl Reg {
         }
     }
 
-    pub fn id(&self) -> String {
+    pub fn get_id(&self) -> String {
         self.id.to_string()
     }
 
