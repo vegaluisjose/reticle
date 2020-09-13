@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
 pub type Id = String;
+pub type PortMap = HashMap<String, Expr>;
 
 #[derive(Clone, Debug)]
 pub enum Expr {
@@ -73,8 +74,8 @@ pub enum RegTy {
 pub struct Reg {
     pub ty: RegTy,
     pub id: Id,
-    pub inputs: HashMap<String, Expr>,
-    pub outputs: HashMap<String, Expr>,
+    pub inputs: PortMap,
+    pub outputs: PortMap,
     pub loc: Option<Loc>,
 }
 
@@ -89,8 +90,8 @@ pub struct DspScalar {
     pub id: Id,
     pub widths: HashMap<String, u64>,
     pub attrs: HashSet<String>,
-    pub inputs: HashMap<String, Expr>,
-    pub outputs: HashMap<String, Expr>,
+    pub inputs: PortMap,
+    pub outputs: PortMap,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -107,8 +108,8 @@ pub struct DspVector {
     pub length: u64,
     pub word: u64,
     pub attrs: HashSet<String>,
-    pub inputs: HashMap<String, Expr>,
-    pub outputs: HashMap<String, Expr>,
+    pub inputs: PortMap,
+    pub outputs: PortMap,
 }
 
 #[derive(Clone, Debug)]
@@ -128,5 +129,5 @@ pub struct Const {
     pub id: Id,
     pub width: u64,
     pub value: i64,
-    pub inputs: HashMap<String, Expr>,
+    pub inputs: PortMap,
 }

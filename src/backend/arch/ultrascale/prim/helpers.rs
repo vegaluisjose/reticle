@@ -135,8 +135,8 @@ impl Reg {
         Reg {
             ty: RegTy::Fdre,
             id: String::new(),
-            inputs: HashMap::new(),
-            outputs: HashMap::new(),
+            inputs: PortMap::new(),
+            outputs: PortMap::new(),
             loc: None,
         }
     }
@@ -145,8 +145,8 @@ impl Reg {
         Reg {
             ty: RegTy::Fdse,
             id: String::new(),
-            inputs: HashMap::new(),
-            outputs: HashMap::new(),
+            inputs: PortMap::new(),
+            outputs: PortMap::new(),
             loc: None,
         }
     }
@@ -228,8 +228,8 @@ impl DspScalar {
             id: String::new(),
             widths,
             attrs: HashSet::new(),
-            inputs: HashMap::new(),
-            outputs: HashMap::new(),
+            inputs: PortMap::new(),
+            outputs: PortMap::new(),
         }
     }
 
@@ -318,8 +318,8 @@ impl DspVector {
             length,
             word,
             attrs: HashSet::new(),
-            inputs: HashMap::new(),
-            outputs: HashMap::new(),
+            inputs: PortMap::new(),
+            outputs: PortMap::new(),
         }
     }
 
@@ -436,7 +436,7 @@ impl Const {
             id: String::new(),
             width,
             value,
-            inputs: HashMap::new(),
+            inputs: PortMap::new(),
         }
     }
 
