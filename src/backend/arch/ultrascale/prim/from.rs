@@ -237,6 +237,61 @@ impl From<DspScalar> for verilog::Stmt {
         inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
         inst.connect("RSTM", verilog::Expr::from(reset.clone()));
         inst.connect("RSTP", verilog::Expr::from(reset));
+        match dsp.op() {
+            DspScalarOp::MulAdd => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
+                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
+                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
+                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
+            }
+        }
+        // default params
+        inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48"));
+        inst.add_param("A_INPUT", verilog::Expr::new_str("DIRECT"));
+        inst.add_param("AMULTSEL", verilog::Expr::new_str("A"));
+        inst.add_param("B_INPUT", verilog::Expr::new_str("DIRECT"));
+        inst.add_param("BMULTSEL", verilog::Expr::new_str("B"));
+        inst.add_param("PREADDINSEL", verilog::Expr::new_str("A"));
+        inst.add_param("RND", verilog::Expr::new_ulit_hex(48, "0"));
+        inst.add_param("USE_WIDEXOR", verilog::Expr::new_str("FALSE"));
+        inst.add_param("XORSIMD", verilog::Expr::new_str("XOR24_48_96"));
+        inst.add_param("AUTORESET_PATDET", verilog::Expr::new_str("NO_RESET"));
+        inst.add_param("AUTORESET_PRIORITY", verilog::Expr::new_str("RESET"));
+        inst.add_param("MASK", verilog::Expr::new_ulit_hex(48, "3fffffffffff"));
+        inst.add_param("PATTERN", verilog::Expr::new_ulit_hex(48, "0"));
+        inst.add_param("SEL_MASK", verilog::Expr::new_str("MASK"));
+        inst.add_param("SEL_PATTERN", verilog::Expr::new_str("PATTERN"));
+        inst.add_param("USE_PATTERN_DETECT", verilog::Expr::new_str("NO_PATDET"));
+        inst.add_param(
+            "IS_ALUMODE_INVERTED",
+            verilog::Expr::new_ulit_bin(4, "0000"),
+        );
+        inst.add_param("IS_CARRYIN_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_CLK_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param(
+            "IS_INMODE_INVERTED",
+            verilog::Expr::new_ulit_bin(5, "00000"),
+        );
+        inst.add_param(
+            "IS_OPMODE_INVERTED",
+            verilog::Expr::new_ulit_bin(9, "000000000"),
+        );
+        inst.add_param(
+            "IS_RSTALLCARRYIN_INVERTED",
+            verilog::Expr::new_ulit_bin(1, "0"),
+        );
+        inst.add_param(
+            "IS_RSTALUMODE_INVERTED",
+            verilog::Expr::new_ulit_bin(1, "0"),
+        );
+        inst.add_param("IS_RSTA_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTB_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTCTRL_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTC_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTD_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTINMODE_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTM_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.add_param("IS_RSTP_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         verilog::Stmt::from(inst)
     }
 }
