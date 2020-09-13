@@ -139,6 +139,7 @@ impl Reg {
             reset: Expr::default(),
             en: Expr::default(),
             input: Expr::default(),
+            inputs: HashMap::new(),
             outputs: HashMap::new(),
             loc: None,
         }
@@ -152,6 +153,7 @@ impl Reg {
             reset: Expr::default(),
             en: Expr::default(),
             input: Expr::default(),
+            inputs: HashMap::new(),
             outputs: HashMap::new(),
             loc: None,
         }
