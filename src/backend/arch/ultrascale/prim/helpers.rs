@@ -306,12 +306,21 @@ impl DspVector {
         params.insert("width".to_string(), 48);
         params.insert("length".to_string(), length as i64);
         params.insert("word".to_string(), word as i64);
+        let mut inputs = PortMap::new();
+        inputs.insert("clock".to_string(), Expr::default());
+        inputs.insert("reset".to_string(), Expr::default());
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("en_input".to_string(), Expr::default());
+        inputs.insert("en_output".to_string(), Expr::default());
+        let mut outputs = PortMap::new();
+        outputs.insert("y".to_string(), Expr::default());
         DspVector {
             op,
             id: String::new(),
             params,
-            inputs: PortMap::new(),
-            outputs: PortMap::new(),
+            inputs,
+            outputs,
         }
     }
 
@@ -335,7 +344,7 @@ impl DspVector {
         if let Some(expr) = self.inputs.get(input) {
             expr
         } else {
-            panic!("Error: dsp vector input does not exist")
+            panic!("Error: {} input does not exist", input)
         }
     }
 
@@ -343,7 +352,7 @@ impl DspVector {
         if let Some(expr) = self.outputs.get(output) {
             expr
         } else {
-            panic!("Error: dsp vector output does not exist")
+            panic!("Error: {} output does not exist", output)
         }
     }
 
@@ -351,12 +360,15 @@ impl DspVector {
         self.id = id.to_string();
     }
 
-    pub fn set_input(&mut self, key: &str, value: &str) {
-        self.inputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_input(&mut self, input: &str, value: &str) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_output(&mut self, key: &str, value: &str) {
-        self.outputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_ref(value));
     }
 }
 
