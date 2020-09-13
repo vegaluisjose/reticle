@@ -67,13 +67,13 @@ impl From<Reg> for verilog::Stmt {
 impl From<DspVector> for verilog::Stmt {
     fn from(dsp: DspVector) -> Self {
         let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
-        let clock = dsp.get_input("clock").clone();
-        let reset = dsp.get_input("reset").clone();
-        let a = dsp.get_input("a").clone();
-        let b = dsp.get_input("b").clone();
-        let y = dsp.get_output("y").clone();
+        let clock = dsp.get_input("clock");
+        let reset = dsp.get_input("reset");
+        let a = dsp.get_input("a");
+        let b = dsp.get_input("b");
+        let y = dsp.get_output("y");
         // clock
-        inst.connect("CLK", verilog::Expr::from(clock));
+        inst.connect("CLK", verilog::Expr::from(clock.clone()));
         // resets
         inst.connect("RSTA", verilog::Expr::from(reset.clone()));
         inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
@@ -84,7 +84,7 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("RSTD", verilog::Expr::from(reset.clone()));
         inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
         inst.connect("RSTM", verilog::Expr::from(reset.clone()));
-        inst.connect("RSTP", verilog::Expr::from(reset));
+        inst.connect("RSTP", verilog::Expr::from(reset.clone()));
         // operands
         inst.connect(
             "A",
@@ -102,8 +102,8 @@ impl From<DspVector> for verilog::Stmt {
                 verilog::Expr::new_int(0),
             ),
         );
-        inst.connect("C", verilog::Expr::from(a));
-        inst.connect("P", verilog::Expr::from(y));
+        inst.connect("C", verilog::Expr::from(a.clone()));
+        inst.connect("P", verilog::Expr::from(y.clone()));
         // derive attributes
         match dsp.op() {
             DspVectorOp::Add => {
@@ -229,15 +229,15 @@ impl From<DspVector> for verilog::Stmt {
 impl From<DspScalar> for verilog::Stmt {
     fn from(dsp: DspScalar) -> Self {
         let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
-        let clock = dsp.get_input("clock").clone();
-        let reset = dsp.get_input("reset").clone();
-        let a = dsp.get_input("a").clone();
-        let b = dsp.get_input("b").clone();
-        let c = dsp.get_input("c").clone();
-        let en_mul = dsp.get_input("en_mul").clone();
-        let y = dsp.get_output("y").clone();
+        let clock = dsp.get_input("clock");
+        let reset = dsp.get_input("reset");
+        let a = dsp.get_input("a");
+        let b = dsp.get_input("b");
+        let c = dsp.get_input("c");
+        let en_mul = dsp.get_input("en_mul");
+        let y = dsp.get_output("y");
         // clock
-        inst.connect("CLK", verilog::Expr::from(clock));
+        inst.connect("CLK", verilog::Expr::from(clock.clone()));
         // resets
         inst.connect("RSTA", verilog::Expr::from(reset.clone()));
         inst.connect("RSTALLCARRYIN", verilog::Expr::from(reset.clone()));
@@ -248,12 +248,12 @@ impl From<DspScalar> for verilog::Stmt {
         inst.connect("RSTD", verilog::Expr::from(reset.clone()));
         inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
         inst.connect("RSTM", verilog::Expr::from(reset.clone()));
-        inst.connect("RSTP", verilog::Expr::from(reset));
+        inst.connect("RSTP", verilog::Expr::from(reset.clone()));
         // operands
-        inst.connect("A", verilog::Expr::from(a));
-        inst.connect("B", verilog::Expr::from(b));
-        inst.connect("C", verilog::Expr::from(c));
-        inst.connect("P", verilog::Expr::from(y));
+        inst.connect("A", verilog::Expr::from(a.clone()));
+        inst.connect("B", verilog::Expr::from(b.clone()));
+        inst.connect("C", verilog::Expr::from(c.clone()));
+        inst.connect("P", verilog::Expr::from(y.clone()));
         // derive attributes
         match dsp.op() {
             DspScalarOp::MulAdd => {
@@ -262,7 +262,7 @@ impl From<DspScalar> for verilog::Stmt {
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
                 inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
-                inst.connect("CEM", verilog::Expr::from(en_mul));
+                inst.connect("CEM", verilog::Expr::from(en_mul.clone()));
             }
         }
         // default params
