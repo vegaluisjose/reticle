@@ -434,11 +434,11 @@ impl Const {
         }
     }
 
-    pub fn get_param(&self, key: &str) -> i64 {
-        if let Some(param) = self.params.get(key) {
-            *param
+    pub fn get_param(&self, param: &str) -> i64 {
+        if let Some(value) = self.params.get(param) {
+            *value
         } else {
-            panic!("Error: {} param does not exist", key);
+            panic!("Error: {} param does not exist", param);
         }
     }
 
@@ -446,11 +446,11 @@ impl Const {
         self.id.to_string()
     }
 
-    pub fn get_input(&self, key: &str) -> &Expr {
-        if let Some(input) = self.inputs.get(key) {
-            input
+    pub fn get_input(&self, input: &str) -> &Expr {
+        if let Some(expr) = self.inputs.get(input) {
+            expr
         } else {
-            panic!("Error: {} input does not exist", key);
+            panic!("Error: {} input does not exist", input);
         }
     }
 
@@ -458,7 +458,7 @@ impl Const {
         self.id = id.to_string();
     }
 
-    pub fn set_input(&mut self, key: &str, value: &str) {
-        self.inputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_input(&mut self, input: &str, value: &str) {
+        self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 }
