@@ -8,6 +8,7 @@ examples = [
     "examples/isa/scalar/register.ret",
     "examples/basic/fsm.ret",
     "examples/basic/vadd_const.ret",
+    "examples/basic/muladd.ret",
 ]
 
 
@@ -133,7 +134,7 @@ def run_vivado_sim(docker: bool, infile: str):
     wd = "ci"
     script = os.path.join(wd, "vivado_sim.sh")
     dut = os.path.join(wd, "{}.v".format(name))
-    test = os.path.join(wd, "{}.v".format(name))
+    test = os.path.join(wd, "{}.v".format(test_name))
     cmd = []
     cmd.append(get_vivado_path(docker, script))
     cmd.append(test_name)
