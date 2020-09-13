@@ -366,7 +366,7 @@ impl Vcc {
     pub fn new(id: &str) -> Vcc {
         Vcc {
             id: id.to_string(),
-            output: Expr::default(),
+            outputs: PortMap::new(),
         }
     }
 
@@ -374,16 +374,20 @@ impl Vcc {
         self.id.to_string()
     }
 
-    pub fn get_output(&self) -> &Expr {
-        &self.output
+    pub fn get_output(&self, output: &str) -> &Expr {
+        if let Some(expr) = self.outputs.get(output) {
+            expr
+        } else {
+            panic!("Error: {} output does not exist", output);
+        }
     }
 
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
     }
 
-    pub fn set_output(&mut self, output: &str) {
-        self.output = Expr::new_ref(output);
+    pub fn set_output(&mut self, key: &str, value: &str) {
+        self.outputs.insert(key.to_string(), Expr::new_ref(value));
     }
 }
 
@@ -391,7 +395,7 @@ impl Gnd {
     pub fn new(id: &str) -> Gnd {
         Gnd {
             id: id.to_string(),
-            output: Expr::default(),
+            outputs: PortMap::new(),
         }
     }
 
@@ -399,16 +403,20 @@ impl Gnd {
         self.id.to_string()
     }
 
-    pub fn get_output(&self) -> &Expr {
-        &self.output
+    pub fn get_output(&self, output: &str) -> &Expr {
+        if let Some(expr) = self.outputs.get(output) {
+            expr
+        } else {
+            panic!("Error: {} output does not exist", output);
+        }
     }
 
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
     }
 
-    pub fn set_output(&mut self, output: &str) {
-        self.output = Expr::new_ref(output);
+    pub fn set_output(&mut self, key: &str, value: &str) {
+        self.outputs.insert(key.to_string(), Expr::new_ref(value));
     }
 }
 

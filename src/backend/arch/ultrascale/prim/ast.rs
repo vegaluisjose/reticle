@@ -114,13 +114,13 @@ pub struct DspVector {
 #[derive(Clone, Debug)]
 pub struct Vcc {
     pub id: Id,
-    pub output: Expr,
+    pub outputs: PortMap,
 }
 
 #[derive(Clone, Debug)]
 pub struct Gnd {
     pub id: Id,
-    pub output: Expr,
+    pub outputs: PortMap,
 }
 
 #[derive(Clone, Debug)]

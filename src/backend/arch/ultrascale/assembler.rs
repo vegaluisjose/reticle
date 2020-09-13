@@ -175,8 +175,8 @@ impl Assembler {
     pub fn emit_vcc_and_gnd(&mut self) {
         let mut vcc = Vcc::default();
         let mut gnd = Gnd::default();
-        vcc.set_output(&self.vcc());
-        gnd.set_output(&self.gnd());
+        vcc.set_output("y", &self.vcc());
+        gnd.set_output("y", &self.gnd());
         let vcc_wire = verilog::Decl::new_wire(&self.vcc, 1);
         let gnd_wire = verilog::Decl::new_wire(&self.gnd, 1);
         self.add_wire(verilog::Stmt::from(vcc_wire));

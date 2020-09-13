@@ -10,7 +10,7 @@ impl Default for Vcc {
     fn default() -> Vcc {
         Vcc {
             id: "VCC".to_string(),
-            output: Expr::default(),
+            outputs: PortMap::new(),
         }
     }
 }
@@ -19,7 +19,7 @@ impl Default for Gnd {
     fn default() -> Gnd {
         Gnd {
             id: "GND".to_string(),
-            output: Expr::default(),
+            outputs: PortMap::new(),
         }
     }
 }

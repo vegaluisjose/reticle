@@ -366,16 +366,18 @@ impl From<DspScalar> for verilog::Stmt {
 
 impl From<Vcc> for verilog::Stmt {
     fn from(vcc: Vcc) -> Self {
+        let y = vcc.get_output("y");
         let mut inst = verilog::Instance::new(&vcc.get_id(), "VCC");
-        inst.connect("P", verilog::Expr::from(vcc.get_output().clone()));
+        inst.connect("P", verilog::Expr::from(y.clone()));
         verilog::Stmt::from(inst)
     }
 }
 
 impl From<Gnd> for verilog::Stmt {
     fn from(gnd: Gnd) -> Self {
+        let y = gnd.get_output("y");
         let mut inst = verilog::Instance::new(&gnd.get_id(), "GND");
-        inst.connect("G", verilog::Expr::from(gnd.get_output().clone()));
+        inst.connect("G", verilog::Expr::from(y.clone()));
         verilog::Stmt::from(inst)
     }
 }
