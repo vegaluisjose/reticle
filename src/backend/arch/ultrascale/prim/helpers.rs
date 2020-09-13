@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::prim::ast::*;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 impl Expr {
     pub fn id(&self) -> String {
@@ -227,7 +227,6 @@ impl DspScalar {
             op,
             id: String::new(),
             widths,
-            attrs: HashSet::new(),
             inputs: PortMap::new(),
             outputs: PortMap::new(),
         }
@@ -235,10 +234,6 @@ impl DspScalar {
 
     pub fn op(&self) -> &DspScalarOp {
         &self.op
-    }
-
-    pub fn has_attr(&self, attr: &str) -> bool {
-        self.attrs.contains(attr)
     }
 
     pub fn get_id(&self) -> String {
@@ -271,10 +266,6 @@ impl DspScalar {
 
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
-    }
-
-    pub fn set_attr(&mut self, attr: &str) {
-        self.attrs.insert(attr.to_string());
     }
 
     pub fn set_input(&mut self, key: &str, value: &str) {
@@ -317,7 +308,6 @@ impl DspVector {
             width: 48,
             length,
             word,
-            attrs: HashSet::new(),
             inputs: PortMap::new(),
             outputs: PortMap::new(),
         }
@@ -337,10 +327,6 @@ impl DspVector {
 
     pub fn word(&self) -> u64 {
         self.word
-    }
-
-    pub fn has_attr(&self, attr: &str) -> bool {
-        self.attrs.contains(attr)
     }
 
     pub fn get_id(&self) -> String {
@@ -365,10 +351,6 @@ impl DspVector {
 
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
-    }
-
-    pub fn set_attr(&mut self, attr: &str) {
-        self.attrs.insert(attr.to_string());
     }
 
     pub fn set_input(&mut self, key: &str, value: &str) {

@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 pub type Id = String;
 pub type PortMap = HashMap<String, Expr>;
@@ -89,7 +89,6 @@ pub struct DspScalar {
     pub op: DspScalarOp,
     pub id: Id,
     pub widths: HashMap<String, u64>,
-    pub attrs: HashSet<String>,
     pub inputs: PortMap,
     pub outputs: PortMap,
 }
@@ -107,7 +106,6 @@ pub struct DspVector {
     pub width: u64,
     pub length: u64,
     pub word: u64,
-    pub attrs: HashSet<String>,
     pub inputs: PortMap,
     pub outputs: PortMap,
 }
