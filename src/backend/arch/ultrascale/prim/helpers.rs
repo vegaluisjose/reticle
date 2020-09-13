@@ -427,10 +427,13 @@ impl Const {
         let mut params = ParamMap::new();
         params.insert("width".to_string(), width as i64);
         params.insert("value".to_string(), value);
+        let mut inputs = PortMap::new();
+        inputs.insert("gnd".to_string(), Expr::default());
+        inputs.insert("vcc".to_string(), Expr::default());
         Const {
             id: String::new(),
             params,
-            inputs: PortMap::new(),
+            inputs,
         }
     }
 
@@ -459,6 +462,7 @@ impl Const {
     }
 
     pub fn set_input(&mut self, input: &str, value: &str) {
+        assert!(self.inputs.contains_key(input));
         self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 }
