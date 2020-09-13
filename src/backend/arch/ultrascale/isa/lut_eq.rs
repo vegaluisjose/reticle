@@ -70,7 +70,7 @@ impl Emit for LutEq {
             reg.set_reset(&asm.reset());
             reg.set_en(&en);
             reg.set_input(&wire_r_name);
-            reg.set_output(&res);
+            reg.set_output("y", &res);
         } else {
             lut_0.set_output(&res);
         }

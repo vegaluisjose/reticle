@@ -46,12 +46,12 @@ impl Emit for LutMux {
                     lut.add_input(&tru);
                     lut.add_input(&fal);
                     reg.set_input(&wire_name);
-                    reg.set_output(&res);
+                    reg.set_output("y", &res);
                 } else {
                     lut.add_input_with_index(&tru, i as u32);
                     lut.add_input_with_index(&fal, i as u32);
                     reg.set_input_with_index(&wire_name, i as u32);
-                    reg.set_output_with_index(&res, i as u32);
+                    reg.set_output_with_index("y", &res, i as u32);
                 }
                 asm.add_instance(verilog::Stmt::from(reg));
                 asm.add_instance(verilog::Stmt::from(lut));

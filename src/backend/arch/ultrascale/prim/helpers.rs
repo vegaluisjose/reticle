@@ -139,7 +139,7 @@ impl Reg {
             reset: Expr::default(),
             en: Expr::default(),
             input: Expr::default(),
-            output: Expr::default(),
+            outputs: HashMap::new(),
             loc: None,
         }
     }
@@ -152,7 +152,7 @@ impl Reg {
             reset: Expr::default(),
             en: Expr::default(),
             input: Expr::default(),
-            output: Expr::default(),
+            outputs: HashMap::new(),
             loc: None,
         }
     }
@@ -195,8 +195,12 @@ impl Reg {
         &self.input
     }
 
-    pub fn output(&self) -> &Expr {
-        &self.output
+    pub fn get_output(&self, key: &str) -> &Expr {
+        if let Some(output) = self.outputs.get(key) {
+            output
+        } else {
+            panic!("Error: {} output does not exist", key);
+        }
     }
 
     pub fn set_id(&mut self, id: &str) {
@@ -223,12 +227,13 @@ impl Reg {
         self.input = Expr::new_index(input, index);
     }
 
-    pub fn set_output(&mut self, output: &str) {
-        self.output = Expr::new_ref(output);
+    pub fn set_output(&mut self, key: &str, value: &str) {
+        self.outputs.insert(key.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_output_with_index(&mut self, output: &str, index: u32) {
-        self.output = Expr::new_index(output, index);
+    pub fn set_output_with_index(&mut self, key: &str, value: &str, index: u32) {
+        self.outputs
+            .insert(key.to_string(), Expr::new_index(value, index));
     }
 
     pub fn set_loc(&mut self, loc: Loc) {

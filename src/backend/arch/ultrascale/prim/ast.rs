@@ -75,7 +75,7 @@ pub struct Reg {
     pub reset: Expr,
     pub en: Expr,
     pub input: Expr,
-    pub output: Expr,
+    pub outputs: HashMap<String, Expr>,
     pub loc: Option<Loc>,
 }
 
