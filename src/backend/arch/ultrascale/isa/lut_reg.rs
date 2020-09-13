@@ -20,7 +20,7 @@ impl Emit for LutReg {
             reg.set_clock(&asm.clock());
             reg.set_reset(&asm.reset());
             reg.set_en(&en);
-            reg.set_input_with_index(&val, i as u32);
+            reg.set_input_with_index("a", &val, i as u32);
             reg.set_output_with_index("y", &res, i as u32);
             asm.add_instance(verilog::Stmt::from(reg));
         }

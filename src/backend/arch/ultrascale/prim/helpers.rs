@@ -197,6 +197,14 @@ impl Reg {
         &self.input
     }
 
+    pub fn get_input(&self, key: &str) -> &Expr {
+        if let Some(input) = self.inputs.get(key) {
+            input
+        } else {
+            panic!("Error: {} input does not exist", key);
+        }
+    }
+
     pub fn get_output(&self, key: &str) -> &Expr {
         if let Some(output) = self.outputs.get(key) {
             output
@@ -221,12 +229,13 @@ impl Reg {
         self.en = Expr::new_ref(en);
     }
 
-    pub fn set_input(&mut self, input: &str) {
-        self.input = Expr::new_ref(input);
+    pub fn set_input(&mut self, key: &str, value: &str) {
+        self.inputs.insert(key.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_input_with_index(&mut self, input: &str, index: u32) {
-        self.input = Expr::new_index(input, index);
+    pub fn set_input_with_index(&mut self, key: &str, value: &str, index: u32) {
+        self.inputs
+            .insert(key.to_string(), Expr::new_index(value, index));
     }
 
     pub fn set_output(&mut self, key: &str, value: &str) {
