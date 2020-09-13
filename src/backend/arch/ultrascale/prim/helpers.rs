@@ -129,13 +129,28 @@ impl Lut {
     }
 }
 
+fn reg_default_inputs() -> PortMap {
+    let mut inputs = PortMap::new();
+    inputs.insert("clock".to_string(), Expr::default());
+    inputs.insert("reset".to_string(), Expr::default());
+    inputs.insert("a".to_string(), Expr::default());
+    inputs.insert("en".to_string(), Expr::default());
+    inputs
+}
+
+fn reg_default_outputs() -> PortMap {
+    let mut outputs = PortMap::new();
+    outputs.insert("y".to_string(), Expr::default());
+    outputs
+}
+
 impl Reg {
     pub fn new_fdre() -> Reg {
         Reg {
             ty: RegTy::Fdre,
             id: String::new(),
-            inputs: PortMap::new(),
-            outputs: PortMap::new(),
+            inputs: reg_default_inputs(),
+            outputs: reg_default_outputs(),
             loc: None,
         }
     }
@@ -144,8 +159,8 @@ impl Reg {
         Reg {
             ty: RegTy::Fdse,
             id: String::new(),
-            inputs: PortMap::new(),
-            outputs: PortMap::new(),
+            inputs: reg_default_inputs(),
+            outputs: reg_default_outputs(),
             loc: None,
         }
     }
@@ -192,22 +207,27 @@ impl Reg {
         self.id = id.to_string();
     }
 
-    pub fn set_input(&mut self, key: &str, value: &str) {
-        self.inputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_input(&mut self, input: &str, value: &str) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_input_with_index(&mut self, key: &str, value: &str, index: u32) {
+    pub fn set_input_with_index(&mut self, input: &str, value: &str, index: u32) {
+        assert!(self.inputs.contains_key(input));
         self.inputs
-            .insert(key.to_string(), Expr::new_index(value, index));
+            .insert(input.to_string(), Expr::new_index(value, index));
     }
 
-    pub fn set_output(&mut self, key: &str, value: &str) {
-        self.outputs.insert(key.to_string(), Expr::new_ref(value));
-    }
-
-    pub fn set_output_with_index(&mut self, key: &str, value: &str, index: u32) {
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
         self.outputs
-            .insert(key.to_string(), Expr::new_index(value, index));
+            .insert(output.to_string(), Expr::new_ref(value));
+    }
+
+    pub fn set_output_with_index(&mut self, output: &str, value: &str, index: u32) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_index(value, index));
     }
 
     pub fn set_loc(&mut self, loc: Loc) {
