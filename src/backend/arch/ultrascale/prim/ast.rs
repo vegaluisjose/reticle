@@ -71,10 +71,6 @@ pub enum RegTy {
 pub struct Reg {
     pub ty: RegTy,
     pub id: String,
-    pub clock: Expr,
-    pub reset: Expr,
-    pub en: Expr,
-    pub input: Expr,
     pub inputs: HashMap<String, Expr>,
     pub outputs: HashMap<String, Expr>,
     pub loc: Option<Loc>,

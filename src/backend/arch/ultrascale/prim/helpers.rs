@@ -135,10 +135,6 @@ impl Reg {
         Reg {
             ty: RegTy::Fdre,
             id: String::new(),
-            clock: Expr::default(),
-            reset: Expr::default(),
-            en: Expr::default(),
-            input: Expr::default(),
             inputs: HashMap::new(),
             outputs: HashMap::new(),
             loc: None,
@@ -149,10 +145,6 @@ impl Reg {
         Reg {
             ty: RegTy::Fdse,
             id: String::new(),
-            clock: Expr::default(),
-            reset: Expr::default(),
-            en: Expr::default(),
-            input: Expr::default(),
             inputs: HashMap::new(),
             outputs: HashMap::new(),
             loc: None,
@@ -173,28 +165,12 @@ impl Reg {
         }
     }
 
-    pub fn get_id(&self) -> String {
-        self.id.to_string()
-    }
-
     pub fn ty(&self) -> &RegTy {
         &self.ty
     }
 
-    pub fn clock(&self) -> &Expr {
-        &self.clock
-    }
-
-    pub fn reset(&self) -> &Expr {
-        &self.reset
-    }
-
-    pub fn en(&self) -> &Expr {
-        &self.en
-    }
-
-    pub fn input(&self) -> &Expr {
-        &self.input
+    pub fn get_id(&self) -> String {
+        self.id.to_string()
     }
 
     pub fn get_input(&self, key: &str) -> &Expr {
@@ -215,18 +191,6 @@ impl Reg {
 
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
-    }
-
-    pub fn set_clock(&mut self, clock: &str) {
-        self.clock = Expr::new_ref(clock);
-    }
-
-    pub fn set_reset(&mut self, reset: &str) {
-        self.reset = Expr::new_ref(reset);
-    }
-
-    pub fn set_en(&mut self, en: &str) {
-        self.en = Expr::new_ref(en);
     }
 
     pub fn set_input(&mut self, key: &str, value: &str) {
