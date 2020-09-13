@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+pub type Id = String;
+
 #[derive(Clone, Debug)]
 pub enum Expr {
     Ref(String),
@@ -54,7 +56,7 @@ pub enum LutTy {
 #[derive(Clone, Debug)]
 pub struct Lut {
     pub ty: LutTy,
-    pub id: String,
+    pub id: Id,
     pub init: String,
     pub inputs: Vec<Expr>,
     pub output: Expr,
@@ -70,7 +72,7 @@ pub enum RegTy {
 #[derive(Clone, Debug)]
 pub struct Reg {
     pub ty: RegTy,
-    pub id: String,
+    pub id: Id,
     pub inputs: HashMap<String, Expr>,
     pub outputs: HashMap<String, Expr>,
     pub loc: Option<Loc>,
@@ -84,7 +86,7 @@ pub enum DspScalarOp {
 #[derive(Clone, Debug)]
 pub struct DspScalar {
     pub op: DspScalarOp,
-    pub id: String,
+    pub id: Id,
     pub widths: HashMap<String, u64>,
     pub attrs: HashSet<String>,
     pub inputs: HashMap<String, Expr>,
@@ -100,7 +102,7 @@ pub enum DspVectorOp {
 #[derive(Clone, Debug)]
 pub struct DspVector {
     pub op: DspVectorOp,
-    pub id: String,
+    pub id: Id,
     pub width: u64,
     pub length: u64,
     pub word: u64,
@@ -111,19 +113,19 @@ pub struct DspVector {
 
 #[derive(Clone, Debug)]
 pub struct Vcc {
-    pub id: String,
+    pub id: Id,
     pub output: Expr,
 }
 
 #[derive(Clone, Debug)]
 pub struct Gnd {
-    pub id: String,
+    pub id: Id,
     pub output: Expr,
 }
 
 #[derive(Clone, Debug)]
 pub struct Const {
-    pub id: String,
+    pub id: Id,
     pub width: u64,
     pub value: i64,
     pub inputs: HashMap<String, Expr>,
