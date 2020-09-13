@@ -69,10 +69,10 @@ impl Emit for DspScalarArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_op(&instr);
         let mut dsp = DspScalar::new(op);
-        let aw = dsp.get_width("a");
-        let bw = dsp.get_width("b");
-        let cw = dsp.get_width("c");
-        let yw = dsp.get_width("y");
+        let aw = dsp.get_param("aw") as u64;
+        let bw = dsp.get_param("bw") as u64;
+        let cw = dsp.get_param("cw") as u64;
+        let yw = dsp.get_param("yw") as u64;
         let a = emit_wire(asm, aw);
         let b = emit_wire(asm, bw);
         let c = emit_wire(asm, cw);

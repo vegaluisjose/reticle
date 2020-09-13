@@ -89,7 +89,7 @@ pub enum DspScalarOp {
 pub struct DspScalar {
     pub op: DspScalarOp,
     pub id: Id,
-    pub widths: HashMap<String, u64>,
+    pub params: ParamMap,
     pub inputs: PortMap,
     pub outputs: PortMap,
 }

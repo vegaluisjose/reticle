@@ -1,5 +1,4 @@
 use crate::backend::arch::ultrascale::prim::ast::*;
-use std::collections::HashMap;
 
 impl Expr {
     pub fn id(&self) -> String {
@@ -218,17 +217,28 @@ impl Reg {
 
 impl DspScalar {
     pub fn new(op: DspScalarOp) -> DspScalar {
-        let mut widths: HashMap<String, u64> = HashMap::new();
-        widths.insert("a".to_string(), 30);
-        widths.insert("b".to_string(), 18);
-        widths.insert("c".to_string(), 48);
-        widths.insert("y".to_string(), 48);
+        let mut params = ParamMap::new();
+        params.insert("aw".to_string(), 30);
+        params.insert("bw".to_string(), 18);
+        params.insert("cw".to_string(), 48);
+        params.insert("yw".to_string(), 48);
+        let mut inputs = PortMap::new();
+        inputs.insert("clock".to_string(), Expr::default());
+        inputs.insert("reset".to_string(), Expr::default());
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("c".to_string(), Expr::default());
+        inputs.insert("en_input".to_string(), Expr::default());
+        inputs.insert("en_mul".to_string(), Expr::default());
+        inputs.insert("en_output".to_string(), Expr::default());
+        let mut outputs = PortMap::new();
+        outputs.insert("y".to_string(), Expr::default());
         DspScalar {
             op,
             id: String::new(),
-            widths,
-            inputs: PortMap::new(),
-            outputs: PortMap::new(),
+            params,
+            inputs,
+            outputs,
         }
     }
 
@@ -240,11 +250,11 @@ impl DspScalar {
         self.id.to_string()
     }
 
-    pub fn get_width(&self, port: &str) -> u64 {
-        if let Some(width) = self.widths.get(port) {
-            *width
+    pub fn get_param(&self, param: &str) -> i64 {
+        if let Some(value) = self.params.get(param) {
+            *value
         } else {
-            panic!("Error: {} port does not exist", port)
+            panic!("Error: {} param does not exist", param);
         }
     }
 
@@ -268,12 +278,15 @@ impl DspScalar {
         self.id = id.to_string();
     }
 
-    pub fn set_input(&mut self, key: &str, value: &str) {
-        self.inputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_input(&mut self, input: &str, value: &str) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_output(&mut self, key: &str, value: &str) {
-        self.outputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_ref(value));
     }
 }
 
