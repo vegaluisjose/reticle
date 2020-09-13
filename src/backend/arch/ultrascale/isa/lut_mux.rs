@@ -41,7 +41,7 @@ impl Emit for LutMux {
                 reg.set_id(&asm.new_instance_name());
                 reg.set_input("clock", &asm.clock());
                 reg.set_input("reset", &asm.reset());
-                reg.set_en(&en);
+                reg.set_input("en", &en);
                 if width == 1 {
                     lut.add_input(&tru);
                     lut.add_input(&fal);

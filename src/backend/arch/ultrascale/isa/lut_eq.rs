@@ -68,7 +68,7 @@ impl Emit for LutEq {
             reg.set_id(&asm.new_instance_name());
             reg.set_input("clock", &asm.clock());
             reg.set_input("reset", &asm.reset());
-            reg.set_en(&en);
+            reg.set_input("en", &en);
             reg.set_input("a", &wire_r_name);
             reg.set_output("y", &res);
         } else {

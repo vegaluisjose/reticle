@@ -39,6 +39,7 @@ impl From<Reg> for verilog::Stmt {
         let a = reg.get_input("a");
         let clock = reg.get_input("clock");
         let reset = reg.get_input("reset");
+        let en = reg.get_input("en");
         let output = reg.get_output("y");
         let mut inst = verilog::Instance::new(&reg.get_id(), &reg.ty().to_string());
         inst.add_param("IS_C_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
@@ -51,7 +52,7 @@ impl From<Reg> for verilog::Stmt {
             inst.add_param("IS_S_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         }
         inst.connect("C", verilog::Expr::from(clock.clone()));
-        inst.connect("CE", verilog::Expr::from(reg.en().clone()));
+        inst.connect("CE", verilog::Expr::from(en.clone()));
         inst.connect("D", verilog::Expr::from(a.clone()));
         inst.connect("Q", verilog::Expr::from(output.clone()));
         if reg.is_fdre() {
