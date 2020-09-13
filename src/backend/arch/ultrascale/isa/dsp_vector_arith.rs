@@ -17,7 +17,7 @@ fn emit_wire(asm: &mut Assembler, width: u64) -> String {
     name
 }
 
-fn emit_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64, index: usize) {
+fn emit_input(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64, index: usize) {
     let mut concat = verilog::ExprConcat::default();
     let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
@@ -35,7 +35,7 @@ fn emit_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64, ind
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-fn emit_output(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64) {
+fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64) {
     let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
     for i in 0..length {
@@ -65,9 +65,9 @@ impl Emit for DspVectorArith {
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
         dsp.set_output("y", &y);
-        emit_input(asm, instr.clone(), &a, dsp.word(), 0);
-        emit_input(asm, instr.clone(), &b, dsp.word(), 1);
-        emit_output(asm, instr, &y, dsp.word());
+        emit_input(asm, &instr, &a, dsp.word(), 0);
+        emit_input(asm, &instr, &b, dsp.word(), 1);
+        emit_output(asm, &instr, &y, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
