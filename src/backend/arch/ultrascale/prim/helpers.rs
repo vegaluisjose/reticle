@@ -414,20 +414,22 @@ impl Gnd {
 
 impl Const {
     pub fn new(width: u64, value: i64) -> Const {
+        let mut params = ParamMap::new();
+        params.insert("width".to_string(), width as i64);
+        params.insert("value".to_string(), value);
         Const {
             id: String::new(),
-            width,
-            value,
+            params,
             inputs: PortMap::new(),
         }
     }
 
-    pub fn width(&self) -> u64 {
-        self.width
-    }
-
-    pub fn value(&self) -> i64 {
-        self.value
+    pub fn get_param(&self, key: &str) -> i64 {
+        if let Some(param) = self.params.get(key) {
+            *param
+        } else {
+            panic!("Error: {} param does not exist", key);
+        }
     }
 
     pub fn get_id(&self) -> String {

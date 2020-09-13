@@ -385,8 +385,10 @@ impl From<Const> for verilog::Stmt {
         let mut concat = verilog::ExprConcat::default();
         let gnd = constant.get_input("gnd");
         let vcc = constant.get_input("vcc");
-        for i in 0..constant.width() {
-            let shift = constant.value() >> i;
+        let width = constant.get_param("width");
+        let value = constant.get_param("value");
+        for i in 0..width {
+            let shift = value >> i;
             let mask = shift & 1;
             let is_one = mask == 1;
             if is_one {

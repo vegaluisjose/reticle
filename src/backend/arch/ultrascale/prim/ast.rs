@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 pub type Id = String;
 pub type PortMap = HashMap<String, Expr>;
+pub type ParamMap = HashMap<String, i64>;
 
 #[derive(Clone, Debug)]
 pub enum Expr {
@@ -125,7 +126,6 @@ pub struct Gnd {
 #[derive(Clone, Debug)]
 pub struct Const {
     pub id: Id,
-    pub width: u64,
-    pub value: i64,
+    pub params: ParamMap,
     pub inputs: PortMap,
 }
