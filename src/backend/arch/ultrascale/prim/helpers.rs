@@ -454,23 +454,10 @@ impl Const {
     pub fn new(width: u64, value: i64) -> Const {
         Const {
             id: String::new(),
-            gnd: Expr::default(),
-            vcc: Expr::default(),
             width,
             value,
+            inputs: HashMap::new(),
         }
-    }
-
-    pub fn id(&self) -> String {
-        self.id.to_string()
-    }
-
-    pub fn gnd(&self) -> &Expr {
-        &self.gnd
-    }
-
-    pub fn vcc(&self) -> &Expr {
-        &self.vcc
     }
 
     pub fn width(&self) -> u64 {
@@ -481,15 +468,23 @@ impl Const {
         self.value
     }
 
+    pub fn get_id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn get_input(&self, key: &str) -> &Expr {
+        if let Some(input) = self.inputs.get(key) {
+            input
+        } else {
+            panic!("Error: {} input does not exist", key);
+        }
+    }
+
     pub fn set_id(&mut self, id: &str) {
         self.id = id.to_string();
     }
 
-    pub fn set_gnd(&mut self, gnd: &str) {
-        self.gnd = Expr::new_ref(gnd);
-    }
-
-    pub fn set_vcc(&mut self, vcc: &str) {
-        self.vcc = Expr::new_ref(vcc);
+    pub fn set_input(&mut self, key: &str, value: &str) {
+        self.inputs.insert(key.to_string(), Expr::new_ref(value));
     }
 }

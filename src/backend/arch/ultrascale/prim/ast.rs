@@ -127,8 +127,7 @@ pub struct Gnd {
 #[derive(Clone, Debug)]
 pub struct Const {
     pub id: String,
-    pub gnd: Expr,
-    pub vcc: Expr,
     pub width: u64,
     pub value: i64,
+    pub inputs: HashMap<String, Expr>,
 }

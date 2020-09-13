@@ -16,8 +16,8 @@ impl Emit for Constant {
                 let mut constant = Const::new(width, value);
                 let res = asm.fresh_vector_variable(&instr.dst_id(), i);
                 constant.set_id(&res);
-                constant.set_gnd(&asm.gnd());
-                constant.set_vcc(&asm.vcc());
+                constant.set_input("gnd", &asm.gnd());
+                constant.set_input("vcc", &asm.vcc());
                 asm.add_assignment(verilog::Stmt::from(constant));
             }
         } else {
@@ -25,8 +25,8 @@ impl Emit for Constant {
             let mut constant = Const::new(width, value);
             let res = asm.fresh_scalar_variable(&instr.dst_id());
             constant.set_id(&res);
-            constant.set_gnd(&asm.gnd());
-            constant.set_vcc(&asm.vcc());
+            constant.set_input("gnd", &asm.gnd());
+            constant.set_input("vcc", &asm.vcc());
             asm.add_assignment(verilog::Stmt::from(constant));
         }
     }

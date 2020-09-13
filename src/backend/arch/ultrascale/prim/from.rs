@@ -378,18 +378,20 @@ impl From<Gnd> for verilog::Stmt {
 impl From<Const> for verilog::Stmt {
     fn from(constant: Const) -> Self {
         let mut concat = verilog::ExprConcat::default();
+        let gnd = constant.get_input("gnd");
+        let vcc = constant.get_input("vcc");
         for i in 0..constant.width() {
             let shift = constant.value() >> i;
             let mask = shift & 1;
             let is_one = mask == 1;
             if is_one {
-                concat.add_expr(verilog::Expr::from(constant.vcc().clone()));
+                concat.add_expr(verilog::Expr::from(vcc.clone()));
             } else {
-                concat.add_expr(verilog::Expr::from(constant.gnd().clone()));
+                concat.add_expr(verilog::Expr::from(gnd.clone()));
             }
         }
         let expr = verilog::Expr::from(concat);
-        let out = verilog::Expr::new_ref(&constant.id());
+        let out = verilog::Expr::new_ref(&constant.get_id());
         let assign = verilog::Parallel::ParAssign(out, expr);
         verilog::Stmt::from(assign)
     }
