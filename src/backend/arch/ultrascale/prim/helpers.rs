@@ -302,12 +302,14 @@ impl DspVector {
             4 => 12,
             _ => unimplemented!(),
         };
+        let mut params = ParamMap::new();
+        params.insert("width".to_string(), 48);
+        params.insert("length".to_string(), length as i64);
+        params.insert("word".to_string(), word as i64);
         DspVector {
             op,
             id: String::new(),
-            width: 48,
-            length,
-            word,
+            params,
             inputs: PortMap::new(),
             outputs: PortMap::new(),
         }
@@ -317,16 +319,12 @@ impl DspVector {
         &self.op
     }
 
-    pub fn length(&self) -> u64 {
-        self.length
-    }
-
-    pub fn width(&self) -> u64 {
-        self.width
-    }
-
-    pub fn word(&self) -> u64 {
-        self.word
+    pub fn get_param(&self, param: &str) -> i64 {
+        if let Some(value) = self.params.get(param) {
+            *value
+        } else {
+            panic!("Error: {} param does not exist", param);
+        }
     }
 
     pub fn get_id(&self) -> String {

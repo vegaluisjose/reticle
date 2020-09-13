@@ -104,9 +104,7 @@ pub enum DspVectorOp {
 pub struct DspVector {
     pub op: DspVectorOp,
     pub id: Id,
-    pub width: u64,
-    pub length: u64,
-    pub word: u64,
+    pub params: ParamMap,
     pub inputs: PortMap,
     pub outputs: PortMap,
 }

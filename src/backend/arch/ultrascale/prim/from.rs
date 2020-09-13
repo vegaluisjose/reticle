@@ -119,7 +119,7 @@ impl From<DspVector> for verilog::Stmt {
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110011"));
             }
         }
-        match dsp.length() {
+        match dsp.get_param("length") {
             1 => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
             2 => inst.add_param("USE_SIMD", verilog::Expr::new_str("TWO24")),
             3 => inst.add_param("USE_SIMD", verilog::Expr::new_str("FOUR12")),
