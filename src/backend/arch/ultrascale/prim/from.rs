@@ -201,10 +201,10 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("BCIN", verilog::Expr::new_ulit_dec(18, "0"));
         inst.connect("CARRYCASCIN", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("MULTSIGNIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("PCIN", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("PCIN", verilog::Expr::new_ulit_dec(48, "0"));
         inst.connect("CARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("CARRYINSEL", verilog::Expr::new_ulit_dec(3, "0"));
-        inst.connect("D", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("D", verilog::Expr::new_ulit_dec(27, "0"));
         // unused outputs
         inst.connect("ACOUT", verilog::Expr::from(Expr::default()));
         inst.connect("BCOUT", verilog::Expr::from(Expr::default()));
@@ -339,10 +339,10 @@ impl From<DspScalar> for verilog::Stmt {
         inst.connect("BCIN", verilog::Expr::new_ulit_dec(18, "0"));
         inst.connect("CARRYCASCIN", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("MULTSIGNIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("PCIN", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("PCIN", verilog::Expr::new_ulit_dec(48, "0"));
         inst.connect("CARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
         inst.connect("CARRYINSEL", verilog::Expr::new_ulit_dec(3, "0"));
-        inst.connect("D", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("D", verilog::Expr::new_ulit_dec(27, "0"));
         // unused outputs
         inst.connect("ACOUT", verilog::Expr::from(Expr::default()));
         inst.connect("BCOUT", verilog::Expr::from(Expr::default()));
