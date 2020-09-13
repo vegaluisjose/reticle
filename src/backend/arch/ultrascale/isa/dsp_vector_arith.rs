@@ -3,7 +3,21 @@ use crate::backend::arch::ultrascale::prim::ast::{DspVector, DspVectorOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
-fn emit_vector_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64, index: usize) {
+fn emit_op(instr: &asm::Instr) -> DspVectorOp {
+    match instr.prim().op().as_ref() {
+        "dsp_add_i8v4_i8v4_i8v4" => DspVectorOp::Add,
+        _ => unimplemented!(),
+    }
+}
+
+fn emit_wire(asm: &mut Assembler, width: u64) -> String {
+    let name = asm.new_variable_name();
+    let wire = verilog::Decl::new_wire(&name, width);
+    asm.add_wire(verilog::Stmt::from(wire));
+    name
+}
+
+fn emit_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64, index: usize) {
     let mut concat = verilog::ExprConcat::default();
     let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
@@ -21,7 +35,7 @@ fn emit_vector_input(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-fn emit_vector_output(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64) {
+fn emit_output(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: u64) {
     let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
     for i in 0..length {
@@ -35,26 +49,12 @@ fn emit_vector_output(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: 
     }
 }
 
-fn emit_vector_op(instr: &asm::Instr) -> DspVectorOp {
-    match instr.prim().op().as_ref() {
-        "dsp_add_i8v4_i8v4_i8v4" => DspVectorOp::Add,
-        _ => unimplemented!(),
-    }
-}
-
-fn emit_wire(asm: &mut Assembler, width: u64) -> String {
-    let name = asm.new_variable_name();
-    let wire = verilog::Decl::new_wire(&name, width);
-    asm.add_wire(verilog::Stmt::from(wire));
-    name
-}
-
 #[derive(Clone, Debug)]
 pub struct DspVectorArith;
 
 impl Emit for DspVectorArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
-        let op = emit_vector_op(&instr);
+        let op = emit_op(&instr);
         let mut dsp = DspVector::new(op, instr.dst_ty().length());
         let a = emit_wire(asm, dsp.width());
         let b = emit_wire(asm, dsp.width());
@@ -65,9 +65,9 @@ impl Emit for DspVectorArith {
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
         dsp.set_output("y", &y);
-        emit_vector_input(asm, instr.clone(), &a, dsp.word(), 0);
-        emit_vector_input(asm, instr.clone(), &b, dsp.word(), 1);
-        emit_vector_output(asm, instr, &y, dsp.word());
+        emit_input(asm, instr.clone(), &a, dsp.word(), 0);
+        emit_input(asm, instr.clone(), &b, dsp.word(), 1);
+        emit_output(asm, instr, &y, dsp.word());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
