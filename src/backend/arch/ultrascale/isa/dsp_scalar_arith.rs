@@ -54,6 +54,17 @@ fn emit_input(
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
+fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
+    let width = instr.dst_ty().width();
+    let name = asm.fresh_scalar_variable(&instr.dst_id());
+    let lo = verilog::Expr::new_int(0);
+    let hi = verilog::Expr::new_int((width - 1) as i32);
+    let src_expr = verilog::Expr::new_slice(wire, hi, lo);
+    let dst_expr = verilog::Expr::new_ref(&name);
+    let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
+    asm.add_assignment(verilog::Stmt::from(assign));
+}
+
 impl Emit for DspScalarArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_op(&instr);
@@ -78,6 +89,7 @@ impl Emit for DspScalarArith {
         emit_input(asm, &instr, &a, aw, 0, true);
         emit_input(asm, &instr, &b, bw, 1, true);
         emit_input(asm, &instr, &c, cw, 3, false);
+        emit_output(asm, &instr, &y);
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
