@@ -80,20 +80,26 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
         inst.connect("RSTM", verilog::Expr::from(reset.clone()));
         inst.connect("RSTP", verilog::Expr::from(reset));
-        // clock enable
-        inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
+        // operands
+        inst.connect(
+            "A",
+            verilog::Expr::new_slice(
+                &b.id(),
+                verilog::Expr::new_int(47),
+                verilog::Expr::new_int(18),
+            ),
+        );
+        inst.connect(
+            "B",
+            verilog::Expr::new_slice(
+                &b.id(),
+                verilog::Expr::new_int(17),
+                verilog::Expr::new_int(0),
+            ),
+        );
+        inst.connect("C", verilog::Expr::from(a));
+        inst.connect("P", verilog::Expr::from(y));
+        // derive attributes
         match dsp.op() {
             DspVectorOp::Add => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
@@ -161,7 +167,21 @@ impl From<DspVector> for verilog::Stmt {
         inst.add_param("IS_RSTINMODE_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_RSTM_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_RSTP_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
-        // default registers (likely to be changed, based on options)
+        // default clock enable
+        inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
+        // default registers
         inst.add_param("ACASCREG", verilog::Expr::new_int(0));
         inst.add_param("ADREG", verilog::Expr::new_int(0));
         inst.add_param("ALUMODEREG", verilog::Expr::new_int(0));
@@ -197,24 +217,6 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("UNDERFLOW", verilog::Expr::from(Expr::default()));
         inst.connect("CARRYOUT", verilog::Expr::from(Expr::default()));
         inst.connect("XOROUT", verilog::Expr::from(Expr::default()));
-        inst.connect(
-            "A",
-            verilog::Expr::new_slice(
-                &b.id(),
-                verilog::Expr::new_int(47),
-                verilog::Expr::new_int(18),
-            ),
-        );
-        inst.connect(
-            "B",
-            verilog::Expr::new_slice(
-                &b.id(),
-                verilog::Expr::new_int(17),
-                verilog::Expr::new_int(0),
-            ),
-        );
-        inst.connect("C", verilog::Expr::from(a));
-        inst.connect("P", verilog::Expr::from(y));
         verilog::Stmt::from(inst)
     }
 }
@@ -224,6 +226,7 @@ impl From<DspScalar> for verilog::Stmt {
         let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
         let clock = dsp.get_input("clock").clone();
         let reset = dsp.get_input("reset").clone();
+        let en_mul = dsp.get_input("en_mul").clone();
         // clock
         inst.connect("CLK", verilog::Expr::from(clock));
         // resets
@@ -237,12 +240,15 @@ impl From<DspScalar> for verilog::Stmt {
         inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
         inst.connect("RSTM", verilog::Expr::from(reset.clone()));
         inst.connect("RSTP", verilog::Expr::from(reset));
+        // derive attributes
         match dsp.op() {
             DspScalarOp::MulAdd => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
+                inst.add_param("MREG", verilog::Expr::new_int(1));
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
                 inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
+                inst.connect("CEM", verilog::Expr::from(en_mul));
             }
         }
         // default params
@@ -292,6 +298,54 @@ impl From<DspScalar> for verilog::Stmt {
         inst.add_param("IS_RSTINMODE_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_RSTM_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_RSTP_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
+        // default clock enable
+        inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
+        // default registers
+        inst.add_param("ACASCREG", verilog::Expr::new_int(0));
+        inst.add_param("ADREG", verilog::Expr::new_int(0));
+        inst.add_param("ALUMODEREG", verilog::Expr::new_int(0));
+        inst.add_param("AREG", verilog::Expr::new_int(0));
+        inst.add_param("BCASCREG", verilog::Expr::new_int(0));
+        inst.add_param("BREG", verilog::Expr::new_int(0));
+        inst.add_param("CARRYINREG", verilog::Expr::new_int(0));
+        inst.add_param("CARRYINSELREG", verilog::Expr::new_int(0));
+        inst.add_param("CREG", verilog::Expr::new_int(0));
+        inst.add_param("DREG", verilog::Expr::new_int(0));
+        inst.add_param("INMODEREG", verilog::Expr::new_int(0));
+        inst.add_param("OPMODEREG", verilog::Expr::new_int(0));
+        inst.add_param("PREG", verilog::Expr::new_int(0));
+        // default input values
+        inst.connect("ACIN", verilog::Expr::new_ulit_dec(30, "0"));
+        inst.connect("BCIN", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("CARRYCASCIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("MULTSIGNIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("PCIN", verilog::Expr::new_ulit_dec(18, "0"));
+        inst.connect("CARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CARRYINSEL", verilog::Expr::new_ulit_dec(3, "0"));
+        inst.connect("D", verilog::Expr::new_ulit_dec(18, "0"));
+        // unused outputs
+        inst.connect("ACOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("BCOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("CARRYCASCOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("MULTSIGNOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("PCOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("OVERFLOW", verilog::Expr::from(Expr::default()));
+        inst.connect("PATTERNBDETECT", verilog::Expr::from(Expr::default()));
+        inst.connect("PATTERNDETECT", verilog::Expr::from(Expr::default()));
+        inst.connect("UNDERFLOW", verilog::Expr::from(Expr::default()));
+        inst.connect("CARRYOUT", verilog::Expr::from(Expr::default()));
+        inst.connect("XOROUT", verilog::Expr::from(Expr::default()));
         verilog::Stmt::from(inst)
     }
 }
