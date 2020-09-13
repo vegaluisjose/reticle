@@ -120,8 +120,9 @@ def run_vivado(docker: bool, cmd):
 
 
 def check_vivado_fail(stdout: str):
-    pattern = re.compile(".*~~FAIL~~.*", re.DOTALL)
-    if pattern.match(stdout) is None:
+    fail = re.compile(".*~~FAIL~~.*", re.DOTALL)
+    error = re.compile(".*ERROR.*", re.DOTALL)
+    if fail.match(stdout) is None and error.match(stdout) is None:
         return True
     else:
         print(stdout)
