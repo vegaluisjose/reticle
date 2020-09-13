@@ -238,9 +238,15 @@ impl Reg {
 
 impl DspScalar {
     pub fn new(op: DspScalarOp) -> DspScalar {
+        let mut widths: HashMap<String, u64> = HashMap::new();
+        widths.insert("a".to_string(), 30);
+        widths.insert("b".to_string(), 18);
+        widths.insert("c".to_string(), 48);
+        widths.insert("y".to_string(), 48);
         DspScalar {
             op,
             id: String::new(),
+            widths,
             attrs: HashSet::new(),
             inputs: HashMap::new(),
             outputs: HashMap::new(),
@@ -259,11 +265,19 @@ impl DspScalar {
         self.id.to_string()
     }
 
+    pub fn get_width(&self, port: &str) -> u64 {
+        if let Some(width) = self.widths.get(port) {
+            *width
+        } else {
+            panic!("Error: {} port does not exist", port)
+        }
+    }
+
     pub fn get_input(&self, input: &str) -> &Expr {
         if let Some(expr) = self.inputs.get(input) {
             expr
         } else {
-            panic!("Error: dsp vector input does not exist")
+            panic!("Error: {} input does not exist", input)
         }
     }
 

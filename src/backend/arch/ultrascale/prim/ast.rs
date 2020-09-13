@@ -88,6 +88,7 @@ pub enum DspScalarOp {
 pub struct DspScalar {
     pub op: DspScalarOp,
     pub id: String,
+    pub widths: HashMap<String, u64>,
     pub attrs: HashSet<String>,
     pub inputs: HashMap<String, Expr>,
     pub outputs: HashMap<String, Expr>,

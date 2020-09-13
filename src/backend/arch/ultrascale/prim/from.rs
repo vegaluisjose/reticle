@@ -226,7 +226,11 @@ impl From<DspScalar> for verilog::Stmt {
         let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
         let clock = dsp.get_input("clock").clone();
         let reset = dsp.get_input("reset").clone();
+        let a = dsp.get_input("a").clone();
+        let b = dsp.get_input("b").clone();
+        let c = dsp.get_input("c").clone();
         let en_mul = dsp.get_input("en_mul").clone();
+        let y = dsp.get_output("y").clone();
         // clock
         inst.connect("CLK", verilog::Expr::from(clock));
         // resets
@@ -240,6 +244,11 @@ impl From<DspScalar> for verilog::Stmt {
         inst.connect("RSTINMODE", verilog::Expr::from(reset.clone()));
         inst.connect("RSTM", verilog::Expr::from(reset.clone()));
         inst.connect("RSTP", verilog::Expr::from(reset));
+        // operands
+        inst.connect("A", verilog::Expr::from(a));
+        inst.connect("B", verilog::Expr::from(b));
+        inst.connect("C", verilog::Expr::from(c));
+        inst.connect("P", verilog::Expr::from(y));
         // derive attributes
         match dsp.op() {
             DspScalarOp::MulAdd => {

@@ -13,16 +13,30 @@ fn emit_scalar_op(instr: &asm::Instr) -> DspScalarOp {
     }
 }
 
+fn emit_wire(asm: &mut Assembler, width: u64) -> String {
+    let name = asm.new_variable_name();
+    let wire = verilog::Decl::new_wire(&name, width);
+    asm.add_wire(verilog::Stmt::from(wire));
+    name
+}
+
 impl Emit for DspScalarArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
-        let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let op = emit_scalar_op(&instr);
-        let en_mul = asm.fresh_scalar_variable(&params[2]);
         let mut dsp = DspScalar::new(op);
+        let a = emit_wire(asm, dsp.get_width("a"));
+        let b = emit_wire(asm, dsp.get_width("b"));
+        let c = emit_wire(asm, dsp.get_width("c"));
+        let y = emit_wire(asm, dsp.get_width("y"));
+        let en_mul = asm.fresh_scalar_variable(&instr.indexed_param(2).id());
         dsp.set_id(&asm.new_instance_name());
         dsp.set_input("clock", &asm.clock());
         dsp.set_input("reset", &asm.reset());
+        dsp.set_input("a", &a);
+        dsp.set_input("b", &b);
+        dsp.set_input("c", &c);
         dsp.set_input("en_mul", &en_mul);
+        dsp.set_output("y", &y);
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
