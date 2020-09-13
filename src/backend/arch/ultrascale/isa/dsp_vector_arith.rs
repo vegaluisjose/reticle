@@ -35,18 +35,18 @@ fn emit_vector_output(asm: &mut Assembler, instr: asm::Instr, wire: &str, word: 
     }
 }
 
-fn emit_vector_wire(asm: &mut Assembler, width: u64) -> String {
-    let name = asm.new_variable_name();
-    let wire = verilog::Decl::new_wire(&name, width);
-    asm.add_wire(verilog::Stmt::from(wire));
-    name
-}
-
 fn emit_vector_op(instr: &asm::Instr) -> DspVectorOp {
     match instr.prim().op().as_ref() {
         "dsp_add_i8v4_i8v4_i8v4" => DspVectorOp::Add,
         _ => unimplemented!(),
     }
+}
+
+fn emit_wire(asm: &mut Assembler, width: u64) -> String {
+    let name = asm.new_variable_name();
+    let wire = verilog::Decl::new_wire(&name, width);
+    asm.add_wire(verilog::Stmt::from(wire));
+    name
 }
 
 #[derive(Clone, Debug)]
@@ -56,9 +56,9 @@ impl Emit for DspVectorArith {
     fn emit(asm: &mut Assembler, instr: asm::Instr) {
         let op = emit_vector_op(&instr);
         let mut dsp = DspVector::new(op, instr.dst_ty().length());
-        let a = emit_vector_wire(asm, dsp.width());
-        let b = emit_vector_wire(asm, dsp.width());
-        let y = emit_vector_wire(asm, dsp.width());
+        let a = emit_wire(asm, dsp.width());
+        let b = emit_wire(asm, dsp.width());
+        let y = emit_wire(asm, dsp.width());
         dsp.set_id(&asm.new_instance_name());
         dsp.set_input("clock", &asm.clock());
         dsp.set_input("reset", &asm.reset());
