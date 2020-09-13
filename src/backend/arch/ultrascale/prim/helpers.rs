@@ -364,10 +364,9 @@ impl DspVector {
 
 impl Vcc {
     pub fn new(id: &str) -> Vcc {
-        Vcc {
-            id: id.to_string(),
-            outputs: PortMap::new(),
-        }
+        let mut vcc = Vcc::default();
+        vcc.set_id(id);
+        vcc
     }
 
     pub fn get_id(&self) -> String {
@@ -386,17 +385,18 @@ impl Vcc {
         self.id = id.to_string();
     }
 
-    pub fn set_output(&mut self, key: &str, value: &str) {
-        self.outputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_ref(value));
     }
 }
 
 impl Gnd {
     pub fn new(id: &str) -> Gnd {
-        Gnd {
-            id: id.to_string(),
-            outputs: PortMap::new(),
-        }
+        let mut gnd = Gnd::default();
+        gnd.set_id(id);
+        gnd
     }
 
     pub fn get_id(&self) -> String {
@@ -415,8 +415,10 @@ impl Gnd {
         self.id = id.to_string();
     }
 
-    pub fn set_output(&mut self, key: &str, value: &str) {
-        self.outputs.insert(key.to_string(), Expr::new_ref(value));
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_ref(value));
     }
 }
 

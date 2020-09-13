@@ -8,18 +8,22 @@ impl Default for Expr {
 
 impl Default for Vcc {
     fn default() -> Vcc {
+        let mut outputs = PortMap::new();
+        outputs.insert("y".to_string(), Expr::default());
         Vcc {
             id: "VCC".to_string(),
-            outputs: PortMap::new(),
+            outputs,
         }
     }
 }
 
 impl Default for Gnd {
     fn default() -> Gnd {
+        let mut outputs = PortMap::new();
+        outputs.insert("y".to_string(), Expr::default());
         Gnd {
             id: "GND".to_string(),
-            outputs: PortMap::new(),
+            outputs,
         }
     }
 }
