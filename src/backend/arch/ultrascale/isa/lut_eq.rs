@@ -66,8 +66,8 @@ impl Emit for LutEq {
             };
             let en = asm.fresh_scalar_variable(&params[3]);
             reg.set_id(&asm.new_instance_name());
-            reg.set_clock(&asm.clock());
-            reg.set_reset(&asm.reset());
+            reg.set_input("clock", &asm.clock());
+            reg.set_input("reset", &asm.reset());
             reg.set_en(&en);
             reg.set_input("a", &wire_r_name);
             reg.set_output("y", &res);

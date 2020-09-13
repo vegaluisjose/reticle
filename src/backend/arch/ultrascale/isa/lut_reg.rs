@@ -17,8 +17,8 @@ impl Emit for LutReg {
         for (i, reg) in regs.iter().enumerate() {
             let mut reg = reg.clone();
             reg.set_id(&asm.new_instance_name());
-            reg.set_clock(&asm.clock());
-            reg.set_reset(&asm.reset());
+            reg.set_input("clock", &asm.clock());
+            reg.set_input("reset", &asm.reset());
             reg.set_en(&en);
             reg.set_input_with_index("a", &val, i as u32);
             reg.set_output_with_index("y", &res, i as u32);
