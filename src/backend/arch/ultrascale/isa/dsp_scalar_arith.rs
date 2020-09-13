@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{DspScalarOp, DspScalar};
+use crate::backend::arch::ultrascale::prim::ast::{DspScalar, DspScalarOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
