@@ -195,5 +195,5 @@ def test_reticle_build(docker: bool):
 
 @pytest.mark.parametrize("example", examples)
 def test_reticle_compiler(docker: bool, example: str):
-    reticle_to_verilog(docker, example, "ci")
+    reticle_to_verilog(docker, example, "ci/verilog")
     assert run_vivado_sim(docker, example)
