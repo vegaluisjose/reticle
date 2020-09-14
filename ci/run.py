@@ -7,6 +7,7 @@ import pytest
 examples = [
     "examples/isa/scalar/register.ret",
     "examples/isa/vector/vadd_v4.ret",
+    "examples/basic/pipeline.ret",
     "examples/basic/fsm.ret",
     "examples/basic/vadd_const.ret",
     "examples/basic/muladd.ret",
@@ -130,13 +131,12 @@ def check_vivado_fail(stdout: str):
         return False
 
 
-def run_vivado_sim(docker: bool, infile: str):
+def run_vivado_sim(docker: bool, infile: str, outdir: str):
     name = get_example_name(infile)
     test_name = "test_{}".format(name)
-    wd = "ci"
-    script = os.path.join(wd, "vivado_sim.sh")
-    dut = os.path.join(wd, "{}.v".format(name))
-    test = os.path.join(wd, "{}.v".format(test_name))
+    script = os.path.join("ci", "vivado_sim.sh")
+    dut = os.path.join(outdir, "{}.v".format(name))
+    test = os.path.join("ci", "{}.v".format(test_name))
     cmd = []
     cmd.append(get_vivado_path(docker, script))
     cmd.append(test_name)
@@ -195,5 +195,6 @@ def test_reticle_build(docker: bool):
 
 @pytest.mark.parametrize("example", examples)
 def test_reticle_compiler(docker: bool, example: str):
-    reticle_to_verilog(docker, example, "ci/verilog")
-    assert run_vivado_sim(docker, example)
+    wd = "ci/verilog"
+    reticle_to_verilog(docker, example, wd)
+    assert run_vivado_sim(docker, example, wd)
