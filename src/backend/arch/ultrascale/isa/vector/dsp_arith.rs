@@ -50,9 +50,9 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64) {
 }
 
 #[derive(Clone, Debug)]
-pub struct DspVectorArith;
+pub struct DspArith;
 
-impl Emit for DspVectorArith {
+impl Emit for DspArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
         let mut dsp = DspVector::new(op, instr.dst_ty().length());

@@ -260,8 +260,8 @@ impl Assembler {
                     "lut_mux_i8_b_i8_i8" => isa::scalar::LutMux::emit(self, instr),
                     "lut_reg_mux_i8_b_i8_i8_b" => isa::scalar::LutMux::emit(self, instr),
                     "lut_reg_i8_i8_b" => isa::scalar::LutReg::emit(self, instr),
-                    "dsp_add_i8v4_i8v4_i8v4" => isa::DspVectorArith::emit(self, instr),
-                    "dsp_add_reg_mul_i8_i8_i8_b_i8" => isa::DspScalarArith::emit(self, instr),
+                    "dsp_add_reg_mul_i8_i8_i8_b_i8" => isa::scalar::DspArith::emit(self, instr),
+                    "dsp_add_i8v4_i8v4_i8v4" => isa::vector::DspArith::emit(self, instr),
                     _ => unimplemented!(),
                 }
             } else {
