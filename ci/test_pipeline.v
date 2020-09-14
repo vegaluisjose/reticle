@@ -29,7 +29,7 @@ module test_pipeline();
                     step <= 1;
                     a <= 8'd0;
                     en <= 1'b1;
-                    if (y != 0) begin
+                    if (y != 8'd0) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
@@ -38,13 +38,13 @@ module test_pipeline();
                     step <= 2;
                     a <= 8'd0;
                     en <= 1'b0;
-                    if (y != 0) begin
+                    if (y != 8'd0) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
                 end
                 2: begin
-                    if (y != 9) begin
+                    if (y != 8'd9) begin
                         $display("~~FAIL~~");
                         $finish;
                     end

@@ -35,13 +35,13 @@ module test_muladd();
                     b <= 8'd0;
                     c <= 8'd3;
                     en <= 1'b0;
-                    if (y != 3) begin
+                    if (y != 8'd3) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
                 end
                 1: begin
-                    if (y != 11) begin
+                    if (y != 8'd11) begin
                         $display("~~FAIL~~");
                         $finish;
                     end

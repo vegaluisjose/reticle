@@ -29,7 +29,7 @@ module test_fsm();
                     step <= 1;
                     start <= 1'b1;
                     done <= 1'b0;
-                    if (state != 0) begin
+                    if (state != 8'd0) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
@@ -38,7 +38,7 @@ module test_fsm();
                     step <= 2;
                     start <= 1'b0;
                     done <= 1'b1;
-                    if (state != 0) begin
+                    if (state != 8'd0) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
@@ -47,13 +47,13 @@ module test_fsm();
                     step <= 3;
                     start <= 1'b0;
                     done <= 1'b0;
-                    if (state != 1) begin
+                    if (state != 8'd1) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
                 end
                 3: begin
-                    if (state != 0) begin
+                    if (state != 8'd0) begin
                         $display("~~FAIL~~");
                         $finish;
                     end
