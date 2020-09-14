@@ -1,3 +1,0 @@
-def register(a: i8, en: bool) -> (y: i8) {
-    y: i8 = reg[3](a, en);
-}

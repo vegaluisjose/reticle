@@ -1,4 +1,4 @@
-module test_register();
+module test_reg_i8_i8_b();
 
     reg clock = 1'b0;
     reg reset = 1'b0;
@@ -54,6 +54,6 @@ module test_register();
         end
     end
 
-    register dut(.clock(clock), .reset(reset), .a(a), .en(en), .y(y));
+    reg_i8_i8_b dut(.clock(clock), .reset(reset), .a(a), .en(en), .y(y));
 
 endmodule
