@@ -4,7 +4,7 @@ use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
 #[derive(Clone, Debug)]
-pub struct DspArith;
+pub struct DspFusedArith;
 
 fn emit_op(instr: &asm::Instr) -> DspFusedOp {
     match instr.prim().op().as_ref() {
@@ -65,7 +65,7 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-impl Emit for DspArith {
+impl Emit for DspFusedArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
         let mut dsp = DspFused::new(op);
