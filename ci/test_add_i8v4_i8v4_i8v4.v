@@ -1,4 +1,4 @@
-module test_vadd_v4();
+module test_add_i8v4_i8v4_i8v4();
 
     reg clock = 1'b0;
     reg reset = 1'b0;
@@ -42,6 +42,6 @@ module test_vadd_v4();
         end
     end
 
-    vadd_v4 dut(.clock(clock), .reset(reset), .a_0(a_0), .a_1(a_1), .a_2(a_2), .a_3(a_3), .b_0(b_0), .b_1(b_1), .b_2(b_2), .b_3(b_3), .y_0(y_0), .y_1(y_1), .y_2(y_2), .y_3(y_3));
+    add_i8v4_i8v4_i8v4 dut(.clock(clock), .reset(reset), .a_0(a_0), .a_1(a_1), .a_2(a_2), .a_3(a_3), .b_0(b_0), .b_1(b_1), .b_2(b_2), .b_3(b_3), .y_0(y_0), .y_1(y_1), .y_2(y_2), .y_3(y_3));
 
 endmodule

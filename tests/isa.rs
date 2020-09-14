@@ -339,8 +339,8 @@ mod test_vector_isa {
     }
 
     #[test]
-    fn test_vadd_v4() {
-        let prog = parse_from_file("examples/isa/vector/vadd_v4.ret");
+    fn test_add_i8v4_i8v4_i8v4() {
+        let prog = parse_from_file("examples/isa/vector/add_i8v4_i8v4_i8v4.ret");
         let mut trace = Trace::default();
         trace.enq_vector("a", vec![-4, 2, 2, 1]);
         trace.enq_vector("b", vec![1, 3, 0, 1]);
