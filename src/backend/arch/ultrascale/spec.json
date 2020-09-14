@@ -110,7 +110,7 @@
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
-         "expr":["or", "bool", "bool"]
+         "expr":["xor", "bool", "bool"]
       },
       {
          "name":"lut_reg_add_i8_i8_i8_b",
