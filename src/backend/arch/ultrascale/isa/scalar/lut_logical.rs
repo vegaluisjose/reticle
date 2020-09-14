@@ -8,6 +8,8 @@ fn emit_lut_init(instr: &asm::Instr) -> String {
         "lut_and_b_b_b" | "lut_and_i8_i8_i8" => "8".to_string(),
         "lut_or_b_b_b" | "lut_or_i8_i8_i8" => "e".to_string(),
         "lut_xor_b_b_b" | "lut_xor_i8_i8_i8" => "6".to_string(),
+        "lut_nand_b_b_b" | "lut_nand_i8_i8_i8" => "7".to_string(),
+        "lut_nor_b_b_b" | "lut_nor_i8_i8_i8" => "1".to_string(),
         "lut_xnor_b_b_b" | "lut_xnor_i8_i8_i8" => "9".to_string(),
         _ => unimplemented!(),
     }

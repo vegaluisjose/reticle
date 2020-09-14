@@ -71,6 +71,20 @@
          "expr":["xor", "i8", "i8"]
       },
       {
+         "name":"lut_nand_i8_i8_i8",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"i8",
+         "expr":["nand", "i8", "i8"]
+      },
+      {
+         "name":"lut_nor_i8_i8_i8",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"i8",
+         "expr":["nor", "i8", "i8"]
+      },
+      {
          "name":"lut_xnor_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
@@ -118,6 +132,20 @@
          "loc":"lut",
          "ty":"bool",
          "expr":["xor", "bool", "bool"]
+      },
+      {
+         "name":"lut_nand_b_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["nand", "bool", "bool"]
+      },
+      {
+         "name":"lut_nor_b_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["nor", "bool", "bool"]
       },
       {
          "name":"lut_xnor_b_b_b",
