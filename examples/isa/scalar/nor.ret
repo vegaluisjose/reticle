@@ -1,3 +1,0 @@
-def nor(a: i8, b: i8) -> (y: i8) {
-    y: i8 = nor(a, b);
-}

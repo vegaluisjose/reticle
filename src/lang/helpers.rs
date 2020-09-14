@@ -12,6 +12,13 @@ impl Ty {
         }
     }
 
+    pub fn vector_ty(&self) -> &Ty {
+        match self {
+            Ty::Vector(ty, _) => ty,
+            _ => panic!("Error: type is not a vector"),
+        }
+    }
+
     pub fn length(&self) -> u64 {
         match self {
             Ty::Vector(_, l) => *l,

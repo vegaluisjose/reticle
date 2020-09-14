@@ -138,12 +138,34 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_nand() {
-        let prog = parse_from_file("examples/isa/scalar/nand.ret");
+    fn test_nand_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/nand_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 15);
         trace.enq_scalar("b", 15);
         trace.enq_scalar("y", -16);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_nand_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/nand_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 0);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
@@ -186,12 +208,34 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_nor() {
-        let prog = parse_from_file("examples/isa/scalar/nor.ret");
+    fn test_nor_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/nor_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 7);
         trace.enq_scalar("b", 8);
         trace.enq_scalar("y", -16);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_nor_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/nor_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
@@ -234,12 +278,34 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_xnor() {
-        let prog = parse_from_file("examples/isa/scalar/xnor.ret");
+    fn test_xnor_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/xnor_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 3);
         trace.enq_scalar("b", 12);
         trace.enq_scalar("y", -16);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_xnor_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/xnor_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 1);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
