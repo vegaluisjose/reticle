@@ -274,6 +274,8 @@ impl Assembler {
                     "lut_reg_neq_b_i8_i8" => isa::scalar::LutEq::emit(self, instr),
                     "lut_mux_i8_b_i8_i8" => isa::scalar::LutMux::emit(self, instr),
                     "lut_mux_b_b_b_b" => isa::scalar::LutMux::emit(self, instr),
+                    "lut_not_i8_i8" => isa::scalar::LutNot::emit(self, instr),
+                    "lut_not_b_b" => isa::scalar::LutNot::emit(self, instr),
                     "lut_reg_mux_i8_b_i8_i8_b" => isa::scalar::LutMux::emit(self, instr),
                     "lut_reg_i8_i8_b" => isa::scalar::LutReg::emit(self, instr),
                     "dsp_add_reg_mul_i8_i8_i8_b_i8" => isa::scalar::DspArith::emit(self, instr),
