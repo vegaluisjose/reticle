@@ -271,8 +271,8 @@ impl From<DspVector> for verilog::Stmt {
     }
 }
 
-impl From<DspScalar> for verilog::Stmt {
-    fn from(dsp: DspScalar) -> Self {
+impl From<DspFused> for verilog::Stmt {
+    fn from(dsp: DspFused) -> Self {
         let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
         let clock = dsp.get_input("clock");
         let reset = dsp.get_input("reset");
@@ -301,7 +301,7 @@ impl From<DspScalar> for verilog::Stmt {
         inst.connect("P", verilog::Expr::from(y.clone()));
         // derive attributes
         match dsp.op() {
-            DspScalarOp::MulAdd => {
+            DspFusedOp::MulAdd => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(1));
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));

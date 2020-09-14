@@ -38,7 +38,7 @@ impl fmt::Display for Reg {
     }
 }
 
-impl fmt::Display for DspScalar {
+impl fmt::Display for DspFused {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", verilog::Stmt::from(self.clone()))
     }

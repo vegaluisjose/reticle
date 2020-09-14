@@ -83,13 +83,13 @@ pub struct Reg {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DspScalarOp {
+pub enum DspFusedOp {
     MulAdd,
 }
 
 #[derive(Clone, Debug)]
-pub struct DspScalar {
-    pub op: DspScalarOp,
+pub struct DspFused {
+    pub op: DspFusedOp,
     pub id: Id,
     pub params: ParamMap,
     pub inputs: PortMap,

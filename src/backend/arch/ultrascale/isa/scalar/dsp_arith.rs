@@ -1,14 +1,14 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{DspScalar, DspScalarOp};
+use crate::backend::arch::ultrascale::prim::ast::{DspFused, DspFusedOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
 #[derive(Clone, Debug)]
 pub struct DspArith;
 
-fn emit_op(instr: &asm::Instr) -> DspScalarOp {
+fn emit_op(instr: &asm::Instr) -> DspFusedOp {
     match instr.prim().op().as_ref() {
-        "dsp_add_reg_mul_i8_i8_i8_b_i8" => DspScalarOp::MulAdd,
+        "dsp_add_reg_mul_i8_i8_i8_b_i8" => DspFusedOp::MulAdd,
         _ => unimplemented!(),
     }
 }
@@ -68,7 +68,7 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
 impl Emit for DspArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
-        let mut dsp = DspScalar::new(op);
+        let mut dsp = DspFused::new(op);
         let aw = dsp.get_param("aw") as u64;
         let bw = dsp.get_param("bw") as u64;
         let cw = dsp.get_param("cw") as u64;

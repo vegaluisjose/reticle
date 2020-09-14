@@ -305,8 +305,8 @@ impl Reg {
     }
 }
 
-impl DspScalar {
-    pub fn new(op: DspScalarOp) -> DspScalar {
+impl DspFused {
+    pub fn new(op: DspFusedOp) -> DspFused {
         let mut params = ParamMap::new();
         params.insert("aw".to_string(), 30);
         params.insert("bw".to_string(), 18);
@@ -323,7 +323,7 @@ impl DspScalar {
         inputs.insert("en_output".to_string(), Expr::default());
         let mut outputs = PortMap::new();
         outputs.insert("y".to_string(), Expr::default());
-        DspScalar {
+        DspFused {
             op,
             id: String::new(),
             params,
@@ -332,7 +332,7 @@ impl DspScalar {
         }
     }
 
-    pub fn op(&self) -> &DspScalarOp {
+    pub fn op(&self) -> &DspFusedOp {
         &self.op
     }
 
