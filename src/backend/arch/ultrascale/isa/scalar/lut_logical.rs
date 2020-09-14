@@ -5,8 +5,9 @@ use crate::backend::verilog;
 
 fn emit_lut_init(instr: &asm::Instr) -> String {
     match instr.prim().op().as_ref() {
-        "lut_and_b_b_b" => "8".to_string(),
-        "lut_or_b_b_b" => "e".to_string(),
+        "lut_and_b_b_b" | "lut_and_i8_i8_i8"=> "8".to_string(),
+        "lut_or_b_b_b" | "lut_or_i8_i8_i8" => "e".to_string(),
+        "lut_xor_b_b_b" | "lut_xor_i8_i8_i8" => "6".to_string(),
         _ => unimplemented!(),
     }
 }
