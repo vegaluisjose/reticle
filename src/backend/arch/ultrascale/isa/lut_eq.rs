@@ -33,32 +33,32 @@ impl Emit for LutEq {
         lut_0.set_attr("init", "9009000000000000");
         lut_1.set_attr("init", "9009000000009009");
         lut_2.set_attr("init", "9009000000009009");
-        lut_0.add_input_with_index(&rhs, 7);
-        lut_0.add_input_with_index(&lhs, 7);
-        lut_0.add_input_with_index(&rhs, 6);
-        lut_0.add_input_with_index(&lhs, 6);
-        lut_0.add_input(&wire_0_name);
-        lut_0.add_input(&wire_1_name);
-        lut_1.add_input_with_index(&lhs, 3);
-        lut_1.add_input_with_index(&rhs, 3);
-        lut_1.add_input_with_index(&rhs, 5);
-        lut_1.add_input_with_index(&lhs, 5);
-        lut_1.add_input_with_index(&rhs, 4);
-        lut_1.add_input_with_index(&lhs, 4);
-        lut_1.set_output(&wire_0_name);
-        lut_2.add_input_with_index(&lhs, 0);
-        lut_2.add_input_with_index(&rhs, 0);
-        lut_2.add_input_with_index(&rhs, 2);
-        lut_2.add_input_with_index(&lhs, 2);
-        lut_2.add_input_with_index(&rhs, 1);
-        lut_2.add_input_with_index(&lhs, 1);
-        lut_2.set_output(&wire_1_name);
+        lut_0.set_input_with_index("a", &rhs, 7);
+        lut_0.set_input_with_index("b", &lhs, 7);
+        lut_0.set_input_with_index("c", &rhs, 6);
+        lut_0.set_input_with_index("d", &lhs, 6);
+        lut_0.set_input("e", &wire_0_name);
+        lut_0.set_input("f", &wire_1_name);
+        lut_1.set_input_with_index("a", &lhs, 3);
+        lut_1.set_input_with_index("b", &rhs, 3);
+        lut_1.set_input_with_index("c", &rhs, 5);
+        lut_1.set_input_with_index("d", &lhs, 5);
+        lut_1.set_input_with_index("e", &rhs, 4);
+        lut_1.set_input_with_index("f", &lhs, 4);
+        lut_1.set_output("y", &wire_0_name);
+        lut_2.set_input_with_index("a", &lhs, 0);
+        lut_2.set_input_with_index("b", &rhs, 0);
+        lut_2.set_input_with_index("c", &rhs, 2);
+        lut_2.set_input_with_index("d", &lhs, 2);
+        lut_2.set_input_with_index("e", &rhs, 1);
+        lut_2.set_input_with_index("f", &lhs, 1);
+        lut_2.set_output("y", &wire_1_name);
         let has_reg = has_reg(&instr.op());
         if has_reg {
             let wire_r_name = asm.new_variable_name();
             let wire_r = verilog::Decl::new_wire(&wire_r_name, 1);
             asm.add_wire(verilog::Stmt::from(wire_r));
-            lut_0.set_output(&wire_r_name);
+            lut_0.set_output("y", &wire_r_name);
             let mut reg = if instr.indexed_attr(0).value() == 0 {
                 Reg::new_fdre()
             } else {
@@ -72,7 +72,7 @@ impl Emit for LutEq {
             reg.set_input("a", &wire_r_name);
             reg.set_output("y", &res);
         } else {
-            lut_0.set_output(&res);
+            lut_0.set_output("y", &res);
         }
         asm.add_wire(verilog::Stmt::from(wire_0));
         asm.add_wire(verilog::Stmt::from(wire_1));

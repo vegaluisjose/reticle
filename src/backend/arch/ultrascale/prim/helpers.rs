@@ -24,70 +24,105 @@ impl Expr {
     }
 }
 
+fn lut_default_attrs() -> AttrMap {
+    let mut attrs = AttrMap::new();
+    attrs.insert("init".to_string(), "0".to_string());
+    attrs
+}
+
+fn lut_default_outputs() -> PortMap {
+    let mut outputs = PortMap::new();
+    outputs.insert("y".to_string(), Expr::default());
+    outputs
+}
+
 impl Lut {
     pub fn new_lut2() -> Lut {
-        let mut attrs = AttrMap::new();
-        attrs.insert("init".to_string(), "0".to_string());
+        let mut inputs = PortMap::new();
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
         Lut {
             ty: LutTy::Lut2,
             id: String::new(),
-            attrs,
-            inputs: Vec::new(),
-            output: Expr::default(),
+            attrs: lut_default_attrs(),
+            inputs,
+            outputs: lut_default_outputs(),
             loc: None,
         }
     }
 
     pub fn new_lut3() -> Lut {
-        let mut attrs = AttrMap::new();
-        attrs.insert("init".to_string(), "0".to_string());
+        let mut inputs = PortMap::new();
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("c".to_string(), Expr::default());
         Lut {
             ty: LutTy::Lut3,
             id: String::new(),
-            attrs,
-            inputs: Vec::new(),
-            output: Expr::default(),
+            attrs: lut_default_attrs(),
+            inputs,
+            outputs: lut_default_outputs(),
             loc: None,
         }
     }
 
     pub fn new_lut4() -> Lut {
-        let mut attrs = AttrMap::new();
-        attrs.insert("init".to_string(), "0".to_string());
+        let mut inputs = PortMap::new();
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("c".to_string(), Expr::default());
+        inputs.insert("d".to_string(), Expr::default());
         Lut {
             ty: LutTy::Lut4,
             id: String::new(),
-            attrs,
-            inputs: Vec::new(),
-            output: Expr::default(),
+            attrs: lut_default_attrs(),
+            inputs,
+            outputs: lut_default_outputs(),
             loc: None,
         }
     }
 
     pub fn new_lut5() -> Lut {
-        let mut attrs = AttrMap::new();
-        attrs.insert("init".to_string(), "0".to_string());
+        let mut inputs = PortMap::new();
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("c".to_string(), Expr::default());
+        inputs.insert("d".to_string(), Expr::default());
+        inputs.insert("e".to_string(), Expr::default());
         Lut {
             ty: LutTy::Lut5,
             id: String::new(),
-            attrs,
-            inputs: Vec::new(),
-            output: Expr::default(),
+            attrs: lut_default_attrs(),
+            inputs,
+            outputs: lut_default_outputs(),
             loc: None,
         }
     }
 
     pub fn new_lut6() -> Lut {
-        let mut attrs = AttrMap::new();
-        attrs.insert("init".to_string(), "0".to_string());
+        let mut inputs = PortMap::new();
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("c".to_string(), Expr::default());
+        inputs.insert("d".to_string(), Expr::default());
+        inputs.insert("e".to_string(), Expr::default());
+        inputs.insert("f".to_string(), Expr::default());
         Lut {
             ty: LutTy::Lut6,
             id: String::new(),
-            attrs,
-            inputs: Vec::new(),
-            output: Expr::default(),
+            attrs: lut_default_attrs(),
+            inputs,
+            outputs: lut_default_outputs(),
             loc: None,
         }
+    }
+
+    pub fn ty(&self) -> &LutTy {
+        &self.ty
+    }
+
+    pub fn get_id(&self) -> String {
+        self.id.to_string()
     }
 
     pub fn get_attr(&self, attr: &str) -> String {
@@ -98,20 +133,20 @@ impl Lut {
         }
     }
 
-    pub fn id(&self) -> String {
-        self.id.to_string()
+    pub fn get_input(&self, key: &str) -> &Expr {
+        if let Some(input) = self.inputs.get(key) {
+            input
+        } else {
+            panic!("Error: {} input does not exist", key);
+        }
     }
 
-    pub fn ty(&self) -> &LutTy {
-        &self.ty
-    }
-
-    pub fn inputs(&self) -> &Vec<Expr> {
-        &self.inputs
-    }
-
-    pub fn output(&self) -> &Expr {
-        &self.output
+    pub fn get_output(&self, key: &str) -> &Expr {
+        if let Some(output) = self.outputs.get(key) {
+            output
+        } else {
+            panic!("Error: {} output does not exist", key);
+        }
     }
 
     pub fn set_id(&mut self, id: &str) {
@@ -123,20 +158,27 @@ impl Lut {
         self.attrs.insert(attr.to_string(), value.to_string());
     }
 
-    pub fn add_input(&mut self, name: &str) {
-        self.inputs.push(Expr::new_ref(name));
+    pub fn set_input(&mut self, input: &str, value: &str) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 
-    pub fn add_input_with_index(&mut self, name: &str, index: u32) {
-        self.inputs.push(Expr::new_index(name, index));
+    pub fn set_input_with_index(&mut self, input: &str, value: &str, index: u32) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs
+            .insert(input.to_string(), Expr::new_index(value, index));
     }
 
-    pub fn set_output(&mut self, name: &str) {
-        self.output = Expr::new_ref(name);
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_ref(value));
     }
 
-    pub fn set_output_with_index(&mut self, name: &str, index: u32) {
-        self.output = Expr::new_index(name, index);
+    pub fn set_output_with_index(&mut self, output: &str, value: &str, index: u32) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_index(value, index));
     }
 
     pub fn set_loc(&mut self, loc: Loc) {

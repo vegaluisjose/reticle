@@ -27,13 +27,13 @@ impl Emit for LutScalarLog {
             lut.set_attr("init", &init);
             lut.set_id(&asm.new_instance_name());
             if width == 1 {
-                lut.add_input(&lhs);
-                lut.add_input(&rhs);
-                lut.set_output(&res);
+                lut.set_input("a", &lhs);
+                lut.set_input("b", &rhs);
+                lut.set_output("y", &res);
             } else {
-                lut.add_input_with_index(&lhs, i as u32);
-                lut.add_input_with_index(&rhs, i as u32);
-                lut.set_output_with_index(&res, i as u32);
+                lut.set_input_with_index("a", &lhs, i as u32);
+                lut.set_input_with_index("b", &rhs, i as u32);
+                lut.set_output_with_index("y", &res, i as u32);
             }
             asm.add_instance(verilog::Stmt::from(lut));
         }

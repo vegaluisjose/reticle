@@ -20,17 +20,50 @@ impl From<Expr> for verilog::Expr {
     }
 }
 
+#[allow(clippy::many_single_char_names)]
 impl From<Lut> for verilog::Stmt {
     fn from(lut: Lut) -> Self {
         let init = lut.get_attr("init");
-        let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
+        let a = lut.get_input("a");
+        let b = lut.get_input("b");
+        let y = lut.get_output("y");
+        let mut inst = verilog::Instance::new(&lut.get_id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
         inst.add_param("INIT", verilog::Expr::new_ulit_hex(width, &init));
-        for (i, input) in lut.inputs().iter().enumerate() {
-            let port = format!("I{}", i);
-            inst.connect(&port, verilog::Expr::from(input.clone()));
+        inst.connect("I0", verilog::Expr::from(a.clone()));
+        inst.connect("I1", verilog::Expr::from(b.clone()));
+        match lut.ty() {
+            LutTy::Lut3 => {
+                let c = lut.get_input("c");
+                inst.connect("I2", verilog::Expr::from(c.clone()));
+            }
+            LutTy::Lut4 => {
+                let c = lut.get_input("c");
+                let d = lut.get_input("d");
+                inst.connect("I2", verilog::Expr::from(c.clone()));
+                inst.connect("I3", verilog::Expr::from(d.clone()));
+            }
+            LutTy::Lut5 => {
+                let c = lut.get_input("c");
+                let d = lut.get_input("d");
+                let e = lut.get_input("e");
+                inst.connect("I2", verilog::Expr::from(c.clone()));
+                inst.connect("I3", verilog::Expr::from(d.clone()));
+                inst.connect("I4", verilog::Expr::from(e.clone()));
+            }
+            LutTy::Lut6 => {
+                let c = lut.get_input("c");
+                let d = lut.get_input("d");
+                let e = lut.get_input("e");
+                let f = lut.get_input("f");
+                inst.connect("I2", verilog::Expr::from(c.clone()));
+                inst.connect("I3", verilog::Expr::from(d.clone()));
+                inst.connect("I4", verilog::Expr::from(e.clone()));
+                inst.connect("I5", verilog::Expr::from(f.clone()));
+            }
+            _ => (),
         }
-        inst.connect("O", verilog::Expr::from(lut.output().clone()));
+        inst.connect("O", verilog::Expr::from(y.clone()));
         verilog::Stmt::from(inst)
     }
 }

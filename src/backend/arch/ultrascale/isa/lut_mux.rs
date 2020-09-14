@@ -36,20 +36,20 @@ impl Emit for LutMux {
                 let mut reg = reg.clone();
                 lut.set_id(&asm.new_instance_name());
                 lut.set_attr("init", "ac");
-                lut.add_input(&con);
-                lut.set_output_with_index(&wire_name, i as u32);
+                lut.set_input("a", &con);
+                lut.set_output_with_index("y", &wire_name, i as u32);
                 reg.set_id(&asm.new_instance_name());
                 reg.set_input("clock", &asm.clock());
                 reg.set_input("reset", &asm.reset());
                 reg.set_input("en", &en);
                 if width == 1 {
-                    lut.add_input(&tru);
-                    lut.add_input(&fal);
+                    lut.set_input("b", &tru);
+                    lut.set_input("c", &fal);
                     reg.set_input("a", &wire_name);
                     reg.set_output("y", &res);
                 } else {
-                    lut.add_input_with_index(&tru, i as u32);
-                    lut.add_input_with_index(&fal, i as u32);
+                    lut.set_input_with_index("b", &tru, i as u32);
+                    lut.set_input_with_index("c", &fal, i as u32);
                     reg.set_input_with_index("a", &wire_name, i as u32);
                     reg.set_output_with_index("y", &res, i as u32);
                 }
@@ -61,15 +61,15 @@ impl Emit for LutMux {
                 let mut lut = Lut::new_lut3();
                 lut.set_id(&asm.new_instance_name());
                 lut.set_attr("init", "ac");
-                lut.add_input(&con);
+                lut.set_input("a", &con);
                 if width == 1 {
-                    lut.add_input(&tru);
-                    lut.add_input(&fal);
-                    lut.set_output(&res);
+                    lut.set_input("b", &tru);
+                    lut.set_input("c", &fal);
+                    lut.set_output("y", &res);
                 } else {
-                    lut.add_input_with_index(&tru, i as u32);
-                    lut.add_input_with_index(&fal, i as u32);
-                    lut.set_output_with_index(&res, i as u32);
+                    lut.set_input_with_index("b", &tru, i as u32);
+                    lut.set_input_with_index("c", &fal, i as u32);
+                    lut.set_output_with_index("y", &res, i as u32);
                 }
                 asm.add_instance(verilog::Stmt::from(lut));
             }

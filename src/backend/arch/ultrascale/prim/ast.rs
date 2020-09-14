@@ -61,8 +61,8 @@ pub struct Lut {
     pub ty: LutTy,
     pub id: Id,
     pub attrs: AttrMap,
-    pub inputs: Vec<Expr>,
-    pub output: Expr,
+    pub inputs: PortMap,
+    pub outputs: PortMap,
     pub loc: Option<Loc>,
 }
 
