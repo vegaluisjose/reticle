@@ -7,6 +7,8 @@ fn has_reg(op: &str) -> bool {
     match op {
         "lut_eq_b_i8_i8" => false,
         "lut_reg_eq_b_i8_i8" => true,
+        "lut_neq_b_i8_i8" => false,
+        "lut_reg_neq_b_i8_i8" => true,
         _ => unimplemented!(),
     }
 }
