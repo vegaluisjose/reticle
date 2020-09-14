@@ -37,6 +37,19 @@ fn lut_default_outputs() -> PortMap {
 }
 
 impl Lut {
+    pub fn new_lut1() -> Lut {
+        let mut inputs = PortMap::new();
+        inputs.insert("a".to_string(), Expr::default());
+        Lut {
+            ty: LutTy::Lut1,
+            id: String::new(),
+            attrs: lut_default_attrs(),
+            inputs,
+            outputs: lut_default_outputs(),
+            loc: None,
+        }
+    }
+
     pub fn new_lut2() -> Lut {
         let mut inputs = PortMap::new();
         inputs.insert("a".to_string(), Expr::default());

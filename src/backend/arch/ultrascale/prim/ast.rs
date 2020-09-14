@@ -49,6 +49,7 @@ pub struct Loc {
 
 #[derive(Clone, Debug)]
 pub enum LutTy {
+    Lut1,
     Lut2,
     Lut3,
     Lut4,

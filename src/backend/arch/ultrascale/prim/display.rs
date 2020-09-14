@@ -5,6 +5,7 @@ use std::fmt;
 impl fmt::Display for LutTy {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let name = match self {
+            LutTy::Lut1 => "LUT1",
             LutTy::Lut2 => "LUT2",
             LutTy::Lut3 => "LUT3",
             LutTy::Lut4 => "LUT4",
