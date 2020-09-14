@@ -11,6 +11,16 @@ fn has_reg(op: &str) -> bool {
     }
 }
 
+fn is_eq(op: &str) -> bool {
+    match op {
+        "lut_eq_b_i8_i8" => true,
+        "lut_reg_eq_b_i8_i8" => true,
+        "lut_neq_b_i8_i8" => false,
+        "lut_reg_neq_b_i8_i8" => false,
+        _ => unimplemented!(),
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct LutEq;
 
@@ -31,9 +41,15 @@ impl Emit for LutEq {
         lut_0.set_id(&asm.new_instance_name());
         lut_1.set_id(&asm.new_instance_name());
         lut_2.set_id(&asm.new_instance_name());
-        lut_0.set_attr("init", "9009000000000000");
-        lut_1.set_attr("init", "9009000000009009");
-        lut_2.set_attr("init", "9009000000009009");
+        if is_eq(&instr.op) {
+            lut_0.set_attr("init", "9009000000000000");
+            lut_1.set_attr("init", "9009000000009009");
+            lut_2.set_attr("init", "9009000000009009");
+        } else {
+            lut_0.set_attr("init", "FFFFFFFFFFFF6FF6");
+            lut_1.set_attr("init", "6FF6FFFFFFFF6FF6");
+            lut_2.set_attr("init", "6FF6FFFFFFFF6FF6");
+        }
         lut_0.set_input_with_index("a", &rhs, 7);
         lut_0.set_input_with_index("b", &lhs, 7);
         lut_0.set_input_with_index("c", &rhs, 6);
