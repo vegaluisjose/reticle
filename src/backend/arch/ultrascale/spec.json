@@ -155,6 +155,20 @@
          "expr":["xnor", "bool", "bool"]
       },
       {
+         "name":"lut_eq_b_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["eq", "bool", "bool"]
+      },
+      {
+         "name":"lut_neq_b_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["neq", "bool", "bool"]
+      },
+      {
          "name":"lut_reg_add_i8_i8_i8_b",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",

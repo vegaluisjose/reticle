@@ -380,7 +380,16 @@ mod test_scalar_isa {
         let prog = parse_from_file("examples/isa/scalar/eq_b_b_b.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
         trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
         trace.enq_scalar("y", 1);
         assert!(!Interpreter::default()
             .with_print()
@@ -406,7 +415,16 @@ mod test_scalar_isa {
         let prog = parse_from_file("examples/isa/scalar/neq_b_b_b.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
         trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 1);
         trace.enq_scalar("y", 0);
         assert!(!Interpreter::default()
             .with_print()
