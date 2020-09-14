@@ -156,11 +156,13 @@ impl Eval for Instr {
                     if self.is_vector() {
                         let mut res = Value::new_vector();
                         for i in input.get_vector().iter() {
-                            res.push(!i);
+                            let ty = self.dst_ty().vector_ty();
+                            let value = mask(Value::new_scalar(!i), ty);
+                            res.push(value.get_scalar());
                         }
                         res
                     } else {
-                        Value::new_scalar(!input.get_scalar())
+                        mask(Value::new_scalar(!input.get_scalar()), self.dst_ty())
                     }
                 }
                 PrimOp::And => {
@@ -188,7 +190,10 @@ impl Eval for Instr {
                         }
                         res
                     } else {
-                        mask(Value::new_scalar(!(lhs.get_scalar() & rhs.get_scalar())), self.dst_ty())
+                        mask(
+                            Value::new_scalar(!(lhs.get_scalar() & rhs.get_scalar())),
+                            self.dst_ty(),
+                        )
                     }
                 }
                 PrimOp::Or => {
@@ -216,7 +221,10 @@ impl Eval for Instr {
                         }
                         res
                     } else {
-                        mask(Value::new_scalar(!(lhs.get_scalar() | rhs.get_scalar())), self.dst_ty())
+                        mask(
+                            Value::new_scalar(!(lhs.get_scalar() | rhs.get_scalar())),
+                            self.dst_ty(),
+                        )
                     }
                 }
                 PrimOp::Xor => {
@@ -244,7 +252,10 @@ impl Eval for Instr {
                         }
                         res
                     } else {
-                        mask(Value::new_scalar(!(lhs.get_scalar() ^ rhs.get_scalar())), self.dst_ty())
+                        mask(
+                            Value::new_scalar(!(lhs.get_scalar() ^ rhs.get_scalar())),
+                            self.dst_ty(),
+                        )
                     }
                 }
                 PrimOp::Mux => {

@@ -1,0 +1,3 @@
+def not_b_b(a: bool) -> (y: bool) {
+    y: bool = not(a);
+}

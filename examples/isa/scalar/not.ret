@@ -1,3 +1,0 @@
-def add(a: i8) -> (y: i8) {
-    y: i8 = not(a);
-}

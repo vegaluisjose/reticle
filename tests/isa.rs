@@ -91,11 +91,25 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_not() {
-        let prog = parse_from_file("examples/isa/scalar/not.ret");
+    fn test_not_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/not_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 3); // 0b00000011
         trace.enq_scalar("y", -4); // 0b11111100
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_not_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/not_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("y", 1);
+        trace.enq_scalar("y", 0);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
