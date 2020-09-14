@@ -1,0 +1,3 @@
+def and_b_b_b(a: bool, b: bool) -> (y: bool) {
+    y: bool = and(a, b);
+}

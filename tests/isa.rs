@@ -116,6 +116,28 @@ mod test_scalar_isa {
     }
 
     #[test]
+    fn test_and_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/and_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("b", 1);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 1);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
     fn test_nand() {
         let prog = parse_from_file("examples/isa/scalar/nand.ret");
         let mut trace = Trace::default();
