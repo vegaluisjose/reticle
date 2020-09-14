@@ -1,0 +1,3 @@
+def id_b_b(a: bool) -> (y: bool) {
+    y: bool = id(a);
+}
