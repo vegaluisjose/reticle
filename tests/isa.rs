@@ -365,19 +365,6 @@ mod test_vector_isa {
     }
 
     #[test]
-    fn test_vmul_v4() {
-        let prog = parse_from_file("examples/isa/vector/vmul_v4.ret");
-        let mut trace = Trace::default();
-        trace.enq_vector("a", vec![-4, 2, 2, 1]);
-        trace.enq_vector("b", vec![1, 3, 0, 1]);
-        trace.enq_vector("y", vec![-4, 6, 0, 1]);
-        assert!(!Interpreter::default()
-            .with_print()
-            .run(&prog, &trace)
-            .has_failed());
-    }
-
-    #[test]
     fn test_vnot_v4() {
         let prog = parse_from_file("examples/isa/vector/vnot_v4.ret");
         let mut trace = Trace::default();
