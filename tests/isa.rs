@@ -103,8 +103,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_and() {
-        let prog = parse_from_file("examples/isa/scalar/and.ret");
+    fn test_and_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/and_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 3);
         trace.enq_scalar("b", 3);

@@ -1,3 +1,0 @@
-def and(a: i8, b: i8) -> (y: i8) {
-    y: i8 = and(a, b);
-}
