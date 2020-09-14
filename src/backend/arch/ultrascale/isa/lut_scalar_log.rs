@@ -24,7 +24,7 @@ impl Emit for LutScalarLog {
         let init = emit_lut_init(&instr);
         for i in 0..width {
             let mut lut = Lut::new_lut2();
-            lut.set_init(&init);
+            lut.set_attr("init", &init);
             lut.set_id(&asm.new_instance_name());
             if width == 1 {
                 lut.add_input(&lhs);

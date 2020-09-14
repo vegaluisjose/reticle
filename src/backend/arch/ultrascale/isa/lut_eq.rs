@@ -30,9 +30,9 @@ impl Emit for LutEq {
         lut_0.set_id(&asm.new_instance_name());
         lut_1.set_id(&asm.new_instance_name());
         lut_2.set_id(&asm.new_instance_name());
-        lut_0.set_init("9009000000000000");
-        lut_1.set_init("9009000000009009");
-        lut_2.set_init("9009000000009009");
+        lut_0.set_attr("init", "9009000000000000");
+        lut_1.set_attr("init", "9009000000009009");
+        lut_2.set_attr("init", "9009000000009009");
         lut_0.add_input_with_index(&rhs, 7);
         lut_0.add_input_with_index(&lhs, 7);
         lut_0.add_input_with_index(&rhs, 6);

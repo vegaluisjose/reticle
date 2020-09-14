@@ -3,6 +3,7 @@ use std::collections::HashMap;
 pub type Id = String;
 pub type PortMap = HashMap<String, Expr>;
 pub type ParamMap = HashMap<String, i64>;
+pub type AttrMap = HashMap<String, String>;
 
 #[derive(Clone, Debug)]
 pub enum Expr {
@@ -59,7 +60,7 @@ pub enum LutTy {
 pub struct Lut {
     pub ty: LutTy,
     pub id: Id,
-    pub init: String,
+    pub attrs: AttrMap,
     pub inputs: Vec<Expr>,
     pub output: Expr,
     pub loc: Option<Loc>,

@@ -26,10 +26,12 @@ impl Expr {
 
 impl Lut {
     pub fn new_lut2() -> Lut {
+        let mut attrs = AttrMap::new();
+        attrs.insert("init".to_string(), "0".to_string());
         Lut {
             ty: LutTy::Lut2,
             id: String::new(),
-            init: "0".to_string(),
+            attrs,
             inputs: Vec::new(),
             output: Expr::default(),
             loc: None,
@@ -37,10 +39,12 @@ impl Lut {
     }
 
     pub fn new_lut3() -> Lut {
+        let mut attrs = AttrMap::new();
+        attrs.insert("init".to_string(), "0".to_string());
         Lut {
             ty: LutTy::Lut3,
             id: String::new(),
-            init: "0".to_string(),
+            attrs,
             inputs: Vec::new(),
             output: Expr::default(),
             loc: None,
@@ -48,10 +52,12 @@ impl Lut {
     }
 
     pub fn new_lut4() -> Lut {
+        let mut attrs = AttrMap::new();
+        attrs.insert("init".to_string(), "0".to_string());
         Lut {
             ty: LutTy::Lut4,
             id: String::new(),
-            init: "0".to_string(),
+            attrs,
             inputs: Vec::new(),
             output: Expr::default(),
             loc: None,
@@ -59,10 +65,12 @@ impl Lut {
     }
 
     pub fn new_lut5() -> Lut {
+        let mut attrs = AttrMap::new();
+        attrs.insert("init".to_string(), "0".to_string());
         Lut {
             ty: LutTy::Lut5,
             id: String::new(),
-            init: "0".to_string(),
+            attrs,
             inputs: Vec::new(),
             output: Expr::default(),
             loc: None,
@@ -70,13 +78,23 @@ impl Lut {
     }
 
     pub fn new_lut6() -> Lut {
+        let mut attrs = AttrMap::new();
+        attrs.insert("init".to_string(), "0".to_string());
         Lut {
             ty: LutTy::Lut6,
             id: String::new(),
-            init: "0".to_string(),
+            attrs,
             inputs: Vec::new(),
             output: Expr::default(),
             loc: None,
+        }
+    }
+
+    pub fn get_attr(&self, attr: &str) -> String {
+        if let Some(value) = self.attrs.get(attr) {
+            value.to_string()
+        } else {
+            panic!("Error: {} attr does not exist", attr);
         }
     }
 
@@ -86,10 +104,6 @@ impl Lut {
 
     pub fn ty(&self) -> &LutTy {
         &self.ty
-    }
-
-    pub fn init(&self) -> String {
-        self.init.to_string()
     }
 
     pub fn inputs(&self) -> &Vec<Expr> {
@@ -104,8 +118,9 @@ impl Lut {
         self.id = id.to_string();
     }
 
-    pub fn set_init(&mut self, value: &str) {
-        self.init = value.to_string();
+    pub fn set_attr(&mut self, attr: &str, value: &str) {
+        assert!(self.attrs.contains_key(attr));
+        self.attrs.insert(attr.to_string(), value.to_string());
     }
 
     pub fn add_input(&mut self, name: &str) {

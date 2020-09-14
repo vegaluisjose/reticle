@@ -22,9 +22,10 @@ impl From<Expr> for verilog::Expr {
 
 impl From<Lut> for verilog::Stmt {
     fn from(lut: Lut) -> Self {
+        let init = lut.get_attr("init");
         let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
-        inst.add_param("INIT", verilog::Expr::new_ulit_hex(width, &lut.init()));
+        inst.add_param("INIT", verilog::Expr::new_ulit_hex(width, &init));
         for (i, input) in lut.inputs().iter().enumerate() {
             let port = format!("I{}", i);
             inst.connect(&port, verilog::Expr::from(input.clone()));
