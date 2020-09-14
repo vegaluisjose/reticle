@@ -266,7 +266,12 @@ impl Assembler {
                 }
             } else {
                 match instr.std().op() {
-                    asm::StdOp::Const => isa::Constant::emit(self, instr),
+                    asm::StdOp::Const if instr.is_vector() => {
+                        isa::vector::Constant::emit(self, instr)
+                    }
+                    asm::StdOp::Const if instr.is_scalar() => {
+                        isa::scalar::Constant::emit(self, instr)
+                    }
                     _ => self.add_assignment(verilog::Stmt::from(instr.std().clone())),
                 }
             }
