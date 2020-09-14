@@ -151,8 +151,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_or() {
-        let prog = parse_from_file("examples/isa/scalar/or.ret");
+    fn test_or_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/or_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 3);
         trace.enq_scalar("b", 8);
