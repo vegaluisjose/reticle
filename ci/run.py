@@ -23,6 +23,8 @@ examples = [
     "examples/isa/scalar/neq_b_b_b.ret",
     "examples/isa/scalar/id_i8_i8.ret",
     "examples/isa/scalar/const_i8.ret",
+    "examples/isa/scalar/mux_i8_b_i8_i8.ret",
+    "examples/isa/scalar/mux_b_b_b_b.ret",
     "examples/isa/scalar/reg_i8_i8_b.ret",
     "examples/isa/vector/add_i8v4_i8v4_i8v4.ret",
     "examples/basic/pipeline.ret",

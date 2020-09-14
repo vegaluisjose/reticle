@@ -169,6 +169,13 @@
          "expr":["neq", "bool", "bool"]
       },
       {
+         "name":"lut_mux_b_b_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["mux", "bool", "bool", "bool"]
+      },
+      {
          "name":"lut_reg_add_i8_i8_i8_b",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
