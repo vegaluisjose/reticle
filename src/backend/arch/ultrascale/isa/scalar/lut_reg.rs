@@ -14,14 +14,20 @@ impl Emit for LutReg {
         let en = asm.fresh_scalar_variable(&params[1]);
         let res = asm.fresh_scalar_variable(&instr.dst_id());
         let regs = regs_from_init(instr.dst_ty().width(), instr.indexed_attr(0).value());
+        let width = instr.dst_ty().width();
         for (i, reg) in regs.iter().enumerate() {
             let mut reg = reg.clone();
             reg.set_id(&asm.new_instance_name());
             reg.set_input("clock", &asm.clock());
             reg.set_input("reset", &asm.reset());
             reg.set_input("en", &en);
-            reg.set_input_with_index("a", &val, i as u32);
-            reg.set_output_with_index("y", &res, i as u32);
+            if width == 1 {
+                reg.set_input("a", &val);
+                reg.set_output("y", &res);
+            } else {
+                reg.set_input_with_index("a", &val, i as u32);
+                reg.set_output_with_index("y", &res, i as u32);
+            }
             asm.add_instance(verilog::Stmt::from(reg));
         }
     }
