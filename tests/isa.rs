@@ -7,8 +7,8 @@ mod test_scalar_isa {
     use super::*;
 
     #[test]
-    fn test_id() {
-        let prog = parse_from_file("examples/isa/scalar/id.ret");
+    fn test_id_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/id_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 4);
         trace.enq_scalar("a", 1);
@@ -21,8 +21,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_const() {
-        let prog = parse_from_file("examples/isa/scalar/const.ret");
+    fn test_const_i8() {
+        let prog = parse_from_file("examples/isa/scalar/const_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("y", 3);
         trace.enq_scalar("y", 3);
