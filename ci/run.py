@@ -6,6 +6,7 @@ import pytest
 
 examples = [
     "examples/isa/scalar/register.ret",
+    "examples/isa/vector/vadd_v4.ret",
     "examples/basic/fsm.ret",
     "examples/basic/vadd_const.ret",
     "examples/basic/muladd.ret",
