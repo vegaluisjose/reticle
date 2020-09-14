@@ -66,7 +66,7 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
 }
 
 impl Emit for DspScalarArith {
-    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+    fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
         let mut dsp = DspScalar::new(op);
         let aw = dsp.get_param("aw") as u64;

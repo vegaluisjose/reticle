@@ -7,7 +7,7 @@ use crate::backend::verilog;
 pub struct Constant;
 
 impl Emit for Constant {
-    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+    fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let instr = instr.std().clone();
         let width = instr.dst_ty().width();
         if instr.is_vector() {

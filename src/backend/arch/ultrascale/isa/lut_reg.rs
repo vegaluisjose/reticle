@@ -7,7 +7,7 @@ use crate::backend::verilog;
 pub struct LutReg;
 
 impl Emit for LutReg {
-    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+    fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let instr = instr.prim().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let val = asm.fresh_scalar_variable(&params[0]);

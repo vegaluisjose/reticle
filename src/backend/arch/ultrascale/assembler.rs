@@ -5,7 +5,7 @@ use crate::backend::verilog;
 use std::collections::{HashMap, HashSet};
 
 pub trait Emit {
-    fn emit(asm: &mut Assembler, instr: asm::Instr);
+    fn emit(asm: &mut Assembler, instr: &asm::Instr);
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -254,21 +254,19 @@ impl Assembler {
             }
             if instr.is_prim() {
                 match instr.prim().op().as_ref() {
-                    "lut_and_b_b_b" => isa::LutScalarLog::emit(self, instr.clone()),
-                    "lut_or_b_b_b" => isa::LutScalarLog::emit(self, instr.clone()),
-                    "lut_eq_b_i8_i8" => isa::LutEq::emit(self, instr.clone()),
-                    "lut_mux_i8_b_i8_i8" => isa::LutMux::emit(self, instr.clone()),
-                    "lut_reg_mux_i8_b_i8_i8_b" => isa::LutMux::emit(self, instr.clone()),
-                    "lut_reg_i8_i8_b" => isa::LutReg::emit(self, instr.clone()),
-                    "dsp_add_i8v4_i8v4_i8v4" => isa::DspVectorArith::emit(self, instr.clone()),
-                    "dsp_add_reg_mul_i8_i8_i8_b_i8" => {
-                        isa::DspScalarArith::emit(self, instr.clone())
-                    }
+                    "lut_and_b_b_b" => isa::LutScalarLog::emit(self, instr),
+                    "lut_or_b_b_b" => isa::LutScalarLog::emit(self, instr),
+                    "lut_eq_b_i8_i8" => isa::LutEq::emit(self, instr),
+                    "lut_mux_i8_b_i8_i8" => isa::LutMux::emit(self, instr),
+                    "lut_reg_mux_i8_b_i8_i8_b" => isa::LutMux::emit(self, instr),
+                    "lut_reg_i8_i8_b" => isa::LutReg::emit(self, instr),
+                    "dsp_add_i8v4_i8v4_i8v4" => isa::DspVectorArith::emit(self, instr),
+                    "dsp_add_reg_mul_i8_i8_i8_b_i8" => isa::DspScalarArith::emit(self, instr),
                     _ => unimplemented!(),
                 }
             } else {
                 match instr.std().op() {
-                    asm::StdOp::Const => isa::Constant::emit(self, instr.clone()),
+                    asm::StdOp::Const => isa::Constant::emit(self, instr),
                     _ => self.add_assignment(verilog::Stmt::from(instr.std().clone())),
                 }
             }

@@ -15,7 +15,7 @@ fn emit_lut_init(instr: &asm::Instr) -> String {
 pub struct LutScalarLog;
 
 impl Emit for LutScalarLog {
-    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+    fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let lhs = asm.fresh_scalar_variable(&params[0]);
         let rhs = asm.fresh_scalar_variable(&params[1]);

@@ -53,7 +53,7 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64) {
 pub struct DspVectorArith;
 
 impl Emit for DspVectorArith {
-    fn emit(asm: &mut Assembler, instr: asm::Instr) {
+    fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
         let mut dsp = DspVector::new(op, instr.dst_ty().length());
         let dsp_word = dsp.get_param("word") as u64;
