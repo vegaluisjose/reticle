@@ -1,3 +1,0 @@
-def mux(cond: bool, t: i8, f: i8) -> (y: i8) {
-    y: i8 = mux(cond, t, f);
-}

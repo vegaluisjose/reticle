@@ -313,8 +313,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_mux() {
-        let prog = parse_from_file("examples/isa/scalar/mux.ret");
+    fn test_mux_i8_b_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/mux_i8_b_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("cond", 0);
         trace.enq_scalar("cond", 1);
@@ -324,6 +324,24 @@ mod test_scalar_isa {
         trace.enq_scalar("f", 6);
         trace.enq_scalar("y", 6);
         trace.enq_scalar("y", 2);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_mux_b_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/mux_b_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("cond", 0);
+        trace.enq_scalar("cond", 1);
+        trace.enq_scalar("t", 1);
+        trace.enq_scalar("t", 1);
+        trace.enq_scalar("f", 0);
+        trace.enq_scalar("f", 0);
+        trace.enq_scalar("y", 0);
+        trace.enq_scalar("y", 1);
         assert!(!Interpreter::default()
             .with_print()
             .run(&prog, &trace)
