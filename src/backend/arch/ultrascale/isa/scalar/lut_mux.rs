@@ -23,9 +23,8 @@ impl Emit for LutMux {
         let tru = asm.fresh_scalar_variable(&params[1]);
         let fal = asm.fresh_scalar_variable(&params[2]);
         let res = asm.fresh_scalar_variable(&instr.dst_id());
-        let has_reg = has_reg(&instr.op());
         let width = instr.dst_ty().width();
-        if has_reg {
+        if has_reg(&instr.op()) {
             let en = asm.fresh_scalar_variable(&params[3]);
             let wire_name = asm.new_variable_name();
             let wire = verilog::Decl::new_wire(&wire_name, 8);
