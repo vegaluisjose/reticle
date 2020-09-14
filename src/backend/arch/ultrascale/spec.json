@@ -71,6 +71,13 @@
          "expr":["xor", "i8", "i8"]
       },
       {
+         "name":"lut_not_i8_i8",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"i8",
+         "expr":["not", "i8"]
+      },
+      {
          "name":"lut_nand_i8_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
@@ -132,6 +139,13 @@
          "loc":"lut",
          "ty":"bool",
          "expr":["xor", "bool", "bool"]
+      },
+      {
+         "name":"lut_not_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["not", "bool"]
       },
       {
          "name":"lut_nand_b_b_b",
