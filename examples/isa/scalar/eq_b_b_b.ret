@@ -1,0 +1,3 @@
+def eq_b_b_b(a: bool, b: bool) -> (y: bool) {
+    y: bool = eq(a, b);
+}

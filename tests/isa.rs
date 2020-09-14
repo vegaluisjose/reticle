@@ -376,11 +376,37 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_neq() {
-        let prog = parse_from_file("examples/isa/scalar/neq.ret");
+    fn test_eq_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/eq_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("b", 0);
+        trace.enq_scalar("y", 1);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_neq_b_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/neq_b_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 3);
         trace.enq_scalar("b", 3);
+        trace.enq_scalar("y", 0);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_neq_b_b_b() {
+        let prog = parse_from_file("examples/isa/scalar/neq_b_b_b.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 0);
+        trace.enq_scalar("b", 0);
         trace.enq_scalar("y", 0);
         assert!(!Interpreter::default()
             .with_print()
