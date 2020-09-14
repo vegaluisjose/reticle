@@ -260,6 +260,8 @@ impl Assembler {
                     "lut_or_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
                     "lut_xor_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
                     "lut_xor_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
+                    "lut_xnor_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
+                    "lut_xnor_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
                     "lut_eq_b_i8_i8" => isa::scalar::LutEq::emit(self, instr),
                     "lut_mux_i8_b_i8_i8" => isa::scalar::LutMux::emit(self, instr),
                     "lut_reg_mux_i8_b_i8_i8_b" => isa::scalar::LutMux::emit(self, instr),

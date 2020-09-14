@@ -71,6 +71,13 @@
          "expr":["xor", "i8", "i8"]
       },
       {
+         "name":"lut_xnor_i8_i8_i8",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"i8",
+         "expr":["xnor", "i8", "i8"]
+      },
+      {
          "name":"lut_eq_b_i8_i8",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
@@ -111,6 +118,13 @@
          "loc":"lut",
          "ty":"bool",
          "expr":["xor", "bool", "bool"]
+      },
+      {
+         "name":"lut_xnor_b_b_b",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"bool",
+         "expr":["xnor", "bool", "bool"]
       },
       {
          "name":"lut_reg_add_i8_i8_i8_b",

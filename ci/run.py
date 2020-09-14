@@ -11,6 +11,8 @@ examples = [
     "examples/isa/scalar/or_b_b_b.ret",
     "examples/isa/scalar/xor_i8_i8_i8.ret",
     "examples/isa/scalar/xor_b_b_b.ret",
+    "examples/isa/scalar/xnor_i8_i8_i8.ret",
+    "examples/isa/scalar/xnor_b_b_b.ret",
     "examples/isa/scalar/eq_b_i8_i8.ret",
     "examples/isa/scalar/id_i8_i8.ret",
     "examples/isa/scalar/const_i8.ret",
