@@ -106,7 +106,7 @@
          "expr":["or", "bool", "bool"]
       },
       {
-         "name":"lut_or_b_b_b",
+         "name":"lut_xor_b_b_b",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
