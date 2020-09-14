@@ -1,3 +1,0 @@
-def eq(a: i8, b: i8) -> (y: bool) {
-    y: bool = eq(a, b);
-}
