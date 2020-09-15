@@ -84,6 +84,10 @@ pub struct Reg {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspFusedOp {
+    Mul,
+    RegMul,
+    MulReg,
+    RegMulReg,
     MulAdd,
     RegMulAdd,
     MulRegAdd,

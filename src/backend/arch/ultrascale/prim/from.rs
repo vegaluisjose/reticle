@@ -298,6 +298,15 @@ impl From<DspFused> for verilog::Stmt {
         inst.connect("P", verilog::Expr::from(y.clone()));
         // derive attributes
         match dsp.op() {
+            DspFusedOp::Mul => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
+                inst.add_param("MREG", verilog::Expr::new_int(0));
+                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
+                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
+                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000000101"));
+                inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
+                inst.connect("C", verilog::Expr::new_ulit_dec(48, "0"));
+            }
             DspFusedOp::MulAdd => {
                 let c = dsp.get_input("c");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));

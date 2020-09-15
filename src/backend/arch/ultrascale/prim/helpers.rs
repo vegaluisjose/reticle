@@ -317,30 +317,49 @@ impl DspFused {
         inputs.insert("reset".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
-        inputs.insert("c".to_string(), Expr::default());
         match op {
+            DspFusedOp::RegMul => {
+                inputs.insert("en_input".to_string(), Expr::default());
+            }
+            DspFusedOp::MulReg => {
+                inputs.insert("en_output".to_string(), Expr::default());
+            }
+            DspFusedOp::RegMulReg => {
+                inputs.insert("en_input".to_string(), Expr::default());
+                inputs.insert("en_output".to_string(), Expr::default());
+            }
+            DspFusedOp::MulAdd => {
+                inputs.insert("c".to_string(), Expr::default());
+            }
             DspFusedOp::MulRegAdd => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_mul".to_string(), Expr::default());
             }
             DspFusedOp::RegMulAdd => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_input".to_string(), Expr::default());
             }
             DspFusedOp::MulAddReg => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_output".to_string(), Expr::default());
             }
             DspFusedOp::RegMulRegAdd => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_input".to_string(), Expr::default());
                 inputs.insert("en_mul".to_string(), Expr::default());
             }
             DspFusedOp::MulRegAddReg => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_mul".to_string(), Expr::default());
                 inputs.insert("en_output".to_string(), Expr::default());
             }
             DspFusedOp::RegMulAddReg => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_input".to_string(), Expr::default());
                 inputs.insert("en_output".to_string(), Expr::default());
             }
             DspFusedOp::RegMulRegAddReg => {
+                inputs.insert("c".to_string(), Expr::default());
                 inputs.insert("en_input".to_string(), Expr::default());
                 inputs.insert("en_mul".to_string(), Expr::default());
                 inputs.insert("en_output".to_string(), Expr::default());
