@@ -13,18 +13,28 @@ fn lut_width(ty: LutTy) -> u32 {
 }
 
 fn convert_literal(vcc: &Expr, gnd: &Expr, width: i64, value: i64) -> verilog::Expr {
-    let mut concat = verilog::ExprConcat::default();
-    for i in 0..width {
-        let shift = value >> i;
-        let mask = shift & 1;
+    if width == 1 {
+        let mask = value & 1;
         let is_one = mask == 1;
         if is_one {
-            concat.add_expr(verilog::Expr::from(vcc.clone()));
+            verilog::Expr::from(vcc.clone())
         } else {
-            concat.add_expr(verilog::Expr::from(gnd.clone()));
+            verilog::Expr::from(gnd.clone())
         }
+    } else {
+        let mut concat = verilog::ExprConcat::default();
+        for i in 0..width {
+            let shift = value >> i;
+            let mask = shift & 1;
+            let is_one = mask == 1;
+            if is_one {
+                concat.add_expr(verilog::Expr::from(vcc.clone()));
+            } else {
+                concat.add_expr(verilog::Expr::from(gnd.clone()));
+            }
+        }
+        verilog::Expr::from(concat)
     }
-    verilog::Expr::from(concat)
 }
 
 impl From<Expr> for verilog::Expr {
@@ -289,6 +299,8 @@ impl From<DspVector> for verilog::Stmt {
 impl From<DspFused> for verilog::Stmt {
     fn from(dsp: DspFused) -> Self {
         let mut inst = verilog::Instance::new(&dsp.get_id(), "DSP48E2");
+        let gnd = dsp.get_input("gnd");
+        let vcc = dsp.get_input("vcc");
         let clock = dsp.get_input("clock");
         let reset = dsp.get_input("reset");
         let a = dsp.get_input("a");
@@ -420,14 +432,14 @@ impl From<DspFused> for verilog::Stmt {
         inst.add_param("OPMODEREG", verilog::Expr::new_int(0));
         inst.add_param("PREG", verilog::Expr::new_int(0));
         // default input values
-        inst.connect("ACIN", verilog::Expr::new_ulit_dec(30, "0"));
-        inst.connect("BCIN", verilog::Expr::new_ulit_dec(18, "0"));
-        inst.connect("CARRYCASCIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("MULTSIGNIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("PCIN", verilog::Expr::new_ulit_dec(48, "0"));
-        inst.connect("CARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CARRYINSEL", verilog::Expr::new_ulit_dec(3, "0"));
-        inst.connect("D", verilog::Expr::new_ulit_dec(27, "0"));
+        inst.connect("ACIN", convert_literal(&vcc, &gnd, 30, 0));
+        inst.connect("BCIN", convert_literal(&vcc, &gnd, 18, 0));
+        inst.connect("CARRYCASCIN", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("MULTSIGNIN", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("PCIN", convert_literal(&vcc, &gnd, 48, 0));
+        inst.connect("CARRYIN", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CARRYINSEL", convert_literal(&vcc, &gnd, 3, 0));
+        inst.connect("D", convert_literal(&vcc, &gnd, 27, 0));
         // unused outputs
         inst.connect("ACOUT", verilog::Expr::from(Expr::default()));
         inst.connect("BCOUT", verilog::Expr::from(Expr::default()));

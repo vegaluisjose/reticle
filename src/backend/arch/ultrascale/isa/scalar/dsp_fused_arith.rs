@@ -78,6 +78,8 @@ impl Emit for DspFusedArith {
         let b = emit_wire(asm, bw);
         let y = emit_wire(asm, yw);
         dsp.set_id(&asm.new_instance_name());
+        dsp.set_input("vcc", &asm.vcc);
+        dsp.set_input("gnd", &asm.gnd);
         dsp.set_input("clock", &asm.clock());
         dsp.set_input("reset", &asm.reset());
         dsp.set_input("a", &a);

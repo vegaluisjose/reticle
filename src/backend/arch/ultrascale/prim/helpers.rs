@@ -313,6 +313,8 @@ impl DspFused {
         params.insert("cw".to_string(), 48);
         params.insert("yw".to_string(), 48);
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("clock".to_string(), Expr::default());
         inputs.insert("reset".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
