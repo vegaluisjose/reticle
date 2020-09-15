@@ -6,6 +6,15 @@ use crate::backend::verilog;
 fn emit_lut_init(instr: &asm::Instr) -> String {
     match instr.prim().op().as_ref() {
         "lut_add_i8_i8_i8" => "6".to_string(),
+        "lut_sub_i8_i8_i8" => "9".to_string(),
+        _ => unimplemented!(),
+    }
+}
+
+fn is_add(instr: &asm::Instr) -> bool {
+    match instr.prim().op().as_ref() {
+        "lut_add_i8_i8_i8" => true,
+        "lut_sub_i8_i8_i8" => false,
         _ => unimplemented!(),
     }
 }
@@ -38,6 +47,11 @@ impl Emit for LutAddSub {
         carry.set_input("gnd", &asm.gnd);
         carry.set_input("a", &lhs);
         carry.set_input("b", &wire_name);
+        if is_add(instr) {
+            carry.set_input("ci", &asm.gnd);
+        } else {
+            carry.set_input("ci", &asm.vcc);
+        }
         carry.set_output("y", &res);
         asm.add_instance(verilog::Stmt::from(carry));
         asm.add_wire(verilog::Stmt::from(wire));

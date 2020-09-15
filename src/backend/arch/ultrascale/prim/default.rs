@@ -35,6 +35,7 @@ impl Default for Carry {
         inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
+        inputs.insert("ci".to_string(), Expr::default());
         let mut outputs = PortMap::new();
         outputs.insert("y".to_string(), Expr::default());
         Carry {

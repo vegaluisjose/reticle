@@ -255,6 +255,7 @@ impl Assembler {
             if instr.is_prim() {
                 match instr.prim().op().as_ref() {
                     "lut_add_i8_i8_i8" => isa::scalar::LutAddSub::emit(self, instr),
+                    "lut_sub_i8_i8_i8" => isa::scalar::LutAddSub::emit(self, instr),
                     "lut_and_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
                     "lut_and_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
                     "lut_or_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
