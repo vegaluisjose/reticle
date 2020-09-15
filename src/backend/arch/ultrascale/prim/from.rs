@@ -12,6 +12,21 @@ fn lut_width(ty: LutTy) -> u32 {
     }
 }
 
+fn convert_literal(vcc: &Expr, gnd: &Expr, width: i64, value: i64) -> verilog::Expr {
+    let mut concat = verilog::ExprConcat::default();
+    for i in 0..width {
+        let shift = value >> i;
+        let mask = shift & 1;
+        let is_one = mask == 1;
+        if is_one {
+            concat.add_expr(verilog::Expr::from(vcc.clone()));
+        } else {
+            concat.add_expr(verilog::Expr::from(gnd.clone()));
+        }
+    }
+    verilog::Expr::from(concat)
+}
+
 impl From<Expr> for verilog::Expr {
     fn from(expr: Expr) -> Self {
         match expr {
@@ -449,22 +464,11 @@ impl From<Gnd> for verilog::Stmt {
 
 impl From<Const> for verilog::Stmt {
     fn from(constant: Const) -> Self {
-        let mut concat = verilog::ExprConcat::default();
         let gnd = constant.get_input("gnd");
         let vcc = constant.get_input("vcc");
         let width = constant.get_param("width");
         let value = constant.get_param("value");
-        for i in 0..width {
-            let shift = value >> i;
-            let mask = shift & 1;
-            let is_one = mask == 1;
-            if is_one {
-                concat.add_expr(verilog::Expr::from(vcc.clone()));
-            } else {
-                concat.add_expr(verilog::Expr::from(gnd.clone()));
-            }
-        }
-        let expr = verilog::Expr::from(concat);
+        let expr = convert_literal(&vcc, &gnd, width, value);
         let out = verilog::Expr::new_ref(&constant.get_id());
         let assign = verilog::Parallel::ParAssign(out, expr);
         verilog::Stmt::from(assign)
