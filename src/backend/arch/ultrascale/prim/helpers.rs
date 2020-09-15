@@ -624,3 +624,52 @@ impl Const {
         self.inputs.insert(input.to_string(), Expr::new_ref(value));
     }
 }
+
+impl Carry {
+    pub fn get_id(&self) -> String {
+        self.id.to_string()
+    }
+
+    pub fn get_input(&self, input: &str) -> &Expr {
+        if let Some(expr) = self.inputs.get(input) {
+            expr
+        } else {
+            panic!("Error: {} input does not exist", input);
+        }
+    }
+
+    pub fn get_output(&self, output: &str) -> &Expr {
+        if let Some(expr) = self.outputs.get(output) {
+            expr
+        } else {
+            panic!("Error: {} output does not exist", output)
+        }
+    }
+
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+
+    pub fn set_input(&mut self, input: &str, value: &str) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs.insert(input.to_string(), Expr::new_ref(value));
+    }
+
+    pub fn set_input_with_index(&mut self, input: &str, value: &str, index: u32) {
+        assert!(self.inputs.contains_key(input));
+        self.inputs
+            .insert(input.to_string(), Expr::new_index(value, index));
+    }
+
+    pub fn set_output(&mut self, output: &str, value: &str) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_ref(value));
+    }
+
+    pub fn set_output_with_index(&mut self, output: &str, value: &str, index: u32) {
+        assert!(self.outputs.contains_key(output));
+        self.outputs
+            .insert(output.to_string(), Expr::new_index(value, index));
+    }
+}

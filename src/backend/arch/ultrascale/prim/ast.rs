@@ -140,3 +140,10 @@ pub struct Const {
     pub params: ParamMap,
     pub inputs: PortMap,
 }
+
+#[derive(Clone, Debug)]
+pub struct Carry {
+    pub id: Id,
+    pub inputs: PortMap,
+    pub outputs: PortMap,
+}

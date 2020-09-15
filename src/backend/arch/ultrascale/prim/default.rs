@@ -27,3 +27,20 @@ impl Default for Gnd {
         }
     }
 }
+
+impl Default for Carry {
+    fn default() -> Carry {
+        let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
+        inputs.insert("a".to_string(), Expr::default());
+        inputs.insert("b".to_string(), Expr::default());
+        let mut outputs = PortMap::new();
+        outputs.insert("y".to_string(), Expr::default());
+        Carry {
+            id: String::new(),
+            inputs,
+            outputs,
+        }
+    }
+}

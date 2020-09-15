@@ -470,3 +470,22 @@ impl From<Const> for verilog::Stmt {
         verilog::Stmt::from(assign)
     }
 }
+
+impl From<Carry> for verilog::Stmt {
+    fn from(carry: Carry) -> Self {
+        let gnd = carry.get_input("gnd");
+        let a = carry.get_input("a");
+        let b = carry.get_input("b");
+        let y = carry.get_output("y");
+        let mut inst = verilog::Instance::new(&carry.get_id(), "CARRY8");
+        inst.add_param("CARRY_TYPE", verilog::Expr::new_str("SINGLE_CY8"));
+        inst.connect("DI", verilog::Expr::from(a.clone()));
+        inst.connect("S", verilog::Expr::from(b.clone()));
+        inst.connect("O", verilog::Expr::from(y.clone()));
+        inst.connect("CI", verilog::Expr::from(gnd.clone()));
+        inst.connect("CI_TOP", verilog::Expr::from(gnd.clone()));
+        // unused output
+        inst.connect("CO", verilog::Expr::from(Expr::default()));
+        verilog::Stmt::from(inst)
+    }
+}

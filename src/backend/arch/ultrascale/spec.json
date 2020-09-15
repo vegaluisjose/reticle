@@ -44,7 +44,7 @@
       },
       {
          "name":"lut_add_i8_i8_i8",
-         "cost": {"delay":8, "area": 1},
+         "cost": {"delay":0, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["add", "i8", "i8"]
