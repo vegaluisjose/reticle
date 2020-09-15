@@ -1,4 +1,4 @@
-module test_muladd();
+module test_add_reg_mul_i8_i8_i8_b_i8();
 
     reg clock = 1'b0;
     reg reset = 1'b0;
@@ -51,6 +51,6 @@ module test_muladd();
         end
     end
 
-    muladd dut(.clock(clock), .reset(reset), .a(a), .b(b), .c(c), .en(en), .y(y));
+    add_reg_mul_i8_i8_i8_b_i8 dut(.clock(clock), .reset(reset), .a(a), .b(b), .c(c), .en(en), .y(y));
 
 endmodule
