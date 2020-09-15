@@ -29,7 +29,7 @@ impl Emit for LutMux {
         if has_reg(&instr.op()) {
             let en = asm.fresh_scalar_variable(&params[3]);
             let wire_name = asm.new_variable_name();
-            let wire = verilog::Decl::new_wire(&wire_name, 8);
+            let wire = verilog::Decl::new_wire(&wire_name, width);
             let regs = regs_from_init(instr.dst_ty().width(), instr.indexed_attr(0).value());
             asm.add_wire(verilog::Stmt::from(wire));
             for (i, reg) in regs.iter().enumerate() {

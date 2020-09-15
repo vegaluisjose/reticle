@@ -86,8 +86,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_add() {
-        let prog = parse_from_file("examples/isa/scalar/add.ret");
+    fn test_add_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/add_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 9);
         trace.enq_scalar("b", 3);
@@ -99,8 +99,8 @@ mod test_scalar_isa {
     }
 
     #[test]
-    fn test_sub() {
-        let prog = parse_from_file("examples/isa/scalar/sub.ret");
+    fn test_sub_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/sub_i8_i8_i8.ret");
         let mut trace = Trace::default();
         trace.enq_scalar("a", 9);
         trace.enq_scalar("b", 3);

@@ -1,3 +1,0 @@
-def sub(a: i8, b: i8) -> (y: i8) {
-    y: i8 = sub(a, b);
-}
