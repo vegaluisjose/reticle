@@ -212,6 +212,13 @@ def test_reticle_clippy(docker: bool):
     run_rust(docker, cmd)
 
 
+def test_reticle_interpreter(docker: bool):
+    cmd = []
+    cmd.append("cargo")
+    cmd.append("test")
+    run_rust(docker, cmd)
+
+
 def test_reticle_build(docker: bool):
     build_reticle(docker)
 
