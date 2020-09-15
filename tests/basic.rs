@@ -38,26 +38,6 @@ mod test_basic {
     }
 
     #[test]
-    fn test_muladd() {
-        let prog = parse_from_file("examples/basic/muladd.ret");
-        let mut trace = Trace::default();
-        trace.enq_scalar("a", 4);
-        trace.enq_scalar("a", 0);
-        trace.enq_scalar("b", 2);
-        trace.enq_scalar("b", 0);
-        trace.enq_scalar("c", 3);
-        trace.enq_scalar("c", 3);
-        trace.enq_scalar("en", 1);
-        trace.enq_scalar("en", 0);
-        trace.enq_scalar("y", 3);
-        trace.enq_scalar("y", 11);
-        assert!(!Interpreter::default()
-            .with_print()
-            .run(&prog, &trace)
-            .has_failed());
-    }
-
-    #[test]
     fn test_counter() {
         let prog = parse_from_file("examples/basic/counter.ret");
         let mut trace = Trace::default();
