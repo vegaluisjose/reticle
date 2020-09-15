@@ -5,6 +5,7 @@ import pytest
 
 
 examples = [
+    "examples/isa/scalar/add_mul_i8_i8_i8_i8.ret",
     "examples/isa/scalar/add_reg_mul_i8_i8_i8_b_i8.ret",
     "examples/isa/scalar/and_i8_i8_i8.ret",
     "examples/isa/scalar/and_b_b_b.ret",

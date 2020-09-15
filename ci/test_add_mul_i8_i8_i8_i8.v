@@ -38,6 +38,6 @@ module test_add_mul_i8_i8_i8_i8();
         end
     end
 
-    add_reg_i8_i8_i8_i8 dut(.clock(clock), .reset(reset), .a(a), .b(b), .c(c), .y(y));
+    add_mul_i8_i8_i8_i8 dut(.clock(clock), .reset(reset), .a(a), .b(b), .c(c), .y(y));
 
 endmodule
