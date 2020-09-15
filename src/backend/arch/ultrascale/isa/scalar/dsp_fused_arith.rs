@@ -8,7 +8,7 @@ pub struct DspFusedArith;
 
 fn emit_op(instr: &asm::Instr) -> DspFusedOp {
     match instr.prim().op().as_ref() {
-        "dsp_add_reg_mul_i8_i8_i8_b_i8" => DspFusedOp::MulAdd,
+        "dsp_add_reg_mul_i8_i8_i8_b_i8" => DspFusedOp::MulRegAdd,
         _ => unimplemented!(),
     }
 }

@@ -279,7 +279,6 @@ impl From<DspFused> for verilog::Stmt {
         let a = dsp.get_input("a");
         let b = dsp.get_input("b");
         let c = dsp.get_input("c");
-        let en_mul = dsp.get_input("en_mul");
         let y = dsp.get_output("y");
         // clock
         inst.connect("CLK", verilog::Expr::from(clock.clone()));
@@ -301,7 +300,8 @@ impl From<DspFused> for verilog::Stmt {
         inst.connect("P", verilog::Expr::from(y.clone()));
         // derive attributes
         match dsp.op() {
-            DspFusedOp::MulAdd => {
+            DspFusedOp::MulRegAdd => {
+                let en_mul = dsp.get_input("en_mul");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(1));
                 inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
@@ -309,6 +309,7 @@ impl From<DspFused> for verilog::Stmt {
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
                 inst.connect("CEM", verilog::Expr::from(en_mul.clone()));
             }
+            _ => unimplemented!(),
         }
         // default params
         inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48"));

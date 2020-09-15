@@ -318,9 +318,35 @@ impl DspFused {
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
         inputs.insert("c".to_string(), Expr::default());
-        inputs.insert("en_input".to_string(), Expr::default());
-        inputs.insert("en_mul".to_string(), Expr::default());
-        inputs.insert("en_output".to_string(), Expr::default());
+        match op {
+            DspFusedOp::MulRegAdd => {
+                inputs.insert("en_mul".to_string(), Expr::default());
+            }
+            DspFusedOp::RegMulAdd => {
+                inputs.insert("en_input".to_string(), Expr::default());
+            }
+            DspFusedOp::MulAddReg => {
+                inputs.insert("en_output".to_string(), Expr::default());
+            }
+            DspFusedOp::RegMulRegAdd => {
+                inputs.insert("en_input".to_string(), Expr::default());
+                inputs.insert("en_mul".to_string(), Expr::default());
+            }
+            DspFusedOp::MulRegAddReg => {
+                inputs.insert("en_mul".to_string(), Expr::default());
+                inputs.insert("en_output".to_string(), Expr::default());
+            }
+            DspFusedOp::RegMulAddReg => {
+                inputs.insert("en_input".to_string(), Expr::default());
+                inputs.insert("en_output".to_string(), Expr::default());
+            }
+            DspFusedOp::RegMulRegAddReg => {
+                inputs.insert("en_input".to_string(), Expr::default());
+                inputs.insert("en_mul".to_string(), Expr::default());
+                inputs.insert("en_output".to_string(), Expr::default());
+            }
+            _ => (),
+        }
         let mut outputs = PortMap::new();
         outputs.insert("y".to_string(), Expr::default());
         DspFused {
