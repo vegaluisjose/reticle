@@ -8,13 +8,6 @@
          "expr":["mul", "i8", "i8"]
       },
       {
-         "name":"dsp_add_i8_i8_i8",
-         "cost": {"delay":1, "area": 8},
-         "loc":"dsp",
-         "ty":"i8",
-         "expr":["add", "i8", "i8"]
-      },
-      {
          "name":"dsp_add_reg_mul_i8_i8_i8_b_i8",
          "cost": {"delay":1, "area": 8},
          "loc":"dsp",
@@ -44,14 +37,14 @@
       },
       {
          "name":"lut_add_i8_i8_i8",
-         "cost": {"delay":0, "area": 1},
+         "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["add", "i8", "i8"]
       },
       {
          "name":"lut_sub_i8_i8_i8",
-         "cost": {"delay":0, "area": 1},
+         "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["sub", "i8", "i8"]
