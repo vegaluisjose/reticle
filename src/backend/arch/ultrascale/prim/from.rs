@@ -278,7 +278,6 @@ impl From<DspFused> for verilog::Stmt {
         let reset = dsp.get_input("reset");
         let a = dsp.get_input("a");
         let b = dsp.get_input("b");
-        let c = dsp.get_input("c");
         let y = dsp.get_output("y");
         // clock
         inst.connect("CLK", verilog::Expr::from(clock.clone()));
@@ -296,11 +295,21 @@ impl From<DspFused> for verilog::Stmt {
         // operands
         inst.connect("A", verilog::Expr::from(a.clone()));
         inst.connect("B", verilog::Expr::from(b.clone()));
-        inst.connect("C", verilog::Expr::from(c.clone()));
         inst.connect("P", verilog::Expr::from(y.clone()));
         // derive attributes
         match dsp.op() {
+            DspFusedOp::MulAdd => {
+                let c = dsp.get_input("c");
+                inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
+                inst.add_param("MREG", verilog::Expr::new_int(0));
+                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
+                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
+                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
+                inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
+                inst.connect("C", verilog::Expr::from(c.clone()));
+            }
             DspFusedOp::MulRegAdd => {
+                let c = dsp.get_input("c");
                 let en_mul = dsp.get_input("en_mul");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(1));
@@ -308,6 +317,7 @@ impl From<DspFused> for verilog::Stmt {
                 inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
                 inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
                 inst.connect("CEM", verilog::Expr::from(en_mul.clone()));
+                inst.connect("C", verilog::Expr::from(c.clone()));
             }
             _ => unimplemented!(),
         }

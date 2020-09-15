@@ -9,6 +9,7 @@ pub struct DspFusedArith;
 fn emit_op(instr: &asm::Instr) -> DspFusedOp {
     match instr.prim().op().as_ref() {
         "dsp_add_reg_mul_i8_i8_i8_b_i8" => DspFusedOp::MulRegAdd,
+        "dsp_add_mul_i8_i8_i8_i8" => DspFusedOp::MulAdd,
         _ => unimplemented!(),
     }
 }
@@ -68,27 +69,38 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
 impl Emit for DspFusedArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
-        let mut dsp = DspFused::new(op);
+        let mut dsp = DspFused::new(op.clone());
         let aw = dsp.get_param("aw") as u64;
         let bw = dsp.get_param("bw") as u64;
-        let cw = dsp.get_param("cw") as u64;
         let yw = dsp.get_param("yw") as u64;
         let a = emit_wire(asm, aw);
         let b = emit_wire(asm, bw);
-        let c = emit_wire(asm, cw);
         let y = emit_wire(asm, yw);
-        let en_mul = asm.fresh_scalar_variable(&instr.indexed_param(2).id());
         dsp.set_id(&asm.new_instance_name());
         dsp.set_input("clock", &asm.clock());
         dsp.set_input("reset", &asm.reset());
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
-        dsp.set_input("c", &c);
-        dsp.set_input("en_mul", &en_mul);
         dsp.set_output("y", &y);
         emit_input(asm, &instr, &a, aw, 0, true);
         emit_input(asm, &instr, &b, bw, 1, true);
-        emit_input(asm, &instr, &c, cw, 3, false);
+        match op {
+            DspFusedOp::MulAdd => {
+                let cw = dsp.get_param("cw") as u64;
+                let c = emit_wire(asm, cw);
+                dsp.set_input("c", &c);
+                emit_input(asm, &instr, &c, cw, 2, false);
+            }
+            DspFusedOp::MulRegAdd => {
+                let cw = dsp.get_param("cw") as u64;
+                let c = emit_wire(asm, cw);
+                let en_mul = asm.fresh_scalar_variable(&instr.indexed_param(2).id());
+                dsp.set_input("c", &c);
+                dsp.set_input("en_mul", &en_mul);
+                emit_input(asm, &instr, &c, cw, 3, false);
+            }
+            _ => (),
+        }
         emit_output(asm, &instr, &y);
         asm.add_instance(verilog::Stmt::from(dsp));
     }

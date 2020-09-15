@@ -1,0 +1,4 @@
+def add_mul_i8_i8_i8_i8(a: i8, b: i8, c: i8) -> (y: i8) {
+    t0: i8 = mul(a, b);
+    y: i8 = add(t0, c);
+}
