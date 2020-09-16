@@ -457,6 +457,8 @@ impl DspVector {
         params.insert("length".to_string(), length as i64);
         params.insert("word".to_string(), word as i64);
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("clock".to_string(), Expr::default());
         inputs.insert("reset".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
