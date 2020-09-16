@@ -328,20 +328,20 @@ impl From<DspFused> for verilog::Stmt {
             DspFusedOp::Mul => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(0));
-                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
-                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
-                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000000101"));
-                inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
-                inst.connect("C", verilog::Expr::new_ulit_dec(48, "0"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 5));
+                inst.connect("CEM", convert_literal(&vcc, &gnd, 1, 0));
+                inst.connect("C", convert_literal(&vcc, &gnd, 48, 0));
             }
             DspFusedOp::MulAdd => {
                 let c = dsp.get_input("c");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(0));
-                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
-                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
-                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
-                inst.connect("CEM", verilog::Expr::new_ulit_bin(1, "0"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 53));
+                inst.connect("CEM", convert_literal(&vcc, &gnd, 1, 0));
                 inst.connect("C", verilog::Expr::from(c.clone()));
             }
             DspFusedOp::MulRegAdd => {
@@ -349,9 +349,9 @@ impl From<DspFused> for verilog::Stmt {
                 let en_mul = dsp.get_input("en_mul");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(1));
-                inst.connect("ALUMODE", verilog::Expr::new_ulit_bin(4, "0000"));
-                inst.connect("INMODE", verilog::Expr::new_ulit_bin(5, "00000"));
-                inst.connect("OPMODE", verilog::Expr::new_ulit_bin(9, "000110101"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 53));
                 inst.connect("CEM", verilog::Expr::from(en_mul.clone()));
                 inst.connect("C", verilog::Expr::from(c.clone()));
             }
@@ -405,18 +405,18 @@ impl From<DspFused> for verilog::Stmt {
         inst.add_param("IS_RSTM_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_RSTP_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         // default clock enable
-        inst.connect("CEA1", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEA2", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEAD", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEALUMODE", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEB1", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEB2", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEC", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CECARRYIN", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CECTRL", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CED", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEINMODE", verilog::Expr::new_ulit_bin(1, "0"));
-        inst.connect("CEP", verilog::Expr::new_ulit_bin(1, "0"));
+        inst.connect("CEA1", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEA2", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEAD", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEALUMODE", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEB1", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEB2", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEC", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CECARRYIN", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CECTRL", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CED", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEINMODE", convert_literal(&vcc, &gnd, 1, 0));
+        inst.connect("CEP", convert_literal(&vcc, &gnd, 1, 0));
         // default registers
         inst.add_param("ACASCREG", verilog::Expr::new_int(0));
         inst.add_param("ADREG", verilog::Expr::new_int(0));
