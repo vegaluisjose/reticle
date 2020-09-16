@@ -30,6 +30,8 @@ impl Emit for LutLogical {
             let mut lut = Lut::new_lut2();
             lut.set_attr("init", &init);
             lut.set_id(&asm.new_instance_name());
+            lut.set_input("vcc", &asm.vcc);
+            lut.set_input("gnd", &asm.gnd);
             if width == 1 {
                 lut.set_input("a", &lhs);
                 lut.set_input("b", &rhs);

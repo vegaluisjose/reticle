@@ -36,6 +36,8 @@ impl Emit for LutMux {
                 let mut lut = Lut::new_lut3();
                 let mut reg = reg.clone();
                 lut.set_id(&asm.new_instance_name());
+                lut.set_input("vcc", &asm.vcc);
+                lut.set_input("gnd", &asm.gnd);
                 lut.set_attr("init", "ac");
                 lut.set_input("c", &con);
                 lut.set_output_with_index("y", &wire_name, i as u32);

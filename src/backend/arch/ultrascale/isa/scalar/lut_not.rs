@@ -32,6 +32,8 @@ impl Emit for LutNot {
                 let mut lut = Lut::new_lut1();
                 let mut reg = reg.clone();
                 lut.set_id(&asm.new_instance_name());
+                lut.set_input("vcc", &asm.vcc);
+                lut.set_input("gnd", &asm.gnd);
                 lut.set_attr("init", "1");
                 lut.set_output_with_index("y", &wire_name, i as u32);
                 reg.set_id(&asm.new_instance_name());

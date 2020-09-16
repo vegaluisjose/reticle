@@ -43,6 +43,12 @@ impl Emit for LutEq {
         lut_0.set_id(&asm.new_instance_name());
         lut_1.set_id(&asm.new_instance_name());
         lut_2.set_id(&asm.new_instance_name());
+        lut_0.set_input("vcc", &asm.vcc);
+        lut_1.set_input("vcc", &asm.vcc);
+        lut_2.set_input("vcc", &asm.vcc);
+        lut_0.set_input("gnd", &asm.gnd);
+        lut_1.set_input("gnd", &asm.gnd);
+        lut_2.set_input("gnd", &asm.gnd);
         if is_eq(&instr.op) {
             lut_0.set_attr("init", "9009000000000000");
             lut_1.set_attr("init", "9009000000009009");

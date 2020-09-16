@@ -39,6 +39,8 @@ fn lut_default_outputs() -> PortMap {
 impl Lut {
     pub fn new_lut1() -> Lut {
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         Lut {
             ty: LutTy::Lut1,
@@ -52,6 +54,8 @@ impl Lut {
 
     pub fn new_lut2() -> Lut {
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
         Lut {
@@ -66,6 +70,8 @@ impl Lut {
 
     pub fn new_lut3() -> Lut {
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
         inputs.insert("c".to_string(), Expr::default());
@@ -81,6 +87,8 @@ impl Lut {
 
     pub fn new_lut4() -> Lut {
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
         inputs.insert("c".to_string(), Expr::default());
@@ -97,6 +105,8 @@ impl Lut {
 
     pub fn new_lut5() -> Lut {
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
         inputs.insert("c".to_string(), Expr::default());
@@ -114,6 +124,8 @@ impl Lut {
 
     pub fn new_lut6() -> Lut {
         let mut inputs = PortMap::new();
+        inputs.insert("vcc".to_string(), Expr::default());
+        inputs.insert("gnd".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
         inputs.insert("c".to_string(), Expr::default());

@@ -37,6 +37,8 @@ impl Emit for LutAddSub {
             let mut lut = Lut::new_lut2();
             lut.set_attr("init", &init);
             lut.set_id(&asm.new_instance_name());
+            lut.set_input("vcc", &asm.vcc);
+            lut.set_input("gnd", &asm.gnd);
             lut.set_input_with_index("a", &lhs, i as u32);
             lut.set_input_with_index("b", &rhs, i as u32);
             lut.set_output_with_index("y", &wire_name, i as u32);
