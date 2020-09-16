@@ -201,6 +201,8 @@ impl Lut {
 
 fn reg_default_inputs() -> PortMap {
     let mut inputs = PortMap::new();
+    inputs.insert("vcc".to_string(), Expr::default());
+    inputs.insert("gnd".to_string(), Expr::default());
     inputs.insert("clock".to_string(), Expr::default());
     inputs.insert("reset".to_string(), Expr::default());
     inputs.insert("a".to_string(), Expr::default());

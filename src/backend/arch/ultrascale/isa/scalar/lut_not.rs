@@ -35,6 +35,8 @@ impl Emit for LutNot {
                 lut.set_attr("init", "1");
                 lut.set_output_with_index("y", &wire_name, i as u32);
                 reg.set_id(&asm.new_instance_name());
+                reg.set_input("vcc", &asm.vcc);
+                reg.set_input("gnd", &asm.gnd);
                 reg.set_input("clock", &asm.clock());
                 reg.set_input("reset", &asm.reset());
                 reg.set_input("en", &en);
