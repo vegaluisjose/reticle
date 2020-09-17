@@ -11,11 +11,10 @@ impl From<PrimOp> for TreeOp {
 
 impl From<Instr> for TreeNode {
     fn from(instr: Instr) -> Self {
-        let mut node = TreeNode::new(
-            &instr.dst_id(),
-            instr.dst_ty().clone(),
-            TreeOp::from(instr.prim_op().clone()),
-        );
+        let op = TreeOp::from(instr.prim_op().clone());
+        let mut node = TreeNode::new(op);
+        node.set_id(&instr.dst_id());
+        node.set_ty(instr.dst_ty().clone());
         for attr in instr.attrs().iter() {
             node.add_attr(attr.clone());
         }

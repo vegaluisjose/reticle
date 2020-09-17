@@ -4,10 +4,10 @@ use crate::passes::map::tree::*;
 use petgraph::visit::Dfs;
 
 impl TreeNode {
-    pub fn new(id: &str, ty: TreeTy, op: TreeOp) -> TreeNode {
+    pub fn new(op: TreeOp) -> TreeNode {
         TreeNode {
-            id: id.to_string(),
-            ty,
+            id: String::new(),
+            ty: TreeTy::Hole,
             op,
             attrs: Vec::new(),
             matched: false,
