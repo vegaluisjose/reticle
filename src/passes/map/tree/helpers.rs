@@ -100,6 +100,14 @@ impl TreeNode {
         self.attrs.push(expr);
     }
 
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+
+    pub fn set_ty(&mut self, ty: TreeTy) {
+        self.ty = ty;
+    }
+
     pub fn set_cost(&mut self, cost: f32) {
         self.cost = cost;
     }
