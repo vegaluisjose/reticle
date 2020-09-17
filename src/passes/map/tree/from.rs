@@ -15,6 +15,7 @@ impl From<Instr> for TreeNode {
         let mut node = TreeNode::new(op);
         node.set_id(&instr.dst_id());
         node.set_ty(instr.dst_ty().clone());
+        node.set_loc(instr.loc().clone());
         for attr in instr.attrs().iter() {
             node.add_attr(attr.clone());
         }

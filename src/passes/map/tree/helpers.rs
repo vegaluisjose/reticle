@@ -107,6 +107,10 @@ impl TreeNode {
         self.ty = ty;
     }
 
+    pub fn set_loc(&mut self, loc: TreeLoc) {
+        self.loc = loc;
+    }
+
     pub fn set_cost(&mut self, cost: f32) {
         self.cost = cost;
     }

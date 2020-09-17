@@ -49,8 +49,9 @@ pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Ve
     update
 }
 
-pub fn tree_match(pattern: Tree, input: Tree, input_index: TreeIx) -> bool {
+pub fn tree_match(tile: Tile, input: Tree, input_index: TreeIx) -> bool {
     let mut is_match: bool = true;
+    let pattern = tile.pattern().clone();
     let pattern_index = pattern.root_index().unwrap();
     let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
     let mut pstack_iter = pstack.iter();
@@ -64,6 +65,9 @@ pub fn tree_match(pattern: Tree, input: Tree, input_index: TreeIx) -> bool {
                         is_match = false;
                     }
                     if !pnode.is_input() && pnode.op() != inode.op() {
+                        is_match = false;
+                    }
+                    if !inode.loc().is_hole() && inode.loc() != tile.loc() {
                         is_match = false;
                     }
                     if pnode.is_input() {
@@ -112,7 +116,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
         if let Some(node) = input.graph.node_weight(ix) {
             if !node.is_input() {
                 for tile in descriptor.tiles.iter() {
-                    if tree_match(tile.pattern.clone(), input.clone(), ix) {
+                    if tree_match(tile.clone(), input.clone(), ix) {
                         let pat_cost = tile.pattern.estimate_cost();
                         let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
