@@ -64,12 +64,42 @@ pub fn locgen(input_prog: Prog) -> Prog {
 // should be the same after compiling location and
 // clearing them.
 pub fn check_pass(input: Prog) {
-    let mut output = locgen(input.clone());
-    output.clear_loc();
+    let output = locgen(input.clone());
+    let reference = input.indexed_def(0).body();
+    let generated = output.indexed_def(0).body();
     assert_eq!(
-        input, output,
-        "Error: program still has unresolved locations"
+        reference.len(),
+        generated.len(),
+        "Error: malformed program, number of instructions differ"
     );
+    for (r, g) in reference.iter().zip(generated.iter()) {
+        if r.is_std() {
+            assert_eq!(r, g, "Error: malformed program, std instructions differ");
+        } else if r.is_prim() && !r.loc().is_hole() {
+            assert_eq!(r, g, "Error: malformed program, prim instructions differ");
+        } else {
+            assert_eq!(
+                r.prim().op(),
+                g.prim().op(),
+                "Error: malformed program, op in prim instructions differ"
+            );
+            assert_eq!(
+                r.dst(),
+                g.dst(),
+                "Error: malformed program, dst expr in prim instructions differ"
+            );
+            assert_eq!(
+                r.attrs(),
+                g.attrs(),
+                "Error: malformed program, attrs in attrs instructions differ"
+            );
+            assert_eq!(
+                r.params(),
+                g.params(),
+                "Error: malformed program, params in prim instructions differ"
+            );
+        }
+    }
 }
 
 pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
