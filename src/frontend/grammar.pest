@@ -48,13 +48,23 @@ stdop = {
     "shr"
 }
 
+loc = {
+    "??" |
+    "lut" |
+    "lum" |
+    "dsp" |
+    "ram"
+}
+
 op = _{ primop | stdop }
 
 attrs = { "[" ~ (expr ~ ("," ~ expr)*)? ~ "]" }
 
 params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
 
-instr = { expr ~ "=" ~ op ~ attrs? ~ params? ~ ";" }
+at = _{ "@" ~ loc }
+
+instr = { expr ~ "=" ~ op ~ attrs? ~ params? ~ at? ~ ";" }
 
 instrs = { instr ~ (instr)* }
 

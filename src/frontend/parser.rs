@@ -43,6 +43,10 @@ impl ReticleParser {
         Ok(StdOp::from_str(input.as_str()).unwrap())
     }
 
+    fn loc(input: Node) -> Result<Loc> {
+        Ok(Loc::from_str(input.as_str()).unwrap())
+    }
+
     fn expr(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
@@ -89,6 +93,30 @@ impl ReticleParser {
                     dst,
                     attrs,
                     params,
+                }),
+            [expr(dst), primop(op), params(params), loc(loc)] => Instr::from(
+                InstrPrim {
+                    op,
+                    dst,
+                    attrs: Vec::new(),
+                    params,
+                    loc,
+                }),
+            [expr(dst), primop(op), attrs(attrs), loc(loc)] => Instr::from(
+                InstrPrim {
+                    op,
+                    dst,
+                    attrs,
+                    params: Vec::new(),
+                    loc,
+                }),
+            [expr(dst), primop(op), attrs(attrs), params(params), loc(loc)] => Instr::from(
+                InstrPrim {
+                    op,
+                    dst,
+                    attrs,
+                    params,
+                    loc,
                 }),
             [expr(dst), primop(op), params(params)] => Instr::from(
                 InstrPrim {
