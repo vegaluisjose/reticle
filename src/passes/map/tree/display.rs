@@ -14,8 +14,15 @@ impl fmt::Display for TreeOp {
 
 impl fmt::Display for TreeNode {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if let Some(loc) = self.loc() {
-            write!(f, "{} - {} - {} - {}", self.id(), self.ty(), self.op(), loc)
+        if let Some(tile) = self.tile() {
+            write!(
+                f,
+                "{} - {} - {} - {}",
+                self.id(),
+                self.ty(),
+                self.op(),
+                tile.loc()
+            )
         } else {
             write!(f, "{} - {} - {}", self.id(), self.ty(), self.op())
         }

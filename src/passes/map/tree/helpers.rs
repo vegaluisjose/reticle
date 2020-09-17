@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::{InstrPrim, LocTy};
+use crate::backend::asm::ast::InstrPrim;
 use crate::backend::target::Tile;
 use crate::passes::map::tree::*;
 use petgraph::visit::Dfs;
@@ -9,6 +9,7 @@ impl TreeNode {
             id: String::new(),
             ty: TreeTy::Hole,
             op,
+            loc: TreeLoc::Hole,
             attrs: Vec::new(),
             matched: false,
             tile: None,
@@ -21,6 +22,7 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op,
+            loc: TreeLoc::Hole,
             attrs: Vec::new(),
             matched: false,
             tile: None,
@@ -33,6 +35,7 @@ impl TreeNode {
             id: id.to_string(),
             ty,
             op: TreeOp::Input,
+            loc: TreeLoc::Hole,
             attrs: Vec::new(),
             matched: false,
             tile: None,
@@ -52,12 +55,8 @@ impl TreeNode {
         &self.op
     }
 
-    pub fn loc(&self) -> Option<&LocTy> {
-        if let Some(tile) = &self.tile {
-            Some(tile.loc())
-        } else {
-            None
-        }
+    pub fn loc(&self) -> &TreeLoc {
+        &self.loc
     }
 
     pub fn instr(&self) -> Option<&InstrPrim> {
