@@ -6,6 +6,7 @@ use crate::backend::verilog;
 fn emit_op(instr: &asm::Instr) -> DspVectorOp {
     match instr.prim().op().as_ref() {
         "dsp_add_i8v4_i8v4_i8v4" => DspVectorOp::Add,
+        "dsp_add_i8_i8_i8" => DspVectorOp::Add,
         _ => unimplemented!(),
     }
 }
