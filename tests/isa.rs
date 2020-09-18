@@ -151,6 +151,19 @@ mod test_scalar_isa {
     }
 
     #[test]
+    fn test_dsp_sub_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/dsp_sub_i8_i8_i8.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 8);
+        trace.enq_scalar("b", 33);
+        trace.enq_scalar("y", -25);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
     fn test_mul_i8_i8_i8() {
         let prog = parse_from_file("examples/isa/scalar/mul_i8_i8_i8.ret");
         let mut trace = Trace::default();

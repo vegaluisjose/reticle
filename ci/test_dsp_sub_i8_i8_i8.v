@@ -21,7 +21,7 @@ module test_dsp_sub_i8_i8_i8();
         if (reset | glbl.GSR) begin
             step <= 0;
             a <= 8'd8;
-            b <= -8'd33;
+            b <= 8'd33;
         end
         else begin
             case (step)
