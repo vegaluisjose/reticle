@@ -312,6 +312,32 @@ mod test_scalar_isa {
     }
 
     #[test]
+    fn test_lut_or_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/lut_or_i8_i8_i8.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 3);
+        trace.enq_scalar("b", 8);
+        trace.enq_scalar("y", 11);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_dsp_or_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/dsp_or_i8_i8_i8.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 3);
+        trace.enq_scalar("b", 8);
+        trace.enq_scalar("y", 11);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
     fn test_or_b_b_b() {
         let prog = parse_from_file("examples/isa/scalar/or_b_b_b.ret");
         let mut trace = Trace::default();
