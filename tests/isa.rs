@@ -138,6 +138,19 @@ mod test_scalar_isa {
     }
 
     #[test]
+    fn test_lut_sub_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/lut_sub_i8_i8_i8.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 1);
+        trace.enq_scalar("b", -3);
+        trace.enq_scalar("y", 4);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
     fn test_mul_i8_i8_i8() {
         let prog = parse_from_file("examples/isa/scalar/mul_i8_i8_i8.ret");
         let mut trace = Trace::default();
