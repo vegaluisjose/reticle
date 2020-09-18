@@ -10,6 +10,14 @@ fn emit_op(instr: &asm::Instr) -> DspVectorOp {
     }
 }
 
+fn emit_length(instr: &asm::Instr) -> u64 {
+    if instr.is_vector() {
+        instr.dst_ty().length()
+    } else {
+        1
+    }
+}
+
 fn emit_wire(asm: &mut Assembler, width: u64) -> String {
     let name = asm.new_variable_name();
     let wire = verilog::Decl::new_wire(&name, width);
@@ -19,11 +27,15 @@ fn emit_wire(asm: &mut Assembler, width: u64) -> String {
 
 fn emit_input(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64, index: usize) {
     let mut concat = verilog::ExprConcat::default();
-    let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
     let pad = word - width;
+    let length = emit_length(instr);
     for i in 0..length {
-        let name = asm.fresh_vector_variable(&instr.indexed_param(index).id(), i);
+        let name = if instr.is_vector() {
+            asm.fresh_vector_variable(&instr.indexed_param(index).id(), i)
+        } else {
+            asm.fresh_scalar_variable(&instr.indexed_param(index).id())
+        };
         concat.add_expr(verilog::Expr::new_ref(&name));
         for _ in 0..pad {
             concat.add_expr(verilog::Expr::new_ref(&asm.gnd()));
@@ -36,10 +48,14 @@ fn emit_input(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64, in
 }
 
 fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str, word: u64) {
-    let length = instr.dst_ty().length();
     let width = instr.dst_ty().width();
+    let length = emit_length(instr);
     for i in 0..length {
-        let name = asm.fresh_vector_variable(&instr.dst_id(), i);
+        let name = if instr.is_vector() {
+            asm.fresh_vector_variable(&instr.dst_id(), i)
+        } else {
+            asm.fresh_scalar_variable(&instr.dst_id())
+        };
         let lo = verilog::Expr::new_int((i * word) as i32);
         let hi = verilog::Expr::new_int((i * word + width - 1) as i32);
         let src_expr = verilog::Expr::new_slice(wire, hi, lo);
@@ -55,7 +71,8 @@ pub struct DspArith;
 impl Emit for DspArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let op = emit_op(&instr);
-        let mut dsp = DspVector::new(op, instr.dst_ty().length());
+        let length = emit_length(instr);
+        let mut dsp = DspVector::new(op, length);
         let dsp_word = dsp.get_param("word") as u64;
         let dsp_width = dsp.get_param("width") as u64;
         let a = emit_wire(asm, dsp_width);
