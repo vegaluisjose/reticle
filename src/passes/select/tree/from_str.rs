@@ -1,5 +1,5 @@
 use crate::lang::ast::PrimOp;
-use crate::passes::map::tree::TreeOp;
+use crate::passes::select::tree::TreeOp;
 use std::str::FromStr;
 
 impl FromStr for TreeOp {

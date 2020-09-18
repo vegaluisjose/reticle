@@ -1,6 +1,6 @@
 use crate::backend::asm::ast as asm;
 use crate::backend::target::{Descriptor, Tile};
-use crate::passes::map::tree::{Tree, TreeGraph, TreeIx, TreeNode};
+use crate::passes::select::tree::{Tree, TreeGraph, TreeIx, TreeNode};
 use petgraph::visit::{Bfs, DfsPostOrder};
 use petgraph::Direction;
 use std::collections::HashMap;

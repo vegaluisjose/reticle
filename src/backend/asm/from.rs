@@ -1,6 +1,6 @@
 use crate::backend::asm::ast as asm;
 use crate::lang::ast as lang;
-use crate::passes::map::asmgen;
+use crate::passes::select::asmgen;
 
 impl From<asm::InstrStd> for asm::Instr {
     fn from(std: asm::InstrStd) -> Self {

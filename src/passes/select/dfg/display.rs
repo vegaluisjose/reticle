@@ -1,4 +1,4 @@
-use crate::passes::map::dfg::{Dfg, DfgEdge, DfgNode};
+use crate::passes::select::dfg::{Dfg, DfgEdge, DfgNode};
 use petgraph::dot::{Config, Dot};
 use std::fmt;
 

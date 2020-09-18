@@ -1,4 +1,4 @@
-use crate::passes::map::dfg::*;
+use crate::passes::select::dfg::*;
 
 impl Default for Dfg {
     fn default() -> Dfg {

@@ -1,4 +1,4 @@
-use crate::passes::map::analysis::Analysis;
+use crate::passes::select::analysis::Analysis;
 use std::fmt;
 
 impl fmt::Display for Analysis {

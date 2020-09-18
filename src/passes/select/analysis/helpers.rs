@@ -1,4 +1,4 @@
-use crate::passes::map::analysis::Analysis;
+use crate::passes::select::analysis::Analysis;
 
 impl Analysis {
     pub fn num_prims(&self) -> u32 {

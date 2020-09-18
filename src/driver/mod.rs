@@ -3,7 +3,7 @@ pub mod opt;
 use crate::backend::verilog::Module;
 use crate::driver::opt::Opt;
 use crate::frontend::parser::parse_from_file;
-use crate::passes::map::{asmgen, locgen};
+use crate::passes::select::{asmgen, locgen};
 use crate::util::file::write_to_file;
 use structopt::StructOpt;
 

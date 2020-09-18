@@ -1,7 +1,7 @@
 use crate::backend::asm::ast::{InstrPrim, LocTy};
 use crate::backend::target::spec::*;
 use crate::backend::target::{Descriptor, Tile};
-use crate::passes::map::tree::Tree;
+use crate::passes::select::tree::Tree;
 
 impl Tile {
     pub fn instr(&self) -> &InstrPrim {

@@ -6,9 +6,11 @@ use crate::backend::arch::ultrascale::Ultrascale;
 use crate::backend::asm::ast as asm;
 use crate::backend::target::Target;
 use crate::lang::ast::{Def, Prog};
-use crate::passes::map::dfg::Dfg;
-use crate::passes::map::tree::algo::{tree_codegen, tree_locgen, tree_selection, InstrMap, LocMap};
-use crate::passes::map::tree::partition::Partition;
+use crate::passes::select::dfg::Dfg;
+use crate::passes::select::tree::algo::{
+    tree_codegen, tree_locgen, tree_selection, InstrMap, LocMap,
+};
+use crate::passes::select::tree::partition::Partition;
 
 pub fn analysis(input_prog: Prog) -> analysis::Analysis {
     let mut analysis = analysis::Analysis::default();

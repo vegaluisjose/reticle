@@ -1,5 +1,5 @@
 use crate::lang::ast::{Instr, Prog};
-use crate::passes::map::dfg::*;
+use crate::passes::select::dfg::*;
 use petgraph::visit::Dfs;
 use petgraph::Direction;
 

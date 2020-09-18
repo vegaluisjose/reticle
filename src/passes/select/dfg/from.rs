@@ -1,5 +1,5 @@
 use crate::lang::ast::{Instr, Port, Prog};
-use crate::passes::map::dfg::{Dfg, DfgNodeValue};
+use crate::passes::select::dfg::{Dfg, DfgNodeValue};
 
 impl From<Port> for DfgNodeValue {
     fn from(port: Port) -> Self {

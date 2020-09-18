@@ -1,7 +1,7 @@
 use crate::backend::asm::ast::{InstrPrim, Loc, LocTy, Ty};
 use crate::backend::target::spec::*;
 use crate::backend::target::*;
-use crate::passes::map::tree::{Tree, TreeNode, TreeOp, TreeTy};
+use crate::passes::select::tree::{Tree, TreeNode, TreeOp, TreeTy};
 use std::str::FromStr;
 
 impl From<SpecInstr> for InstrPrim {

@@ -1,4 +1,4 @@
-use crate::passes::map::analysis::Analysis;
+use crate::passes::select::analysis::Analysis;
 
 impl Default for Analysis {
     fn default() -> Analysis {
