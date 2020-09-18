@@ -112,6 +112,11 @@ pub enum DspVectorOp {
     Add,
     Sub,
     And,
+    Or,
+    Xor,
+    Nand,
+    Nor,
+    Xnor,
 }
 
 #[derive(Clone, Debug)]

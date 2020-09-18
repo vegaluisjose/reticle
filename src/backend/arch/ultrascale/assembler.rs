@@ -288,6 +288,11 @@ impl Assembler {
                     "dsp_add_i8_i8_i8" => isa::DspArith::emit(self, instr),
                     "dsp_sub_i8_i8_i8" => isa::DspArith::emit(self, instr),
                     "dsp_and_i8_i8_i8" => isa::DspArith::emit(self, instr),
+                    "dsp_or_i8_i8_i8" => isa::DspArith::emit(self, instr),
+                    "dsp_xor_i8_i8_i8" => isa::DspArith::emit(self, instr),
+                    "dsp_nand_i8_i8_i8" => isa::DspArith::emit(self, instr),
+                    "dsp_nor_i8_i8_i8" => isa::DspArith::emit(self, instr),
+                    "dsp_xnor_i8_i8_i8" => isa::DspArith::emit(self, instr),
                     _ => unimplemented!(),
                 }
             } else {

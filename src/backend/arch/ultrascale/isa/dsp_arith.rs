@@ -10,6 +10,11 @@ fn emit_op(instr: &asm::Instr) -> DspVectorOp {
         "dsp_add_i8_i8_i8" => DspVectorOp::Add,
         "dsp_sub_i8_i8_i8" => DspVectorOp::Sub,
         "dsp_and_i8_i8_i8" => DspVectorOp::And,
+        "dsp_or_i8_i8_i8" => DspVectorOp::Or,
+        "dsp_xor_i8_i8_i8" => DspVectorOp::Xor,
+        "dsp_nand_i8_i8_i8" => DspVectorOp::Nand,
+        "dsp_nor_i8_i8_i8" => DspVectorOp::Nor,
+        "dsp_xnor_i8_i8_i8" => DspVectorOp::Xnor,
         _ => unimplemented!(),
     }
 }

@@ -196,6 +196,36 @@ impl From<DspVector> for verilog::Stmt {
                 inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
                 inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 51));
             }
+            DspVectorOp::Or => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 12, 3));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 59));
+            }
+            DspVectorOp::Xor => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 3));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 51));
+            }
+            DspVectorOp::Nand => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 14, 3));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 51));
+            }
+            DspVectorOp::Nor => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 14, 3));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 59));
+            }
+            DspVectorOp::Xnor => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 5, 3));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 51));
+            }
         }
         match dsp.get_param("length") {
             1 => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
