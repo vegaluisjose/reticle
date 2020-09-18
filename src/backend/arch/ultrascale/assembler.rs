@@ -284,7 +284,9 @@ impl Assembler {
                     "dsp_mul_i8_i8_i8" => isa::DspFusedArith::emit(self, instr),
                     "dsp_add_mul_i8_i8_i8_i8" => isa::DspFusedArith::emit(self, instr),
                     "dsp_add_i8v4_i8v4_i8v4" => isa::DspArith::emit(self, instr),
+                    "dsp_sub_i8v4_i8v4_i8v4" => isa::DspArith::emit(self, instr),
                     "dsp_add_i8_i8_i8" => isa::DspArith::emit(self, instr),
+                    "dsp_sub_i8_i8_i8" => isa::DspArith::emit(self, instr),
                     _ => unimplemented!(),
                 }
             } else {
