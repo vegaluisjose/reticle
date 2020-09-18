@@ -50,47 +50,47 @@ impl From<Expr> for verilog::Expr {
 impl From<Lut> for verilog::Stmt {
     fn from(lut: Lut) -> Self {
         let init = lut.get_attr("init");
-        let a = lut.get_input("a");
-        let y = lut.get_output("y");
+        let a = lut.input("a");
+        let y = lut.output("y");
         let mut inst = verilog::Instance::new(&lut.id(), &lut.ty().to_string());
         let width = lut_width(lut.ty().clone());
         inst.add_param("INIT", verilog::Expr::new_ulit_hex(width, &init));
         inst.connect("I0", verilog::Expr::from(a.clone()));
         match lut.ty() {
             LutTy::Lut2 => {
-                let b = lut.get_input("b");
+                let b = lut.input("b");
                 inst.connect("I1", verilog::Expr::from(b.clone()));
             }
             LutTy::Lut3 => {
-                let b = lut.get_input("b");
-                let c = lut.get_input("c");
+                let b = lut.input("b");
+                let c = lut.input("c");
                 inst.connect("I1", verilog::Expr::from(b.clone()));
                 inst.connect("I2", verilog::Expr::from(c.clone()));
             }
             LutTy::Lut4 => {
-                let b = lut.get_input("b");
-                let c = lut.get_input("c");
-                let d = lut.get_input("d");
+                let b = lut.input("b");
+                let c = lut.input("c");
+                let d = lut.input("d");
                 inst.connect("I1", verilog::Expr::from(b.clone()));
                 inst.connect("I2", verilog::Expr::from(c.clone()));
                 inst.connect("I3", verilog::Expr::from(d.clone()));
             }
             LutTy::Lut5 => {
-                let b = lut.get_input("b");
-                let c = lut.get_input("c");
-                let d = lut.get_input("d");
-                let e = lut.get_input("e");
+                let b = lut.input("b");
+                let c = lut.input("c");
+                let d = lut.input("d");
+                let e = lut.input("e");
                 inst.connect("I1", verilog::Expr::from(b.clone()));
                 inst.connect("I2", verilog::Expr::from(c.clone()));
                 inst.connect("I3", verilog::Expr::from(d.clone()));
                 inst.connect("I4", verilog::Expr::from(e.clone()));
             }
             LutTy::Lut6 => {
-                let b = lut.get_input("b");
-                let c = lut.get_input("c");
-                let d = lut.get_input("d");
-                let e = lut.get_input("e");
-                let f = lut.get_input("f");
+                let b = lut.input("b");
+                let c = lut.input("c");
+                let d = lut.input("d");
+                let e = lut.input("e");
+                let f = lut.input("f");
                 inst.connect("I1", verilog::Expr::from(b.clone()));
                 inst.connect("I2", verilog::Expr::from(c.clone()));
                 inst.connect("I3", verilog::Expr::from(d.clone()));
@@ -106,11 +106,11 @@ impl From<Lut> for verilog::Stmt {
 
 impl From<Reg> for verilog::Stmt {
     fn from(reg: Reg) -> Self {
-        let a = reg.get_input("a");
-        let clock = reg.get_input("clock");
-        let reset = reg.get_input("reset");
-        let en = reg.get_input("en");
-        let output = reg.get_output("y");
+        let a = reg.input("a");
+        let clock = reg.input("clock");
+        let reset = reg.input("reset");
+        let en = reg.input("en");
+        let output = reg.output("y");
         let mut inst = verilog::Instance::new(&reg.id(), &reg.ty().to_string());
         inst.add_param("IS_C_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_D_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
@@ -137,13 +137,13 @@ impl From<Reg> for verilog::Stmt {
 impl From<DspVector> for verilog::Stmt {
     fn from(dsp: DspVector) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
-        let gnd = dsp.get_input("gnd");
-        let vcc = dsp.get_input("vcc");
-        let clock = dsp.get_input("clock");
-        let reset = dsp.get_input("reset");
-        let a = dsp.get_input("a");
-        let b = dsp.get_input("b");
-        let y = dsp.get_output("y");
+        let gnd = dsp.input("gnd");
+        let vcc = dsp.input("vcc");
+        let clock = dsp.input("clock");
+        let reset = dsp.input("reset");
+        let a = dsp.input("a");
+        let b = dsp.input("b");
+        let y = dsp.output("y");
         // clock
         inst.connect("CLK", verilog::Expr::from(clock.clone()));
         // resets
@@ -301,13 +301,13 @@ impl From<DspVector> for verilog::Stmt {
 impl From<DspFused> for verilog::Stmt {
     fn from(dsp: DspFused) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
-        let gnd = dsp.get_input("gnd");
-        let vcc = dsp.get_input("vcc");
-        let clock = dsp.get_input("clock");
-        let reset = dsp.get_input("reset");
-        let a = dsp.get_input("a");
-        let b = dsp.get_input("b");
-        let y = dsp.get_output("y");
+        let gnd = dsp.input("gnd");
+        let vcc = dsp.input("vcc");
+        let clock = dsp.input("clock");
+        let reset = dsp.input("reset");
+        let a = dsp.input("a");
+        let b = dsp.input("b");
+        let y = dsp.output("y");
         // clock
         inst.connect("CLK", verilog::Expr::from(clock.clone()));
         // resets
@@ -337,7 +337,7 @@ impl From<DspFused> for verilog::Stmt {
                 inst.connect("C", convert_literal(&vcc, &gnd, 48, 0));
             }
             DspFusedOp::MulAdd => {
-                let c = dsp.get_input("c");
+                let c = dsp.input("c");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(0));
                 inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
@@ -347,8 +347,8 @@ impl From<DspFused> for verilog::Stmt {
                 inst.connect("C", verilog::Expr::from(c.clone()));
             }
             DspFusedOp::MulRegAdd => {
-                let c = dsp.get_input("c");
-                let en_mul = dsp.get_input("en_mul");
+                let c = dsp.input("c");
+                let en_mul = dsp.input("en_mul");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
                 inst.add_param("MREG", verilog::Expr::new_int(1));
                 inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
@@ -460,7 +460,7 @@ impl From<DspFused> for verilog::Stmt {
 
 impl From<Vcc> for verilog::Stmt {
     fn from(vcc: Vcc) -> Self {
-        let y = vcc.get_output("y");
+        let y = vcc.output("y");
         let mut inst = verilog::Instance::new(&vcc.id(), "VCC");
         inst.connect("P", verilog::Expr::from(y.clone()));
         verilog::Stmt::from(inst)
@@ -469,7 +469,7 @@ impl From<Vcc> for verilog::Stmt {
 
 impl From<Gnd> for verilog::Stmt {
     fn from(gnd: Gnd) -> Self {
-        let y = gnd.get_output("y");
+        let y = gnd.output("y");
         let mut inst = verilog::Instance::new(&gnd.id(), "GND");
         inst.connect("G", verilog::Expr::from(y.clone()));
         verilog::Stmt::from(inst)
@@ -478,8 +478,8 @@ impl From<Gnd> for verilog::Stmt {
 
 impl From<Const> for verilog::Stmt {
     fn from(constant: Const) -> Self {
-        let gnd = constant.get_input("gnd");
-        let vcc = constant.get_input("vcc");
+        let gnd = constant.input("gnd");
+        let vcc = constant.input("vcc");
         let width = constant.get_param("width");
         let value = constant.get_param("value");
         let expr = convert_literal(&vcc, &gnd, width, value);
@@ -491,11 +491,11 @@ impl From<Const> for verilog::Stmt {
 
 impl From<Carry> for verilog::Stmt {
     fn from(carry: Carry) -> Self {
-        let gnd = carry.get_input("gnd");
-        let a = carry.get_input("a");
-        let b = carry.get_input("b");
-        let ci = carry.get_input("ci");
-        let y = carry.get_output("y");
+        let gnd = carry.input("gnd");
+        let a = carry.input("a");
+        let b = carry.input("b");
+        let ci = carry.input("ci");
+        let y = carry.output("y");
         let mut inst = verilog::Instance::new(&carry.id(), "CARRY8");
         inst.add_param("CARRY_TYPE", verilog::Expr::new_str("SINGLE_CY8"));
         inst.connect("DI", verilog::Expr::from(a.clone()));

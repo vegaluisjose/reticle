@@ -158,7 +158,7 @@ impl Lut {
         }
     }
 
-    pub fn get_input(&self, key: &str) -> &Expr {
+    pub fn input(&self, key: &str) -> &Expr {
         if let Some(input) = self.inputs.get(key) {
             input
         } else {
@@ -166,7 +166,7 @@ impl Lut {
         }
     }
 
-    pub fn get_output(&self, key: &str) -> &Expr {
+    pub fn output(&self, key: &str) -> &Expr {
         if let Some(output) = self.outputs.get(key) {
             output
         } else {
@@ -271,7 +271,7 @@ impl Reg {
         self.id.to_string()
     }
 
-    pub fn get_input(&self, key: &str) -> &Expr {
+    pub fn input(&self, key: &str) -> &Expr {
         if let Some(input) = self.inputs.get(key) {
             input
         } else {
@@ -279,7 +279,7 @@ impl Reg {
         }
     }
 
-    pub fn get_output(&self, key: &str) -> &Expr {
+    pub fn output(&self, key: &str) -> &Expr {
         if let Some(output) = self.outputs.get(key) {
             output
         } else {
@@ -409,7 +409,7 @@ impl DspFused {
         }
     }
 
-    pub fn get_input(&self, input: &str) -> &Expr {
+    pub fn input(&self, input: &str) -> &Expr {
         if let Some(expr) = self.inputs.get(input) {
             expr
         } else {
@@ -417,7 +417,7 @@ impl DspFused {
         }
     }
 
-    pub fn get_output(&self, output: &str) -> &Expr {
+    pub fn output(&self, output: &str) -> &Expr {
         if let Some(expr) = self.outputs.get(output) {
             expr
         } else {
@@ -506,7 +506,7 @@ impl DspVector {
         self.id.to_string()
     }
 
-    pub fn get_input(&self, input: &str) -> &Expr {
+    pub fn input(&self, input: &str) -> &Expr {
         if let Some(expr) = self.inputs.get(input) {
             expr
         } else {
@@ -514,7 +514,7 @@ impl DspVector {
         }
     }
 
-    pub fn get_output(&self, output: &str) -> &Expr {
+    pub fn output(&self, output: &str) -> &Expr {
         if let Some(expr) = self.outputs.get(output) {
             expr
         } else {
@@ -549,7 +549,7 @@ impl Vcc {
         self.id.to_string()
     }
 
-    pub fn get_output(&self, output: &str) -> &Expr {
+    pub fn output(&self, output: &str) -> &Expr {
         if let Some(expr) = self.outputs.get(output) {
             expr
         } else {
@@ -579,7 +579,7 @@ impl Gnd {
         self.id.to_string()
     }
 
-    pub fn get_output(&self, output: &str) -> &Expr {
+    pub fn output(&self, output: &str) -> &Expr {
         if let Some(expr) = self.outputs.get(output) {
             expr
         } else {
@@ -625,7 +625,7 @@ impl Const {
         self.id.to_string()
     }
 
-    pub fn get_input(&self, input: &str) -> &Expr {
+    pub fn input(&self, input: &str) -> &Expr {
         if let Some(expr) = self.inputs.get(input) {
             expr
         } else {
@@ -648,7 +648,7 @@ impl Carry {
         self.id.to_string()
     }
 
-    pub fn get_input(&self, input: &str) -> &Expr {
+    pub fn input(&self, input: &str) -> &Expr {
         if let Some(expr) = self.inputs.get(input) {
             expr
         } else {
@@ -656,7 +656,7 @@ impl Carry {
         }
     }
 
-    pub fn get_output(&self, output: &str) -> &Expr {
+    pub fn output(&self, output: &str) -> &Expr {
         if let Some(expr) = self.outputs.get(output) {
             expr
         } else {
