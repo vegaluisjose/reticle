@@ -254,48 +254,41 @@ impl Assembler {
             }
             if instr.is_prim() {
                 match instr.prim().op().as_ref() {
-                    "lut_add_i8_i8_i8" => isa::scalar::LutAddSub::emit(self, instr),
-                    "lut_sub_i8_i8_i8" => isa::scalar::LutAddSub::emit(self, instr),
-                    "lut_and_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_and_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_or_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_or_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_xor_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_xor_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_nand_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_nand_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_nor_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_nor_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_xnor_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_xnor_i8_i8_i8" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_eq_b_i8_i8" => isa::scalar::LutEq::emit(self, instr),
-                    "lut_eq_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_reg_eq_b_i8_i8" => isa::scalar::LutEq::emit(self, instr),
-                    "lut_neq_b_i8_i8" => isa::scalar::LutEq::emit(self, instr),
-                    "lut_neq_b_b_b" => isa::scalar::LutLogical::emit(self, instr),
-                    "lut_reg_neq_b_i8_i8" => isa::scalar::LutEq::emit(self, instr),
-                    "lut_mux_i8_b_i8_i8" => isa::scalar::LutMux::emit(self, instr),
-                    "lut_mux_b_b_b_b" => isa::scalar::LutMux::emit(self, instr),
-                    "lut_not_i8_i8" => isa::scalar::LutNot::emit(self, instr),
-                    "lut_not_b_b" => isa::scalar::LutNot::emit(self, instr),
-                    "lut_reg_mux_i8_b_i8_i8_b" => isa::scalar::LutMux::emit(self, instr),
-                    "lut_reg_i8_i8_b" => isa::scalar::LutReg::emit(self, instr),
-                    "dsp_add_reg_mul_i8_i8_i8_b_i8" => {
-                        isa::scalar::DspFusedArith::emit(self, instr)
-                    }
-                    "dsp_mul_i8_i8_i8" => isa::scalar::DspFusedArith::emit(self, instr),
-                    "dsp_add_mul_i8_i8_i8_i8" => isa::scalar::DspFusedArith::emit(self, instr),
-                    "dsp_add_i8v4_i8v4_i8v4" => isa::vector::DspArith::emit(self, instr),
+                    "lut_add_i8_i8_i8" => isa::LutAddSub::emit(self, instr),
+                    "lut_sub_i8_i8_i8" => isa::LutAddSub::emit(self, instr),
+                    "lut_and_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_and_i8_i8_i8" => isa::LutLogical::emit(self, instr),
+                    "lut_or_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_or_i8_i8_i8" => isa::LutLogical::emit(self, instr),
+                    "lut_xor_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_xor_i8_i8_i8" => isa::LutLogical::emit(self, instr),
+                    "lut_nand_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_nand_i8_i8_i8" => isa::LutLogical::emit(self, instr),
+                    "lut_nor_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_nor_i8_i8_i8" => isa::LutLogical::emit(self, instr),
+                    "lut_xnor_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_xnor_i8_i8_i8" => isa::LutLogical::emit(self, instr),
+                    "lut_eq_b_i8_i8" => isa::LutEq::emit(self, instr),
+                    "lut_eq_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_reg_eq_b_i8_i8" => isa::LutEq::emit(self, instr),
+                    "lut_neq_b_i8_i8" => isa::LutEq::emit(self, instr),
+                    "lut_neq_b_b_b" => isa::LutLogical::emit(self, instr),
+                    "lut_reg_neq_b_i8_i8" => isa::LutEq::emit(self, instr),
+                    "lut_mux_i8_b_i8_i8" => isa::LutMux::emit(self, instr),
+                    "lut_mux_b_b_b_b" => isa::LutMux::emit(self, instr),
+                    "lut_not_i8_i8" => isa::LutNot::emit(self, instr),
+                    "lut_not_b_b" => isa::LutNot::emit(self, instr),
+                    "lut_reg_mux_i8_b_i8_i8_b" => isa::LutMux::emit(self, instr),
+                    "lut_reg_i8_i8_b" => isa::LutReg::emit(self, instr),
+                    "dsp_add_reg_mul_i8_i8_i8_b_i8" => isa::DspFusedArith::emit(self, instr),
+                    "dsp_mul_i8_i8_i8" => isa::DspFusedArith::emit(self, instr),
+                    "dsp_add_mul_i8_i8_i8_i8" => isa::DspFusedArith::emit(self, instr),
+                    "dsp_add_i8v4_i8v4_i8v4" => isa::DspArith::emit(self, instr),
                     _ => unimplemented!(),
                 }
             } else {
                 match instr.std().op() {
-                    asm::StdOp::Const if instr.is_vector() => {
-                        isa::vector::Constant::emit(self, instr)
-                    }
-                    asm::StdOp::Const if instr.is_scalar() => {
-                        isa::scalar::Constant::emit(self, instr)
-                    }
+                    asm::StdOp::Const => isa::Constant::emit(self, instr),
                     _ => self.add_assignment(verilog::Stmt::from(instr.std().clone())),
                 }
             }

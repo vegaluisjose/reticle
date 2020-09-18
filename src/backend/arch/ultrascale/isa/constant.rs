@@ -10,10 +10,20 @@ impl Emit for Constant {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let instr = instr.std().clone();
         let width = instr.dst_ty().width();
-        for i in 0..instr.dst_ty().length() {
-            let value = instr.indexed_attr(i as usize).value();
+        if instr.is_vector() {
+            for i in 0..instr.dst_ty().length() {
+                let value = instr.indexed_attr(i as usize).value();
+                let mut constant = Const::new(width, value);
+                let res = asm.fresh_vector_variable(&instr.dst_id(), i);
+                constant.set_id(&res);
+                constant.set_input("gnd", &asm.gnd());
+                constant.set_input("vcc", &asm.vcc());
+                asm.add_assignment(verilog::Stmt::from(constant));
+            }
+        } else {
+            let value = instr.indexed_attr(0).value();
             let mut constant = Const::new(width, value);
-            let res = asm.fresh_vector_variable(&instr.dst_id(), i);
+            let res = asm.fresh_scalar_variable(&instr.dst_id());
             constant.set_id(&res);
             constant.set_input("gnd", &asm.gnd());
             constant.set_input("vcc", &asm.vcc());
