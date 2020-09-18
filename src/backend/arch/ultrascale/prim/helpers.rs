@@ -146,7 +146,7 @@ impl Lut {
         &self.ty
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -267,7 +267,7 @@ impl Reg {
         &self.ty
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -397,7 +397,7 @@ impl DspFused {
         &self.op
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -502,7 +502,7 @@ impl DspVector {
         }
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -545,7 +545,7 @@ impl Vcc {
         vcc
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -575,7 +575,7 @@ impl Gnd {
         gnd
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -621,7 +621,7 @@ impl Const {
         }
     }
 
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
@@ -644,7 +644,7 @@ impl Const {
 }
 
 impl Carry {
-    pub fn get_id(&self) -> String {
+    pub fn id(&self) -> String {
         self.id.to_string()
     }
 
