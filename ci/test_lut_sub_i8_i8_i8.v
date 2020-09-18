@@ -1,4 +1,4 @@
-module test_lut_add_i8_i8_i8();
+module test_lut_sub_i8_i8_i8();
 
     reg clock = 1'b0;
     reg reset = 1'b0;
@@ -36,6 +36,6 @@ module test_lut_add_i8_i8_i8();
         end
     end
 
-    lut_add_i8_i8_i8 dut(.clock(clock), .reset(reset), .a(a), .b(b), .y(y));
+    lut_sub_i8_i8_i8 dut(.clock(clock), .reset(reset), .a(a), .b(b), .y(y));
 
 endmodule
