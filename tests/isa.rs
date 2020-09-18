@@ -216,6 +216,32 @@ mod test_scalar_isa {
     }
 
     #[test]
+    fn test_lut_and_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/lut_and_i8_i8_i8.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 9);
+        trace.enq_scalar("b", 15);
+        trace.enq_scalar("y", 9);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
+    fn test_dsp_and_i8_i8_i8() {
+        let prog = parse_from_file("examples/isa/scalar/dsp_and_i8_i8_i8.ret");
+        let mut trace = Trace::default();
+        trace.enq_scalar("a", 67);
+        trace.enq_scalar("b", 9);
+        trace.enq_scalar("y", 1);
+        assert!(!Interpreter::default()
+            .with_print()
+            .run(&prog, &trace)
+            .has_failed());
+    }
+
+    #[test]
     fn test_and_b_b_b() {
         let prog = parse_from_file("examples/isa/scalar/and_b_b_b.ret");
         let mut trace = Trace::default();

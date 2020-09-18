@@ -111,6 +111,7 @@ pub struct DspFused {
 pub enum DspVectorOp {
     Add,
     Sub,
+    And,
 }
 
 #[derive(Clone, Debug)]

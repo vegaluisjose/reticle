@@ -5,10 +5,12 @@ import pytest
 
 
 examples = [
-    "examples/isa/scalar/dsp_sub_i8_i8_i8.ret",
-    "examples/isa/scalar/lut_sub_i8_i8_i8.ret",
     "examples/isa/scalar/dsp_add_i8_i8_i8.ret",
+    "examples/isa/scalar/dsp_sub_i8_i8_i8.ret",
+    "examples/isa/scalar/dsp_and_i8_i8_i8.ret",
     "examples/isa/scalar/lut_add_i8_i8_i8.ret",
+    "examples/isa/scalar/lut_sub_i8_i8_i8.ret",
+    "examples/isa/scalar/lut_and_i8_i8_i8.ret",
     "examples/isa/scalar/add_i8_i8_i8.ret",
     "examples/isa/scalar/sub_i8_i8_i8.ret",
     "examples/isa/scalar/mul_i8_i8_i8.ret",

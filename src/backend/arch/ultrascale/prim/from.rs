@@ -190,6 +190,12 @@ impl From<DspVector> for verilog::Stmt {
                 inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
                 inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 51));
             }
+            DspVectorOp::And => {
+                inst.add_param("USE_MULT", verilog::Expr::new_str("NONE"));
+                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 12, 3));
+                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
+                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 51));
+            }
         }
         match dsp.get_param("length") {
             1 => inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48")),
