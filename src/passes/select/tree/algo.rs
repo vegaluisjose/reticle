@@ -20,6 +20,15 @@ pub fn tree_node_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     stack
 }
 
+pub fn tree_index_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeIx> {
+    let mut stack: Vec<TreeIx> = Vec::new();
+    let mut visit = Bfs::new(&graph, start);
+    while let Some(ix) = visit.next(&graph) {
+        stack.push(ix);
+    }
+    stack
+}
+
 pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Vec<TreeIx> {
     let mut update: Vec<TreeIx> = Vec::new();
     let pattern_index = pattern.root_index().unwrap();
@@ -49,32 +58,39 @@ pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Ve
     update
 }
 
-pub fn tree_match(tile: Tile, input: Tree, input_index: TreeIx) -> bool {
+pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index: TreeIx) -> bool {
     let mut is_match: bool = true;
     let pattern = tile.pattern().clone();
-    let pattern_index = pattern.root_index().unwrap();
-    let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
+    let pstack = tree_index_stack(pattern.graph().clone(), pattern_index);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
     while let Some(ix) = visit.next(&input.graph) {
         if !discard.contains(&ix) {
-            if let Some(pnode) = pstack_iter.next() {
-                if let Some(inode) = input.graph.node_weight(ix) {
-                    if pnode.ty() != inode.ty() {
-                        is_match = false;
-                    }
-                    if !pnode.is_input() && pnode.op() != inode.op() {
-                        is_match = false;
-                    }
-                    if !inode.loc().is_hole() && inode.loc() != tile.loc() {
-                        is_match = false;
-                    }
-                    if pnode.is_input() {
-                        let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
-                        // discard childs if parent node in pattern is input
-                        for c in childs {
-                            discard.insert(c);
+            if let Some(px) = pstack_iter.next() {
+                if let Some(pnode) = tile.pattern().graph().node_weight(*px) {
+                    if let Some(inode) = input.graph.node_weight(ix) {
+                        if pnode.ty() != inode.ty() {
+                            is_match = false;
+                        }
+                        if !pnode.is_input() && pnode.op() != inode.op() {
+                            is_match = false;
+                        }
+                        if !inode.loc().is_hole() && inode.loc() != tile.loc() {
+                            is_match = false;
+                        }
+                        if pnode.is_input() {
+                            let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+                            // discard childs if parent node in pattern is input
+                            for c in childs {
+                                discard.insert(c);
+                            }
+                        } else if is_match {
+                            if let Some(prev) = inode.tile() {
+                                let prev_tree = prev.pattern();
+                                let prev_index = prev.pattern().root_index().unwrap();
+                                is_match &= tree_match(tile, *px, prev_tree, prev_index);
+                            }
                         }
                     }
                 }
@@ -116,7 +132,9 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
         if let Some(node) = input.graph.node_weight(ix) {
             if !node.is_input() {
                 for tile in descriptor.tiles.iter() {
-                    if tree_match(tile.clone(), input.clone(), ix) {
+                    let pattern_index = tile.pattern().root_index().unwrap();
+                    let is_match = tree_match(tile, pattern_index, &output, ix);
+                    if is_match {
                         let pat_cost = tile.pattern.estimate_cost();
                         let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
