@@ -167,17 +167,12 @@ def check_vivado_fail(stdout: str):
         return False
 
 
-def run_vivado_sim(docker: bool, infile: str, outdir: str):
-    name = get_example_name(infile)
-    test_name = "test_{}".format(name)
+def run_vivado_sim(docker: bool, outdir: str):
     script = os.path.join("ci", "vivado_sim.sh")
-    dut = os.path.join(outdir, "{}.v".format(name))
-    test = os.path.join("ci", "{}.v".format(test_name))
     cmd = []
     cmd.append(get_vivado_path(docker, script))
-    cmd.append(test_name)
-    cmd.append(get_vivado_path(docker, test))
-    cmd.append(get_vivado_path(docker, dut))
+    cmd.append(get_vivado_path(docker, "ci/tests"))
+    cmd.append(get_vivado_path(docker, outdir))
     cmd.append(get_vivado_path(docker, "output"))
     return check_vivado_fail(run_vivado(docker, cmd))
 
@@ -236,8 +231,9 @@ def test_reticle_build(docker: bool):
     build_reticle(docker)
 
 
-@pytest.mark.parametrize("example", examples)
-def test_reticle_compiler(docker: bool, example: str):
+def test_reticle_compiler(docker: bool):
     wd = "ci/verilog"
-    reticle_to_verilog(docker, example, wd)
-    assert run_vivado_sim(docker, example, wd)
+    for example in examples:
+        print("Compiling {}...", example)
+        reticle_to_verilog(docker, example, wd)
+    assert run_vivado_sim(docker, wd)
