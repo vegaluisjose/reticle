@@ -25,6 +25,7 @@ module test_all();
     test_add_mul_i8_i8_i8_i8 t4(.clock(clock), .reset(reset), .fail(fail[4]), .finish(finish[4]));
     test_add_reg_mul_i8_i8_i8_b_i8 t5(.clock(clock), .reset(reset), .fail(fail[5]), .finish(finish[5]));
     test_mul_i8_i8_i8 t6(.clock(clock), .reset(reset), .fail(fail[6]), .finish(finish[6]));
+    test_and_i8_i8_i8 t7(.clock(clock), .reset(reset), .fail(fail[7]), .finish(finish[7]));
 
     always @(posedge clock) begin
         if (|fail) begin
