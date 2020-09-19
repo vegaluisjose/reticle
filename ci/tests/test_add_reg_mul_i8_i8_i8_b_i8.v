@@ -15,7 +15,7 @@ module test_add_reg_mul_i8_i8_i8_b_i8(
     wire [7:0] y;
 
     always @(posedge clock) begin
-        if (reset | glbl.GSR) begin
+        if (reset) begin
             step <= 0;
             a <= 8'd4;
             b <= 8'd2;

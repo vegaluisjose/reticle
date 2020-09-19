@@ -13,7 +13,7 @@ module test_sub_i8v4_i8v4_i8v4(
     wire [7:0] y_0, y_1, y_2, y_3;
 
     always @(posedge clock) begin
-        if (reset | glbl.GSR) begin
+        if (reset) begin
             step <= 0;
             a_0 <= -8'd4;
             a_1 <= 8'd2;
