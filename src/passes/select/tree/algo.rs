@@ -29,7 +29,7 @@ pub fn tree_index_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeIx> {
     stack
 }
 
-pub fn tree_matches_index(pattern: &Tree, input: Tree, input_index: TreeIx) -> Vec<TreeIx> {
+pub fn tree_matches_index(pattern: &Tree, input: &Tree, input_index: TreeIx) -> Vec<TreeIx> {
     let mut update: Vec<TreeIx> = Vec::new();
     let pindex = pattern.root_index().unwrap();
     let pgraph = pattern.graph();
@@ -104,9 +104,9 @@ pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index:
     is_match && pstack_iter.len() == 0
 }
 
-pub fn tree_reset(pattern: Tree, input: Tree, input_index: TreeIx) -> Tree {
+pub fn tree_reset(tile: &Tile, input: &Tree, input_index: TreeIx) -> Tree {
     let mut output = input.clone();
-    let matches = tree_matches_index(&pattern, input, input_index);
+    let matches = tree_matches_index(tile.pattern(), input, input_index);
     for index in matches.iter() {
         if let Some(node) = output.graph.node_weight_mut(*index) {
             node.clear_tile();
@@ -116,8 +116,8 @@ pub fn tree_reset(pattern: Tree, input: Tree, input_index: TreeIx) -> Tree {
     output
 }
 
-pub fn tree_update(tile: &Tile, input: Tree, index: TreeIx) -> Tree {
-    let mut output = input;
+pub fn tree_update(tile: &Tile, input: &Tree, index: TreeIx) -> Tree {
+    let mut output = input.clone();
     if let Some(node) = output.graph.node_weight_mut(index) {
         node.set_cost(tile.pattern().estimate_cost());
         node.set_tile(tile.clone());
@@ -139,8 +139,8 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
                         let pat_cost = tile.pattern.estimate_cost();
                         let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
-                            output = tree_reset(tile.pattern.clone(), output.clone(), ix);
-                            output = tree_update(tile, output.clone(), ix);
+                            output = tree_reset(tile, &output, ix);
+                            output = tree_update(tile, &output, ix);
                         }
                     }
                 }
