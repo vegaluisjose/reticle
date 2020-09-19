@@ -20,9 +20,9 @@ pub fn tree_node_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     stack
 }
 
-pub fn tree_index_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeIx> {
+pub fn tree_index_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeIx> {
     let mut stack: Vec<TreeIx> = Vec::new();
-    let mut visit = Bfs::new(&graph, start);
+    let mut visit = Bfs::new(graph, start);
     while let Some(ix) = visit.next(&graph) {
         stack.push(ix);
     }
@@ -60,8 +60,8 @@ pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Ve
 
 pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index: TreeIx) -> bool {
     let mut is_match: bool = true;
-    let pattern = tile.pattern().clone();
-    let pstack = tree_index_stack(pattern.graph().clone(), pattern_index);
+    let pgraph = tile.pattern().graph();
+    let pstack = tree_index_stack(pgraph, pattern_index);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
@@ -103,15 +103,6 @@ pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index:
     is_match && pstack_iter.len() == 0
 }
 
-pub fn tree_update(input: Tree, index: TreeIx, tile: Tile) -> Tree {
-    let mut output = input;
-    if let Some(node) = output.graph.node_weight_mut(index) {
-        node.set_cost(tile.pattern.estimate_cost());
-        node.set_tile(tile);
-    }
-    output
-}
-
 pub fn tree_reset(pattern: Tree, input: Tree, input_index: TreeIx) -> Tree {
     let mut output = input.clone();
     let matches = tree_matches_index(pattern, input, input_index);
@@ -120,6 +111,15 @@ pub fn tree_reset(pattern: Tree, input: Tree, input_index: TreeIx) -> Tree {
             node.clear_tile();
             node.set_cost(0.0);
         }
+    }
+    output
+}
+
+pub fn tree_update(tile: &Tile, input: Tree, index: TreeIx) -> Tree {
+    let mut output = input;
+    if let Some(node) = output.graph.node_weight_mut(index) {
+        node.set_cost(tile.pattern().estimate_cost());
+        node.set_tile(tile.clone());
     }
     output
 }
@@ -139,7 +139,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
                         let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
                             output = tree_reset(tile.pattern.clone(), output.clone(), ix);
-                            output = tree_update(output.clone(), ix, tile.clone());
+                            output = tree_update(tile, output.clone(), ix);
                         }
                     }
                 }
