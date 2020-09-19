@@ -90,7 +90,7 @@ pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index:
                             if let Some(prev) = inode.tile() {
                                 let prev_tree = prev.pattern();
                                 let prev_index = prev.pattern().root_index().unwrap();
-                                is_match &= tree_match(tile, *px, prev_tree, prev_index);
+                                is_match = tree_match(tile, *px, prev_tree, prev_index);
                             }
                         }
                     }
