@@ -1,28 +1,25 @@
-module test_mux_i8_b_i8_i8();
-
-    reg clock = 1'b0;
-    reg reset = 1'b0;
-
-    always #500 clock = ~clock;
-
-    initial begin
-        reset = 1'b1;
-        repeat(16)@(negedge clock);
-        reset = 1'b0;
-    end
+module test_mux_i8_b_i8_i8(
+    input clock,
+    input reset,
+    output fail,
+    output finish);
 
     reg [31:0] step;
+    reg t_fail;
+    reg t_finish;
 
     reg [7:0] t, f;
     reg cond;
     wire [7:0] y;
 
     always @(posedge clock) begin
-        if (reset | glbl.GSR) begin
+        if (reset) begin
             step <= 0;
             cond <= 1'b0;
             t <= 8'd2;
             f <= 8'd6;
+            t_fail <= 1'b0;
+            t_finish <= 1'b0;
         end
         else begin
             case (step)
@@ -33,20 +30,23 @@ module test_mux_i8_b_i8_i8();
                     f <= 8'd6;
                     if (y != 8'd6) begin
                         $display("~~FAIL~~");
-                        $finish;
+                        t_fail <= 1'b1;
                     end
                 end
                 1: begin
                     if (y != 8'd2) begin
                         $display("~~FAIL~~");
-                        $finish;
+                        t_fail <= 1'b1;
                     end
-                    $finish;
+                    t_finish <= 1'b1;
                 end
             endcase
         end
     end
 
     mux_i8_b_i8_i8 dut(.clock(clock), .reset(reset), .cond(cond), .t(t), .f(f), .y(y));
+
+    assign fail = t_fail;
+    assign finish = t_finish;
 
 endmodule
