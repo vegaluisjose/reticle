@@ -125,7 +125,7 @@ pub fn tree_update(tile: &Tile, input: &Tree, index: TreeIx) -> Tree {
     output
 }
 
-pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
+pub fn tree_selection(descriptor: &Descriptor, input: &Tree) -> Tree {
     let mut output = input.clone();
     let start = input.root_index().unwrap();
     let mut dfs = DfsPostOrder::new(&input.graph(), start);

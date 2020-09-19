@@ -42,7 +42,7 @@ pub fn locgen(input_prog: Prog) -> Prog {
     let input_tree = Partition::from(dfg);
     let mut map: LocMap = LocMap::new();
     for (_, tree) in input_tree.iter() {
-        let output = tree_selection(descriptor.clone(), tree.clone());
+        let output = tree_selection(&descriptor, tree);
         map.extend(tree_locgen(output.clone()));
     }
     let sig = input_prog.indexed_def(0).signature().clone();
@@ -113,7 +113,7 @@ pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
     let input_tree = Partition::from(dfg);
     let mut map: InstrMap = InstrMap::new();
     for (_, tree) in input_tree.iter() {
-        let output = tree_selection(descriptor.clone(), tree.clone());
+        let output = tree_selection(&descriptor, tree);
         map.extend(tree_codegen(output.clone()));
     }
     let sig = input_prog.indexed_def(0).signature().clone();
