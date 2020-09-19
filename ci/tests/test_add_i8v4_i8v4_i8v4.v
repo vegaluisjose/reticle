@@ -1,17 +1,12 @@
-module test_add_i8v4_i8v4_i8v4();
-
-    reg clock = 1'b0;
-    reg reset = 1'b0;
-
-    always #500 clock = ~clock;
-
-    initial begin
-        reset = 1'b1;
-        repeat(16)@(negedge clock);
-        reset = 1'b0;
-    end
+module test_add_i8v4_i8v4_i8v4(
+    input clock,
+    input reset,
+    output fail,
+    output finish);
 
     reg [31:0] step;
+    reg t_fail;
+    reg t_finish;
 
     reg [7:0] a_0, a_1, a_2, a_3;
     reg [7:0] b_0, b_1, b_2, b_3;
@@ -33,15 +28,18 @@ module test_add_i8v4_i8v4_i8v4();
             case (step)
                 0: begin
                     if (y_0 != -8'd3 | y_1 != 8'd5 | y_2 != 8'd2 | y_3 != 8'd2) begin
-                        $display("~~FAIL~~");
-                        $finish;
+                        $display("[test_add_i8v4_i8v4_i8v4] ~~FAIL~~ res:[%d, %d, %d, %d] exp:[-3, 5, 2. 2]", $signed(y_0), $signed(y_1), $signed(y_2), $signed(y_3));
+                        t_fail <= 1'b1;
                     end
-                    $finish;
+                    t_finish <= 1'b1;
                 end
             endcase
         end
     end
 
     add_i8v4_i8v4_i8v4 dut(.clock(clock), .reset(reset), .a_0(a_0), .a_1(a_1), .a_2(a_2), .a_3(a_3), .b_0(b_0), .b_1(b_1), .b_2(b_2), .b_3(b_3), .y_0(y_0), .y_1(y_1), .y_2(y_2), .y_3(y_3));
+
+    assign fail = t_fail;
+    assign finish = t_finish;
 
 endmodule
