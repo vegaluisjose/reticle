@@ -18,10 +18,11 @@ source venv/bin/activate
 pip install wheel
 pip install pytest==6.0.1
 pip install pytest-pycodestyle==2.2.0
+pip install pytest-xdist==2.1.0
 
 # run ci tests
 pytest --pycodestyle -x -v ci
-pytest -x -v ci/run.py --use-docker
+pytest -n auto -x -v ci/run.py --use-docker
 
 # deactivate virtual environment
 deactivate
