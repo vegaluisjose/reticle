@@ -15,6 +15,10 @@ impl Tile {
     pub fn loc(&self) -> &LocTy {
         &self.loc
     }
+
+    pub fn cost(&self) -> f32 {
+        self.cost
+    }
 }
 
 impl Descriptor {

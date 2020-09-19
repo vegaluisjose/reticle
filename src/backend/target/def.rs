@@ -6,6 +6,7 @@ pub struct Tile {
     pub instr: InstrPrim,
     pub pattern: Tree,
     pub loc: LocTy,
+    pub cost: f32,
 }
 
 #[derive(Clone, Debug)]

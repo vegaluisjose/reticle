@@ -121,6 +121,7 @@ impl From<SpecInstr> for Tile {
             instr: InstrPrim::from(spec_instr.clone()),
             pattern: Tree::from(spec_instr.clone()),
             loc: LocTy::from_str(&spec_instr.loc()).unwrap(),
+            cost: spec_instr.delay() as f32,
         }
     }
 }
