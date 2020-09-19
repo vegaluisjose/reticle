@@ -9,9 +9,9 @@ use std::collections::HashSet;
 pub type InstrMap = HashMap<String, asm::InstrPrim>;
 pub type LocMap = HashMap<String, asm::LocTy>;
 
-pub fn tree_node_stack(graph: TreeGraph, start: TreeIx) -> Vec<TreeNode> {
+pub fn tree_node_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();
-    let mut visit = Bfs::new(&graph, start);
+    let mut visit = Bfs::new(graph, start);
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             stack.push(node.clone());
@@ -29,10 +29,11 @@ pub fn tree_index_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeIx> {
     stack
 }
 
-pub fn tree_matches_index(pattern: Tree, input: Tree, input_index: TreeIx) -> Vec<TreeIx> {
+pub fn tree_matches_index(pattern: &Tree, input: Tree, input_index: TreeIx) -> Vec<TreeIx> {
     let mut update: Vec<TreeIx> = Vec::new();
-    let pattern_index = pattern.root_index().unwrap();
-    let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
+    let pindex = pattern.root_index().unwrap();
+    let pgraph = pattern.graph();
+    let pstack = tree_node_stack(pgraph, pindex);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
@@ -105,7 +106,7 @@ pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index:
 
 pub fn tree_reset(pattern: Tree, input: Tree, input_index: TreeIx) -> Tree {
     let mut output = input.clone();
-    let matches = tree_matches_index(pattern, input, input_index);
+    let matches = tree_matches_index(&pattern, input, input_index);
     for index in matches.iter() {
         if let Some(node) = output.graph.node_weight_mut(*index) {
             node.clear_tile();
@@ -152,8 +153,9 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
 pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::InstrPrim {
     let mut instr: asm::InstrPrim = tile.instr().clone();
     let pattern = tile.pattern();
-    let pattern_index = pattern.root_index().unwrap();
-    let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
+    let pindex = pattern.root_index().unwrap();
+    let pgraph = pattern.graph();
+    let pstack = tree_node_stack(pgraph, pindex);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
@@ -213,8 +215,9 @@ pub fn tree_codegen(input: Tree) -> InstrMap {
 pub fn subtree_locgen(input: Tree, input_index: TreeIx, tile: Tile) -> LocMap {
     let loc = tile.loc().clone();
     let pattern = tile.pattern();
-    let pattern_index = pattern.root_index().unwrap();
-    let pstack = tree_node_stack(pattern.graph().clone(), pattern_index);
+    let pindex = pattern.root_index().unwrap();
+    let pgraph = pattern.graph();
+    let pstack = tree_node_stack(pgraph, pindex);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
