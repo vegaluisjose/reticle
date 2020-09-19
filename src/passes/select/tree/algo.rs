@@ -196,7 +196,7 @@ pub fn subtree_codegen(tile: &Tile, input: &Tree, input_index: TreeIx) -> asm::I
     instr
 }
 
-pub fn tree_codegen(input: Tree) -> InstrMap {
+pub fn tree_codegen(input: &Tree) -> InstrMap {
     let mut map: InstrMap = InstrMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
@@ -204,7 +204,7 @@ pub fn tree_codegen(input: Tree) -> InstrMap {
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                let instr = subtree_codegen(tile, &input, ix);
+                let instr = subtree_codegen(tile, input, ix);
                 map.insert(instr.dst_id(), instr);
             }
         }
@@ -243,7 +243,7 @@ pub fn subtree_locgen(tile: &Tile, input: &Tree, input_index: TreeIx) -> LocMap 
     map
 }
 
-pub fn tree_locgen(input: Tree) -> LocMap {
+pub fn tree_locgen(input: &Tree) -> LocMap {
     let mut map: LocMap = LocMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
@@ -251,7 +251,7 @@ pub fn tree_locgen(input: Tree) -> LocMap {
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                map.extend(subtree_locgen(tile, &input, ix));
+                map.extend(subtree_locgen(tile, input, ix));
             }
         }
     }

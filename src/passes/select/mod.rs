@@ -43,7 +43,7 @@ pub fn locgen(input_prog: Prog) -> Prog {
     let mut map: LocMap = LocMap::new();
     for (_, tree) in input_tree.iter() {
         let output = tree_selection(&descriptor, tree);
-        map.extend(tree_locgen(output.clone()));
+        map.extend(tree_locgen(&output));
     }
     let sig = input_prog.indexed_def(0).signature().clone();
     let mut def = Def::new_with_signature(sig);
@@ -114,7 +114,7 @@ pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
     let mut map: InstrMap = InstrMap::new();
     for (_, tree) in input_tree.iter() {
         let output = tree_selection(&descriptor, tree);
-        map.extend(tree_codegen(output.clone()));
+        map.extend(tree_codegen(&output));
     }
     let sig = input_prog.indexed_def(0).signature().clone();
     let body = input_prog.indexed_def(0).body().clone();
