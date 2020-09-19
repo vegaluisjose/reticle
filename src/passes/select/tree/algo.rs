@@ -150,7 +150,7 @@ pub fn tree_selection(descriptor: Descriptor, input: Tree) -> Tree {
     output
 }
 
-pub fn subtree_codegen(input: Tree, input_index: TreeIx, tile: Tile) -> asm::InstrPrim {
+pub fn subtree_codegen(tile: &Tile, input: Tree, input_index: TreeIx) -> asm::InstrPrim {
     let mut instr: asm::InstrPrim = tile.instr().clone();
     let pattern = tile.pattern();
     let pindex = pattern.root_index().unwrap();
@@ -204,7 +204,7 @@ pub fn tree_codegen(input: Tree) -> InstrMap {
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                let instr = subtree_codegen(input.clone(), ix, tile.clone());
+                let instr = subtree_codegen(tile, input.clone(), ix);
                 map.insert(instr.dst_id(), instr);
             }
         }
@@ -212,7 +212,7 @@ pub fn tree_codegen(input: Tree) -> InstrMap {
     map
 }
 
-pub fn subtree_locgen(input: Tree, input_index: TreeIx, tile: Tile) -> LocMap {
+pub fn subtree_locgen(tile: &Tile, input: Tree, input_index: TreeIx) -> LocMap {
     let loc = tile.loc().clone();
     let pattern = tile.pattern();
     let pindex = pattern.root_index().unwrap();
@@ -251,7 +251,7 @@ pub fn tree_locgen(input: Tree) -> LocMap {
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                map.extend(subtree_locgen(input.clone(), ix, tile.clone()));
+                map.extend(subtree_locgen(tile, input.clone(), ix));
             }
         }
     }
