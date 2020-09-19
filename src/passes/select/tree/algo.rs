@@ -119,7 +119,7 @@ pub fn tree_reset(tile: &Tile, input: &Tree, input_index: TreeIx) -> Tree {
 pub fn tree_update(tile: &Tile, input: &Tree, index: TreeIx) -> Tree {
     let mut output = input.clone();
     if let Some(node) = output.graph.node_weight_mut(index) {
-        node.set_cost(tile.pattern().estimate_cost());
+        node.set_cost(tile.cost());
         node.set_tile(tile.clone());
     }
     output
@@ -136,7 +136,7 @@ pub fn tree_selection(descriptor: &Descriptor, input: &Tree) -> Tree {
                     let pattern_index = tile.pattern().root_index().unwrap();
                     let is_match = tree_match(tile, pattern_index, &output, ix);
                     if is_match {
-                        let pat_cost = tile.pattern.estimate_cost();
+                        let pat_cost = tile.cost();
                         let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
                             output = tree_reset(tile, &output, ix);
