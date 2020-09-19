@@ -19,6 +19,8 @@ module test_add_mul_i8_i8_i8_i8(
             a <= 8'd4;
             b <= 8'd2;
             c <= 8'd3;
+            t_fail <= 1'b0;
+            t_finish <= 1'b0;
         end
         else begin
             case (step)

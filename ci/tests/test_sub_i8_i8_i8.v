@@ -17,6 +17,8 @@ module test_sub_i8_i8_i8(
             step <= 0;
             a <= 8'd9;
             b <= 8'd3;
+            t_fail <= 1'b0;
+            t_finish <= 1'b0;
         end
         else begin
             case (step)

@@ -23,6 +23,8 @@ module test_add_i8v4_i8v4_i8v4(
             b_1 <= 8'd3;
             b_2 <= 8'd0;
             b_3 <= 8'd1;
+            t_fail <= 1'b0;
+            t_finish <= 1'b0;
         end
         else begin
             case (step)
