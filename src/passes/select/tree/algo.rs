@@ -59,13 +59,19 @@ pub fn tree_matches_index(pattern: &Tree, input: &Tree, input_index: TreeIx) -> 
     update
 }
 
-pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index: TreeIx) -> bool {
+pub fn tree_match(
+    tile: &Tile,
+    pattern_index: TreeIx,
+    input: &Tree,
+    input_index: TreeIx,
+) -> (bool, f32) {
     let mut is_match: bool = true;
     let pgraph = tile.pattern().graph();
     let pstack = tree_index_stack(pgraph, pattern_index);
     let mut pstack_iter = pstack.iter();
     let mut visit = Bfs::new(&input.graph, input_index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
+    let mut cost: f32 = 0.0;
     while let Some(ix) = visit.next(&input.graph) {
         if !discard.contains(&ix) {
             if let Some(px) = pstack_iter.next() {
@@ -90,7 +96,12 @@ pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index:
                             if let Some(prev) = inode.tile() {
                                 let prev_tree = prev.pattern();
                                 let prev_index = prev.pattern().root_index().unwrap();
-                                is_match = tree_match(tile, *px, prev_tree, prev_index);
+                                let (t_match, t_cost) =
+                                    tree_match(tile, *px, prev_tree, prev_index);
+                                is_match = t_match;
+                                cost += t_cost;
+                            } else {
+                                cost += inode.cost();
                             }
                         }
                     }
@@ -101,7 +112,8 @@ pub fn tree_match(tile: &Tile, pattern_index: TreeIx, input: &Tree, input_index:
             break;
         }
     }
-    is_match && pstack_iter.len() == 0
+    is_match = is_match && pstack_iter.len() == 0;
+    (is_match, cost)
 }
 
 pub fn tree_reset(tile: &Tile, input: &Tree, input_index: TreeIx) -> Tree {
@@ -134,10 +146,9 @@ pub fn tree_selection(descriptor: &Descriptor, input: &Tree) -> Tree {
             if !node.is_input() {
                 for tile in descriptor.tiles.iter() {
                     let pattern_index = tile.pattern().root_index().unwrap();
-                    let is_match = tree_match(tile, pattern_index, &output, ix);
+                    let (is_match, cur_cost) = tree_match(tile, pattern_index, &output, ix);
                     if is_match {
                         let pat_cost = tile.cost();
-                        let cur_cost = output.estimate_cost_from_index(ix);
                         if pat_cost < cur_cost {
                             output = tree_reset(tile, &output, ix);
                             output = tree_update(tile, &output, ix);
