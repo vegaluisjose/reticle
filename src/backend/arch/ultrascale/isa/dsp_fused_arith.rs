@@ -1,16 +1,20 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{DspFused, DspFusedOp};
+use crate::backend::arch::ultrascale::prim::ast::{DspFused, DspFusedConfig, DspFusedOp};
 use crate::backend::asm::ast as asm;
 use crate::backend::verilog;
 
 #[derive(Clone, Debug)]
 pub struct DspFusedArith;
 
-fn emit_op(instr: &asm::Instr) -> DspFusedOp {
+fn emit_config(instr: &asm::Instr) -> DspFusedConfig {
     match instr.prim().op().as_ref() {
-        "dsp_mul_i8_i8_i8" => DspFusedOp::Mul,
-        "dsp_add_mul_i8_i8_i8_i8" => DspFusedOp::MulAdd,
-        "dsp_add_reg_mul_i8_i8_i8_b_i8" => DspFusedOp::MulRegAdd,
+        "dsp_mul_i8_i8_i8" => DspFusedConfig::new(DspFusedOp::Mul),
+        "dsp_add_mul_i8_i8_i8_i8" => DspFusedConfig::new(DspFusedOp::MulAdd),
+        "dsp_add_reg_mul_i8_i8_i8_b_i8" => {
+            let mut config = DspFusedConfig::new(DspFusedOp::MulAdd);
+            config.set_reg("mul", 1);
+            config
+        }
         _ => unimplemented!(),
     }
 }
@@ -69,11 +73,11 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
 
 impl Emit for DspFusedArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
-        let op = emit_op(&instr);
-        let mut dsp = DspFused::new(op.clone());
-        let aw = dsp.get_param("aw") as u64;
-        let bw = dsp.get_param("bw") as u64;
-        let yw = dsp.get_param("yw") as u64;
+        let config = emit_config(&instr);
+        let mut dsp = DspFused::new(config);
+        let aw = dsp.width("a") as u64;
+        let bw = dsp.width("b") as u64;
+        let yw = dsp.width("y") as u64;
         let a = emit_wire(asm, aw);
         let b = emit_wire(asm, bw);
         let y = emit_wire(asm, yw);
@@ -87,22 +91,24 @@ impl Emit for DspFusedArith {
         dsp.set_output("y", &y);
         emit_input(asm, &instr, &a, aw, 0, true);
         emit_input(asm, &instr, &b, bw, 1, true);
-        match op {
-            DspFusedOp::MulAdd => {
-                let cw = dsp.get_param("cw") as u64;
+        match dsp.op() {
+            DspFusedOp::MulAdd if !dsp.has_reg("mul") => {
+                let cw = dsp.width("c") as u64;
                 let c = emit_wire(asm, cw);
                 dsp.set_input("c", &c);
                 emit_input(asm, &instr, &c, cw, 2, false);
             }
-            DspFusedOp::MulRegAdd => {
-                let cw = dsp.get_param("cw") as u64;
+            DspFusedOp::MulAdd => {
+                let cw = dsp.width("c") as u64;
                 let c = emit_wire(asm, cw);
-                let en_mul = asm.fresh_scalar_variable(&instr.indexed_param(2).id());
                 dsp.set_input("c", &c);
-                dsp.set_input("en_mul", &en_mul);
                 emit_input(asm, &instr, &c, cw, 3, false);
             }
             _ => (),
+        }
+        if dsp.has_reg("mul") {
+            let en_mul = asm.fresh_scalar_variable(&instr.indexed_param(2).id());
+            dsp.set_input("en_mul", &en_mul);
         }
         emit_output(asm, &instr, &y);
         asm.add_instance(verilog::Stmt::from(dsp));

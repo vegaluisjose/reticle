@@ -365,35 +365,27 @@ impl From<DspFused> for verilog::Stmt {
         match dsp.op() {
             DspFusedOp::Mul => {
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
-                inst.add_param("MREG", verilog::Expr::new_int(0));
                 inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
                 inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
                 inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 5));
-                inst.connect("CEM", convert_literal(&vcc, &gnd, 1, 0));
                 inst.connect("C", convert_literal(&vcc, &gnd, 48, 0));
             }
             DspFusedOp::MulAdd => {
                 let c = dsp.input("c");
                 inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
-                inst.add_param("MREG", verilog::Expr::new_int(0));
                 inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
                 inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
                 inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 53));
-                inst.connect("CEM", convert_literal(&vcc, &gnd, 1, 0));
                 inst.connect("C", verilog::Expr::from(c.clone()));
             }
-            DspFusedOp::MulRegAdd => {
-                let c = dsp.input("c");
-                let en_mul = dsp.input("en_mul");
-                inst.add_param("USE_MULT", verilog::Expr::new_str("MULTIPLY"));
-                inst.add_param("MREG", verilog::Expr::new_int(1));
-                inst.connect("ALUMODE", convert_literal(&vcc, &gnd, 4, 0));
-                inst.connect("INMODE", convert_literal(&vcc, &gnd, 5, 0));
-                inst.connect("OPMODE", convert_literal(&vcc, &gnd, 9, 53));
-                inst.connect("CEM", verilog::Expr::from(en_mul.clone()));
-                inst.connect("C", verilog::Expr::from(c.clone()));
-            }
-            _ => unimplemented!(),
+        }
+        if dsp.has_reg("mul") {
+            let en_mul = dsp.input("en_mul");
+            inst.add_param("MREG", verilog::Expr::new_int(1));
+            inst.connect("CEM", verilog::Expr::from(en_mul.clone()));
+        } else {
+            inst.add_param("MREG", verilog::Expr::new_int(0));
+            inst.connect("CEM", convert_literal(&vcc, &gnd, 1, 0));
         }
         // default params
         inst.add_param("USE_SIMD", verilog::Expr::new_str("ONE48"));

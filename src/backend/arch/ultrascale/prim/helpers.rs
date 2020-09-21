@@ -319,13 +319,46 @@ impl Reg {
     }
 }
 
+impl DspFusedConfig {
+    pub fn new(op: DspFusedOp) -> DspFusedConfig {
+        let mut reg = ParamMap::new();
+        reg.insert("a".to_string(), 0);
+        reg.insert("b".to_string(), 0);
+        reg.insert("c".to_string(), 0);
+        reg.insert("mul".to_string(), 0);
+        reg.insert("y".to_string(), 0);
+        let mut width = ParamMap::new();
+        width.insert("a".to_string(), 30);
+        width.insert("b".to_string(), 18);
+        width.insert("c".to_string(), 48);
+        width.insert("y".to_string(), 48);
+        DspFusedConfig { op, reg, width }
+    }
+
+    pub fn op(&self) -> &DspFusedOp {
+        &self.op
+    }
+
+    pub fn has_reg(&self, port: &str) -> bool {
+        self.reg[port] > 0
+    }
+
+    pub fn reg(&self, port: &str) -> i64 {
+        self.reg[port]
+    }
+
+    pub fn width(&self, port: &str) -> i64 {
+        self.width[port]
+    }
+
+    pub fn set_reg(&mut self, port: &str, value: i64) {
+        assert!(self.reg.contains_key(port));
+        self.reg.insert(port.to_string(), value);
+    }
+}
+
 impl DspFused {
-    pub fn new(op: DspFusedOp) -> DspFused {
-        let mut params = ParamMap::new();
-        params.insert("aw".to_string(), 30);
-        params.insert("bw".to_string(), 18);
-        params.insert("cw".to_string(), 48);
-        params.insert("yw".to_string(), 48);
+    pub fn new(config: DspFusedConfig) -> DspFused {
         let mut inputs = PortMap::new();
         inputs.insert("vcc".to_string(), Expr::default());
         inputs.insert("gnd".to_string(), Expr::default());
@@ -333,80 +366,52 @@ impl DspFused {
         inputs.insert("reset".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
-        match op {
-            DspFusedOp::RegMul => {
-                inputs.insert("en_input".to_string(), Expr::default());
-            }
-            DspFusedOp::MulReg => {
-                inputs.insert("en_output".to_string(), Expr::default());
-            }
-            DspFusedOp::RegMulReg => {
-                inputs.insert("en_input".to_string(), Expr::default());
-                inputs.insert("en_output".to_string(), Expr::default());
-            }
-            DspFusedOp::MulAdd => {
-                inputs.insert("c".to_string(), Expr::default());
-            }
-            DspFusedOp::MulRegAdd => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_mul".to_string(), Expr::default());
-            }
-            DspFusedOp::RegMulAdd => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_input".to_string(), Expr::default());
-            }
-            DspFusedOp::MulAddReg => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_output".to_string(), Expr::default());
-            }
-            DspFusedOp::RegMulRegAdd => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_input".to_string(), Expr::default());
-                inputs.insert("en_mul".to_string(), Expr::default());
-            }
-            DspFusedOp::MulRegAddReg => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_mul".to_string(), Expr::default());
-                inputs.insert("en_output".to_string(), Expr::default());
-            }
-            DspFusedOp::RegMulAddReg => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_input".to_string(), Expr::default());
-                inputs.insert("en_output".to_string(), Expr::default());
-            }
-            DspFusedOp::RegMulRegAddReg => {
-                inputs.insert("c".to_string(), Expr::default());
-                inputs.insert("en_input".to_string(), Expr::default());
-                inputs.insert("en_mul".to_string(), Expr::default());
-                inputs.insert("en_output".to_string(), Expr::default());
-            }
-            _ => (),
+        if *config.op() == DspFusedOp::MulAdd {
+            inputs.insert("c".to_string(), Expr::default());
+        }
+        if config.has_reg("a") {
+            inputs.insert("en_a".to_string(), Expr::default());
+        }
+        if config.has_reg("b") {
+            inputs.insert("en_b".to_string(), Expr::default());
+        }
+        if config.has_reg("c") {
+            inputs.insert("en_c".to_string(), Expr::default());
+        }
+        if config.has_reg("mul") {
+            inputs.insert("en_mul".to_string(), Expr::default());
+        }
+        if config.has_reg("y") {
+            inputs.insert("en_y".to_string(), Expr::default());
         }
         let mut outputs = PortMap::new();
         outputs.insert("y".to_string(), Expr::default());
         DspFused {
-            op,
             id: String::new(),
-            params,
+            config,
             inputs,
             outputs,
         }
     }
 
     pub fn op(&self) -> &DspFusedOp {
-        &self.op
+        self.config.op()
     }
 
     pub fn id(&self) -> String {
         self.id.to_string()
     }
 
-    pub fn get_param(&self, param: &str) -> i64 {
-        if let Some(value) = self.params.get(param) {
-            *value
-        } else {
-            panic!("Error: {} param does not exist", param);
-        }
+    pub fn has_reg(&self, port: &str) -> bool {
+        self.config.has_reg(port)
+    }
+
+    pub fn reg(&self, port: &str) -> i64 {
+        self.config.reg(port)
+    }
+
+    pub fn width(&self, port: &str) -> i64 {
+        self.config.width(port)
     }
 
     pub fn input(&self, input: &str) -> &Expr {
