@@ -9,5 +9,5 @@ if [ ! -f "$VIVADO_BIN" ]; then
 fi
 
 source get_vivado_credential.sh $VIVADO_BIN $WORKSPACE_DIR
-#source install_vivado.sh $VIVADO_BIN
+source install_vivado.sh $VIVADO_BIN
 source install_rust.sh
