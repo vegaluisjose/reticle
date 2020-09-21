@@ -462,8 +462,8 @@ impl DspVectorOp {
     }
 }
 
-impl DspVector {
-    pub fn new(op: DspVectorOp, length: u64) -> DspVector {
+impl DspVectorConfig {
+    pub fn new(op: DspVectorOp, length: u64) -> DspVectorConfig {
         let word = match length {
             1 => 48,
             2 => 24,
@@ -471,10 +471,36 @@ impl DspVector {
             4 => 12,
             _ => unimplemented!(),
         };
+        let mut regs = ParamMap::new();
+        regs.insert("a".to_string(), 0);
+        regs.insert("b".to_string(), 0);
+        regs.insert("y".to_string(), 0);
         let mut params = ParamMap::new();
         params.insert("width".to_string(), 48);
         params.insert("length".to_string(), length as i64);
         params.insert("word".to_string(), word as i64);
+        DspVectorConfig { op, params, regs }
+    }
+
+    pub fn op(&self) -> &DspVectorOp {
+        &self.op
+    }
+
+    pub fn get_param(&self, param: &str) -> i64 {
+        self.params[param]
+    }
+
+    pub fn has_reg(&self, port: &str) -> bool {
+        self.regs[port] > 0
+    }
+
+    pub fn reg(&self, port: &str) -> i64 {
+        self.regs[port]
+    }
+}
+
+impl DspVector {
+    pub fn new(config: DspVectorConfig) -> DspVector {
         let mut inputs = PortMap::new();
         inputs.insert("vcc".to_string(), Expr::default());
         inputs.insert("gnd".to_string(), Expr::default());
@@ -487,24 +513,23 @@ impl DspVector {
         let mut outputs = PortMap::new();
         outputs.insert("y".to_string(), Expr::default());
         DspVector {
-            op,
             id: String::new(),
-            params,
+            config,
             inputs,
             outputs,
         }
     }
 
+    pub fn config(&self) -> &DspVectorConfig {
+        &self.config
+    }
+
     pub fn op(&self) -> &DspVectorOp {
-        &self.op
+        self.config.op()
     }
 
     pub fn get_param(&self, param: &str) -> i64 {
-        if let Some(value) = self.params.get(param) {
-            *value
-        } else {
-            panic!("Error: {} param does not exist", param);
-        }
+        self.config.get_param(param)
     }
 
     pub fn id(&self) -> String {
@@ -525,6 +550,14 @@ impl DspVector {
         } else {
             panic!("Error: {} output does not exist", output)
         }
+    }
+
+    pub fn has_reg(&self, port: &str) -> bool {
+        self.config.has_reg(port)
+    }
+
+    pub fn reg(&self, port: &str) -> i64 {
+        self.config.reg(port)
     }
 
     pub fn set_id(&mut self, id: &str) {

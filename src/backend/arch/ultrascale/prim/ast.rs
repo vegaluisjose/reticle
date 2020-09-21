@@ -116,10 +116,16 @@ pub enum DspVectorOp {
 }
 
 #[derive(Clone, Debug)]
-pub struct DspVector {
+pub struct DspVectorConfig {
     pub op: DspVectorOp,
-    pub id: Id,
     pub params: ParamMap,
+    pub regs: ParamMap,
+}
+
+#[derive(Clone, Debug)]
+pub struct DspVector {
+    pub id: Id,
+    pub config: DspVectorConfig,
     pub inputs: PortMap,
     pub outputs: PortMap,
 }
