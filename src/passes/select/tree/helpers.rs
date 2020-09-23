@@ -11,9 +11,9 @@ impl TreeNode {
             op,
             loc: TreeLoc::Hole,
             attrs: Vec::new(),
-            matched: false,
-            tile: None,
             cost: f32::INFINITY,
+            tile: None,
+            target: None,
         }
     }
 
@@ -24,9 +24,9 @@ impl TreeNode {
             op,
             loc: TreeLoc::Hole,
             attrs: Vec::new(),
-            matched: false,
-            tile: None,
             cost,
+            tile: None,
+            target: None,
         }
     }
 
@@ -37,9 +37,9 @@ impl TreeNode {
             op: TreeOp::Input,
             loc: TreeLoc::Hole,
             attrs: Vec::new(),
-            matched: false,
-            tile: None,
             cost: 0 as f32,
+            tile: None,
+            target: None,
         }
     }
 
@@ -59,6 +59,10 @@ impl TreeNode {
         &self.loc
     }
 
+    pub fn target_loc(&self) -> Option<&TreeLoc> {
+        self.target.as_ref()
+    }
+
     pub fn instr(&self) -> Option<&InstrPrim> {
         if let Some(tile) = &self.tile {
             Some(tile.instr())
@@ -69,10 +73,6 @@ impl TreeNode {
 
     pub fn tile(&self) -> Option<&Tile> {
         self.tile.as_ref()
-    }
-
-    pub fn is_matched(&self) -> bool {
-        self.matched
     }
 
     pub fn id(&self) -> String {
@@ -115,16 +115,20 @@ impl TreeNode {
         self.cost = cost;
     }
 
-    pub fn set_matched(&mut self) {
-        self.matched = true;
-    }
-
     pub fn set_tile(&mut self, tile: Tile) {
         self.tile = Some(tile);
     }
 
+    pub fn set_target_loc(&mut self, loc: TreeLoc) {
+        self.target = Some(loc);
+    }
+
     pub fn clear_tile(&mut self) {
         self.tile = None;
+    }
+
+    pub fn clear_target_loc(&mut self) {
+        self.target = None;
     }
 }
 

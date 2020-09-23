@@ -1,7 +1,7 @@
 use crate::backend::asm::ast as asm;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::select::tree::{Tree, TreeGraph, TreeIx, TreeNode};
-use petgraph::visit::{Bfs, DfsPostOrder};
+use petgraph::visit::{Dfs, DfsPostOrder};
 use petgraph::Direction;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -11,7 +11,7 @@ pub type LocMap = HashMap<String, asm::LocTy>;
 
 pub fn tree_node_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();
-    let mut visit = Bfs::new(graph, start);
+    let mut visit = Dfs::new(graph, start);
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             stack.push(node.clone());
@@ -20,119 +20,106 @@ pub fn tree_node_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     stack
 }
 
-pub fn tree_index_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeIx> {
-    let mut stack: Vec<TreeIx> = Vec::new();
-    let mut visit = Bfs::new(graph, start);
-    while let Some(ix) = visit.next(&graph) {
-        stack.push(ix);
-    }
-    stack
-}
-
-pub fn tree_matches_index(pattern: &Tree, input: &Tree, input_index: TreeIx) -> Vec<TreeIx> {
-    let mut update: Vec<TreeIx> = Vec::new();
-    let pindex = pattern.root_index().unwrap();
-    let pgraph = pattern.graph();
-    let pstack = tree_node_stack(pgraph, pindex);
-    let mut pstack_iter = pstack.iter();
-    let mut visit = Bfs::new(&input.graph, input_index);
-    let mut discard: HashSet<TreeIx> = HashSet::new();
-    while let Some(ix) = visit.next(&input.graph) {
-        if !discard.contains(&ix) {
-            if let Some(pnode) = pstack_iter.next() {
-                if !pnode.is_input() {
-                    update.push(ix);
-                }
-                if pnode.is_input() {
-                    let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
-                    // discard childs if parent node in pattern is input
-                    for c in childs {
-                        discard.insert(c);
-                    }
-                }
-            }
-        }
-        if pstack_iter.len() == 0 {
-            break;
-        }
-    }
-    update
-}
-
-pub fn tree_match(
-    tile: &Tile,
-    pattern_index: TreeIx,
-    input: &Tree,
-    input_index: TreeIx,
-) -> (bool, f32) {
+pub fn tree_match(tile: &Tile, input: &Tree, index: TreeIx) -> (bool, f32) {
     let mut is_match: bool = true;
-    let pgraph = tile.pattern().graph();
-    let pstack = tree_index_stack(pgraph, pattern_index);
-    let mut pstack_iter = pstack.iter();
-    let mut visit = Bfs::new(&input.graph, input_index);
+    let root = tile.pattern().root_index().unwrap();
+    let graph = tile.pattern().graph();
+    let mut stack = tree_node_stack(graph, root);
+    stack.reverse();
+    let mut visit = Dfs::new(&input.graph, index);
     let mut discard: HashSet<TreeIx> = HashSet::new();
     let mut cost: f32 = 0.0;
     while let Some(ix) = visit.next(&input.graph) {
         if !discard.contains(&ix) {
-            if let Some(px) = pstack_iter.next() {
-                if let Some(pnode) = tile.pattern().graph().node_weight(*px) {
-                    if let Some(inode) = input.graph.node_weight(ix) {
-                        if pnode.ty() != inode.ty() {
-                            is_match = false;
+            if let Some(pnode) = stack.pop() {
+                if let Some(inode) = input.graph.node_weight(ix) {
+                    if pnode.ty() != inode.ty() {
+                        is_match = false;
+                    }
+                    if !pnode.is_input() && !inode.is_input() && pnode.op() != inode.op() {
+                        is_match = false;
+                    }
+                    if !inode.loc().is_hole() && inode.loc() != tile.loc() {
+                        is_match = false;
+                    }
+                    if pnode.is_input() {
+                        let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+                        for c in childs {
+                            discard.insert(c);
                         }
-                        if !pnode.is_input() && pnode.op() != inode.op() {
-                            is_match = false;
-                        }
-                        if !inode.loc().is_hole() && inode.loc() != tile.loc() {
-                            is_match = false;
-                        }
-                        if pnode.is_input() {
+                    }
+                    cost += inode.cost();
+                }
+            }
+        } else {
+            let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+            for c in childs {
+                discard.insert(c);
+            }
+        }
+        if !is_match || stack.is_empty() {
+            break;
+        }
+    }
+    (is_match && stack.is_empty(), cost)
+}
+
+pub fn tree_update(tile: &Tile, input: &Tree, index: TreeIx) -> Tree {
+    let mut output = input.clone();
+    let root = tile.pattern().root_index().unwrap();
+    let graph = tile.pattern().graph();
+    let mut stack = tree_node_stack(graph, root);
+    stack.reverse();
+    let mut visit = Dfs::new(&input.graph(), index);
+    let mut discard: HashSet<TreeIx> = HashSet::new();
+    let mut instr = tile.instr().clone();
+    let mut params: Vec<asm::Expr> = Vec::new();
+    let mut attrs: Vec<asm::Expr> = Vec::new();
+    while let Some(ix) = visit.next(&input.graph) {
+        if !discard.contains(&ix) {
+            if let Some(pnode) = stack.pop() {
+                if let Some(inode) = input.graph.node_weight(ix) {
+                    if let Some(onode) = output.graph.node_weight_mut(ix) {
+                        if !pnode.is_input() {
+                            onode.clear_tile();
+                            attrs.extend(inode.attrs().clone());
+                            onode.set_target_loc(tile.loc().clone());
+                            if ix == index {
+                                instr.set_dst_id(&inode.id());
+                                onode.set_cost(tile.cost());
+                            } else {
+                                onode.set_cost(0.0);
+                            }
+                        } else {
+                            params.push(asm::Expr::new_ref(&inode.id(), inode.ty().clone()));
                             let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
-                            // discard childs if parent node in pattern is input
                             for c in childs {
                                 discard.insert(c);
-                            }
-                        } else if is_match {
-                            if let Some(prev) = inode.tile() {
-                                let prev_tree = prev.pattern();
-                                let prev_index = prev.pattern().root_index().unwrap();
-                                let (t_match, t_cost) =
-                                    tree_match(tile, *px, prev_tree, prev_index);
-                                is_match = t_match;
-                                cost += t_cost;
-                            } else {
-                                cost += inode.cost();
                             }
                         }
                     }
                 }
             }
+        } else {
+            let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
+            for c in childs {
+                discard.insert(c);
+            }
         }
-        if !is_match || pstack_iter.len() == 0 {
+        if stack.is_empty() {
             break;
         }
     }
-    is_match = is_match && pstack_iter.len() == 0;
-    (is_match, cost)
-}
-
-pub fn tree_reset(tile: &Tile, input: &Tree, input_index: TreeIx) -> Tree {
-    let mut output = input.clone();
-    let matches = tree_matches_index(tile.pattern(), input, input_index);
-    for index in matches.iter() {
-        if let Some(node) = output.graph.node_weight_mut(*index) {
-            node.clear_tile();
-            node.set_cost(0.0);
-        }
+    for attr in attrs.iter() {
+        instr.add_attr(attr.clone());
     }
-    output
-}
-
-pub fn tree_update(tile: &Tile, input: &Tree, index: TreeIx) -> Tree {
-    let mut output = input.clone();
-    if let Some(node) = output.graph.node_weight_mut(index) {
-        node.set_cost(tile.cost());
-        node.set_tile(tile.clone());
+    for param in params.iter() {
+        instr.add_param(param.clone());
+    }
+    if let Some(onode) = output.graph.node_weight_mut(index) {
+        let mut tile = tile.clone();
+        tile.set_instr(instr);
+        onode.set_tile(tile);
     }
     output
 }
@@ -145,12 +132,10 @@ pub fn tree_selection(descriptor: &Descriptor, input: &Tree) -> Tree {
         if let Some(node) = input.graph.node_weight(ix) {
             if !node.is_input() {
                 for tile in descriptor.tiles.iter() {
-                    let pattern_index = tile.pattern().root_index().unwrap();
-                    let (is_match, cur_cost) = tree_match(tile, pattern_index, &output, ix);
+                    let (is_match, cur_cost) = tree_match(tile, &output, ix);
                     if is_match {
                         let pat_cost = tile.cost();
                         if pat_cost < cur_cost {
-                            output = tree_reset(tile, &output, ix);
                             output = tree_update(tile, &output, ix);
                         }
                     }
@@ -161,53 +146,7 @@ pub fn tree_selection(descriptor: &Descriptor, input: &Tree) -> Tree {
     output
 }
 
-pub fn subtree_codegen(tile: &Tile, input: &Tree, input_index: TreeIx) -> asm::InstrPrim {
-    let mut instr: asm::InstrPrim = tile.instr().clone();
-    let pattern = tile.pattern();
-    let pindex = pattern.root_index().unwrap();
-    let pgraph = pattern.graph();
-    let pstack = tree_node_stack(pgraph, pindex);
-    let mut pstack_iter = pstack.iter();
-    let mut visit = Bfs::new(&input.graph, input_index);
-    let mut discard: HashSet<TreeIx> = HashSet::new();
-    let mut params: Vec<asm::Expr> = Vec::new();
-    let mut attrs: Vec<asm::Expr> = Vec::new();
-    while let Some(ix) = visit.next(&input.graph) {
-        if !discard.contains(&ix) {
-            if let Some(pnode) = pstack_iter.next() {
-                if let Some(inode) = input.graph.node_weight(ix) {
-                    attrs.extend(inode.attrs().clone());
-                    if instr.dst_id().is_empty() {
-                        // root
-                        instr.set_dst_id(&inode.id());
-                    } else if pnode.is_input() {
-                        // param
-                        params.push(asm::Expr::new_ref(&inode.id(), inode.ty().clone()));
-                    }
-                    if pnode.is_input() {
-                        let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
-                        // discard childs if parent node in pattern is input
-                        for c in childs {
-                            discard.insert(c);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    // bfs is right-to-left, so need to reverse it here
-    attrs.reverse();
-    params.reverse();
-    for attr in attrs.iter() {
-        instr.add_attr(attr.clone());
-    }
-    for param in params.iter() {
-        instr.add_param(param.clone());
-    }
-    instr
-}
-
-pub fn tree_codegen(input: &Tree) -> InstrMap {
+pub fn tree_asmgen(input: &Tree) -> InstrMap {
     let mut map: InstrMap = InstrMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
@@ -215,39 +154,7 @@ pub fn tree_codegen(input: &Tree) -> InstrMap {
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
             if let Some(tile) = node.tile() {
-                let instr = subtree_codegen(tile, input, ix);
-                map.insert(instr.dst_id(), instr);
-            }
-        }
-    }
-    map
-}
-
-pub fn subtree_locgen(tile: &Tile, input: &Tree, input_index: TreeIx) -> LocMap {
-    let loc = tile.loc().clone();
-    let pattern = tile.pattern();
-    let pindex = pattern.root_index().unwrap();
-    let pgraph = pattern.graph();
-    let pstack = tree_node_stack(pgraph, pindex);
-    let mut pstack_iter = pstack.iter();
-    let mut visit = Bfs::new(&input.graph, input_index);
-    let mut discard: HashSet<TreeIx> = HashSet::new();
-    let mut map = LocMap::new();
-    while let Some(ix) = visit.next(&input.graph) {
-        if !discard.contains(&ix) {
-            if let Some(pnode) = pstack_iter.next() {
-                if let Some(inode) = input.graph.node_weight(ix) {
-                    if !pnode.is_input() {
-                        map.insert(inode.id(), loc.clone());
-                    }
-                    if pnode.is_input() {
-                        let childs = input.graph.neighbors_directed(ix, Direction::Outgoing);
-                        // discard childs if parent node in pattern is input
-                        for c in childs {
-                            discard.insert(c);
-                        }
-                    }
-                }
+                map.insert(tile.instr().dst_id(), tile.instr().clone());
             }
         }
     }
@@ -261,8 +168,8 @@ pub fn tree_locgen(input: &Tree) -> LocMap {
     let mut visit = DfsPostOrder::new(&graph, root_index);
     while let Some(ix) = visit.next(&graph) {
         if let Some(node) = graph.node_weight(ix) {
-            if let Some(tile) = node.tile() {
-                map.extend(subtree_locgen(tile, input, ix));
+            if let Some(loc) = node.target_loc() {
+                map.insert(node.id(), loc.clone());
             }
         }
     }

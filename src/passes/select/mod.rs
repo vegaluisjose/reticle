@@ -8,7 +8,7 @@ use crate::backend::target::Target;
 use crate::lang::ast::{Def, Prog};
 use crate::passes::select::dfg::Dfg;
 use crate::passes::select::tree::algo::{
-    tree_codegen, tree_locgen, tree_selection, InstrMap, LocMap,
+    tree_asmgen, tree_locgen, tree_selection, InstrMap, LocMap,
 };
 use crate::passes::select::tree::partition::Partition;
 
@@ -114,7 +114,7 @@ pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
     let mut map: InstrMap = InstrMap::new();
     for (_, tree) in input_tree.iter() {
         let output = tree_selection(&descriptor, tree);
-        map.extend(tree_codegen(&output));
+        map.extend(tree_asmgen(&output));
     }
     let sig = input_prog.indexed_def(0).signature().clone();
     let body = input_prog.indexed_def(0).body().clone();

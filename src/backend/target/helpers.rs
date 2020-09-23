@@ -19,6 +19,10 @@ impl Tile {
     pub fn cost(&self) -> f32 {
         self.cost
     }
+
+    pub fn set_instr(&mut self, instr: InstrPrim) {
+        self.instr = instr;
+    }
 }
 
 impl Descriptor {

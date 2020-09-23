@@ -28,9 +28,9 @@ pub struct TreeNode {
     pub op: TreeOp,
     pub loc: TreeLoc,
     pub attrs: Vec<TreeExpr>,
-    pub matched: bool,
-    pub tile: Option<Tile>,
     pub cost: f32,
+    pub tile: Option<Tile>,
+    pub target: Option<TreeLoc>,
 }
 
 #[derive(Default, Clone, Debug)]
