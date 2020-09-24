@@ -93,6 +93,7 @@ pub struct DspFusedConfig {
     pub op: DspFusedOp,
     pub regs: ParamMap,
     pub widths: ParamMap,
+    pub posargs: ParamMap,
 }
 
 #[derive(Clone, Debug)]

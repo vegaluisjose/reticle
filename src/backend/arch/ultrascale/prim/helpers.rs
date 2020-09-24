@@ -332,7 +332,21 @@ impl DspFusedConfig {
         widths.insert("b".to_string(), 18);
         widths.insert("c".to_string(), 48);
         widths.insert("y".to_string(), 48);
-        DspFusedConfig { op, regs, widths }
+        let mut posargs = ParamMap::new();
+        posargs.insert("a".to_string(), 0);
+        posargs.insert("b".to_string(), 0);
+        posargs.insert("c".to_string(), 0);
+        posargs.insert("en_a".to_string(), 0);
+        posargs.insert("en_b".to_string(), 0);
+        posargs.insert("en_c".to_string(), 0);
+        posargs.insert("en_mul".to_string(), 0);
+        posargs.insert("en_y".to_string(), 0);
+        DspFusedConfig {
+            op,
+            regs,
+            widths,
+            posargs,
+        }
     }
 
     pub fn op(&self) -> &DspFusedOp {
@@ -354,6 +368,11 @@ impl DspFusedConfig {
     pub fn set_reg(&mut self, port: &str, value: i64) {
         assert!(self.regs.contains_key(port));
         self.regs.insert(port.to_string(), value);
+    }
+
+    pub fn set_pos(&mut self, port: &str, value: i64) {
+        assert!(self.posargs.contains_key(port));
+        self.posargs.insert(port.to_string(), value);
     }
 }
 
