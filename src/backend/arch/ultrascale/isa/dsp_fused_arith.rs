@@ -9,8 +9,8 @@ pub struct DspFusedArith;
 fn emit_config(instr: &asm::Instr) -> DspFusedConfig {
     match instr.prim().op().as_ref() {
         "dsp_mul_i8_r0_r0" => DspFusedConfig::new(DspFusedOp::Mul),
-        "dsp_muladd_i8_r0_r0_r0_r0_a_b_c" => DspFusedConfig::new(DspFusedOp::MulAdd),
-        "dsp_muladd_i8_r0_r0_r1_r0_a_b_c" => {
+        "dsp_muladd_i8_r0_r0_r0_r0_r0_a_b_c" => DspFusedConfig::new(DspFusedOp::MulAdd),
+        "dsp_muladd_i8_r0_r0_r0_r1_r0_a_b_c" => {
             let mut config = DspFusedConfig::new(DspFusedOp::MulAdd);
             config.set_reg("mul", 1);
             config
