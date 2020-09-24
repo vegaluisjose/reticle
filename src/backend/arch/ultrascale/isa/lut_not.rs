@@ -7,7 +7,7 @@ use crate::backend::verilog;
 fn has_reg(op: &str) -> bool {
     match op {
         "lut_reg_not_i8_i8" | "lut_reg_not_b_b" => true,
-        "lut_not_i8_i8" | "lut_not_b_b" => false,
+        "lut_not_i8_r0" | "lut_not_bool_r0" => false,
         _ => unimplemented!(),
     }
 }

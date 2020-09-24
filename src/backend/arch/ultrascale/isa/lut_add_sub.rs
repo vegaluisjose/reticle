@@ -5,16 +5,16 @@ use crate::backend::verilog;
 
 fn emit_lut_init(instr: &asm::Instr) -> String {
     match instr.prim().op().as_ref() {
-        "lut_add_i8_i8_i8" => "6".to_string(),
-        "lut_sub_i8_i8_i8" => "9".to_string(),
+        "lut_add_i8_r0" => "6".to_string(),
+        "lut_sub_i8_r0" => "9".to_string(),
         _ => unimplemented!(),
     }
 }
 
 fn is_add(instr: &asm::Instr) -> bool {
     match instr.prim().op().as_ref() {
-        "lut_add_i8_i8_i8" => true,
-        "lut_sub_i8_i8_i8" => false,
+        "lut_add_i8_r0" => true,
+        "lut_sub_i8_r0" => false,
         _ => unimplemented!(),
     }
 }

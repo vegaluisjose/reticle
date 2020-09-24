@@ -5,12 +5,12 @@ use crate::backend::verilog;
 
 fn emit_lut_init(instr: &asm::Instr) -> String {
     match instr.prim().op().as_ref() {
-        "lut_and_b_b_b" | "lut_and_i8_i8_i8" => "8".to_string(),
-        "lut_or_b_b_b" | "lut_or_i8_i8_i8" => "e".to_string(),
-        "lut_xor_b_b_b" | "lut_xor_i8_i8_i8" | "lut_neq_b_b_b" => "6".to_string(),
-        "lut_nand_b_b_b" | "lut_nand_i8_i8_i8" => "7".to_string(),
-        "lut_nor_b_b_b" | "lut_nor_i8_i8_i8" => "1".to_string(),
-        "lut_xnor_b_b_b" | "lut_xnor_i8_i8_i8" | "lut_eq_b_b_b" => "9".to_string(),
+        "lut_and_bool_r0" | "lut_and_i8_r0" => "8".to_string(),
+        "lut_or_bool_r0" | "lut_or_i8_r0" => "e".to_string(),
+        "lut_xor_bool_r0" | "lut_xor_i8_r0" | "lut_neq1_bool_r0" => "6".to_string(),
+        "lut_nand_bool_r0" | "lut_nand_i8_r0" => "7".to_string(),
+        "lut_nor_bool_r0" | "lut_nor_i8_r0" => "1".to_string(),
+        "lut_xnor_bool_r0" | "lut_xnor_i8_r0" | "lut_eq1_bool_r0" => "9".to_string(),
         _ => unimplemented!(),
     }
 }

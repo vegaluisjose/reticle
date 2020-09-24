@@ -6,10 +6,10 @@ use crate::backend::verilog;
 
 fn has_reg(op: &str) -> bool {
     match op {
-        "lut_reg_mux_i8_b_i8_i8_b" => true,
-        "lut_mux_i8_b_i8_i8" => false,
+        "lut_mux_i8_r1" => true,
+        "lut_mux_i8_r0" => false,
         "lut_reg_mux_b_b_b_b_b" => true,
-        "lut_mux_b_b_b_b" => false,
+        "lut_mux_bool_r0" => false,
         _ => unimplemented!(),
     }
 }

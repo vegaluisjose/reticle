@@ -5,20 +5,20 @@ use crate::backend::verilog;
 
 fn has_reg(op: &str) -> bool {
     match op {
-        "lut_eq_b_i8_i8" => false,
-        "lut_reg_eq_b_i8_i8" => true,
-        "lut_neq_b_i8_i8" => false,
-        "lut_reg_neq_b_i8_i8" => true,
+        "lut_eq8_bool_r0" => false,
+        "lut_eq8_bool_r1" => true,
+        "lut_neq8_bool_r0" => false,
+        "lut_neq8_bool_r1" => true,
         _ => unimplemented!(),
     }
 }
 
 fn is_eq(op: &str) -> bool {
     match op {
-        "lut_eq_b_i8_i8" => true,
-        "lut_reg_eq_b_i8_i8" => true,
-        "lut_neq_b_i8_i8" => false,
-        "lut_reg_neq_b_i8_i8" => false,
+        "lut_eq8_bool_r0" => true,
+        "lut_eq8_bool_r1" => true,
+        "lut_neq8_bool_r0" => false,
+        "lut_neq8_bool_r1" => false,
         _ => unimplemented!(),
     }
 }
