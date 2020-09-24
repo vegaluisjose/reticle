@@ -5,10 +5,10 @@ use crate::backend::verilog;
 
 fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
     match instr.prim().op().as_ref() {
-        "dsp_add_i8v4_i8v4_i8v4" => DspVectorConfig::new(DspVectorOp::Add, instr.dst_ty().length()),
-        "dsp_sub_i8v4_i8v4_i8v4" => DspVectorConfig::new(DspVectorOp::Sub, instr.dst_ty().length()),
-        "dsp_add_i8_i8_i8" => DspVectorConfig::new(DspVectorOp::Add, 1),
-        "dsp_sub_i8_i8_i8" => DspVectorConfig::new(DspVectorOp::Sub, 1),
+        "dsp_add_i8v4_r0_r0" => DspVectorConfig::new(DspVectorOp::Add, instr.dst_ty().length()),
+        "dsp_sub_i8v4_r0_r0" => DspVectorConfig::new(DspVectorOp::Sub, instr.dst_ty().length()),
+        "dsp_add_i8_r0_r0" => DspVectorConfig::new(DspVectorOp::Add, 1),
+        "dsp_sub_i8_r0_r0" => DspVectorConfig::new(DspVectorOp::Sub, 1),
         "dsp_and_i8_i8_i8" => DspVectorConfig::new(DspVectorOp::And, 1),
         "dsp_or_i8_i8_i8" => DspVectorConfig::new(DspVectorOp::Or, 1),
         "dsp_xor_i8_i8_i8" => DspVectorConfig::new(DspVectorOp::Xor, 1),

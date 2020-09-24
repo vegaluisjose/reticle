@@ -57,35 +57,35 @@
          "expr":["reg", ["add", "i8", ["reg", ["mul", ["reg", "i8", "bool"], ["reg", "i8", "bool"]], "bool"]], "bool"]
       },
       {
-         "name":"dsp_add_i8v4_i8v4_i8v4",
+         "name":"dsp_add_i8v4_r0_r0",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",
          "ty":"i8<4>",
          "expr":["add", "i8<4>", "i8<4>"]
       },
       {
-         "name":"dsp_sub_i8v4_i8v4_i8v4",
+         "name":"dsp_sub_i8v4_r0_r0",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",
          "ty":"i8<4>",
          "expr":["sub", "i8<4>", "i8<4>"]
       },
       {
-         "name":"dsp_mul_i8_i8_i8",
+         "name":"dsp_mul_i8_r0_r0",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",
          "ty":"i8",
          "expr":["mul", "i8", "i8"]
       },
       {
-         "name":"dsp_add_i8_i8_i8",
+         "name":"dsp_add_i8_r0_r0",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",
          "ty":"i8",
          "expr":["add", "i8", "i8"]
       },
       {
-         "name":"dsp_sub_i8_i8_i8",
+         "name":"dsp_sub_i8_r0_r0",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",
          "ty":"i8",
