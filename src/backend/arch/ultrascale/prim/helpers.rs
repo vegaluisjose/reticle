@@ -361,6 +361,10 @@ impl DspFusedConfig {
         self.regs[port]
     }
 
+    pub fn pos(&self, port: &str) -> i64 {
+        self.posargs[port]
+    }
+
     pub fn width(&self, port: &str) -> i64 {
         self.widths[port]
     }
@@ -431,6 +435,10 @@ impl DspFused {
 
     pub fn width(&self, port: &str) -> i64 {
         self.config.width(port)
+    }
+
+    pub fn pos(&self, port: &str) -> i64 {
+        self.config.pos(port)
     }
 
     pub fn input(&self, input: &str) -> &Expr {

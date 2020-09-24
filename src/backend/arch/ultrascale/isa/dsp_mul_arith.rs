@@ -8,20 +8,35 @@ pub struct DspMulArith;
 
 fn emit_config(instr: &asm::Instr) -> DspFusedConfig {
     match instr.prim().op().as_ref() {
-        "dsp_mul_i8_r0_r0_r0" => DspFusedConfig::new(DspFusedOp::Mul),
-        "dsp_muladd_i8_r0_r0_r0_r0_r0_a_b_c" => DspFusedConfig::new(DspFusedOp::MulAdd),
+        "dsp_mul_i8_r0_r0_r0" => {
+            let mut config = DspFusedConfig::new(DspFusedOp::Mul);
+            config.set_pos("a", 0);
+            config.set_pos("b", 1);
+            config
+        }
+        "dsp_muladd_i8_r0_r0_r0_r0_r0_a_b_c" => {
+            let mut config = DspFusedConfig::new(DspFusedOp::MulAdd);
+            config.set_pos("a", 0);
+            config.set_pos("b", 1);
+            config.set_pos("c", 2);
+            config
+        }
         "dsp_muladd_i8_r0_r0_r0_r1_r0_a_b_c" => {
             let mut config = DspFusedConfig::new(DspFusedOp::MulAdd);
             config.set_reg("mul", 1);
+            config.set_pos("a", 0);
+            config.set_pos("b", 1);
+            config.set_pos("en_mul", 2);
+            config.set_pos("c", 3);
             config
         }
         _ => unimplemented!(),
     }
 }
 
-fn emit_wire(asm: &mut Assembler, width: u64) -> String {
+fn emit_wire(asm: &mut Assembler, width: i64) -> String {
     let name = asm.new_variable_name();
-    let wire = verilog::Decl::new_wire(&name, width);
+    let wire = verilog::Decl::new_wire(&name, width as u64);
     asm.add_wire(verilog::Stmt::from(wire));
     name
 }
@@ -30,19 +45,19 @@ fn emit_input(
     asm: &mut Assembler,
     instr: &asm::Instr,
     wire: &str,
-    width: u64,
-    index: usize,
+    width: i64,
+    index: i64,
     trunc: bool,
 ) {
     let mut concat = verilog::ExprConcat::default();
     let w = instr.dst_ty().width();
     let trunc_width = w / 2;
     let rem = if trunc {
-        width - trunc_width
+        width - trunc_width as i64
     } else {
-        width - w
+        width - w as i64
     };
-    let name = asm.fresh_scalar_variable(&instr.indexed_param(index).id());
+    let name = asm.fresh_scalar_variable(&instr.indexed_param(index as usize).id());
     let hi = if trunc {
         verilog::Expr::new_int((trunc_width - 1) as i32)
     } else {
@@ -75,12 +90,9 @@ impl Emit for DspMulArith {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let config = emit_config(&instr);
         let mut dsp = DspFused::new(config);
-        let aw = dsp.width("a") as u64;
-        let bw = dsp.width("b") as u64;
-        let yw = dsp.width("y") as u64;
-        let a = emit_wire(asm, aw);
-        let b = emit_wire(asm, bw);
-        let y = emit_wire(asm, yw);
+        let a = emit_wire(asm, dsp.width("a"));
+        let b = emit_wire(asm, dsp.width("b"));
+        let y = emit_wire(asm, dsp.width("y"));
         dsp.set_id(&asm.new_instance_name());
         dsp.set_input("vcc", &asm.vcc);
         dsp.set_input("gnd", &asm.gnd);
@@ -89,25 +101,16 @@ impl Emit for DspMulArith {
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
         dsp.set_output("y", &y);
-        emit_input(asm, &instr, &a, aw, 0, true);
-        emit_input(asm, &instr, &b, bw, 1, true);
-        match dsp.op() {
-            DspFusedOp::MulAdd if !dsp.has_reg("mul") => {
-                let cw = dsp.width("c") as u64;
-                let c = emit_wire(asm, cw);
-                dsp.set_input("c", &c);
-                emit_input(asm, &instr, &c, cw, 2, false);
-            }
-            DspFusedOp::MulAdd => {
-                let cw = dsp.width("c") as u64;
-                let c = emit_wire(asm, cw);
-                dsp.set_input("c", &c);
-                emit_input(asm, &instr, &c, cw, 3, false);
-            }
-            _ => (),
+        emit_input(asm, &instr, &a, dsp.width("a"), dsp.pos("a"), true);
+        emit_input(asm, &instr, &b, dsp.width("b"), dsp.pos("b"), true);
+        if *dsp.op() != DspFusedOp::Mul {
+            let c = emit_wire(asm, dsp.width("c"));
+            dsp.set_input("c", &c);
+            emit_input(asm, &instr, &c, dsp.width("c"), dsp.pos("c"), false);
         }
         if dsp.has_reg("mul") {
-            let en_mul = asm.fresh_scalar_variable(&instr.indexed_param(2).id());
+            let en_mul =
+                asm.fresh_scalar_variable(&instr.indexed_param(dsp.pos("en_mul") as usize).id());
             dsp.set_input("en_mul", &en_mul);
         }
         emit_output(asm, &instr, &y);
