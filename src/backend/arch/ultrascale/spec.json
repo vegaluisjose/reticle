@@ -295,49 +295,49 @@
          "expr":["mux", "bool", "bool", "bool"]
       },
       {
-         "name":"lut_reg_add_i8_i8_i8_b",
+         "name":"lut_add_i8_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["add", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_reg_sub_i8_i8_i8_b",
+         "name":"lut_sub_i8_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["sub", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_reg_and_i8_i8_i8_b",
+         "name":"lut_and_i8_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["and", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_reg_or_i8_i8_i8_b",
+         "name":"lut_or_i8_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["or", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_reg_xor_i8_i8_i8_b",
+         "name":"lut_xor_i8_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"i8",
          "expr":["reg", ["xor", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_eq8_b_r1_b",
+         "name":"lut_eq8_bool_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["reg", ["eq", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_neq8_bool_r1_b",
+         "name":"lut_neq8_bool_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
@@ -351,21 +351,21 @@
          "expr":["reg", ["mux", "bool", "i8", "i8"], "bool"]
       },
       {
-         "name":"lut_reg_and_b_b_b",
+         "name":"lut_and_bool_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["reg", ["and", "bool", "bool"], "bool"]
       },
       {
-         "name":"lut_reg_or_b_b_b",
+         "name":"lut_or_bool_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
          "expr":["reg", ["or", "bool", "bool"], "bool"]
       },
       {
-         "name":"lut_reg_xor_b_b_b",
+         "name":"lut_xor_bool_r1",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
          "ty":"bool",
