@@ -1,6 +1,20 @@
 {
    "isa":[
       {
+         "name":"dsp_muladd_i8_r0_a_b_c",
+         "cost": {"delay":2, "area": 8},
+         "loc":"dsp",
+         "ty":"i8",
+         "expr":["add", ["mul", "i8", "i8"], "i8"]
+      },
+      {
+         "name":"dsp_muladd_i8_r0_c_a_b",
+         "cost": {"delay":2, "area": 8},
+         "loc":"dsp",
+         "ty":"i8",
+         "expr":["add", "i8", ["mul", "i8", "i8"]]
+      },
+      {
          "name":"dsp_i8_r3_muladd_a_b_c",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",
@@ -34,13 +48,6 @@
          "loc":"dsp",
          "ty":"i8",
          "expr":["add", ["reg", ["mul", "i8", "i8"], "bool"], "i8"]
-      },
-      {
-         "name":"dsp_add_mul_i8_i8_i8_i8",
-         "cost": {"delay":2, "area": 8},
-         "loc":"dsp",
-         "ty":"i8",
-         "expr":["add", ["mul", "i8", "i8"], "i8"]
       },
       {
          "name":"dsp_add_i8v4_i8v4_i8v4",
