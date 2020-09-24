@@ -321,18 +321,18 @@ impl Reg {
 
 impl DspFusedConfig {
     pub fn new(op: DspFusedOp) -> DspFusedConfig {
-        let mut reg = ParamMap::new();
-        reg.insert("a".to_string(), 0);
-        reg.insert("b".to_string(), 0);
-        reg.insert("c".to_string(), 0);
-        reg.insert("mul".to_string(), 0);
-        reg.insert("y".to_string(), 0);
-        let mut width = ParamMap::new();
-        width.insert("a".to_string(), 30);
-        width.insert("b".to_string(), 18);
-        width.insert("c".to_string(), 48);
-        width.insert("y".to_string(), 48);
-        DspFusedConfig { op, reg, width }
+        let mut regs = ParamMap::new();
+        regs.insert("a".to_string(), 0);
+        regs.insert("b".to_string(), 0);
+        regs.insert("c".to_string(), 0);
+        regs.insert("mul".to_string(), 0);
+        regs.insert("y".to_string(), 0);
+        let mut widths = ParamMap::new();
+        widths.insert("a".to_string(), 30);
+        widths.insert("b".to_string(), 18);
+        widths.insert("c".to_string(), 48);
+        widths.insert("y".to_string(), 48);
+        DspFusedConfig { op, regs, widths }
     }
 
     pub fn op(&self) -> &DspFusedOp {
@@ -340,20 +340,20 @@ impl DspFusedConfig {
     }
 
     pub fn has_reg(&self, port: &str) -> bool {
-        self.reg[port] > 0
+        self.regs[port] > 0
     }
 
     pub fn reg(&self, port: &str) -> i64 {
-        self.reg[port]
+        self.regs[port]
     }
 
     pub fn width(&self, port: &str) -> i64 {
-        self.width[port]
+        self.widths[port]
     }
 
     pub fn set_reg(&mut self, port: &str, value: i64) {
-        assert!(self.reg.contains_key(port));
-        self.reg.insert(port.to_string(), value);
+        assert!(self.regs.contains_key(port));
+        self.regs.insert(port.to_string(), value);
     }
 }
 

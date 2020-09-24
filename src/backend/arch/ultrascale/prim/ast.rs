@@ -91,8 +91,8 @@ pub enum DspFusedOp {
 #[derive(Clone, Debug)]
 pub struct DspFusedConfig {
     pub op: DspFusedOp,
-    pub reg: ParamMap,
-    pub width: ParamMap,
+    pub regs: ParamMap,
+    pub widths: ParamMap,
 }
 
 #[derive(Clone, Debug)]
