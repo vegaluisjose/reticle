@@ -41,7 +41,7 @@ ${VERILOG_DIR}/reg_i8_i8_b.v
 ${VERILOG_DIR}/vadd_const.v
 ${VERILOG_DIR}/xnor_b_b_b.v
 ${VERILOG_DIR}/xor_b_b_b.v
-# ${VERILOG_DIR}/dot.v
+${VERILOG_DIR}/dot.v
 ${TESTS_DIR}/test_add_i8_i8_i8.v
 ${TESTS_DIR}/test_sub_i8_i8_i8.v
 ${TESTS_DIR}/test_add_i8v4_i8v4_i8v4.v
@@ -85,4 +85,4 @@ ${TESTS_DIR}/test_reg_i8_i8_b.v
 ${TESTS_DIR}/test_vadd_const.v
 ${TESTS_DIR}/test_xnor_b_b_b.v
 ${TESTS_DIR}/test_xor_b_b_b.v
-# ${TESTS_DIR}/test_dot.v
+${TESTS_DIR}/test_dot.v

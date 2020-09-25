@@ -60,7 +60,7 @@ module test_all();
     test_vadd_const t39(.clock(clock), .reset(reset), .fail(fail[39]), .finish(finish[39]));
     test_xnor_b_b_b t40(.clock(clock), .reset(reset), .fail(fail[40]), .finish(finish[40]));
     test_xor_b_b_b t41(.clock(clock), .reset(reset), .fail(fail[41]), .finish(finish[41]));
-    // test_dot t42(.clock(clock), .reset(reset), .fail(fail[42]), .finish(finish[42]));
+    test_dot t42(.clock(clock), .reset(reset), .fail(fail[42]), .finish(finish[42]));
 
     always @(posedge clock) begin
         if (|fail) begin

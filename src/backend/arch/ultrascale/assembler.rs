@@ -280,9 +280,6 @@ impl Assembler {
                     "lut_not_bool_r0" => isa::LutNot::emit(self, instr),
                     "lut_mux_i8_r1" => isa::LutMux::emit(self, instr),
                     "lut_reg_i8" => isa::LutReg::emit(self, instr),
-                    "dsp_muladd_i8_r0_r0_r0_r0_r0_a_b_c" => isa::DspMulArith::emit(self, instr),
-                    "dsp_muladd_i8_r0_r0_r0_r1_r0_a_b_c" => isa::DspMulArith::emit(self, instr),
-                    "dsp_mul_i8_r0_r0_r0" => isa::DspMulArith::emit(self, instr),
                     "dsp_add_i8v4_r0_r0_r0" => isa::DspArith::emit(self, instr),
                     "dsp_sub_i8v4_r0_r0_r0" => isa::DspArith::emit(self, instr),
                     "dsp_add_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
@@ -293,6 +290,11 @@ impl Assembler {
                     "dsp_nand_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
                     "dsp_nor_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
                     "dsp_xnor_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
+                    "dsp_mul_i8_r0_r0_r0" => isa::DspMulArith::emit(self, instr),
+                    "dsp_muladd_i8_r0_r0_r0_r0_r0_a_b_c" => isa::DspMulArith::emit(self, instr),
+                    "dsp_muladd_i8_r0_r0_r0_r1_r0_a_b_c" => isa::DspMulArith::emit(self, instr),
+                    "dsp_muladd_i8_r1_r1_r0_r1_r1_a_b_c" => isa::DspMulArith::emit(self, instr),
+                    "dsp_muladd_i8_r1_r1_r0_r1_r1_c_a_b" => isa::DspMulArith::emit(self, instr),
                     _ => unimplemented!(),
                 }
             } else {

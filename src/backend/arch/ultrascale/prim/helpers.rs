@@ -319,6 +319,15 @@ impl Reg {
     }
 }
 
+impl DspFusedOp {
+    pub fn is_mul(&self) -> bool {
+        match self {
+            DspFusedOp::Mul => true,
+            _ => false,
+        }
+    }
+}
+
 impl DspFusedConfig {
     pub fn new(op: DspFusedOp) -> DspFusedConfig {
         let mut regs = ParamMap::new();
@@ -389,7 +398,7 @@ impl DspFused {
         inputs.insert("reset".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
-        if *config.op() == DspFusedOp::MulAdd {
+        if !config.op().is_mul() {
             inputs.insert("c".to_string(), Expr::default());
         }
         if config.has_reg("a") {
