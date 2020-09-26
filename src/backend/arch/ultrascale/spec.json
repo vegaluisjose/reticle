@@ -57,6 +57,20 @@
          "expr":["reg", ["add", "i8", ["reg", ["mul", ["reg", "i8", "bool"], ["reg", "i8", "bool"]], "bool"]], "bool"]
       },
       {
+         "name":"dsp_muladd_i8_r1_r1_r1_r1_r1_a_b_c",
+         "cost": {"delay":2, "area": 8},
+         "loc":"dsp",
+         "ty":"i8",
+         "expr":["reg", ["add", ["reg", ["mul", ["reg", "i8", "bool"], ["reg", "i8", "bool"]], "bool"], ["reg", "i8", "bool"]], "bool"]
+      },
+      {
+         "name":"dsp_muladd_i8_r1_r1_r1_r1_r1_c_a_b",
+         "cost": {"delay":2, "area": 8},
+         "loc":"dsp",
+         "ty":"i8",
+         "expr":["reg", ["add", ["reg", "i8", "bool"], ["reg", ["mul", ["reg", "i8", "bool"], ["reg", "i8", "bool"]], "bool"]], "bool"]
+      },
+      {
          "name":"dsp_add_i8v4_r0_r0_r0",
          "cost": {"delay":2, "area": 8},
          "loc":"dsp",

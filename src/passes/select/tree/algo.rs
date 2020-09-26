@@ -47,6 +47,27 @@ pub fn tree_match(tile: &Tile, input: &Tree, index: TreeIx) -> (bool, f32) {
                         for c in childs {
                             discard.insert(c);
                         }
+                    } else if is_match {
+                        if let Some(prev) = inode.tile() {
+                            let prev_root = prev.pattern().root_index().unwrap();
+                            let prev_graph = prev.pattern().graph();
+                            let mut prev_stack = tree_node_stack(prev_graph, prev_root);
+                            prev_stack.reverse();
+                            prev_stack.pop();
+                            if stack.len() <= prev_stack.len() {
+                                for a in prev_stack.iter() {
+                                    if let Some(b) = stack.pop() {
+                                        visit.next(&input.graph);
+                                        if a.op() != b.op() || a.ty() != b.ty() {
+                                            is_match = false;
+                                            break;
+                                        }
+                                    } else {
+                                        break;
+                                    }
+                                }
+                            }
+                        }
                     }
                     cost += inode.cost();
                 }
