@@ -71,13 +71,7 @@ fn emit_wire(asm: &mut Assembler, width: i64) -> String {
     name
 }
 
-fn emit_input(
-    asm: &mut Assembler,
-    instr: &asm::Instr,
-    wire: &str,
-    width: i64,
-    index: i64,
-) {
+fn emit_input(asm: &mut Assembler, instr: &asm::Instr, wire: &str, width: i64, index: i64) {
     let mut concat = verilog::ExprConcat::default();
     let ty_width = instr.dst_ty().width();
     let rem = width - ty_width as i64;
