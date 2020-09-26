@@ -183,6 +183,13 @@
          "expr":["sub", "i8", "i8"]
       },
       {
+         "name":"lut_sub_i8_r1",
+         "cost": {"delay":8, "area": 1},
+         "loc":"lut",
+         "ty":"i8",
+         "expr":["reg", ["sub", "i8", "i8"], "bool"]
+      },
+      {
          "name":"lut_and_i8_r0",
          "cost": {"delay":8, "area": 1},
          "loc":"lut",
