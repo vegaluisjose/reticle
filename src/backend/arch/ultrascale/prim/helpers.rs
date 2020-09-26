@@ -569,8 +569,15 @@ impl DspVector {
         inputs.insert("reset".to_string(), Expr::default());
         inputs.insert("a".to_string(), Expr::default());
         inputs.insert("b".to_string(), Expr::default());
-        inputs.insert("en_input".to_string(), Expr::default());
-        inputs.insert("en_output".to_string(), Expr::default());
+        if config.has_reg("a") {
+            inputs.insert("en_a".to_string(), Expr::default());
+        }
+        if config.has_reg("b") {
+            inputs.insert("en_b".to_string(), Expr::default());
+        }
+        if config.has_reg("y") {
+            inputs.insert("en_y".to_string(), Expr::default());
+        }
         let mut outputs = PortMap::new();
         outputs.insert("y".to_string(), Expr::default());
         DspVector {

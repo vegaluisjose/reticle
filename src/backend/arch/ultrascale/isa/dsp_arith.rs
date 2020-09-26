@@ -67,6 +67,14 @@ fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
             config.set_pos("b", 1);
             config
         }
+        "dsp_add_i8_r0_r0_r1" => {
+            let mut config = DspVectorConfig::new(DspVectorOp::Add, 1);
+            config.set_pos("a", 0);
+            config.set_pos("b", 1);
+            config.set_pos("en_y", 2);
+            config.set_reg("y", 1);
+            config
+        }
         _ => unimplemented!(),
     }
 }
@@ -147,6 +155,21 @@ impl Emit for DspArith {
         dsp.set_output("y", &y);
         emit_input(asm, &instr, dsp.config(), &a, 0);
         emit_input(asm, &instr, dsp.config(), &b, 1);
+        if dsp.has_reg("a") {
+            let en_a =
+                asm.fresh_scalar_variable(&instr.indexed_param(dsp.pos("en_a") as usize).id());
+            dsp.set_input("en_a", &en_a);
+        }
+        if dsp.has_reg("b") {
+            let en_b =
+                asm.fresh_scalar_variable(&instr.indexed_param(dsp.pos("en_b") as usize).id());
+            dsp.set_input("en_b", &en_b);
+        }
+        if dsp.has_reg("y") {
+            let en_y =
+                asm.fresh_scalar_variable(&instr.indexed_param(dsp.pos("en_y") as usize).id());
+            dsp.set_input("en_y", &en_y);
+        }
         emit_output(asm, &instr, dsp.config(), &y);
         asm.add_instance(verilog::Stmt::from(dsp));
     }

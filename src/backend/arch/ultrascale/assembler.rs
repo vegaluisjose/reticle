@@ -290,6 +290,7 @@ impl Assembler {
                     "dsp_nand_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
                     "dsp_nor_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
                     "dsp_xnor_i8_r0_r0_r0" => isa::DspArith::emit(self, instr),
+                    "dsp_add_i8_r0_r0_r1" => isa::DspArith::emit(self, instr),
                     "dsp_mul_i8_r0_r0_r0" => isa::DspMulArith::emit(self, instr),
                     "dsp_muladd_i8_r0_r0_r0_r0_r0_a_b_c" => isa::DspMulArith::emit(self, instr),
                     "dsp_muladd_i8_r0_r0_r0_r1_r0_a_b_c" => isa::DspMulArith::emit(self, instr),
