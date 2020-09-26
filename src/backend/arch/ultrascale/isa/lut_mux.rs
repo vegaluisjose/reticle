@@ -7,10 +7,7 @@ use crate::backend::verilog;
 fn has_reg(op: &str) -> bool {
     match op {
         "lut_mux_i8_r1" => true,
-        "lut_mux_i8_r0" => false,
-        "lut_reg_mux_b_b_b_b_b" => true,
-        "lut_mux_bool_r0" => false,
-        _ => unimplemented!(),
+        _ => false,
     }
 }
 
@@ -40,7 +37,6 @@ impl Emit for LutMux {
                 lut.set_input("gnd", &asm.gnd);
                 lut.set_attr("init", "ac");
                 lut.set_input("c", &con);
-                lut.set_output_with_index("y", &wire_name, i as u32);
                 reg.set_id(&asm.new_instance_name());
                 reg.set_input("vcc", &asm.vcc);
                 reg.set_input("gnd", &asm.gnd);
@@ -50,11 +46,13 @@ impl Emit for LutMux {
                 if width == 1 {
                     lut.set_input("a", &tru);
                     lut.set_input("b", &fal);
+                    lut.set_output("y", &wire_name);
                     reg.set_input("a", &wire_name);
                     reg.set_output("y", &res);
                 } else {
                     lut.set_input_with_index("a", &tru, i as u32);
                     lut.set_input_with_index("b", &fal, i as u32);
+                    lut.set_output_with_index("y", &wire_name, i as u32);
                     reg.set_input_with_index("a", &wire_name, i as u32);
                     reg.set_output_with_index("y", &res, i as u32);
                 }
