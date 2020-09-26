@@ -77,27 +77,17 @@ fn emit_input(
     wire: &str,
     width: i64,
     index: i64,
-    trunc: bool,
 ) {
     let mut concat = verilog::ExprConcat::default();
-    let w = instr.dst_ty().width();
-    let trunc_width = w / 2;
-    let rem = if trunc {
-        width - trunc_width as i64
-    } else {
-        width - w as i64
-    };
+    let ty_width = instr.dst_ty().width();
+    let rem = width - ty_width as i64;
     let name = asm.fresh_scalar_variable(&instr.indexed_param(index as usize).id());
-    let hi = if trunc {
-        verilog::Expr::new_int((trunc_width - 1) as i32)
-    } else {
-        verilog::Expr::new_int((w - 1) as i32)
-    };
+    let hi = verilog::Expr::new_int((ty_width - 1) as i32);
     let lo = verilog::Expr::new_int(0);
     concat.add_expr(verilog::Expr::new_slice(&name, hi, lo));
     // extend sign
     for _ in 0..rem {
-        concat.add_expr(verilog::Expr::new_index_bit(&name, (w - 1) as i32));
+        concat.add_expr(verilog::Expr::new_index_bit(&name, (ty_width - 1) as i32));
     }
     let src_expr = verilog::Expr::from(concat);
     let dst_expr = verilog::Expr::new_ref(wire);
@@ -131,12 +121,12 @@ impl Emit for DspMulArith {
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
         dsp.set_output("y", &y);
-        emit_input(asm, &instr, &a, dsp.width("a"), dsp.pos("a"), true);
-        emit_input(asm, &instr, &b, dsp.width("b"), dsp.pos("b"), true);
+        emit_input(asm, &instr, &a, dsp.width("a"), dsp.pos("a"));
+        emit_input(asm, &instr, &b, dsp.width("b"), dsp.pos("b"));
         if !dsp.op().is_mul() {
             let c = emit_wire(asm, dsp.width("c"));
             dsp.set_input("c", &c);
-            emit_input(asm, &instr, &c, dsp.width("c"), dsp.pos("c"), false);
+            emit_input(asm, &instr, &c, dsp.width("c"), dsp.pos("c"));
         }
         if dsp.has_reg("a") {
             let en_a =
