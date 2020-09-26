@@ -121,6 +121,7 @@ pub struct DspVectorConfig {
     pub op: DspVectorOp,
     pub params: ParamMap,
     pub regs: ParamMap,
+    pub posargs: ParamMap,
 }
 
 #[derive(Clone, Debug)]

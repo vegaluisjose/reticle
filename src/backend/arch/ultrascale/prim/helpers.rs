@@ -515,7 +515,18 @@ impl DspVectorConfig {
         params.insert("width".to_string(), 48);
         params.insert("length".to_string(), length as i64);
         params.insert("word".to_string(), word as i64);
-        DspVectorConfig { op, params, regs }
+        let mut posargs = ParamMap::new();
+        posargs.insert("a".to_string(), 0);
+        posargs.insert("b".to_string(), 0);
+        posargs.insert("en_a".to_string(), 0);
+        posargs.insert("en_b".to_string(), 0);
+        posargs.insert("en_y".to_string(), 0);
+        DspVectorConfig {
+            op,
+            params,
+            regs,
+            posargs,
+        }
     }
 
     pub fn op(&self) -> &DspVectorOp {
@@ -532,6 +543,20 @@ impl DspVectorConfig {
 
     pub fn reg(&self, port: &str) -> i64 {
         self.regs[port]
+    }
+
+    pub fn pos(&self, port: &str) -> i64 {
+        self.posargs[port]
+    }
+
+    pub fn set_reg(&mut self, port: &str, value: i64) {
+        assert!(self.regs.contains_key(port));
+        self.regs.insert(port.to_string(), value);
+    }
+
+    pub fn set_pos(&mut self, port: &str, value: i64) {
+        assert!(self.posargs.contains_key(port));
+        self.posargs.insert(port.to_string(), value);
     }
 }
 
@@ -594,6 +619,10 @@ impl DspVector {
 
     pub fn reg(&self, port: &str) -> i64 {
         self.config.reg(port)
+    }
+
+    pub fn pos(&self, port: &str) -> i64 {
+        self.config.pos(port)
     }
 
     pub fn set_id(&mut self, id: &str) {
