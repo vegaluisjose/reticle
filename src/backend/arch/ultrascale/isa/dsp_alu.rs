@@ -12,6 +12,28 @@ fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
             config.set_pos("b", 1);
             config
         }
+        "dsp_add_i8v4_r0_r0_r1" => {
+            let len = instr.dst_ty().length();
+            let mut config = DspVectorConfig::new(DspVectorOp::Add, len);
+            config.set_pos("a", 0);
+            config.set_pos("b", 1);
+            config.set_pos("en_y", 2);
+            config.set_reg("y", 1);
+            config
+        }
+        "dsp_add_i8v4_r1_r1_r1" => {
+            let len = instr.dst_ty().length();
+            let mut config = DspVectorConfig::new(DspVectorOp::Add, len);
+            config.set_pos("a", 0);
+            config.set_pos("en_a", 1);
+            config.set_pos("b", 2);
+            config.set_pos("en_b", 3);
+            config.set_pos("en_y", 4);
+            config.set_reg("a", 1);
+            config.set_reg("b", 1);
+            config.set_reg("y", 1);
+            config
+        }
         "dsp_sub_i8v4_r0_r0_r0" => {
             let len = instr.dst_ty().length();
             let mut config = DspVectorConfig::new(DspVectorOp::Sub, len);
@@ -89,10 +111,11 @@ fn emit_wire(asm: &mut Assembler, width: u64) -> String {
 fn emit_input(
     asm: &mut Assembler,
     instr: &asm::Instr,
-    config: &DspVectorConfig,
     wire: &str,
-    index: usize,
+    config: &DspVectorConfig,
+    port: &str,
 ) {
+    let index = config.pos(port) as usize;
     let mut concat = verilog::ExprConcat::default();
     let width = instr.dst_ty().width();
     let length = config.get_param("length") as u64;
@@ -115,7 +138,7 @@ fn emit_input(
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
-fn emit_output(asm: &mut Assembler, instr: &asm::Instr, config: &DspVectorConfig, wire: &str) {
+fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str, config: &DspVectorConfig) {
     let width = instr.dst_ty().width();
     let length = config.get_param("length") as u64;
     let word = config.get_param("word") as u64;
@@ -135,9 +158,9 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, config: &DspVectorConfig
 }
 
 #[derive(Clone, Debug)]
-pub struct DspArith;
+pub struct DspAlu;
 
-impl Emit for DspArith {
+impl Emit for DspAlu {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
         let config = emit_config(&instr);
         let mut dsp = DspVector::new(config);
@@ -153,8 +176,8 @@ impl Emit for DspArith {
         dsp.set_input("a", &a);
         dsp.set_input("b", &b);
         dsp.set_output("y", &y);
-        emit_input(asm, &instr, dsp.config(), &a, 0);
-        emit_input(asm, &instr, dsp.config(), &b, 1);
+        emit_input(asm, &instr, &a, dsp.config(), "a");
+        emit_input(asm, &instr, &b, dsp.config(), "b");
         if dsp.has_reg("a") {
             let en_a =
                 asm.fresh_scalar_variable(&instr.indexed_param(dsp.pos("en_a") as usize).id());
@@ -170,7 +193,7 @@ impl Emit for DspArith {
                 asm.fresh_scalar_variable(&instr.indexed_param(dsp.pos("en_y") as usize).id());
             dsp.set_input("en_y", &en_y);
         }
-        emit_output(asm, &instr, dsp.config(), &y);
+        emit_output(asm, &instr, &y, dsp.config());
         asm.add_instance(verilog::Stmt::from(dsp));
     }
 }
