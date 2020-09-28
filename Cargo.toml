@@ -19,3 +19,7 @@ structopt = { version = "0.3", default-features = false }
 [[bin]]
 name = "reticle-translate"
 path = "src/bin/translate.rs"
+
+[[bin]]
+name = "reticle-opt"
+path = "src/bin/opt.rs"
