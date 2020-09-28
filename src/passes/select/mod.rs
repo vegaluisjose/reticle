@@ -2,8 +2,8 @@ pub mod analysis;
 pub mod dfg;
 pub mod tree;
 
-use crate::backend::arch::ultrascale::Ultrascale;
 use crate::asm::ast as asm;
+use crate::backend::arch::ultrascale::Ultrascale;
 use crate::backend::target::Target;
 use crate::lang::ast::{Def, Prog};
 use crate::passes::select::dfg::Dfg;

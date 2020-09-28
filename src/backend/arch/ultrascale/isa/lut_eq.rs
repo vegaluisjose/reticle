@@ -1,6 +1,6 @@
+use crate::asm::ast as asm;
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
 use crate::backend::arch::ultrascale::prim::ast::{Lut, Reg};
-use crate::asm::ast as asm;
 use crate::backend::verilog;
 
 fn has_reg(op: &str) -> bool {
