@@ -73,8 +73,6 @@ impl From<lang::Port> for Vec<verilog::Port> {
 impl From<lang::Sig> for Vec<verilog::Port> {
     fn from(sig: lang::Sig) -> Self {
         let mut ports: Vec<verilog::Port> = Vec::new();
-        ports.push(verilog::Port::new_input("clock", 1));
-        ports.push(verilog::Port::new_input("reset", 1));
         for p in sig.inputs() {
             let v: Vec<verilog::Port> = p.clone().into();
             ports.extend(v);
@@ -108,7 +106,9 @@ impl From<lang::Instr> for Vec<verilog::Decl> {
 impl From<lang::Prog> for verilog::Module {
     fn from(prog: lang::Prog) -> Self {
         let def = prog.indexed_def(0);
-        let ports: Vec<verilog::Port> = def.signature().clone().into();
+        let mut ports: Vec<verilog::Port> = def.signature().clone().into();
+        ports.push(verilog::Port::new_input("clock", 1));
+        ports.push(verilog::Port::new_input("reset", 1));
         let outputs: HashSet<lang::Id> = def.signature().outputs().iter().map(|x| x.id()).collect();
         let mut module = Module::new(&def.id());
         for p in ports {
