@@ -663,6 +663,10 @@ impl Sig {
         &self.outputs
     }
 
+    pub fn set_id(&mut self, name: &str) {
+        self.id = name.to_string();
+    }
+
     pub fn add_input(&mut self, name: &str, ty: &str) {
         let ty = Ty::from_str(ty).unwrap();
         let expr = Expr::new_ref(name, ty);
