@@ -13,5 +13,5 @@ regex = "1.3.9"
 pest = "2.0"
 pest_derive = "2.0"
 pest_consume = "1.0.5"
-vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "e65bf0567b715f58d50b0fe36747576b0fd5153f" }
+vast = "0.2.1"
 structopt = { version = "0.3", default-features = false }
