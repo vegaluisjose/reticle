@@ -322,7 +322,7 @@ impl Assembler {
             } else {
                 match instr.std().op() {
                     asm::StdOp::Const => isa::Constant::emit(self, instr),
-                    _ => self.add_assignment(verilog::Stmt::from(instr.std().clone())),
+                    _ => unimplemented!(),
                 }
             }
         }

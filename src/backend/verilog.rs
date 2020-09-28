@@ -13,32 +13,6 @@ impl From<asm::Prog> for verilog::Module {
     }
 }
 
-impl From<lang::InstrStd> for verilog::Stmt {
-    fn from(instr: lang::InstrStd) -> Self {
-        match instr.op() {
-            lang::StdOp::Identity => {
-                let inp = verilog::Expr::new_ref(&instr.indexed_param(0).id());
-                let out = verilog::Expr::new_ref(&instr.dst_id());
-                let assign = verilog::Parallel::ParAssign(out, inp);
-                verilog::Stmt::from(assign)
-            }
-            lang::StdOp::Const => {
-                if instr.is_vector() {
-                    unimplemented!()
-                } else {
-                    let attr = &instr.indexed_attr(0).value();
-                    let width = instr.dst_ty().width();
-                    let value = verilog::Expr::new_ulit_dec(width as u32, &attr.to_string());
-                    let out = verilog::Expr::new_ref(&instr.dst_id());
-                    let assign = verilog::Parallel::ParAssign(out, value);
-                    verilog::Stmt::from(assign)
-                }
-            }
-            _ => unimplemented!(),
-        }
-    }
-}
-
 impl From<lang::Expr> for Vec<verilog::Id> {
     fn from(expr: lang::Expr) -> Self {
         let mut ids: Vec<verilog::Id> = Vec::new();
@@ -103,23 +77,102 @@ impl From<lang::Instr> for Vec<verilog::Decl> {
     }
 }
 
+impl From<lang::InstrStd> for Vec<verilog::Stmt> {
+    fn from(instr: lang::InstrStd) -> Self {
+        match instr.op() {
+            lang::StdOp::Identity => {
+                let inp = verilog::Expr::new_ref(&instr.indexed_param(0).id());
+                let out = verilog::Expr::new_ref(&instr.dst_id());
+                let assign = verilog::Parallel::ParAssign(out, inp);
+                vec![verilog::Stmt::from(assign)]
+            }
+            lang::StdOp::Const => {
+                if instr.is_vector() {
+                    unimplemented!()
+                } else {
+                    let attr = &instr.indexed_attr(0).value();
+                    let width = instr.dst_ty().width();
+                    let value = verilog::Expr::new_ulit_dec(width as u32, &attr.to_string());
+                    let out = verilog::Expr::new_ref(&instr.dst_id());
+                    let assign = verilog::Parallel::ParAssign(out, value);
+                    vec![verilog::Stmt::from(assign)]
+                }
+            }
+            _ => unimplemented!(),
+        }
+    }
+}
+
+impl From<lang::InstrPrim> for Vec<verilog::Stmt> {
+    fn from(instr: lang::InstrPrim) -> Self {
+        let mut instrs: Vec<verilog::Stmt> = Vec::new();
+        let lhs: Vec<verilog::Id> = instr.indexed_param(0).clone().into();
+        let rhs: Vec<verilog::Id> = instr.indexed_param(1).clone().into();
+        let res: Vec<verilog::Id> = instr.dst().clone().into();
+        match instr.op() {
+            lang::PrimOp::Add => {
+                for ((a, b), y) in lhs.iter().zip(rhs.iter()).zip(res.iter()) {
+                    let ar = Expr::new_signed_ref(a);
+                    let br = Expr::new_signed_ref(b);
+                    let yr = Expr::new_ref(y);
+                    let add = verilog::Expr::new_add(ar, br);
+                    let assign = verilog::Parallel::ParAssign(yr, add);
+                    instrs.push(verilog::Stmt::from(assign));
+                }
+            }
+            lang::PrimOp::Mul => {
+                for ((a, b), y) in lhs.iter().zip(rhs.iter()).zip(res.iter()) {
+                    let ar = Expr::new_signed_ref(a);
+                    let br = Expr::new_signed_ref(b);
+                    let yr = Expr::new_ref(y);
+                    let add = verilog::Expr::new_mul(ar, br);
+                    let assign = verilog::Parallel::ParAssign(yr, add);
+                    instrs.push(verilog::Stmt::from(assign));
+                }
+            }
+            _ => unimplemented!(),
+        }
+        instrs
+    }
+}
+
+impl From<lang::Instr> for Vec<verilog::Stmt> {
+    fn from(instr: lang::Instr) -> Self {
+        if instr.is_std() {
+            instr.std().clone().into()
+        } else {
+            instr.prim().clone().into()
+        }
+    }
+}
+
 impl From<lang::Prog> for verilog::Module {
     fn from(prog: lang::Prog) -> Self {
         let def = prog.indexed_def(0);
-        let mut ports: Vec<verilog::Port> = def.signature().clone().into();
+        let mut ports: Vec<verilog::Port> = Vec::new();
         ports.push(verilog::Port::new_input("clock", 1));
         ports.push(verilog::Port::new_input("reset", 1));
+        let def_ports: Vec<verilog::Port> = def.signature().clone().into();
+        ports.extend(def_ports);
         let outputs: HashSet<lang::Id> = def.signature().outputs().iter().map(|x| x.id()).collect();
         let mut module = Module::new(&def.id());
         for p in ports {
             module.add_port(p);
         }
+        // decls
         for instr in def.body() {
             if !outputs.contains(&instr.dst().id()) {
                 let decl: Vec<verilog::Decl> = instr.clone().into();
                 for d in decl {
                     module.add_stmt(verilog::Stmt::from(d));
                 }
+            }
+        }
+        // exprs
+        for instr in def.body() {
+            let stmts: Vec<verilog::Stmt> = instr.clone().into();
+            for s in stmts {
+                module.add_stmt(s);
             }
         }
         module
