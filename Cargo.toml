@@ -15,3 +15,7 @@ pest_derive = "2.0"
 pest_consume = "1.0.5"
 vast = "0.2.1"
 structopt = { version = "0.3", default-features = false }
+
+[[bin]]
+name = "reticle-translate"
+path = "src/bin/translate.rs"
