@@ -1,6 +1,7 @@
 use crate::asm::ast as asm;
 use crate::backend::arch::ultrascale::assembler::Assembler;
 use crate::lang::ast as lang;
+use std::collections::HashSet;
 use vast::v05::ast as verilog;
 
 pub use verilog::*;
@@ -38,27 +39,32 @@ impl From<lang::InstrStd> for verilog::Stmt {
     }
 }
 
+impl From<lang::Expr> for Vec<verilog::Id> {
+    fn from(expr: lang::Expr) -> Self {
+        let mut ids: Vec<verilog::Id> = Vec::new();
+        if expr.ty().is_vector() {
+            for i in 0..expr.ty().length() {
+                ids.push(format!("{}_{}", expr.id(), i));
+            }
+        } else {
+            ids.push(expr.id());
+        }
+        ids
+    }
+}
+
 impl From<lang::Port> for Vec<verilog::Port> {
     fn from(port: lang::Port) -> Self {
         let mut ports: Vec<verilog::Port> = Vec::new();
         let width = port.ty().width();
-        if port.ty().is_vector() {
-            for i in 0..port.ty().length() {
-                let name = format!("{}_{}", &port.id(), i);
-                let vport = if port.is_input() {
-                    verilog::Port::new_input(&name, width)
-                } else {
-                    verilog::Port::new_output(&name, width)
-                };
-                ports.push(vport);
-            }
-        } else {
-            let sport = if port.is_input() {
-                verilog::Port::new_input(&port.id(), width)
+        let names: Vec<verilog::Id> = port.expr().clone().into();
+        for n in names {
+            let port = if port.is_input() {
+                verilog::Port::new_input(&n, width)
             } else {
-                verilog::Port::new_output(&port.id(), width)
+                verilog::Port::new_output(&n, width)
             };
-            ports.push(sport);
+            ports.push(port);
         }
         ports
     }
@@ -81,13 +87,40 @@ impl From<lang::Sig> for Vec<verilog::Port> {
     }
 }
 
+impl From<lang::Instr> for Vec<verilog::Decl> {
+    fn from(instr: lang::Instr) -> Self {
+        let mut decls: Vec<verilog::Decl> = Vec::new();
+        let expr = instr.dst();
+        let width = expr.ty().width();
+        let names: Vec<verilog::Id> = expr.clone().into();
+        for n in names {
+            let decl = if instr.is_reg() {
+                verilog::Decl::new_reg(&n, width)
+            } else {
+                verilog::Decl::new_wire(&n, width)
+            };
+            decls.push(decl);
+        }
+        decls
+    }
+}
+
 impl From<lang::Prog> for verilog::Module {
     fn from(prog: lang::Prog) -> Self {
         let def = prog.indexed_def(0);
         let ports: Vec<verilog::Port> = def.signature().clone().into();
+        let outputs: HashSet<lang::Id> = def.signature().outputs().iter().map(|x| x.id()).collect();
         let mut module = Module::new(&def.id());
         for p in ports {
             module.add_port(p);
+        }
+        for instr in def.body() {
+            if !outputs.contains(&instr.dst().id()) {
+                let decl: Vec<verilog::Decl> = instr.clone().into();
+                for d in decl {
+                    module.add_stmt(verilog::Stmt::from(d));
+                }
+            }
         }
         module
     }
