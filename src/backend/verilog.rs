@@ -37,3 +37,11 @@ impl From<lang::InstrStd> for verilog::Stmt {
         }
     }
 }
+
+impl From<lang::Prog> for verilog::Module {
+    fn from(prog: lang::Prog) -> Self {
+        let def = prog.indexed_def(0);
+        let module = Module::new(&def.id());
+        module
+    }
+}

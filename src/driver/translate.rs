@@ -1,5 +1,5 @@
 use crate::backend::verilog::Module;
-// use crate::lang::parser::parse_from_file;
+use crate::lang::parser::parse_from_file;
 use crate::util::file::write_to_file;
 use std::fmt;
 use std::path::{Path, PathBuf};
@@ -119,9 +119,9 @@ impl Translate {
     }
 
     pub fn run(&self) {
-        // let prog = parse_from_file(self.opts().input());
         if self.opts().is_verilog_backend() {
-            let verilog = Module::new("foo");
+            let prog = parse_from_file(self.opts().input());
+            let verilog = Module::from(prog);
             self.write_output(&verilog.to_string());
         } else {
             unimplemented!();
