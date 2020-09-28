@@ -1,6 +1,6 @@
-use crate::frontend::check::Check;
-use crate::frontend::infer::infer_expr_types;
 use crate::lang::ast::*;
+use crate::lang::check::Check;
+use crate::lang::infer::infer_expr_types;
 use crate::util::file::read_to_string;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
@@ -9,12 +9,10 @@ use std::str::FromStr;
 pub type Result<T> = std::result::Result<T, Error<Rule>>;
 type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 
-// trick to make cargo build when grammar changes, taken from
-// https://github.com/cucapra/futil/blob/master/calyx/src/frontend/library_syntax.rs
 const _GRAMMAR: &str = include_str!("grammar.pest");
 
 #[derive(Parser)]
-#[grammar = "frontend/grammar.pest"]
+#[grammar = "lang/grammar.pest"]
 struct ReticleParser;
 
 #[pest_consume::parser]

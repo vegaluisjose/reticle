@@ -1,6 +1,6 @@
-use reticle::frontend::parser::parse_from_file;
 use reticle::interp::trace::Trace;
 use reticle::interp::Interpreter;
+use reticle::lang::parser::parse_from_file;
 
 #[cfg(test)]
 mod test_scalar_isa {

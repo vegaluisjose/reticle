@@ -1,5 +1,5 @@
 use crate::backend::verilog::Module;
-// use crate::frontend::parser::parse_from_file;
+// use crate::lang::parser::parse_from_file;
 use crate::util::file::write_to_file;
 use std::fmt;
 use std::path::{Path, PathBuf};
