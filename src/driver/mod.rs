@@ -1,4 +1,5 @@
 pub mod opt;
+pub mod translate;
 
 use crate::backend::verilog::Module;
 use crate::driver::opt::Opt;

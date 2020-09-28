@@ -1,3 +1,6 @@
+use reticle::driver::translate::Translate;
+
 fn main() {
-    println!("reticle translate");
+    let translate = Translate::default();
+    translate.run();
 }
