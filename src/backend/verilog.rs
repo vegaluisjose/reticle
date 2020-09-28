@@ -38,9 +38,57 @@ impl From<lang::InstrStd> for verilog::Stmt {
     }
 }
 
+impl From<lang::Port> for Vec<verilog::Port> {
+    fn from(port: lang::Port) -> Self {
+        let mut ports: Vec<verilog::Port> = Vec::new();
+        let width = port.ty().width();
+        if port.ty().is_vector() {
+            for i in 0..port.ty().length() {
+                let name = format!("{}_{}", &port.id(), i);
+                let vport = if port.is_input() {
+                    verilog::Port::new_input(&name, width)
+                } else {
+                    verilog::Port::new_output(&name, width)
+                };
+                ports.push(vport);
+            }
+        } else {
+            let sport = if port.is_input() {
+                verilog::Port::new_input(&port.id(), width)
+            } else {
+                verilog::Port::new_output(&port.id(), width)
+            };
+            ports.push(sport);
+        }
+        ports
+    }
+}
+
+impl From<lang::Sig> for Vec<verilog::Port> {
+    fn from(sig: lang::Sig) -> Self {
+        let mut ports: Vec<verilog::Port> = Vec::new();
+        ports.push(verilog::Port::new_input("clock", 1));
+        ports.push(verilog::Port::new_input("reset", 1));
+        for p in sig.inputs() {
+            let v: Vec<verilog::Port> = p.clone().into();
+            ports.extend(v);
+        }
+        for p in sig.outputs() {
+            let v: Vec<verilog::Port> = p.clone().into();
+            ports.extend(v);
+        }
+        ports
+    }
+}
+
 impl From<lang::Prog> for verilog::Module {
     fn from(prog: lang::Prog) -> Self {
         let def = prog.indexed_def(0);
-        Module::new(&def.id())
+        let ports: Vec<verilog::Port> = def.signature().clone().into();
+        let mut module = Module::new(&def.id());
+        for p in ports {
+            module.add_port(p);
+        }
+        module
     }
 }
