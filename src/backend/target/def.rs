@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::{InstrPrim, LocTy};
+use crate::asm::ast::{InstrPrim, LocTy};
 use crate::passes::select::tree::Tree;
 
 #[derive(Clone, Debug)]

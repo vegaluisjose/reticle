@@ -1,7 +1,7 @@
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
 use crate::backend::arch::ultrascale::prim::ast::{Carry, Lut};
 use crate::backend::arch::ultrascale::prim::util::regs_from_init;
-use crate::backend::asm::ast as asm;
+use crate::asm::ast as asm;
 use crate::backend::verilog;
 
 fn emit_lut_init(op: &str) -> String {

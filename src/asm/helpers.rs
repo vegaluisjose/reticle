@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::*;
+use crate::asm::ast::*;
 
 impl LocExpr {
     pub fn new_hole() -> LocExpr {

@@ -1,4 +1,4 @@
-use crate::backend::asm::ast as asm;
+use crate::asm::ast as asm;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::select::tree::{Tree, TreeGraph, TreeIx, TreeNode};
 use petgraph::visit::{Dfs, DfsPostOrder};

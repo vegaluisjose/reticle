@@ -1,5 +1,5 @@
 use crate::backend::arch::ultrascale::assembler::Assembler;
-use crate::backend::asm::ast as asm;
+use crate::asm::ast as asm;
 use crate::lang::ast as lang;
 use vast::v05::ast as verilog;
 

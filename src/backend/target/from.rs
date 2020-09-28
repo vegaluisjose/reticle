@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::{InstrPrim, Loc, LocTy, Ty};
+use crate::asm::ast::{InstrPrim, Loc, LocTy, Ty};
 use crate::backend::target::spec::*;
 use crate::backend::target::*;
 use crate::passes::select::tree::{Tree, TreeNode, TreeOp, TreeTy};

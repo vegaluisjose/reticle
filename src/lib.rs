@@ -1,3 +1,4 @@
+pub mod asm;
 pub mod backend;
 pub mod driver;
 pub mod interp;

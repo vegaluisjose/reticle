@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::InstrPrim;
+use crate::asm::ast::InstrPrim;
 use crate::backend::target::Tile;
 use crate::passes::select::tree::*;
 use petgraph::visit::Dfs;

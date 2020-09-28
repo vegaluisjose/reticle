@@ -1,4 +1,4 @@
-use crate::backend::asm::ast as asm;
+use crate::asm::ast as asm;
 use crate::lang::ast as lang;
 use crate::passes::select::asmgen;
 

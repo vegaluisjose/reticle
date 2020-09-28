@@ -1,4 +1,4 @@
-use crate::backend::asm::ast::{InstrPrim, LocTy};
+use crate::asm::ast::{InstrPrim, LocTy};
 use crate::backend::target::spec::*;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::select::tree::Tree;

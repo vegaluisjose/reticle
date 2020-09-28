@@ -1,6 +1,6 @@
 use crate::backend::arch::ultrascale::isa;
 use crate::backend::arch::ultrascale::prim::ast::{Gnd, Vcc};
-use crate::backend::asm::ast as asm;
+use crate::asm::ast as asm;
 use crate::backend::verilog;
 use std::collections::{HashMap, HashSet};
 
