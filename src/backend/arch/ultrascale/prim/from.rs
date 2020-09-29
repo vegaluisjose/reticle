@@ -574,7 +574,7 @@ impl From<Const> for verilog::Stmt {
         let value = constant.get_param("value");
         let expr = convert_literal(&vcc, &gnd, width, value);
         let out = verilog::Expr::new_ref(&constant.id());
-        let assign = verilog::Parallel::ParAssign(out, expr);
+        let assign = verilog::Parallel::Assign(out, expr);
         verilog::Stmt::from(assign)
     }
 }

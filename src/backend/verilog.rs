@@ -83,7 +83,7 @@ impl From<lang::InstrStd> for Vec<verilog::Stmt> {
             lang::StdOp::Identity => {
                 let inp = verilog::Expr::new_ref(&instr.indexed_param(0).id());
                 let out = verilog::Expr::new_ref(&instr.dst_id());
-                let assign = verilog::Parallel::ParAssign(out, inp);
+                let assign = verilog::Parallel::Assign(out, inp);
                 vec![verilog::Stmt::from(assign)]
             }
             lang::StdOp::Const => {
@@ -94,7 +94,7 @@ impl From<lang::InstrStd> for Vec<verilog::Stmt> {
                     let width = instr.dst_ty().width();
                     let value = verilog::Expr::new_ulit_dec(width as u32, &attr.to_string());
                     let out = verilog::Expr::new_ref(&instr.dst_id());
-                    let assign = verilog::Parallel::ParAssign(out, value);
+                    let assign = verilog::Parallel::Assign(out, value);
                     vec![verilog::Stmt::from(assign)]
                 }
             }
@@ -105,7 +105,7 @@ impl From<lang::InstrStd> for Vec<verilog::Stmt> {
 
 impl From<lang::InstrPrim> for Vec<verilog::Stmt> {
     fn from(instr: lang::InstrPrim) -> Self {
-        let mut instrs: Vec<verilog::Stmt> = Vec::new();
+        let mut stmts: Vec<verilog::Stmt> = Vec::new();
         let lhs: Vec<verilog::Id> = instr.indexed_param(0).clone().into();
         let rhs: Vec<verilog::Id> = instr.indexed_param(1).clone().into();
         let res: Vec<verilog::Id> = instr.dst().clone().into();
@@ -116,8 +116,8 @@ impl From<lang::InstrPrim> for Vec<verilog::Stmt> {
                     let br = Expr::new_signed_ref(b);
                     let yr = Expr::new_ref(y);
                     let add = verilog::Expr::new_add(ar, br);
-                    let assign = verilog::Parallel::ParAssign(yr, add);
-                    instrs.push(verilog::Stmt::from(assign));
+                    let assign = verilog::Parallel::Assign(yr, add);
+                    stmts.push(verilog::Stmt::from(assign));
                 }
             }
             lang::PrimOp::Mul => {
@@ -126,13 +126,37 @@ impl From<lang::InstrPrim> for Vec<verilog::Stmt> {
                     let br = Expr::new_signed_ref(b);
                     let yr = Expr::new_ref(y);
                     let add = verilog::Expr::new_mul(ar, br);
-                    let assign = verilog::Parallel::ParAssign(yr, add);
-                    instrs.push(verilog::Stmt::from(assign));
+                    let assign = verilog::Parallel::Assign(yr, add);
+                    stmts.push(verilog::Stmt::from(assign));
+                }
+            }
+            lang::PrimOp::Reg => {
+                let en = Expr::new_ref(&instr.indexed_param(1).id());
+                for (i, (a, y)) in lhs.iter().zip(res.iter()).enumerate() {
+                    let ar = Expr::new_ref(a);
+                    let yr = Expr::new_ref(y);
+                    let event = verilog::Sequential::new_posedge("clock");
+                    let mut always = verilog::ParallelAlways::new(event);
+                    let reset = verilog::Expr::new_ref("reset");
+                    let val = if instr.attrs().len() == 1 {
+                        verilog::Expr::new_int(instr.indexed_attr(0).value() as i32)
+                    } else {
+                        verilog::Expr::new_int(instr.indexed_attr(i).value() as i32)
+                    };
+                    let s0 = verilog::Sequential::new_nonblk_assign(yr.clone(), val);
+                    let s1 = verilog::Sequential::new_nonblk_assign(yr, ar);
+                    let mut i0 = verilog::SequentialIfElse::new(reset);
+                    let mut i1 = verilog::SequentialIfElse::new(en.clone());
+                    i0.add_seq(s0);
+                    i1.add_seq(s1);
+                    i0.set_else(i1.into());
+                    always.add_seq(i0.into());
+                    stmts.push(verilog::Stmt::from(always));
                 }
             }
             _ => unimplemented!(),
         }
-        instrs
+        stmts
     }
 }
 

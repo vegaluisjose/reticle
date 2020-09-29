@@ -85,7 +85,7 @@ fn emit_input(asm: &mut Assembler, instr: &asm::Instr, wire: &str, width: i64, i
     }
     let src_expr = verilog::Expr::from(concat);
     let dst_expr = verilog::Expr::new_ref(wire);
-    let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
+    let assign = verilog::Parallel::Assign(dst_expr, src_expr);
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
@@ -96,7 +96,7 @@ fn emit_output(asm: &mut Assembler, instr: &asm::Instr, wire: &str) {
     let hi = verilog::Expr::new_int((width - 1) as i32);
     let src_expr = verilog::Expr::new_slice(wire, hi, lo);
     let dst_expr = verilog::Expr::new_ref(&name);
-    let assign = verilog::Parallel::ParAssign(dst_expr, src_expr);
+    let assign = verilog::Parallel::Assign(dst_expr, src_expr);
     asm.add_assignment(verilog::Stmt::from(assign));
 }
 
