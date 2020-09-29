@@ -233,14 +233,14 @@ impl Instr {
 }
 
 impl Prog {
-    pub fn new_with_signature(sig: Sig) -> Prog {
+    pub fn new_with_signature(sig: Signature) -> Prog {
         Prog {
             sig,
             body: Vec::new(),
         }
     }
 
-    pub fn signature(&self) -> &Sig {
+    pub fn signature(&self) -> &Signature {
         &self.sig
     }
 

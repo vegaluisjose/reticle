@@ -86,7 +86,7 @@ pub enum Port {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct Sig {
+pub struct Signature {
     pub id: Id,
     pub inputs: Vec<Port>,
     pub outputs: Vec<Port>,
@@ -94,7 +94,7 @@ pub struct Sig {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Def {
-    pub sig: Sig,
+    pub sig: Signature,
     pub body: Vec<Instr>,
 }
 

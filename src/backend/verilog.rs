@@ -44,8 +44,8 @@ impl From<lang::Port> for Vec<verilog::Port> {
     }
 }
 
-impl From<lang::Sig> for Vec<verilog::Port> {
-    fn from(sig: lang::Sig) -> Self {
+impl From<lang::Signature> for Vec<verilog::Port> {
+    fn from(sig: lang::Signature) -> Self {
         let mut ports: Vec<verilog::Port> = Vec::new();
         for p in sig.inputs() {
             let v: Vec<verilog::Port> = p.clone().into();

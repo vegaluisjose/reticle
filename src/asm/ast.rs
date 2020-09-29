@@ -8,7 +8,7 @@ pub type Id = ast::Id;
 pub type Ty = ast::Ty;
 pub type LocTy = ast::Loc;
 pub type Port = ast::Port;
-pub type Sig = ast::Sig;
+pub type Signature = ast::Signature;
 pub type Expr = ast::Expr;
 pub type StdOp = ast::StdOp;
 pub type InstrStd = ast::InstrStd;
@@ -44,6 +44,6 @@ pub enum Instr {
 
 #[derive(Clone, Debug)]
 pub struct Prog {
-    pub sig: Sig,
+    pub sig: Signature,
     pub body: Vec<Instr>,
 }

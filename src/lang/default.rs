@@ -1,8 +1,8 @@
 use crate::lang::ast::*;
 
-impl Default for Sig {
-    fn default() -> Sig {
-        Sig {
+impl Default for Signature {
+    fn default() -> Signature {
+        Signature {
             id: String::new(),
             inputs: Vec::new(),
             outputs: Vec::new(),
@@ -13,7 +13,7 @@ impl Default for Sig {
 impl Default for Def {
     fn default() -> Def {
         Def {
-            sig: Sig::default(),
+            sig: Signature::default(),
             body: Vec::new(),
         }
     }

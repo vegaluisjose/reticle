@@ -642,9 +642,9 @@ impl Instr {
     }
 }
 
-impl Sig {
-    pub fn new(name: &str) -> Sig {
-        Sig {
+impl Signature {
+    pub fn new(name: &str) -> Signature {
+        Signature {
             id: name.to_string(),
             inputs: Vec::new(),
             outputs: Vec::new(),
@@ -685,12 +685,12 @@ impl Sig {
 impl Def {
     pub fn new(id: &str) -> Def {
         Def {
-            sig: Sig::new(id),
+            sig: Signature::new(id),
             body: Vec::new(),
         }
     }
 
-    pub fn new_with_signature(sig: Sig) -> Def {
+    pub fn new_with_signature(sig: Signature) -> Def {
         Def {
             sig,
             body: Vec::new(),
@@ -705,7 +705,7 @@ impl Def {
         self.sig.id()
     }
 
-    pub fn signature(&self) -> &Sig {
+    pub fn signature(&self) -> &Signature {
         &self.sig
     }
 
@@ -721,7 +721,7 @@ impl Def {
         &mut self.body
     }
 
-    pub fn set_signature(&mut self, sig: Sig) {
+    pub fn set_signature(&mut self, sig: Signature) {
         self.sig = sig;
     }
 

@@ -182,7 +182,7 @@ impl ReticleParser {
         Ok(match_nodes!(
             input.into_children();
             [identifier(id), inputs(inputs), outputs(outputs), instrs(body)] => Def {
-                sig: Sig {
+                sig: Signature {
                     id,
                     inputs,
                     outputs,
