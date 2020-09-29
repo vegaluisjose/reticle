@@ -13,7 +13,7 @@ regex = "1.3.9"
 pest = "2.0"
 pest_derive = "2.0"
 pest_consume = "1.0.5"
-vast = "0.2.2"
+vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "2a443027b54bd77f45cd9704fd067f26ce9e55df" }
 structopt = { version = "0.3", default-features = false }
 
 [[bin]]
