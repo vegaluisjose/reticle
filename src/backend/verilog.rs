@@ -176,13 +176,12 @@ impl From<lang::Prog> for verilog::Module {
         let mut ports: Vec<verilog::Port> = Vec::new();
         ports.push(verilog::Port::new_input("clock", 1));
         ports.push(verilog::Port::new_input("reset", 1));
-        let def_ports: Vec<verilog::Port> = def.signature().clone().into();
-        ports.extend(def_ports);
-        let outputs: HashSet<lang::Id> = def.signature().outputs().iter().map(|x| x.id()).collect();
-        let mut module = Module::new(&def.id());
-        for p in ports {
-            module.add_port(p);
+        for i in def.inputs() {
+            let inputs: Vec<verilog::Port> = i.clone().into();
+            ports.extend(inputs);
         }
+        let outputs: HashSet<lang::Id> = def.outputs().iter().map(|x| x.id()).collect();
+        let mut module = Module::new(&def.id());
         // decls
         for instr in def.body() {
             if !outputs.contains(&instr.dst().id()) {
@@ -190,9 +189,23 @@ impl From<lang::Prog> for verilog::Module {
                 for d in decl {
                     module.add_stmt(verilog::Stmt::from(d));
                 }
+            } else {
+                let ids: Vec<verilog::Id> = instr.dst().clone().into();
+                let width = instr.dst().ty().width();
+                for i in ids {
+                    if instr.is_reg() {
+                        ports.push(verilog::Port::new_output_reg(&i, width));
+                    } else {
+                        ports.push(verilog::Port::new_output(&i, width));
+                    }
+                }
             }
         }
-        // exprs
+        // ports
+        for p in ports {
+            module.add_port(p);
+        }
+        // stmts
         for instr in def.body() {
             let stmts: Vec<verilog::Stmt> = instr.clone().into();
             for s in stmts {
