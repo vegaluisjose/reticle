@@ -721,7 +721,7 @@ impl Def {
         &mut self.body
     }
 
-    pub fn add_sig(&mut self, sig: Sig) {
+    pub fn set_signature(&mut self, sig: Sig) {
         self.sig = sig;
     }
 
