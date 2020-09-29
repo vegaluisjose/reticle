@@ -73,6 +73,6 @@ def emit(name, size):
 
 if __name__ == "__main__":
     name = "vector_add"
-    size = 16
+    size = 512
     with open("{}.ret".format(name), "w") as file:
         file.write(emit(name, size))
