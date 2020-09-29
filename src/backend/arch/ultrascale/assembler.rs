@@ -322,6 +322,12 @@ impl Assembler {
             } else {
                 match instr.std().op() {
                     asm::StdOp::Const => isa::Constant::emit(self, instr),
+                    asm::StdOp::Identity => {
+                        let stmts: Vec<verilog::Stmt> = instr.std().clone().into();
+                        for s in stmts {
+                            self.add_assignment(s);
+                        }
+                    }
                     _ => unimplemented!(),
                 }
             }
