@@ -1,4 +1,4 @@
-use crate::backend::verilog::Module;
+use crate::backend::verilog::{Attribute, Module};
 use crate::lang::parser::parse_from_file;
 use crate::util::file::write_to_file;
 use std::fmt;
@@ -20,6 +20,10 @@ pub struct Opt {
     // Backend
     #[structopt(short = "b", long = "backend", default_value)]
     pub backend: Backend,
+
+    // Add dsp compiler hint
+    #[structopt(long)]
+    pub use_dsp: bool,
 
     // Output file
     #[structopt(short = "o", long = "output", parse(from_os_str))]
@@ -51,6 +55,10 @@ impl Opt {
             Backend::Verilog => true,
             _ => false,
         }
+    }
+
+    pub fn use_dsp(&self) -> bool {
+        self.use_dsp
     }
 }
 
@@ -121,8 +129,13 @@ impl Translate {
     pub fn run(&self) {
         if self.opts().is_verilog_backend() {
             let prog = parse_from_file(self.opts().input());
-            let verilog = Module::from(prog);
-            self.write_output(&verilog.to_string());
+            let mut module = Module::from(prog);
+            if self.opts().use_dsp() {
+                let mut attr = Attribute::default();
+                attr.add_stmt("use_dsp", "yes");
+                module.set_attr(attr);
+            }
+            self.write_output(&module.to_string());
         } else {
             unimplemented!();
         }
