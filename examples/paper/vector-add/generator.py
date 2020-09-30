@@ -1,5 +1,6 @@
 import argparse
 
+
 def fmt(ident, value):
     return "{}{}".format(ident, value)
 
@@ -67,23 +68,28 @@ def emit(name, length):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="generate vector programs")
     parser.add_argument("-n", help="function name", type=str)
     parser.add_argument("-l", help="length of vector", type=int)
     parser.add_argument("-o", help="output file", type=str)
-    return parser.parse_args()
+    args = parser.parse_args()
+    if not isinstance(args.n, str):
+        print("Error: parsing name")
+        raise argparse.ArgumentTypeError
+    if not isinstance(args.l, int):
+        print("Error: parsing length")
+        raise argparse.ArgumentTypeError
+    return args.n, args.l, args.o
+
+
+def vector_add(name, length, output=None):
+    if output:
+        with open(output, "w") as file:
+            file.write(emit(name, length))
+    else:
+        print(emit(name, length))
 
 
 if __name__ == "__main__":
-    try:
-        args = parse_args()
-        name = args.n
-        length = args.l
-        if args.o:
-            filename = args.o
-            with open("{}.ret".format(filename), "w") as file:
-                file.write(emit(name, length))
-        else:
-            print(emit(name, length))
-    except argparse.ArgumentError:
-        pass
+    name, length, output = parse_args()
+    vector_add(name, length, output)
