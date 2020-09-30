@@ -1,3 +1,4 @@
+use crate::asm::ast as asm;
 use crate::backend::verilog::{Attribute, Module};
 use crate::lang::parser::parse_from_file;
 use crate::util::file::write_to_file;
@@ -52,6 +53,7 @@ impl Opt {
 pub enum Backend {
     Asm,
     Verilog,
+    Reticle,
 }
 
 // TODO: change this to asm as default
@@ -66,6 +68,7 @@ impl fmt::Display for Backend {
         let backend = match self {
             Backend::Asm => "asm",
             Backend::Verilog => "verilog",
+            Backend::Reticle => "reticle",
         };
         write!(f, "{}", backend)
     }
@@ -77,6 +80,7 @@ impl FromStr for Backend {
         match input {
             "asm" => Ok(Backend::Asm),
             "verilog" => Ok(Backend::Verilog),
+            "reticle" => Ok(Backend::Reticle),
             _ => Err(format!("Error: {} is not valid backend", input)),
         }
     }
@@ -123,6 +127,10 @@ impl Translate {
                     m.set_attr(attr);
                 }
                 m
+            }
+            Backend::Reticle => {
+                let asm = asm::Prog::from(prog);
+                Module::from(asm)
             }
             _ => unimplemented!(),
         };
