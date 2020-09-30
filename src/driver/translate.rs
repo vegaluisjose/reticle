@@ -43,20 +43,6 @@ impl Opt {
         &self.backend
     }
 
-    pub fn is_asm_backend(&self) -> bool {
-        match self.backend() {
-            Backend::Asm => true,
-            _ => false,
-        }
-    }
-
-    pub fn is_verilog_backend(&self) -> bool {
-        match self.backend() {
-            Backend::Verilog => true,
-            _ => false,
-        }
-    }
-
     pub fn use_dsp(&self) -> bool {
         self.use_dsp
     }
@@ -127,17 +113,19 @@ impl Translate {
     }
 
     pub fn run(&self) {
-        if self.opts().is_verilog_backend() {
-            let prog = parse_from_file(self.opts().input());
-            let mut module = Module::from(prog);
-            if self.opts().use_dsp() {
-                let mut attr = Attribute::default();
-                attr.add_stmt("use_dsp", "yes");
-                module.set_attr(attr);
+        let prog = parse_from_file(self.opts().input());
+        let module = match self.opts().backend() {
+            Backend::Verilog => {
+                let mut m = Module::from(prog);
+                if self.opts().use_dsp() {
+                    let mut attr = Attribute::default();
+                    attr.add_stmt("use_dsp", "yes");
+                    m.set_attr(attr);
+                }
+                m
             }
-            self.write_output(&module.to_string());
-        } else {
-            unimplemented!();
-        }
+            _ => unimplemented!(),
+        };
+        self.write_output(&module.to_string());
     }
 }
