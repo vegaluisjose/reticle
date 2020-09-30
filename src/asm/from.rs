@@ -16,8 +16,7 @@ impl From<asm::InstrPrim> for asm::Instr {
 
 impl From<lang::Prog> for asm::Prog {
     fn from(prog: lang::Prog) -> Self {
-        // always check for now
-        asmgen(prog, true)
+        asmgen(prog)
     }
 }
 
