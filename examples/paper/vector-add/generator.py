@@ -1,10 +1,4 @@
-# def dsp_add_i8v4_r1_r1_r1(a: i8<4>, b: i8<4>, en:bool) -> (y: i8<4>) {
-#     t0: i8<4> = reg[0](a, en);
-#     t1: i8<4> = reg[0](b, en);
-#     t2: i8<4> = add(t0, t1);
-#     y: i8<4> = reg[0](t2, en);
-# }
-
+import argparse
 
 def fmt(ident, value):
     return "{}{}".format(ident, value)
@@ -29,9 +23,9 @@ def add(ident, lhs, rhs, ty):
 
 
 def signature(name, inps, outs):
-    i = ",\n".join(inps)
-    o = ",\n".join(outs)
-    signature = "def {}(\n{})\n->\n({})".format(name, i, o)
+    i = ", ".join(inps)
+    o = ", ".join(outs)
+    signature = "def {}({})->({})".format(name, i, o)
     return signature
 
 
@@ -42,7 +36,8 @@ def prog(name, inps, outs, body):
     return prog
 
 
-def emit(name, size):
+def emit(name, length):
+    length = length // 4
     en = "en"
     inps = []
     outs = []
@@ -50,7 +45,7 @@ def emit(name, size):
     ty = "i8<4>"
 
     inps.append(expr(en, "bool"))
-    for i in range(size):
+    for i in range(length):
         pa = port("a", i, ty)
         pb = port("b", i, ty)
         py = port("y", i, ty)
@@ -71,8 +66,24 @@ def emit(name, size):
     return prog(name, inps, outs, body)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-n", help="function name", type=str)
+    parser.add_argument("-l", help="length of vector", type=int)
+    parser.add_argument("-o", help="output file", type=str)
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    name = "vector_add"
-    size = 512
-    with open("{}.ret".format(name), "w") as file:
-        file.write(emit(name, size))
+    try:
+        args = parse_args()
+        name = args.n
+        length = args.l
+        if args.o:
+            filename = args.o
+            with open("{}.ret".format(filename), "w") as file:
+                file.write(emit(name, length))
+        else:
+            print(emit(name, length))
+    except argparse.ArgumentError:
+        pass
