@@ -104,10 +104,7 @@ pub fn check_pass(input: Prog) {
     }
 }
 
-pub fn asmgen(input_prog: Prog, check: bool) -> asm::Prog {
-    if check {
-        check_pass(input_prog.clone());
-    }
+pub fn asmgen(input_prog: Prog) -> asm::Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dfg = Dfg::from(input_prog.clone());
     let input_tree = Partition::from(dfg);

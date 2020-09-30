@@ -18,14 +18,9 @@ pub struct Opt {
     #[structopt(short = "b", long = "backend", default_value)]
     pub backend: Backend,
 
-    // check if assembly has still unresolved locations, performance hit
-    #[structopt(
-        short = "c",
-        long = "check",
-        parse(try_from_str),
-        default_value = "true"
-    )]
-    pub check: bool,
+    // Disable check
+    #[structopt(long)]
+    pub no_check: bool,
 
     // Backend
     #[structopt(short = "o", long = "output", parse(from_os_str))]
@@ -42,7 +37,7 @@ impl Opt {
     }
 
     pub fn check(&self) -> bool {
-        self.check
+        !self.no_check
     }
 
     pub fn backend(&self) -> &Backend {
