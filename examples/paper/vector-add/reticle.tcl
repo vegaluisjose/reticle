@@ -1,8 +1,10 @@
 set part_name "xczu3eg-sbva484-1-e"
 
-set name [lindex $argv 0]
+set filename [lindex $argv 0]
 set dir [lindex $argv 1]
-set prefix "${dir}/${name}"
+set name [lindex $argv 2]
+
+set prefix "${dir}/${filename}"
 
 read_verilog -sv "$prefix.v"
 synth_design -mode "out_of_context" -flatten_hierarchy "rebuilt" -top $name -part $part_name

@@ -21,8 +21,11 @@ def docker_bind_opt(src: str, dst: str) -> str:
     return "{}:{}".format(src, dst)
 
 
+def docker_vivado_workdir() -> str:
+    return os.path.join("/home", "vivado", "workspace")
+
+
 def build_docker_vivado_cmd():
-    wd = "/home/vivado/workspace"
     cmd = []
     cmd.append("docker")
     cmd.append("run")
@@ -31,16 +34,16 @@ def build_docker_vivado_cmd():
     cmd.append("--user")
     cmd.append(docker_bind_opt(get_user_id(), get_group_id()))
     cmd.append("-v")
-    cmd.append(docker_bind_opt(get_curr_dir(), wd))
+    cmd.append(docker_bind_opt(get_curr_dir(), docker_vivado_workdir()))
     cmd.append("-w")
-    cmd.append(wd)
+    cmd.append(docker_vivado_workdir())
     cmd.append("vivado")
     cmd.append("bash")
     cmd.append("--login")
     return cmd
 
 
-def run_vivado(docker: bool, cmd):
+def run_vivado(cmd, docker=True):
     if not isinstance(cmd, list):
         cmd = [cmd]
     if docker is True:

@@ -1,6 +1,6 @@
 from os import path, makedirs
 from generator import vector_add
-from vivado import run_vivado
+from vivado import run_vivado, docker_vivado_workdir
 from reticle import (
     build_reticle,
     compile_generic,
@@ -18,7 +18,9 @@ def make_dir(value):
 if __name__ == "__main__":
     lengths = [8, 16]
     backends = ["gen", "dsp", "ret"]
-    result_dir = path.join(get_curr_dir(), "results")
+    dirname = "results"
+    result_dir = path.join(get_curr_dir(), dirname)
+    vivado_dir = path.join(docker_vivado_workdir(), dirname)
     make_dir(result_dir)
     build_reticle()
     for l in lengths:
@@ -26,10 +28,16 @@ if __name__ == "__main__":
         prog = path.join(result_dir, "{}.ret".format(name))
         vector_add(name, l, prog)
         for b in backends:
-            vlog = path.join(result_dir, "{}_{}.v".format(name, b))
-            if b == "dsp":
-                compile_generic(prog, vlog, use_dsp=True)
-            elif b == "ret":
-                compile_reticle(prog, vlog)
+            use_dsp = True if b == "dsp" else False
+            vname = "{}_{}".format(name, b)
+            vfile = path.join(result_dir, "{}.v".format(vname))
+            if b == "ret":
+                compile_reticle(prog, vfile)
+                run_vivado(
+                    ["vivado.sh", "generic.tcl", vname, vivado_dir, name]
+                )
             else:
-                compile_generic(prog, vlog, use_dsp=False)
+                compile_generic(prog, vfile, use_dsp)
+                run_vivado(
+                    ["vivado.sh", "generic.tcl", vname, vivado_dir, name]
+                )
