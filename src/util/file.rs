@@ -1,6 +1,13 @@
 use std::fs::File;
 use std::io::prelude::*;
-use std::path::Path;
+use std::path::{Path, PathBuf};
+
+pub fn create_absolute<P: AsRef<Path>>(path: P) -> PathBuf {
+    let mut p = PathBuf::new();
+    p.push(env!("CARGO_MANIFEST_DIR"));
+    p.push(path);
+    p
+}
 
 pub fn read_to_string<P: AsRef<Path>>(path: P) -> String {
     let mut file = File::open(path).expect("Error: openning the file");
