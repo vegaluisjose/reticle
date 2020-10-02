@@ -5,7 +5,7 @@
 3,carry,8,8,gen
 4,lut,0,8,dsp
 5,reg,0,8,dsp
-6,dsp,0,8,dsp
+6,dsp,8,8,dsp
 7,carry,0,8,dsp
 8,lut,0,8,ret
 9,reg,0,8,ret
