@@ -42,7 +42,7 @@ def run_vector_add(name, dirname, lengths):
 
 
 if __name__ == "__main__":
-    lengths = [8, 16]
+    lengths = [8, 16, 32, 64, 128, 256, 512, 1024]
     dirname = "results"
     name = "vadd"
     run_vector_add(name, dirname, lengths)
