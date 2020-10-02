@@ -95,7 +95,7 @@ def parse_runtime(name, dirname, lengths, backends):
                     m = re.search(pat, f)
                     if m is not None:
                         runtime = float(m.group(1))
-                        frame = update_runtime_data(frame, l, b, runtime)
+                        frame = update_runtime_data(frame, b, l, runtime)
     return frame
 
 
