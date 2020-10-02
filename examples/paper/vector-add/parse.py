@@ -3,22 +3,26 @@ from os import path
 import pandas as pd
 
 
-def build_re(start, end):
+def build_util_pattern(start, end):
     return r".*{}\s+\|\s+(\b\d+\b)\s+\|\s+{}.*".format(start, end)
 
 
-def build_re_dict():
+def build_util_pattern_map():
     pat = {}
     for i in range(1, 7):
-        pat["lut{}".format(i)] = build_re("LUT{}".format(i), "CLB")
-    pat["carry"] = build_re("CARRY8", "CLB")
-    pat["fdre"] = build_re("FDRE", "Register")
-    pat["fdse"] = build_re("FDSE", "Register")
-    pat["dsp"] = build_re("DSP48E2", "Arithmetic")
+        pat["lut{}".format(i)] = build_util_pattern("LUT{}".format(i), "CLB")
+    pat["carry"] = build_util_pattern("CARRY8", "CLB")
+    pat["fdre"] = build_util_pattern("FDRE", "Register")
+    pat["fdse"] = build_util_pattern("FDSE", "Register")
+    pat["dsp"] = build_util_pattern("DSP48E2", "Arithmetic")
     comp = {}
     for k, v in pat.items():
         comp[k] = re.compile(v)
     return comp
+
+
+def build_runtime_pattern():
+    return re.compile(r"Data Path Delay:\s+(\d+\.\d+).*")
 
 
 def count(data, types):
@@ -29,7 +33,7 @@ def count(data, types):
     return num
 
 
-def update_frame(frame, ty, number, length, backend):
+def update_util_data(frame, ty, number, length, backend):
     if frame:
         frame["type"].append(ty)
         frame["number"].append(number)
@@ -43,6 +47,18 @@ def update_frame(frame, ty, number, length, backend):
     return frame
 
 
+def update_runtime_data(frame, backend, length, time):
+    if frame:
+        frame["backend"].append(backend)
+        frame["length"].append(length)
+        frame["time"].append(time)
+    else:
+        frame["backend"] = [backend]
+        frame["length"] = [length]
+        frame["time"] = [time]
+    return frame
+
+
 def parse_util(name, dirname, lengths, backends):
     frame = {}
     for l in lengths:
@@ -52,7 +68,7 @@ def parse_util(name, dirname, lengths, backends):
             data = {}
             with open(file, "r") as file:
                 for f in file:
-                    for k, pat in build_re_dict().items():
+                    for k, pat in build_util_pattern_map().items():
                         m = re.search(pat, f)
                         if m is not None:
                             data[k] = int(m.group(1))
@@ -62,7 +78,24 @@ def parse_util(name, dirname, lengths, backends):
             num["dsp"] = count(data, ["dsp"])
             num["carry"] = count(data, ["carry"])
             for k, v in num.items():
-                frame = update_frame(frame, k, v, l, b)
+                frame = update_util_data(frame, k, v, l, b)
+    return frame
+
+
+def parse_runtime(name, dirname, lengths, backends):
+    frame = {}
+    pat = build_runtime_pattern()
+    for l in lengths:
+        for b in backends:
+            filename = "{}{}_{}_timing.txt".format(name, l, b)
+            file = path.join(dirname, filename)
+            data = {}
+            with open(file, "r") as file:
+                for f in file:
+                    m = re.search(pat, f)
+                    if m is not None:
+                        runtime = float(m.group(1))
+                        frame = update_runtime_data(frame, l, b, runtime)
     return frame
 
 
@@ -71,6 +104,9 @@ if __name__ == "__main__":
     backends = ["gen", "dsp", "ret"]
     dirname = "results"
     name = "vadd"
-    frame = parse_util(name, dirname, lengths, backends)
-    df = pd.DataFrame.from_dict(frame)
-    df.to_csv("util.csv")
+    util = parse_util(name, dirname, lengths, backends)
+    util_df = pd.DataFrame.from_dict(util)
+    util_df.to_csv("util.csv")
+    runtime = parse_runtime(name, dirname, lengths, backends)
+    runtime_df = pd.DataFrame.from_dict(runtime)
+    runtime_df.to_csv("runtime.csv")
