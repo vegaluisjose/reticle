@@ -1,4 +1,6 @@
 import re
+from os import path
+import pandas as pd
 
 
 def build_re(start, end):
@@ -27,24 +29,46 @@ def count(data, types):
     return num
 
 
-def process(data):
-    out = {}
-    out["lut"] = count(data, ["lut{}".format(i) for i in range(1, 7)])
-    out["reg"] = count(data, ["fdre", "fdse"])
-    out["dsp"] = count(data, ["dsp"])
-    out["carry"] = count(data, ["carry"])
-    return out
+def update_frame(frame, data, length, backend):
+    if frame:
+        frame["lut"].append(
+            count(data, ["lut{}".format(i) for i in range(1, 7)])
+        )
+        frame["reg"].append(count(data, ["fdre", "fdse"]))
+        frame["dsp"].append(count(data, ["dsp"]))
+        frame["carry"].append(count(data, ["carry"]))
+        frame["length"].append(length)
+        frame["backend"].append(backend)
+    else:
+        frame["lut"] = [count(data, ["lut{}".format(i) for i in range(1, 7)])]
+        frame["reg"] = [count(data, ["fdre", "fdse"])]
+        frame["dsp"] = [count(data, ["dsp"])]
+        frame["carry"] = [count(data, ["carry"])]
+        frame["length"] = [length]
+        frame["backend"] = [backend]
+    return frame
+
+
+def parse_util(name, dirname, lengths, backends):
+    frame = {}
+    for l in lengths:
+        for b in backends:
+            filename = "{}{}_{}_util.txt".format(name, l, b)
+            file = path.join(dirname, filename)
+            data = {}
+            with open(file, "r") as file:
+                for f in file:
+                    for k, pat in build_re_dict().items():
+                        m = re.search(pat, f)
+                        if m is not None:
+                            data[k] = int(m.group(1))
+            frame = update_frame(frame, data, l, b)
+    return frame
 
 
 if __name__ == "__main__":
-    filename = "results/vadd1024_gen_util.txt"
-    data = {}
-    with open(filename, "r") as file:
-        for f in file:
-            for k, pat in build_re_dict().items():
-                m = re.search(pat, f)
-                if m is not None:
-                    data[k] = int(m.group(1))
-    file.close()
-    print(data)
-    print(process(data))
+    lengths = [8, 16, 32, 64, 128, 256, 512, 1024]
+    backends = ["gen", "dsp", "ret"]
+    dirname = "results"
+    name = "vadd"
+    print(parse_util(name, dirname, lengths, backends))
