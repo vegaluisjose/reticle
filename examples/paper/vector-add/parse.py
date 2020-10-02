@@ -71,4 +71,6 @@ if __name__ == "__main__":
     backends = ["gen", "dsp", "ret"]
     dirname = "results"
     name = "vadd"
-    print(parse_util(name, dirname, lengths, backends))
+    frame = parse_util(name, dirname, lengths, backends)
+    df = pd.DataFrame.from_dict(frame)
+    df.to_csv("util.csv")
