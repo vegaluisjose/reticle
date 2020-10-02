@@ -19,6 +19,8 @@ def create_plot(frame, ty):
     for t, l in zip(g._legend.texts, labels):
         t.set_text(l)
     g._legend.set_title("Backend")
+    plt.title(ty)
+    plt.tight_layout()
     plt.savefig("{}.pdf".format(ty))
 
 
