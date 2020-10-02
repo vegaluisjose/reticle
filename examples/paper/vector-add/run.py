@@ -15,8 +15,7 @@ def make_dir(value):
         makedirs(value)
 
 
-def run_vector_add(name, dirname, lengths):
-    backends = ["gen", "dsp", "ret"]
+def run_vector_add(name, dirname, lengths, backends):
     result_dir = path.join(get_curr_dir(), dirname)
     vivado_dir = path.join(docker_vivado_workdir(), dirname)
     make_dir(result_dir)
@@ -43,6 +42,7 @@ def run_vector_add(name, dirname, lengths):
 
 if __name__ == "__main__":
     lengths = [8, 16, 32, 64, 128, 256, 512, 1024]
+    backends = ["gen", "dsp", "ret"]
     dirname = "results"
     name = "vadd"
-    run_vector_add(name, dirname, lengths)
+    run_vector_add(name, dirname, lengths, backends)
