@@ -29,21 +29,15 @@ def count(data, types):
     return num
 
 
-def update_frame(frame, data, length, backend):
+def update_frame(frame, ty, number, length, backend):
     if frame:
-        frame["lut"].append(
-            count(data, ["lut{}".format(i) for i in range(1, 7)])
-        )
-        frame["reg"].append(count(data, ["fdre", "fdse"]))
-        frame["dsp"].append(count(data, ["dsp"]))
-        frame["carry"].append(count(data, ["carry"]))
+        frame["type"].append(ty)
+        frame["number"].append(number)
         frame["length"].append(length)
         frame["backend"].append(backend)
     else:
-        frame["lut"] = [count(data, ["lut{}".format(i) for i in range(1, 7)])]
-        frame["reg"] = [count(data, ["fdre", "fdse"])]
-        frame["dsp"] = [count(data, ["dsp"])]
-        frame["carry"] = [count(data, ["carry"])]
+        frame["type"] = [ty]
+        frame["number"] = [number]
         frame["length"] = [length]
         frame["backend"] = [backend]
     return frame
@@ -62,7 +56,13 @@ def parse_util(name, dirname, lengths, backends):
                         m = re.search(pat, f)
                         if m is not None:
                             data[k] = int(m.group(1))
-            frame = update_frame(frame, data, l, b)
+            num = {}
+            num["lut"] = count(data, ["lut{}".format(i) for i in range(1, 7)])
+            num["reg"] = count(data, ["fdre", "fdse"])
+            num["dsp"] = count(data, ["dsp"])
+            num["carry"] = count(data, ["carry"])
+            for k, v in num.items():
+                frame = update_frame(frame, k, v, l, b)
     return frame
 
 
