@@ -106,7 +106,7 @@ if __name__ == "__main__":
     name = "vadd"
     util = parse_util(name, dirname, lengths, backends)
     util_df = pd.DataFrame.from_dict(util)
-    util_df.to_csv("util.csv")
+    util_df.to_csv("util.csv", Index=False)
     runtime = parse_runtime(name, dirname, lengths, backends)
     runtime_df = pd.DataFrame.from_dict(runtime)
-    runtime_df.to_csv("runtime.csv")
+    runtime_df.to_csv("runtime.csv", Index=False)

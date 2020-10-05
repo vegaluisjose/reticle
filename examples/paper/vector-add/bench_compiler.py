@@ -63,4 +63,4 @@ if __name__ == "__main__":
     name = "vadd"
     runtime = bench(name, dirname, lengths, backends)
     df = pd.DataFrame.from_dict(runtime)
-    df.to_csv("compiler.csv")
+    df.to_csv("compiler.csv", index=False)
