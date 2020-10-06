@@ -9,3 +9,4 @@ __pycache__/
 *.cpython.*
 .cargo/
 .pytest_cache/
+*.pdf
