@@ -32,7 +32,7 @@ def plot_dsp(ax, length, baseline, optimized):
     ax.set_xlabel("Loop bound (N)")
     ax.set_ylabel("DSPs used")
     ax.grid(ls="--")
-    ax.legend(["example", "optimized"])
+    ax.legend(["example", "vectorized"])
 
 
 def plot_lut(ax, length, baseline, optimized):
@@ -44,7 +44,7 @@ def plot_lut(ax, length, baseline, optimized):
     ax.set_ylabel("LUTs used")
     ax.grid(ls="--")
     ax.yaxis.set_major_formatter(formatter())
-    ax.legend(["example", "optimized"])
+    ax.legend(["example", "vectorized"])
 
 
 if __name__ == "__main__":
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     lut_length = tolist(lut_util, "length")
     lut_baseline = tolist(lut_util, "number")
     lut_optiimzed = len(lut_baseline) * [0]
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
+    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 3))
     plot_dsp(ax1, dsp_length, dsp_baseline, dsp_optimized)
     plot_lut(ax2, lut_length, lut_baseline, lut_optiimzed)
-    plt.tight_layout(pad=2)
+    plt.tight_layout()
     plt.savefig("overview.pdf")
