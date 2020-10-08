@@ -24,7 +24,9 @@ def formatter():
     return matplt.ticker.FuncFormatter(mkfunc)
 
 
-def plot_dsp(ax, length, baseline, optimized):
+def plot_dsp(length, baseline, optimized):
+    plt.figure()
+    ax = plt.gca()
     ax.scatter(np.arange(len(length)), baseline, marker="o")
     ax.scatter(np.arange(len(length)), optimized, marker="^")
     ax.set_xticks(np.arange(len(length)))
@@ -33,9 +35,13 @@ def plot_dsp(ax, length, baseline, optimized):
     ax.set_ylabel("DSPs used")
     ax.grid(ls="--")
     ax.legend(["behavioral, scalar", "structural, vectorized"])
+    plt.tight_layout()
+    plt.savefig("overview_dsp.pdf")
 
 
-def plot_lut(ax, length, baseline, optimized):
+def plot_lut(length, baseline, optimized):
+    plt.figure()
+    ax = plt.gca()
     ax.scatter(np.arange(len(length)), baseline, marker="o")
     ax.scatter(np.arange(len(length)), optimized, marker="^")
     ax.set_xticks(np.arange(len(length)))
@@ -45,6 +51,8 @@ def plot_lut(ax, length, baseline, optimized):
     ax.grid(ls="--")
     ax.yaxis.set_major_formatter(formatter())
     ax.legend(["behavioral, scalar", "structural, vectorized"])
+    plt.tight_layout()
+    plt.savefig("overview_lut.pdf")
 
 
 if __name__ == "__main__":
@@ -57,9 +65,6 @@ if __name__ == "__main__":
     dsp_optimized = [x // 4 for x in dsp_length]
     lut_length = tolist(lut_util, "length")
     lut_baseline = tolist(lut_util, "number")
-    lut_optiimzed = len(lut_baseline) * [0]
-    f, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 3))
-    plot_dsp(ax1, dsp_length, dsp_baseline, dsp_optimized)
-    plot_lut(ax2, lut_length, lut_baseline, lut_optiimzed)
-    plt.tight_layout()
-    plt.savefig("overview.pdf")
+    lut_optimized = len(lut_baseline) * [0]
+    plot_dsp(dsp_length, dsp_baseline, dsp_optimized)
+    plot_lut(lut_length, lut_baseline, lut_optimized)
