@@ -1,0 +1,3 @@
+def example(a:i8, b:i8) -> (out:i8) {
+    out: i8 = muladd(a, b) @??(??, ??);
+}
