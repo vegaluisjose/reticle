@@ -1,6 +1,5 @@
 use crate::asm::ast::*;
-// use crate::lang::check::Check;
-// use crate::lang::infer::infer_expr_types;
+use crate::asm::infer::infer_prog;
 use crate::util::file::read_to_string;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
@@ -195,10 +194,8 @@ impl AsmParser {
 pub fn parse(input_str: &str) -> Prog {
     let inputs = AsmParser::parse(Rule::file, input_str).expect("Error: parsing inputs");
     let input = inputs.single().expect("Error: parsing root");
-    AsmParser::file(input).expect("Error: parsing file")
-    // let prog_infer = infer_expr_types(&prog);
-    // prog_infer.check();
-    // prog_infer
+    let prog = AsmParser::file(input).expect("Error: parsing file");
+    infer_prog(&prog)
 }
 
 pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {

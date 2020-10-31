@@ -234,6 +234,13 @@ impl Instr {
             Instr::Prim(instr) => instr.add_attr(expr),
         }
     }
+
+    pub fn clear_params(&mut self) {
+        match self {
+            Instr::Std(instr) => instr.clear_params(),
+            Instr::Prim(instr) => instr.clear_params(),
+        }
+    }
 }
 
 impl Prog {
