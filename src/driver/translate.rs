@@ -22,6 +22,10 @@ pub struct Opt {
     #[structopt(short = "b", long = "backend", default_value)]
     pub backend: Backend,
 
+    // Input file is assembly
+    #[structopt(long)]
+    pub asm: bool,
+
     // Add dsp compiler hint for verilog backend
     #[structopt(long)]
     pub use_dsp: bool,
@@ -42,6 +46,10 @@ impl Opt {
 
     pub fn backend(&self) -> &Backend {
         &self.backend
+    }
+
+    pub fn asm(&self) -> bool {
+        self.asm
     }
 
     pub fn use_dsp(&self) -> bool {
@@ -118,7 +126,7 @@ impl Translate {
 
     pub fn run(&self) {
         let prog = parse_from_file(self.opts().input());
-        let module = match self.opts().backend() {
+        match self.opts().backend() {
             Backend::Verilog => {
                 let mut m = Module::from(prog);
                 if self.opts().use_dsp() {
@@ -126,14 +134,17 @@ impl Translate {
                     attr.add_stmt("use_dsp", "yes");
                     m.set_attr(attr);
                 }
-                m
+                self.write_output(&m.to_string());
             }
             Backend::Reticle => {
                 let asm = asm::Prog::from(prog);
-                Module::from(asm)
+                let m = Module::from(asm);
+                self.write_output(&m.to_string());
             }
-            _ => unimplemented!(),
-        };
-        self.write_output(&module.to_string());
+            Backend::Asm => {
+                let asm = asm::Prog::from(prog);
+                self.write_output(&asm.to_string());
+            }
+        }
     }
 }
