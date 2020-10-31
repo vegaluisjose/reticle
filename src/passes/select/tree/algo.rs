@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 pub type InstrMap = HashMap<String, asm::InstrPhy>;
-pub type LocMap = HashMap<String, asm::TyPrim>;
+pub type PrimMap = HashMap<String, asm::TyPrim>;
 
 pub fn tree_node_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();
@@ -182,8 +182,8 @@ pub fn tree_asmgen(input: &Tree) -> InstrMap {
     map
 }
 
-pub fn tree_locgen(input: &Tree) -> LocMap {
-    let mut map: LocMap = LocMap::new();
+pub fn tree_locgen(input: &Tree) -> PrimMap {
+    let mut map: PrimMap = PrimMap::new();
     let root_index = input.root_index().unwrap();
     let graph = input.graph.clone();
     let mut visit = DfsPostOrder::new(&graph, root_index);

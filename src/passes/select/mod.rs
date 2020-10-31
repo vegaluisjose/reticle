@@ -8,7 +8,7 @@ use crate::backend::target::Target;
 use crate::lang::ast::{Def, Prog};
 use crate::passes::select::dfg::Dfg;
 use crate::passes::select::tree::algo::{
-    tree_asmgen, tree_locgen, tree_selection, InstrMap, LocMap,
+    tree_asmgen, tree_locgen, tree_selection, InstrMap, PrimMap,
 };
 use crate::passes::select::tree::partition::Partition;
 
@@ -40,7 +40,7 @@ pub fn locgen(input_prog: Prog) -> Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dfg = Dfg::from(input_prog.clone());
     let input_tree = Partition::from(dfg);
-    let mut map: LocMap = LocMap::new();
+    let mut map: PrimMap = PrimMap::new();
     for (_, tree) in input_tree.iter() {
         let output = tree_selection(&descriptor, tree);
         map.extend(tree_locgen(&output));
