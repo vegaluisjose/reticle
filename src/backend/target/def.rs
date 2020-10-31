@@ -1,11 +1,11 @@
-use crate::asm::ast::{InstrPrim, LocTy};
+use crate::asm::ast::{InstrPrim, TyPrim};
 use crate::passes::select::tree::Tree;
 
 #[derive(Clone, Debug)]
 pub struct Tile {
     pub instr: InstrPrim,
     pub pattern: Tree,
-    pub loc: LocTy,
+    pub loc: TyPrim,
     pub cost: f32,
 }
 

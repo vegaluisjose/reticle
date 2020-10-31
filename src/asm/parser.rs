@@ -65,7 +65,7 @@ impl AsmParser {
                 attrs: vec![],
                 params: vec![],
                 loc: Loc {
-                    prim: LocTy::Hole,
+                    prim: TyPrim::Hole,
                     x: ExprCoord::Hole,
                     y: ExprCoord::Hole,
                 }

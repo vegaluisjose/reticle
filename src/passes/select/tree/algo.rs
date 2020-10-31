@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::collections::HashSet;
 
 pub type InstrMap = HashMap<String, asm::InstrPrim>;
-pub type LocMap = HashMap<String, asm::LocTy>;
+pub type LocMap = HashMap<String, asm::TyPrim>;
 
 pub fn tree_node_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeNode> {
     let mut stack: Vec<TreeNode> = Vec::new();

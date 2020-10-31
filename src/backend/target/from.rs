@@ -1,4 +1,4 @@
-use crate::asm::ast::{InstrPrim, Loc, LocTy, Ty};
+use crate::asm::ast::{InstrPrim, Loc, TyPrim, Ty};
 use crate::backend::target::spec::*;
 use crate::backend::target::*;
 use crate::passes::select::tree::{Tree, TreeNode, TreeOp, TreeTy};
@@ -7,7 +7,7 @@ use std::str::FromStr;
 impl From<SpecInstr> for InstrPrim {
     fn from(spec_instr: SpecInstr) -> Self {
         let ty = Ty::from_str(&spec_instr.ty()).unwrap();
-        let loc = Loc::new_with_hole(LocTy::from_str(&spec_instr.loc()).unwrap());
+        let loc = Loc::new_with_hole(TyPrim::from_str(&spec_instr.loc()).unwrap());
         let mut instr = InstrPrim::new(loc);
         instr.set_op(&spec_instr.name());
         instr.set_dst_ty(ty);
@@ -120,7 +120,7 @@ impl From<SpecInstr> for Tile {
         Tile {
             instr: InstrPrim::from(spec_instr.clone()),
             pattern: Tree::from(spec_instr.clone()),
-            loc: LocTy::from_str(&spec_instr.loc()).unwrap(),
+            loc: TyPrim::from_str(&spec_instr.loc()).unwrap(),
             cost: spec_instr.delay() as f32,
         }
     }

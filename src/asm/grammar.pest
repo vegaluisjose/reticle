@@ -16,7 +16,7 @@ ty_vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
 ty = { ty_vector | ty_int | ty_bool }
 
-ty_loc = {
+ty_prim = {
     "??" |
     "lut" |
     "dsp"
@@ -24,7 +24,7 @@ ty_loc = {
 
 expr_coord = { "??" | num | id }
 
-loc = { "@" ~ ty_loc ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+loc = { "@" ~ ty_prim ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 expr = { id ~ ":" ~ ty | id | num }
 
