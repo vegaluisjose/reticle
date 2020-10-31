@@ -1,0 +1,18 @@
+def vadd_pipeline(en:bool, a0:i8<4>, b0:i8<4>, a1:i8<4>, b1:i8<4>, a2:i8<4>, b2:i8<4>, a3:i8<4>, b3:i8<4>)->(y0:i8<4>, y1:i8<4>, y2:i8<4>, y3:i8<4>) {
+t0:i8<4> = reg[0](a0, en);
+t1:i8<4> = reg[0](b0, en);
+t2:i8<4> = add(t0, t1);
+y0:i8<4> = reg[0](t2, en);
+t3:i8<4> = reg[0](a1, en);
+t4:i8<4> = reg[0](b1, en);
+t5:i8<4> = add(t3, t4);
+y1:i8<4> = reg[0](t5, en);
+t6:i8<4> = reg[0](a2, en);
+t7:i8<4> = reg[0](b2, en);
+t8:i8<4> = add(t6, t7);
+y2:i8<4> = reg[0](t8, en);
+t9:i8<4> = reg[0](a3, en);
+t10:i8<4> = reg[0](b3, en);
+t11:i8<4> = add(t9, t10);
+y3:i8<4> = reg[0](t11, en);
+}
