@@ -4,7 +4,7 @@ pub mod translate;
 use crate::backend::verilog::Module;
 use crate::driver::opt::Opt;
 use crate::lang::parser::parse_from_file;
-use crate::passes::select::{asmgen, check_pass, locgen};
+use crate::passes::select::{asmgen, check_pass, primgen};
 use crate::util::file::write_to_file;
 use structopt::StructOpt;
 
@@ -43,8 +43,8 @@ impl Driver {
         if self.opts().is_reticle_backend() {
             self.write_output(&prog.to_string());
         } else if self.opts().is_loc_backend() {
-            let prog_with_loc = locgen(prog);
-            self.write_output(&prog_with_loc.to_string());
+            let prog_with_prim = primgen(prog);
+            self.write_output(&prog_with_prim.to_string());
         } else if self.opts().is_asm_backend() {
             if self.opts().check() {
                 check_pass(prog.clone());

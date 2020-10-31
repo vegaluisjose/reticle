@@ -36,7 +36,7 @@ pub fn analysis(input_prog: Prog) -> analysis::Analysis {
     analysis
 }
 
-pub fn locgen(input_prog: Prog) -> Prog {
+pub fn primgen(input_prog: Prog) -> Prog {
     let descriptor = Ultrascale::default().to_descriptor();
     let dfg = Dfg::from(input_prog.clone());
     let input_tree = Partition::from(dfg);
@@ -66,7 +66,7 @@ pub fn locgen(input_prog: Prog) -> Prog {
 // should be the same after compiling location and
 // clearing them.
 pub fn check_pass(input: Prog) {
-    let output = locgen(input.clone());
+    let output = primgen(input.clone());
     let reference = input.indexed_def(0).body();
     let generated = output.indexed_def(0).body();
     assert_eq!(
