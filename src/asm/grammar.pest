@@ -1,0 +1,23 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+
+COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+sep = _{ "_" | "-"}
+
+id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+
+num = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+
+ty_int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+ty_bool = @{ ASCII_ALPHA_LOWER+ }
+
+ty_vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+
+ty = { ty_vector | ty_int | ty_bool }
+
+expr = { id ~ ":" ~ ty | id | num }
+
+def = _{ expr ~ ";" }
+
+file = { SOI ~ def ~ EOI }
