@@ -24,7 +24,7 @@ ty = { ty_vector | ty_int | ty_bool }
 
 expr = { id ~ ":" ~ ty | id | num }
 
-expr_coord = { "??" | num | id }
+expr_coord = { "??" | id | num }
 
 loc = { "@" ~ ty_prim ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 

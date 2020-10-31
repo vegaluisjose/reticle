@@ -33,12 +33,27 @@ impl AsmParser {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
 
+    fn ty_prim(input: Node) -> Result<TyPrim> {
+        Ok(TyPrim::from_str(input.as_str()).unwrap())
+    }
+
     fn expr(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
             [id(n), ty(ty)] => Expr::new_ref(&n, ty),
             [id(n)] => Expr::new_ref(&n, Ty::Hole),
             [num(n)] => Expr::new_int(n),
+        ))
+    }
+
+    fn expr_coord(input: Node) -> Result<ExprCoord> {
+        Ok(ExprCoord::from_str(input.as_str()).unwrap())
+    }
+
+    fn loc(input: Node) -> Result<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [ty_prim(prim), expr_coord(x), expr_coord(y)] => Loc { prim, x, y }
         ))
     }
 
@@ -69,6 +84,13 @@ impl AsmParser {
                     x: ExprCoord::Hole,
                     y: ExprCoord::Hole,
                 }
+            },
+            [expr(dst), id(op), loc(loc)] => InstrPhy {
+                op,
+                dst,
+                attrs: vec![],
+                params: vec![],
+                loc,
             }
         ))
     }
