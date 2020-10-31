@@ -14,7 +14,7 @@ impl PrettyPrint for ExprCoord {
 
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
-        self.ty.to_doc().append(
+        self.prim.to_doc().append(
             self.x
                 .to_doc()
                 .append(RcDoc::text(","))

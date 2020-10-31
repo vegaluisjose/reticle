@@ -22,7 +22,7 @@ pub enum ExprCoord {
 
 #[derive(Clone, Debug)]
 pub struct Loc {
-    pub ty: LocTy,
+    pub prim: LocTy,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
