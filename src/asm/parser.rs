@@ -56,16 +56,47 @@ impl AsmParser {
         ))
     }
 
+    fn instr_phy(input: Node) -> Result<InstrPrim> {
+        Ok(match_nodes!(
+            input.into_children();
+            [expr(dst), id(op)] => InstrPrim {
+                op,
+                dst,
+                attrs: vec![],
+                params: vec![],
+                loc: Loc {
+                    ty: LocTy::Hole,
+                    x: LocExpr::Hole,
+                    y: LocExpr::Hole,
+                }
+            }
+        ))
+    }
+
+    fn instr(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr_phy(instr)] => Instr::Prim(instr)
+        ))
+    }
+
+    fn instrs(input: Node) -> Result<Vec<Instr>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr(instr)..] => instr.collect()
+        ))
+    }
+
     fn prog(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), inputs(inputs), outputs(outputs)] => Prog {
+            [id(id), inputs(inputs), outputs(outputs), instrs(body)] => Prog {
                 sig: Signature {
                     id,
                     inputs,
                     outputs,
                 },
-                body: vec![],
+                body,
             }
         ))
     }

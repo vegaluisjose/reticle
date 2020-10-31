@@ -1,1 +1,3 @@
-def id() -> () {}
+def id(in:i8) -> (out:i8) {
+    out: i8 = in;
+}

@@ -16,12 +16,28 @@ ty_vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
 ty = { ty_vector | ty_int | ty_bool }
 
+ty_loc = {
+    "??" |
+    "lut" |
+    "dsp"
+}
+
+expr_coord = { "??" | num | id }
+
+loc = { "@" ~ ty_loc ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
 expr = { id ~ ":" ~ ty | id | num }
+
+instr_phy = { expr ~ "=" ~ id ~ loc? ~ ";" }
+
+instr = { instr_phy }
+
+instrs = { instr ~ (instr)* }
 
 inputs = { (expr ~ ("," ~ expr)*)? }
 
 outputs = { (expr ~ ("," ~ expr)*)? }
 
-prog = { "def" ~ id ~ "(" ~ inputs ~ ")" ~ "->" ~ "(" ~ outputs ~ ")" ~ "{" ~ "}" }
+prog = { "def" ~ id ~ "(" ~ inputs ~ ")" ~ "->" ~ "(" ~ outputs ~ ")" ~ "{" ~ instrs ~ "}" }
 
 file = { SOI ~ prog ~ EOI }
