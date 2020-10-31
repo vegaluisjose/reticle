@@ -71,25 +71,32 @@ impl AsmParser {
         ))
     }
 
+    fn params(input: Node) -> Result<Vec<Expr>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [expr(params)..] => params.collect()
+        ))
+    }
+
     fn instr_phy(input: Node) -> Result<InstrPhy> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(dst), id(op)] => InstrPhy {
+            [expr(dst), id(op), params(params)] => InstrPhy {
                 op,
                 dst,
                 attrs: vec![],
-                params: vec![],
+                params,
                 loc: Loc {
                     prim: TyPrim::Hole,
                     x: ExprCoord::Hole,
                     y: ExprCoord::Hole,
                 }
             },
-            [expr(dst), id(op), loc(loc)] => InstrPhy {
+            [expr(dst), id(op), params(params), loc(loc)] => InstrPhy {
                 op,
                 dst,
                 attrs: vec![],
-                params: vec![],
+                params,
                 loc,
             }
         ))

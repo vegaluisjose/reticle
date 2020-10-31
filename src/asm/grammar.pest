@@ -26,9 +26,11 @@ expr = { id ~ ":" ~ ty | id | num }
 
 expr_coord = { "??" | id | num }
 
+params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
+
 loc = { "@" ~ ty_prim ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
-instr_phy = { expr ~ "=" ~ id ~ loc? ~ ";" }
+instr_phy = { expr ~ "=" ~ id ~ params ~ loc? ~ ";" }
 
 instr = { instr_phy }
 
