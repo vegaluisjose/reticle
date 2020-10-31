@@ -22,7 +22,7 @@ pub struct Opt {
     #[structopt(short = "b", long = "backend", default_value)]
     pub backend: Backend,
 
-    // Add dsp compiler hint
+    // Add dsp compiler hint for verilog backend
     #[structopt(long)]
     pub use_dsp: bool,
 
