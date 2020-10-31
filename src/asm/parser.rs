@@ -57,6 +57,10 @@ impl AsmParser {
         ))
     }
 
+    fn op_std(input: Node) -> Result<StdOp> {
+        Ok(StdOp::from_str(input.as_str()).unwrap())
+    }
+
     fn inputs(input: Node) -> Result<Vec<Port>> {
         Ok(match_nodes!(
             input.into_children();
@@ -127,10 +131,35 @@ impl AsmParser {
         ))
     }
 
+    fn instr_std(input: Node) -> Result<InstrStd> {
+        Ok(match_nodes!(
+            input.into_children();
+            [expr(dst), op_std(op), params(params)] => InstrStd {
+                op,
+                dst,
+                attrs: vec![],
+                params,
+            },
+            [expr(dst), op_std(op), attrs(attrs)] => InstrStd {
+                op,
+                dst,
+                attrs,
+                params: vec![],
+            },
+            [expr(dst), op_std(op), params(params), attrs(attrs)] => InstrStd {
+                op,
+                dst,
+                attrs,
+                params,
+            },
+        ))
+    }
+
     fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [instr_phy(instr)] => Instr::Prim(instr)
+            [instr_phy(instr)] => Instr::Prim(instr),
+            [instr_std(instr)] => Instr::Std(instr),
         ))
     }
 

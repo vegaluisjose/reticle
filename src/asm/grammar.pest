@@ -32,9 +32,20 @@ params = { "(" ~ (expr ~ ("," ~ expr)*)? ~ ")" }
 
 loc = { "@" ~ ty_prim ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
-instr_phy = { expr ~ "=" ~ id ~ attrs? ~ params ~ loc? ~ ";" }
+op_phy = _{ id }
 
-instr = { instr_phy }
+instr_phy = { expr ~ "=" ~ op_phy ~ attrs? ~ params ~ loc? ~ ";" }
+
+op_std = {
+    "id" |
+    "const" |
+    "shl" |
+    "shr"
+}
+
+instr_std = { expr ~ "=" ~ op_std ~ attrs? ~ params? ~ ";" }
+
+instr = { instr_phy | instr_std }
 
 instrs = { instr ~ (instr)* }
 
