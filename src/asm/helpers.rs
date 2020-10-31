@@ -102,6 +102,10 @@ impl InstrPhy {
     pub fn add_param(&mut self, expr: Expr) {
         self.params.push(expr);
     }
+
+    pub fn clear_params(&mut self) {
+        self.params.clear();
+    }
 }
 
 impl Instr {
