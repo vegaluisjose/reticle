@@ -1,4 +1,5 @@
 use crate::asm::ast as asm;
+use crate::asm::parser::parse_from_file as parse_asm_from_file;
 use crate::backend::verilog::{Attribute, Module};
 use crate::lang::parser::parse_from_file;
 use crate::util::file::write_to_file;
@@ -60,14 +61,13 @@ impl Opt {
 #[derive(Clone, Debug)]
 pub enum Backend {
     Asm,
-    Verilog,
-    Reticle,
+    Behavioral,
+    Structural,
 }
 
-// TODO: change this to asm as default
 impl Default for Backend {
     fn default() -> Backend {
-        Backend::Verilog
+        Backend::Structural
     }
 }
 
@@ -75,8 +75,8 @@ impl fmt::Display for Backend {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let backend = match self {
             Backend::Asm => "asm",
-            Backend::Verilog => "verilog",
-            Backend::Reticle => "reticle",
+            Backend::Behavioral => "behavioral",
+            Backend::Structural => "structural",
         };
         write!(f, "{}", backend)
     }
@@ -87,8 +87,8 @@ impl FromStr for Backend {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "asm" => Ok(Backend::Asm),
-            "verilog" => Ok(Backend::Verilog),
-            "reticle" => Ok(Backend::Reticle),
+            "behavioral" => Ok(Backend::Behavioral),
+            "structural" => Ok(Backend::Structural),
             _ => Err(format!("Error: {} is not valid backend", input)),
         }
     }
@@ -125,9 +125,9 @@ impl Translate {
     }
 
     pub fn run(&self) {
-        let prog = parse_from_file(self.opts().input());
         match self.opts().backend() {
-            Backend::Verilog => {
+            Backend::Behavioral => {
+                let prog = parse_from_file(self.opts().input());
                 let mut m = Module::from(prog);
                 if self.opts().use_dsp() {
                     let mut attr = Attribute::default();
@@ -136,12 +136,18 @@ impl Translate {
                 }
                 self.write_output(&m.to_string());
             }
-            Backend::Reticle => {
-                let asm = asm::Prog::from(prog);
-                let m = Module::from(asm);
+            Backend::Structural => {
+                let prog_asm = if self.opts().asm() {
+                    parse_asm_from_file(self.opts().input())
+                } else {
+                    let prog = parse_from_file(self.opts().input());
+                    asm::Prog::from(prog)
+                };
+                let m = Module::from(prog_asm);
                 self.write_output(&m.to_string());
             }
             Backend::Asm => {
+                let prog = parse_from_file(self.opts().input());
                 let asm = asm::Prog::from(prog);
                 self.write_output(&asm.to_string());
             }
