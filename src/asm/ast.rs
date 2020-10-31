@@ -14,7 +14,7 @@ pub type StdOp = ast::StdOp;
 pub type InstrStd = ast::InstrStd;
 
 #[derive(Clone, Debug)]
-pub enum LocExpr {
+pub enum ExprCoord {
     Hole,
     Var(Id),
     Lit(u32),
@@ -23,8 +23,8 @@ pub enum LocExpr {
 #[derive(Clone, Debug)]
 pub struct Loc {
     pub ty: LocTy,
-    pub x: LocExpr,
-    pub y: LocExpr,
+    pub x: ExprCoord,
+    pub y: ExprCoord,
 }
 
 #[derive(Clone, Debug)]

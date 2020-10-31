@@ -1,8 +1,8 @@
 use crate::asm::ast::*;
 
-impl LocExpr {
-    pub fn new_hole() -> LocExpr {
-        LocExpr::Hole
+impl ExprCoord {
+    pub fn new_hole() -> ExprCoord {
+        ExprCoord::Hole
     }
 }
 
@@ -10,8 +10,8 @@ impl Loc {
     pub fn new_with_hole(ty: LocTy) -> Loc {
         Loc {
             ty,
-            x: LocExpr::new_hole(),
-            y: LocExpr::new_hole(),
+            x: ExprCoord::new_hole(),
+            y: ExprCoord::new_hole(),
         }
     }
 }

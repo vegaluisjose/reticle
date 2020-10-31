@@ -2,12 +2,12 @@ use crate::asm::ast::*;
 use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 use pretty::RcDoc;
 
-impl PrettyPrint for LocExpr {
+impl PrettyPrint for ExprCoord {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            LocExpr::Hole => RcDoc::text("??"),
-            LocExpr::Var(n) => RcDoc::as_string(n),
-            LocExpr::Lit(n) => RcDoc::as_string(n),
+            ExprCoord::Hole => RcDoc::text("??"),
+            ExprCoord::Var(n) => RcDoc::as_string(n),
+            ExprCoord::Lit(n) => RcDoc::as_string(n),
         }
     }
 }
