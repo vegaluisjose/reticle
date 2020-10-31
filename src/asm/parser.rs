@@ -81,8 +81,7 @@ impl AsmParser {
 pub fn parse(input_str: &str) -> Prog {
     let inputs = AsmParser::parse(Rule::file, input_str).expect("Error: parsing inputs");
     let input = inputs.single().expect("Error: parsing root");
-    let prog = AsmParser::file(input).expect("Error: parsing file");
-    prog
+    AsmParser::file(input).expect("Error: parsing file")
     // let prog_infer = infer_expr_types(&prog);
     // prog_infer.check();
     // prog_infer
