@@ -25,7 +25,7 @@ impl PrettyPrint for Loc {
     }
 }
 
-impl PrettyPrint for InstrPrim {
+impl PrettyPrint for InstrPhy {
     fn to_doc(&self) -> RcDoc<()> {
         let id = if self.dst_id().is_empty() {
             RcDoc::nil()

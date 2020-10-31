@@ -8,8 +8,8 @@ impl From<asm::InstrStd> for asm::Instr {
     }
 }
 
-impl From<asm::InstrPrim> for asm::Instr {
-    fn from(prim: asm::InstrPrim) -> Self {
+impl From<asm::InstrPhy> for asm::Instr {
+    fn from(prim: asm::InstrPhy) -> Self {
         asm::Instr::Prim(prim)
     }
 }

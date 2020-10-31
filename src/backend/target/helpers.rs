@@ -1,10 +1,10 @@
-use crate::asm::ast::{InstrPrim, TyPrim};
+use crate::asm::ast::{InstrPhy, TyPrim};
 use crate::backend::target::spec::*;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::select::tree::Tree;
 
 impl Tile {
-    pub fn instr(&self) -> &InstrPrim {
+    pub fn instr(&self) -> &InstrPhy {
         &self.instr
     }
 
@@ -20,7 +20,7 @@ impl Tile {
         self.cost
     }
 
-    pub fn set_instr(&mut self, instr: InstrPrim) {
+    pub fn set_instr(&mut self, instr: InstrPhy) {
         self.instr = instr;
     }
 }

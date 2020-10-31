@@ -14,7 +14,7 @@ impl fmt::Display for Loc {
     }
 }
 
-impl fmt::Display for InstrPrim {
+impl fmt::Display for InstrPhy {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.to_pretty())
     }

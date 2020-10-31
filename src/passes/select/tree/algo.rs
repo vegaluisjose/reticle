@@ -6,7 +6,7 @@ use petgraph::Direction;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
-pub type InstrMap = HashMap<String, asm::InstrPrim>;
+pub type InstrMap = HashMap<String, asm::InstrPhy>;
 pub type LocMap = HashMap<String, asm::TyPrim>;
 
 pub fn tree_node_stack(graph: &TreeGraph, start: TreeIx) -> Vec<TreeNode> {

@@ -56,10 +56,10 @@ impl AsmParser {
         ))
     }
 
-    fn instr_phy(input: Node) -> Result<InstrPrim> {
+    fn instr_phy(input: Node) -> Result<InstrPhy> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(dst), id(op)] => InstrPrim {
+            [expr(dst), id(op)] => InstrPhy {
                 op,
                 dst,
                 attrs: vec![],

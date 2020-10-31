@@ -16,9 +16,9 @@ impl Loc {
     }
 }
 
-impl InstrPrim {
-    pub fn new(loc: Loc) -> InstrPrim {
-        InstrPrim {
+impl InstrPhy {
+    pub fn new(loc: Loc) -> InstrPhy {
+        InstrPhy {
             op: String::new(),
             dst: Expr::new_ref("", Ty::Hole),
             attrs: Vec::new(),
@@ -140,7 +140,7 @@ impl Instr {
         }
     }
 
-    pub fn prim(&self) -> &InstrPrim {
+    pub fn prim(&self) -> &InstrPhy {
         match self {
             Instr::Prim(instr) => instr,
             _ => panic!("Error: not a prim instruction"),
