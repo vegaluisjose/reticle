@@ -42,10 +42,38 @@ impl AsmParser {
         ))
     }
 
-    fn file(input: Node) -> Result<Expr> {
+    fn inputs(input: Node) -> Result<Vec<Port>> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(expr), _] => expr,
+            [expr(expr)..] => expr.into_iter().map(|e| Port::Input(e)).collect()
+        ))
+    }
+
+    fn outputs(input: Node) -> Result<Vec<Port>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [expr(expr)..] => expr.into_iter().map(|e| Port::Output(e)).collect()
+        ))
+    }
+
+    fn prog(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), inputs(inputs), outputs(outputs)] => Prog {
+                sig: Signature {
+                    id,
+                    inputs,
+                    outputs,
+                },
+                body: vec![],
+            }
+        ))
+    }
+
+    fn file(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [prog(prog), _] => prog,
         ))
     }
 }

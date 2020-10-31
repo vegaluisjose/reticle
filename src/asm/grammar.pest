@@ -18,6 +18,10 @@ ty = { ty_vector | ty_int | ty_bool }
 
 expr = { id ~ ":" ~ ty | id | num }
 
-def = _{ expr ~ ";" }
+inputs = { (expr ~ ("," ~ expr)*)? }
 
-file = { SOI ~ def ~ EOI }
+outputs = { (expr ~ ("," ~ expr)*)? }
+
+prog = { "def" ~ id ~ "(" ~ inputs ~ ")" ~ "->" ~ "(" ~ outputs ~ ")" ~ "{" ~ "}" }
+
+file = { SOI ~ prog ~ EOI }
