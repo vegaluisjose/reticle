@@ -1,3 +1,0 @@
-def example(a:i8, b:i8) -> (y:i8) {
-    y: i8 = muladd[0](a, b) @dsp(x, y);
-}
