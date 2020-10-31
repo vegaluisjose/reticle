@@ -14,19 +14,19 @@ ty_bool = @{ ASCII_ALPHA_LOWER+ }
 
 ty_vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
-ty = { ty_vector | ty_int | ty_bool }
-
 ty_prim = {
     "??" |
     "lut" |
     "dsp"
 }
 
+ty = { ty_vector | ty_int | ty_bool }
+
+expr = { id ~ ":" ~ ty | id | num }
+
 expr_coord = { "??" | num | id }
 
 loc = { "@" ~ ty_prim ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
-
-expr = { id ~ ":" ~ ty | id | num }
 
 instr_phy = { expr ~ "=" ~ id ~ loc? ~ ";" }
 
