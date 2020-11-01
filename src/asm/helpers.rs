@@ -21,6 +21,22 @@ impl Loc {
             y: ExprCoord::new_hole(),
         }
     }
+
+    pub fn prim(&self) -> &Prim {
+        &self.prim
+    }
+
+    pub fn expr_x(&self) -> &ExprCoord {
+        &self.x
+    }
+
+    pub fn expr_y(&self) -> &ExprCoord {
+        &self.y
+    }
+
+    pub fn is_valid(&self) -> bool {
+        !self.prim().is_hole() & self.expr_x().is_lit() & self.expr_y().is_lit()
+    }
 }
 
 impl InstrPhy {
@@ -68,6 +84,10 @@ impl InstrPhy {
 
     pub fn loc(&self) -> &Loc {
         &self.loc
+    }
+
+    pub fn has_valid_loc(&self) -> bool {
+        self.loc().is_valid()
     }
 
     pub fn dst_id(&self) -> String {
