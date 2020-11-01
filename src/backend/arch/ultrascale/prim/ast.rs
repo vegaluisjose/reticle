@@ -31,7 +31,7 @@ pub enum Letter {
 
 #[derive(Clone, Debug)]
 pub enum BelTy {
-    A6LUT,
+    L6,
     FF,
 }
 
