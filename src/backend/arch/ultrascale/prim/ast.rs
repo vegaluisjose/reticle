@@ -129,6 +129,7 @@ pub struct DspVectorConfig {
     pub params: ParamMap,
     pub regs: ParamMap,
     pub posargs: ParamMap,
+    pub loc: Option<DspLoc>,
 }
 
 #[derive(Clone, Debug)]

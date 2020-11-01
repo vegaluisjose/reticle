@@ -1,15 +1,27 @@
 use crate::asm::ast as asm;
 use crate::backend::arch::ultrascale::assembler::{Assembler, Emit};
-use crate::backend::arch::ultrascale::prim::ast::{DspVector, DspVectorConfig, DspVectorOp};
+use crate::backend::arch::ultrascale::prim::ast::{
+    DspLoc, DspVector, DspVectorConfig, DspVectorOp,
+};
 use crate::backend::verilog;
 
 fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
+    let dsp_loc = if instr.phy().has_valid_loc() {
+        let x = instr.phy().loc().lit_x();
+        let y = instr.phy().loc().lit_y();
+        Some(DspLoc { x, y })
+    } else {
+        None
+    };
     match instr.phy().op().as_ref() {
         "dsp_add_i8v4_r0_r0_r0" => {
             let len = instr.dst_ty().length();
             let mut config = DspVectorConfig::new(DspVectorOp::Add, len);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_add_i8v4_r0_r0_r1" => {
@@ -19,6 +31,9 @@ fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
             config.set_pos("b", 1);
             config.set_pos("en_y", 2);
             config.set_reg("y", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_add_i8v4_r1_r1_r1" => {
@@ -32,6 +47,9 @@ fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
             config.set_reg("a", 1);
             config.set_reg("b", 1);
             config.set_reg("y", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_sub_i8v4_r0_r0_r0" => {
@@ -39,54 +57,81 @@ fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
             let mut config = DspVectorConfig::new(DspVectorOp::Sub, len);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_add_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Add, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_sub_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Sub, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_and_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::And, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_or_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Or, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_xor_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Xor, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_nand_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Nand, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_nor_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Nor, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_xnor_i8_r0_r0_r0" => {
             let mut config = DspVectorConfig::new(DspVectorOp::Xnor, 1);
             config.set_pos("a", 0);
             config.set_pos("b", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         "dsp_add_i8_r0_r0_r1" => {
@@ -95,6 +140,9 @@ fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
             config.set_pos("b", 1);
             config.set_pos("en_y", 2);
             config.set_reg("y", 1);
+            if let Some(loc) = dsp_loc {
+                config.set_loc(loc);
+            }
             config
         }
         _ => unimplemented!(),
