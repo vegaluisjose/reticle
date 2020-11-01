@@ -6,7 +6,7 @@ use crate::lang::ast;
 
 pub type Id = ast::Id;
 pub type Ty = ast::Ty;
-pub type TyPrim = ast::Loc;
+pub type Prim = ast::Loc;
 pub type Port = ast::Port;
 pub type Signature = ast::Signature;
 pub type Expr = ast::Expr;
@@ -22,7 +22,7 @@ pub enum ExprCoord {
 
 #[derive(Clone, Debug)]
 pub struct Loc {
-    pub prim: TyPrim,
+    pub prim: Prim,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }

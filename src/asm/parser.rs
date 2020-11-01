@@ -32,8 +32,8 @@ impl AsmParser {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
 
-    fn ty_prim(input: Node) -> Result<TyPrim> {
-        Ok(TyPrim::from_str(input.as_str()).unwrap())
+    fn ty_prim(input: Node) -> Result<Prim> {
+        Ok(Prim::from_str(input.as_str()).unwrap())
     }
 
     fn expr(input: Node) -> Result<Expr> {
@@ -97,7 +97,7 @@ impl AsmParser {
                 attrs: vec![],
                 params,
                 loc: Loc {
-                    prim: TyPrim::Hole,
+                    prim: Prim::Hole,
                     x: ExprCoord::Hole,
                     y: ExprCoord::Hole,
                 }
@@ -108,7 +108,7 @@ impl AsmParser {
                 attrs,
                 params,
                 loc: Loc {
-                    prim: TyPrim::Hole,
+                    prim: Prim::Hole,
                     x: ExprCoord::Hole,
                     y: ExprCoord::Hole,
                 }

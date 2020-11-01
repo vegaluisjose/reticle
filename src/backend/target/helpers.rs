@@ -1,4 +1,4 @@
-use crate::asm::ast::{InstrPhy, TyPrim};
+use crate::asm::ast::{InstrPhy, Prim};
 use crate::backend::target::spec::*;
 use crate::backend::target::{Descriptor, Tile};
 use crate::passes::select::tree::Tree;
@@ -12,7 +12,7 @@ impl Tile {
         &self.pattern
     }
 
-    pub fn loc(&self) -> &TyPrim {
+    pub fn loc(&self) -> &Prim {
         &self.loc
     }
 
