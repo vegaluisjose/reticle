@@ -1,4 +1,4 @@
 def dot(en: bool, bias: i8, a: i8, b: i8, c: i8, d: i8) -> (y: i8) {
-    t9: i8 = dsp_muladd_i8_r1_r1_r0_r1_r1_c_a_b[0, 0, 0, 0](bias, a, en, b, en, en, en) @dsp(??, ??);
+    t9: i8 = dsp_muladd_i8_r1_r1_r0_r1_r1_a_b_c[0, 0, 0, 0](a, en, b, en, en, bias, en) @dsp(??, ??);
     y: i8 = dsp_muladd_i8_r1_r1_r0_r1_r1_a_b_c[0, 0, 0, 0](c, en, d, en, en, t9, en) @dsp(??, ??);
 }
