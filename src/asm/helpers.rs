@@ -158,7 +158,7 @@ impl Instr {
         }
     }
 
-    pub fn is_prim(&self) -> bool {
+    pub fn is_phy(&self) -> bool {
         match self {
             Instr::Phy(_) => true,
             _ => false,

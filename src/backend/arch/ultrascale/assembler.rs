@@ -252,7 +252,7 @@ impl Assembler {
             if !self.is_output(&instr.dst().id()) {
                 self.emit_wire(instr.dst().clone());
             }
-            if instr.is_prim() {
+            if instr.is_phy() {
                 match instr.prim().op().as_ref() {
                     "lut_add_i8_r0" => isa::LutAddSub::emit(self, instr),
                     "lut_add_i8_r1" => isa::LutAddSub::emit(self, instr),
