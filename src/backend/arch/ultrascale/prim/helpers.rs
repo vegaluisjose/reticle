@@ -319,6 +319,12 @@ impl Reg {
     }
 }
 
+impl DspLoc {
+    pub fn new(x: u32, y: u32) -> DspLoc {
+        DspLoc { x, y }
+    }
+}
+
 impl DspFusedOp {
     pub fn is_mul(&self) -> bool {
         match self {
@@ -355,6 +361,7 @@ impl DspFusedConfig {
             regs,
             widths,
             posargs,
+            loc: None,
         }
     }
 
@@ -378,6 +385,10 @@ impl DspFusedConfig {
         self.widths[port]
     }
 
+    pub fn loc(&self) -> Option<&DspLoc> {
+        self.loc.as_ref()
+    }
+
     pub fn set_reg(&mut self, port: &str, value: i64) {
         assert!(self.regs.contains_key(port));
         self.regs.insert(port.to_string(), value);
@@ -386,6 +397,10 @@ impl DspFusedConfig {
     pub fn set_pos(&mut self, port: &str, value: i64) {
         assert!(self.posargs.contains_key(port));
         self.posargs.insert(port.to_string(), value);
+    }
+
+    pub fn set_loc(&mut self, loc: DspLoc) {
+        self.loc = Some(loc);
     }
 }
 

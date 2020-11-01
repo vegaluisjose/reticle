@@ -82,6 +82,12 @@ pub struct Reg {
     pub loc: Option<Loc>,
 }
 
+#[derive(Clone, Debug)]
+pub struct DspLoc {
+    pub x: u32,
+    pub y: u32,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspFusedOp {
     Mul,
@@ -94,6 +100,7 @@ pub struct DspFusedConfig {
     pub regs: ParamMap,
     pub widths: ParamMap,
     pub posargs: ParamMap,
+    pub loc: Option<DspLoc>,
 }
 
 #[derive(Clone, Debug)]
