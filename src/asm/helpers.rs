@@ -144,10 +144,10 @@ impl Instr {
         }
     }
 
-    pub fn prim(&self) -> &InstrPhy {
+    pub fn phy(&self) -> &InstrPhy {
         match self {
             Instr::Phy(instr) => instr,
-            _ => panic!("Error: not a prim instruction"),
+            _ => panic!("Error: not a phy instruction"),
         }
     }
 

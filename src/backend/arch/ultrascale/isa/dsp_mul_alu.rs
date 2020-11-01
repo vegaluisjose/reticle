@@ -7,7 +7,7 @@ use crate::backend::verilog;
 pub struct DspMulAlu;
 
 fn emit_config(instr: &asm::Instr) -> DspFusedConfig {
-    match instr.prim().op().as_ref() {
+    match instr.phy().op().as_ref() {
         "dsp_mul_i8_r0_r0_r0" => {
             let mut config = DspFusedConfig::new(DspFusedOp::Mul);
             config.set_pos("a", 0);

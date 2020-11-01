@@ -16,7 +16,7 @@ pub struct LutMux;
 
 impl Emit for LutMux {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
-        let instr = instr.prim().clone();
+        let instr = instr.phy().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let con = asm.fresh_scalar_variable(&params[0]);
         let tru = asm.fresh_scalar_variable(&params[1]);

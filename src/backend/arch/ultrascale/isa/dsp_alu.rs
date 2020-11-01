@@ -4,7 +4,7 @@ use crate::backend::arch::ultrascale::prim::ast::{DspVector, DspVectorConfig, Ds
 use crate::backend::verilog;
 
 fn emit_config(instr: &asm::Instr) -> DspVectorConfig {
-    match instr.prim().op().as_ref() {
+    match instr.phy().op().as_ref() {
         "dsp_add_i8v4_r0_r0_r0" => {
             let len = instr.dst_ty().length();
             let mut config = DspVectorConfig::new(DspVectorOp::Add, len);

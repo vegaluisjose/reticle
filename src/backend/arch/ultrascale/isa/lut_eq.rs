@@ -28,7 +28,7 @@ pub struct LutEq;
 
 impl Emit for LutEq {
     fn emit(asm: &mut Assembler, instr: &asm::Instr) {
-        let instr = instr.prim().clone();
+        let instr = instr.phy().clone();
         let params: Vec<String> = instr.params().iter().map(|x| x.id()).collect();
         let lhs = asm.fresh_scalar_variable(&params[0]);
         let rhs = asm.fresh_scalar_variable(&params[1]);
