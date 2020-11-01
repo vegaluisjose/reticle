@@ -14,7 +14,7 @@ impl ExprCoord {
 }
 
 impl Loc {
-    pub fn new_with_hole(prim: Prim) -> Loc {
+    pub fn new(prim: Prim) -> Loc {
         Loc {
             prim,
             x: ExprCoord::new_hole(),
