@@ -69,7 +69,7 @@ impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Instr::Std(instr) => instr.to_doc(),
-            Instr::Prim(instr) => instr.to_doc(),
+            Instr::Phy(instr) => instr.to_doc(),
         }
     }
 }

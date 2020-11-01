@@ -39,7 +39,7 @@ pub struct InstrPhy {
 #[derive(Clone, Debug)]
 pub enum Instr {
     Std(InstrStd),
-    Prim(InstrPhy),
+    Phy(InstrPhy),
 }
 
 #[derive(Clone, Debug)]

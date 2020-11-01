@@ -112,41 +112,41 @@ impl Instr {
     pub fn dst_id(&self) -> String {
         match self {
             Instr::Std(instr) => instr.dst_id(),
-            Instr::Prim(instr) => instr.dst_id(),
+            Instr::Phy(instr) => instr.dst_id(),
         }
     }
 
     pub fn dst_ty(&self) -> &Ty {
         match self {
             Instr::Std(instr) => instr.dst_ty(),
-            Instr::Prim(instr) => instr.dst_ty(),
+            Instr::Phy(instr) => instr.dst_ty(),
         }
     }
 
     pub fn is_scalar(&self) -> bool {
         match self {
             Instr::Std(instr) => instr.is_scalar(),
-            Instr::Prim(instr) => instr.is_scalar(),
+            Instr::Phy(instr) => instr.is_scalar(),
         }
     }
 
     pub fn is_vector(&self) -> bool {
         match self {
             Instr::Std(instr) => instr.is_vector(),
-            Instr::Prim(instr) => instr.is_vector(),
+            Instr::Phy(instr) => instr.is_vector(),
         }
     }
 
     pub fn dst(&self) -> &Expr {
         match self {
             Instr::Std(instr) => instr.dst(),
-            Instr::Prim(instr) => instr.dst(),
+            Instr::Phy(instr) => instr.dst(),
         }
     }
 
     pub fn prim(&self) -> &InstrPhy {
         match self {
-            Instr::Prim(instr) => instr,
+            Instr::Phy(instr) => instr,
             _ => panic!("Error: not a prim instruction"),
         }
     }
@@ -160,7 +160,7 @@ impl Instr {
 
     pub fn is_prim(&self) -> bool {
         match self {
-            Instr::Prim(_) => true,
+            Instr::Phy(_) => true,
             _ => false,
         }
     }
@@ -175,70 +175,70 @@ impl Instr {
     pub fn attrs(&self) -> &Vec<Expr> {
         match self {
             Instr::Std(instr) => instr.attrs(),
-            Instr::Prim(instr) => instr.attrs(),
+            Instr::Phy(instr) => instr.attrs(),
         }
     }
 
     pub fn params(&self) -> &Vec<Expr> {
         match self {
             Instr::Std(instr) => instr.params(),
-            Instr::Prim(instr) => instr.params(),
+            Instr::Phy(instr) => instr.params(),
         }
     }
 
     pub fn indexed_param(&self, index: usize) -> &Expr {
         match self {
             Instr::Std(instr) => instr.indexed_param(index),
-            Instr::Prim(instr) => instr.indexed_param(index),
+            Instr::Phy(instr) => instr.indexed_param(index),
         }
     }
 
     pub fn indexed_attr(&self, index: usize) -> &Expr {
         match self {
             Instr::Std(instr) => instr.indexed_attr(index),
-            Instr::Prim(instr) => instr.indexed_attr(index),
+            Instr::Phy(instr) => instr.indexed_attr(index),
         }
     }
 
     pub fn set_dst_id(&mut self, value: &str) {
         match self {
             Instr::Std(instr) => instr.set_dst_id(value),
-            Instr::Prim(instr) => instr.set_dst_id(value),
+            Instr::Phy(instr) => instr.set_dst_id(value),
         }
     }
 
     pub fn set_dst_ty(&mut self, ty: Ty) {
         match self {
             Instr::Std(instr) => instr.set_dst_ty(ty),
-            Instr::Prim(instr) => instr.set_dst_ty(ty),
+            Instr::Phy(instr) => instr.set_dst_ty(ty),
         }
     }
 
     pub fn set_dst(&mut self, expr: Expr) {
         match self {
             Instr::Std(instr) => instr.set_dst(expr),
-            Instr::Prim(instr) => instr.set_dst(expr),
+            Instr::Phy(instr) => instr.set_dst(expr),
         }
     }
 
     pub fn add_param(&mut self, expr: Expr) {
         match self {
             Instr::Std(instr) => instr.add_param(expr),
-            Instr::Prim(instr) => instr.add_param(expr),
+            Instr::Phy(instr) => instr.add_param(expr),
         }
     }
 
     pub fn add_attr(&mut self, expr: Expr) {
         match self {
             Instr::Std(instr) => instr.add_attr(expr),
-            Instr::Prim(instr) => instr.add_attr(expr),
+            Instr::Phy(instr) => instr.add_attr(expr),
         }
     }
 
     pub fn clear_params(&mut self) {
         match self {
             Instr::Std(instr) => instr.clear_params(),
-            Instr::Prim(instr) => instr.clear_params(),
+            Instr::Phy(instr) => instr.clear_params(),
         }
     }
 }

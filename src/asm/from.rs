@@ -10,7 +10,7 @@ impl From<asm::InstrStd> for asm::Instr {
 
 impl From<asm::InstrPhy> for asm::Instr {
     fn from(prim: asm::InstrPhy) -> Self {
-        asm::Instr::Prim(prim)
+        asm::Instr::Phy(prim)
     }
 }
 

@@ -157,7 +157,7 @@ impl AsmParser {
     fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [instr_phy(instr)] => Instr::Prim(instr),
+            [instr_phy(instr)] => Instr::Phy(instr),
             [instr_std(instr)] => Instr::Std(instr),
         ))
     }
