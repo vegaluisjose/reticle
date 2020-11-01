@@ -11,6 +11,13 @@ impl ExprCoord {
             _ => false,
         }
     }
+
+    pub fn lit(&self) -> u32 {
+        match self {
+            ExprCoord::Lit(val) => *val,
+            _ => panic!("Error: ExprCoord not a literal"),
+        }
+    }
 }
 
 impl Loc {
@@ -32,6 +39,14 @@ impl Loc {
 
     pub fn expr_y(&self) -> &ExprCoord {
         &self.y
+    }
+
+    pub fn lit_x(&self) -> u32 {
+        self.expr_x().lit()
+    }
+
+    pub fn lit_y(&self) -> u32 {
+        self.expr_y().lit()
     }
 
     pub fn is_valid(&self) -> bool {
