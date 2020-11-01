@@ -269,6 +269,9 @@ impl From<DspVector> for verilog::Stmt {
             if dsp.reg("b") == 2 {
                 inst.connect("CEA2", verilog::Expr::from(en_b.clone()));
                 inst.connect("CEB2", verilog::Expr::from(en_b.clone()));
+            } else {
+                inst.connect("CEA2", convert_literal(&vcc, &gnd, 1, 0));
+                inst.connect("CEB2", convert_literal(&vcc, &gnd, 1, 0));
             }
         } else {
             inst.add_param("AREG", verilog::Expr::new_int(0));
