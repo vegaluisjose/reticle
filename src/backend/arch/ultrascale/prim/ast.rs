@@ -88,6 +88,13 @@ pub struct DspLoc {
     pub y: u32,
 }
 
+#[derive(Clone, Debug)]
+pub enum DspOpt {
+    CascadeIn,
+    CascadeOut,
+    CascadeInOut,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum DspFusedOp {
     Mul,
@@ -101,6 +108,7 @@ pub struct DspFusedConfig {
     pub widths: ParamMap,
     pub posargs: ParamMap,
     pub loc: Option<DspLoc>,
+    pub opt: Option<DspOpt>,
 }
 
 #[derive(Clone, Debug)]

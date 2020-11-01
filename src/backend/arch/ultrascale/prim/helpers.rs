@@ -370,6 +370,7 @@ impl DspFusedConfig {
             widths,
             posargs,
             loc: None,
+            opt: None,
         }
     }
 
@@ -397,6 +398,10 @@ impl DspFusedConfig {
         self.loc.as_ref()
     }
 
+    pub fn opt(&self) -> Option<&DspOpt> {
+        self.opt.as_ref()
+    }
+
     pub fn set_reg(&mut self, port: &str, value: i64) {
         assert!(self.regs.contains_key(port));
         self.regs.insert(port.to_string(), value);
@@ -409,6 +414,10 @@ impl DspFusedConfig {
 
     pub fn set_loc(&mut self, loc: DspLoc) {
         self.loc = Some(loc);
+    }
+
+    pub fn set_opt(&mut self, opt: DspOpt) {
+        self.opt = Some(opt);
     }
 }
 
