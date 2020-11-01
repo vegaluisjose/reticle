@@ -4,6 +4,13 @@ impl ExprCoord {
     pub fn new_hole() -> ExprCoord {
         ExprCoord::Hole
     }
+
+    pub fn is_lit(&self) -> bool {
+        match self {
+            ExprCoord::Lit(_) => true,
+            _ => false,
+        }
+    }
 }
 
 impl Loc {
