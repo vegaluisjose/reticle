@@ -323,6 +323,14 @@ impl DspLoc {
     pub fn new(x: u32, y: u32) -> DspLoc {
         DspLoc { x, y }
     }
+
+    pub fn x(&self) -> u32 {
+        self.x
+    }
+
+    pub fn y(&self) -> u32 {
+        self.y
+    }
 }
 
 impl DspFusedOp {
@@ -626,6 +634,10 @@ impl DspVector {
 
     pub fn id(&self) -> String {
         self.id.to_string()
+    }
+
+    pub fn loc(&self) -> Option<&DspLoc> {
+        self.config.loc()
     }
 
     pub fn input(&self, input: &str) -> &Expr {

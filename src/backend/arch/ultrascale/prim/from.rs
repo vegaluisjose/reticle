@@ -134,9 +134,21 @@ impl From<Reg> for verilog::Stmt {
     }
 }
 
+impl From<DspLoc> for verilog::Attribute {
+    fn from(loc: DspLoc) -> Self {
+        let mut attr = verilog::Attribute::default();
+        let loc = format!("DSP48E2_X{}Y{}", loc.x(), loc.y());
+        attr.add_stmt("LOC", &loc);
+        attr
+    }
+}
+
 impl From<DspVector> for verilog::Stmt {
     fn from(dsp: DspVector) -> Self {
         let mut inst = verilog::Instance::new(&dsp.id(), "DSP48E2");
+        if let Some(loc) = dsp.loc() {
+            inst.set_attr(verilog::Attribute::from(loc.clone()));
+        }
         let gnd = dsp.input("gnd");
         let vcc = dsp.input("vcc");
         let clock = dsp.input("clock");

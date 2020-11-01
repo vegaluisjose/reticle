@@ -1,6 +1,6 @@
 def vadd_pipeline(en: bool, a0: i8<4>, b0: i8<4>, a1: i8<4>, b1: i8<4>, a2: i8<4>, b2: i8<4>, a3: i8<4>, b3: i8<4>) -> (y0: i8<4>, y1: i8<4>, y2: i8<4>, y3: i8<4>) {
-    y0: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a0, en, b0, en, en) @dsp(??, ??);
-    y1: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a1, en, b1, en, en) @dsp(??, ??);
-    y2: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a2, en, b2, en, en) @dsp(??, ??);
-    y3: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a3, en, b3, en, en) @dsp(??, ??);
+    y0: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a0, en, b0, en, en) @dsp(0, 0);
+    y1: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a1, en, b1, en, en) @dsp(0, 1);
+    y2: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a2, en, b2, en, en) @dsp(0, 2);
+    y3: i8<4> = dsp_add_i8v4_r1_r1_r1[0, 0, 0](a3, en, b3, en, en) @dsp(0, 3);
 }
