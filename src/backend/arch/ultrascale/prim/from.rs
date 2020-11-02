@@ -430,10 +430,12 @@ impl From<DspFused> for verilog::Stmt {
             inst.add_param("AREG", verilog::Expr::new_int(na));
             inst.add_param("ACASCREG", verilog::Expr::new_int(na));
             inst.connect("CEA1", verilog::Expr::from(en_a.clone()));
+            inst.connect("CEA2", verilog::Expr::from(en_a.clone()));
         } else {
             inst.add_param("AREG", verilog::Expr::new_int(0));
             inst.add_param("ACASCREG", verilog::Expr::new_int(0));
             inst.connect("CEA1", convert_literal(&vcc, &gnd, 1, 0));
+            inst.connect("CEA2", convert_literal(&vcc, &gnd, 1, 0));
         }
         if dsp.has_reg("b") {
             let nb = dsp.reg("b") as i32;
@@ -441,10 +443,12 @@ impl From<DspFused> for verilog::Stmt {
             inst.add_param("BREG", verilog::Expr::new_int(nb));
             inst.add_param("BCASCREG", verilog::Expr::new_int(nb));
             inst.connect("CEB1", verilog::Expr::from(en_b.clone()));
+            inst.connect("CEB2", verilog::Expr::from(en_b.clone()));
         } else {
             inst.add_param("BREG", verilog::Expr::new_int(0));
             inst.add_param("BCASCREG", verilog::Expr::new_int(0));
             inst.connect("CEB1", convert_literal(&vcc, &gnd, 1, 0));
+            inst.connect("CEB2", convert_literal(&vcc, &gnd, 1, 0));
         }
         if dsp.has_reg("c") {
             let nc = dsp.reg("c") as i32;
@@ -521,10 +525,8 @@ impl From<DspFused> for verilog::Stmt {
         inst.add_param("IS_RSTM_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         inst.add_param("IS_RSTP_INVERTED", verilog::Expr::new_ulit_bin(1, "0"));
         // default clock enable
-        inst.connect("CEA2", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CEAD", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CEALUMODE", convert_literal(&vcc, &gnd, 1, 0));
-        inst.connect("CEB2", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CECARRYIN", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CECTRL", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CED", convert_literal(&vcc, &gnd, 1, 0));
