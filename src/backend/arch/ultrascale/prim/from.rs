@@ -264,6 +264,8 @@ impl From<DspVector> for verilog::Stmt {
             assert!(nb < 3, "Error: more than three registers");
             inst.add_param("AREG", verilog::Expr::new_int(nb));
             inst.add_param("BREG", verilog::Expr::new_int(nb));
+            inst.add_param("ACASCREG", verilog::Expr::new_int(nb));
+            inst.add_param("BCASCREG", verilog::Expr::new_int(nb));
             inst.connect("CEA1", verilog::Expr::from(en_b.clone()));
             inst.connect("CEB1", verilog::Expr::from(en_b.clone()));
             if dsp.reg("b") == 2 {
@@ -276,6 +278,8 @@ impl From<DspVector> for verilog::Stmt {
         } else {
             inst.add_param("AREG", verilog::Expr::new_int(0));
             inst.add_param("BREG", verilog::Expr::new_int(0));
+            inst.add_param("ACASCREG", verilog::Expr::new_int(0));
+            inst.add_param("BCASCREG", verilog::Expr::new_int(0));
             inst.connect("CEA1", convert_literal(&vcc, &gnd, 1, 0));
             inst.connect("CEA2", convert_literal(&vcc, &gnd, 1, 0));
             inst.connect("CEB1", convert_literal(&vcc, &gnd, 1, 0));
@@ -346,10 +350,8 @@ impl From<DspVector> for verilog::Stmt {
         inst.connect("CEINMODE", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CEM", convert_literal(&vcc, &gnd, 1, 0));
         // default registers
-        inst.add_param("ACASCREG", verilog::Expr::new_int(0));
         inst.add_param("ADREG", verilog::Expr::new_int(0));
         inst.add_param("ALUMODEREG", verilog::Expr::new_int(0));
-        inst.add_param("BCASCREG", verilog::Expr::new_int(0));
         inst.add_param("CARRYINREG", verilog::Expr::new_int(0));
         inst.add_param("CARRYINSELREG", verilog::Expr::new_int(0));
         inst.add_param("DREG", verilog::Expr::new_int(0));
@@ -431,18 +433,22 @@ impl From<DspFused> for verilog::Stmt {
             let na = dsp.reg("a") as i32;
             let en_a = dsp.input("en_a");
             inst.add_param("AREG", verilog::Expr::new_int(na));
+            inst.add_param("ACASCREG", verilog::Expr::new_int(na));
             inst.connect("CEA1", verilog::Expr::from(en_a.clone()));
         } else {
             inst.add_param("AREG", verilog::Expr::new_int(0));
+            inst.add_param("ACASCREG", verilog::Expr::new_int(0));
             inst.connect("CEA1", convert_literal(&vcc, &gnd, 1, 0));
         }
         if dsp.has_reg("b") {
             let nb = dsp.reg("b") as i32;
             let en_b = dsp.input("en_b");
             inst.add_param("BREG", verilog::Expr::new_int(nb));
+            inst.add_param("BCASCREG", verilog::Expr::new_int(nb));
             inst.connect("CEB1", verilog::Expr::from(en_b.clone()));
         } else {
             inst.add_param("BREG", verilog::Expr::new_int(0));
+            inst.add_param("BCASCREG", verilog::Expr::new_int(0));
             inst.connect("CEB1", convert_literal(&vcc, &gnd, 1, 0));
         }
         if dsp.has_reg("c") {
@@ -529,10 +535,8 @@ impl From<DspFused> for verilog::Stmt {
         inst.connect("CED", convert_literal(&vcc, &gnd, 1, 0));
         inst.connect("CEINMODE", convert_literal(&vcc, &gnd, 1, 0));
         // default registers
-        inst.add_param("ACASCREG", verilog::Expr::new_int(0));
         inst.add_param("ADREG", verilog::Expr::new_int(0));
         inst.add_param("ALUMODEREG", verilog::Expr::new_int(0));
-        inst.add_param("BCASCREG", verilog::Expr::new_int(0));
         inst.add_param("CARRYINREG", verilog::Expr::new_int(0));
         inst.add_param("CARRYINSELREG", verilog::Expr::new_int(0));
         inst.add_param("DREG", verilog::Expr::new_int(0));
