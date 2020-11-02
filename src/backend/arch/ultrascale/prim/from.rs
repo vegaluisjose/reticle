@@ -268,13 +268,8 @@ impl From<DspVector> for verilog::Stmt {
             inst.add_param("BCASCREG", verilog::Expr::new_int(nb));
             inst.connect("CEA1", verilog::Expr::from(en_b.clone()));
             inst.connect("CEB1", verilog::Expr::from(en_b.clone()));
-            if dsp.reg("b") == 2 {
-                inst.connect("CEA2", verilog::Expr::from(en_b.clone()));
-                inst.connect("CEB2", verilog::Expr::from(en_b.clone()));
-            } else {
-                inst.connect("CEA2", convert_literal(&vcc, &gnd, 1, 0));
-                inst.connect("CEB2", convert_literal(&vcc, &gnd, 1, 0));
-            }
+            inst.connect("CEA2", verilog::Expr::from(en_b.clone()));
+            inst.connect("CEB2", verilog::Expr::from(en_b.clone()));
         } else {
             inst.add_param("AREG", verilog::Expr::new_int(0));
             inst.add_param("BREG", verilog::Expr::new_int(0));
