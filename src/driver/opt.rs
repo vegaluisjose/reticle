@@ -2,6 +2,7 @@
 use std::path::{Path, PathBuf};
 // use std::str::FromStr;
 use crate::asm::parser::parse_from_file;
+use crate::passes::layout::place;
 use structopt::StructOpt;
 
 #[derive(Clone, Debug, StructOpt)]
@@ -54,6 +55,6 @@ impl Optimize {
 
     pub fn run(&self) {
         let prog = parse_from_file(self.opts().input());
-        println!("{}", prog);
+        place::place_basic(&prog);
     }
 }
