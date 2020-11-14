@@ -137,6 +137,10 @@ impl InstrPhy {
         self.dst = expr;
     }
 
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
+    }
+
     pub fn add_attr(&mut self, expr: Expr) {
         self.attrs.push(expr);
     }
