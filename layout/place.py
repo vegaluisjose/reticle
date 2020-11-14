@@ -179,7 +179,7 @@ def place(
         print("LUT {}: ({}, {})".format(k, v[0], v[1]))
 
     for k, v in dsplocs.items():
-        print("DSP {}: ({}, {})".format(k, v[0], v[1]))
+        print("{},{},{}".format(k, v[0], v[1]))
 
 
 def parse_args():
