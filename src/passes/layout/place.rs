@@ -1,8 +1,10 @@
 use crate::asm::ast::{InstrPhy, Prim, Prog};
-use crate::util::file::{create_absolute, read_from_tempfile, remove_tempfile, write_to_tempfile};
+use crate::util::file::{create_absolute, remove_tempfile, write_to_tempfile};
 use std::collections::HashMap;
 use std::fmt;
+use std::num::ParseIntError;
 use std::process::Command;
+use std::str::FromStr;
 
 #[derive(Clone, Debug)]
 pub struct PlacerInput {
@@ -10,9 +12,50 @@ pub struct PlacerInput {
     pub prim: Prim,
 }
 
+#[derive(Clone, Debug)]
+pub struct PlacerOutput {
+    pub id: u32,
+    pub x: u32,
+    pub y: u32,
+}
+
+impl FromStr for PlacerOutput {
+    type Err = ParseIntError;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let values: Vec<&str> = input.split(",").collect();
+        match values.len() {
+            3 => {
+                let id = values[0].parse::<u32>()?;
+                let x = values[1].parse::<u32>()?;
+                let y = values[2].parse::<u32>()?;
+                Ok(PlacerOutput::new(id, x, y))
+            }
+            _ => panic!("Error: {} is not valid placer output format", input),
+        }
+    }
+}
+
 impl PlacerInput {
     pub fn new(id: u32, prim: Prim) -> PlacerInput {
         PlacerInput { id, prim }
+    }
+}
+
+impl PlacerOutput {
+    pub fn new(id: u32, x: u32, y: u32) -> PlacerOutput {
+        PlacerOutput { id, x, y }
+    }
+
+    pub fn id(&self) -> u32 {
+        self.id
+    }
+
+    pub fn x(&self) -> u32 {
+        self.x
+    }
+
+    pub fn y(&self) -> u32 {
+        self.y
     }
 }
 
@@ -22,12 +65,19 @@ impl fmt::Display for PlacerInput {
     }
 }
 
+impl fmt::Display for PlacerOutput {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{},{},{}", self.id(), self.x(), self.y())
+    }
+}
+
 #[derive(Clone, Debug)]
 pub struct Placer {
     pub counter: u32,
     pub var: HashMap<String, u32>,
     pub num: HashMap<u32, String>,
     pub inputs: Vec<PlacerInput>,
+    pub outputs: HashMap<String, PlacerOutput>,
 }
 
 impl Default for Placer {
@@ -37,6 +87,7 @@ impl Default for Placer {
             var: HashMap::new(),
             num: HashMap::new(),
             inputs: Vec::new(),
+            outputs: HashMap::new(),
         }
     }
 }
@@ -50,6 +101,10 @@ impl Placer {
         &self.inputs
     }
 
+    pub fn lookup_num(&self, key: u32) -> Option<&String> {
+        self.num.get(&key)
+    }
+
     pub fn rename(&mut self, current: &str) -> u32 {
         let value = self.counter();
         self.counter += 1;
@@ -61,6 +116,16 @@ impl Placer {
     pub fn add_input(&mut self, id: u32, prim: Prim) {
         let input = PlacerInput::new(id, prim);
         self.inputs.push(input);
+    }
+
+    pub fn add_output(&mut self, input: &str) {
+        let output = PlacerOutput::from_str(input).expect("Error parsing placer output");
+        let id = if let Some(n) = self.lookup_num(output.id()) {
+            n.to_string()
+        } else {
+            panic!("Error: key not found")
+        };
+        self.outputs.insert(id, output);
     }
 
     pub fn add_instr(&mut self, instr: &InstrPhy) {
@@ -78,11 +143,13 @@ impl Placer {
             .arg(&filepath)
             .output()
             .expect("failed to execute place.py");
-        println!("{}", read_from_tempfile(&filepath));
-        println!(
-            "solution:\n{}",
-            String::from_utf8_lossy(&output.stdout).to_string()
-        );
+        let res = String::from_utf8_lossy(&output.stdout).to_string();
+        for i in res.lines() {
+            self.add_output(i);
+        }
+        for (k, v) in self.outputs.clone() {
+            println!("{} --> {}", k, v);
+        }
         remove_tempfile(filepath);
     }
 }
