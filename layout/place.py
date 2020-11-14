@@ -14,7 +14,7 @@ def parse(program):
     for line in program.split("\n"):
         if not line:
             continue
-        line = line.strip().split()
+        line = line.strip().split(",")
         N = int(line[0])
         tile = line[1]
         if len(line) > 2:

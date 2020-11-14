@@ -1,5 +1,8 @@
 use crate::asm::ast::{InstrPhy, Prim, Prog};
+use crate::util::file::{create_absolute, read_from_tempfile, remove_tempfile, write_to_tempfile};
 use std::collections::HashMap;
+use std::fmt;
+use std::process::Command;
 
 #[derive(Clone, Debug)]
 pub struct PlacerInput {
@@ -10,6 +13,12 @@ pub struct PlacerInput {
 impl PlacerInput {
     pub fn new(id: u32, prim: Prim) -> PlacerInput {
         PlacerInput { id, prim }
+    }
+}
+
+impl fmt::Display for PlacerInput {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{},{}", self.id, self.prim)
     }
 }
 
@@ -60,9 +69,21 @@ impl Placer {
     }
 
     pub fn run(&mut self) {
-        for i in self.inputs() {
-            println!("{:?}", i);
-        }
+        let bin = create_absolute("layout/place.py");
+        let filename = "__reticle_locations.txt";
+        let contents: String = self.inputs().iter().map(|i| format!("{}\n", i)).collect();
+        let filepath = write_to_tempfile(&filename, &contents);
+        let output = Command::new("python3")
+            .arg(bin)
+            .arg(&filepath)
+            .output()
+            .expect("failed to execute place.py");
+        println!("{}", read_from_tempfile(&filepath));
+        println!(
+            "solution:\n{}",
+            String::from_utf8_lossy(&output.stdout).to_string()
+        );
+        remove_tempfile(filepath);
     }
 }
 
@@ -75,24 +96,3 @@ pub fn place_basic(prog: &Prog) {
     }
     placer.run();
 }
-
-// use reticle::util::file::{create_absolute, write_to_tempfile};
-// use std::path::Path;
-// use std::process::Command;
-
-// fn place<P: AsRef<Path>>(input: P) -> String {
-//     let bin = create_absolute("layout/place.py");
-//     let output = Command::new("python3")
-//         .arg(bin)
-//         .arg(input.as_ref())
-//         .output()
-//         .expect("failed to execute place.py");
-//     String::from_utf8_lossy(&output.stdout).to_string()
-// }
-
-// fn main() {
-// let constraints = write_to_tempfile("__reticle_constraints.txt", "0 dsp");
-// println!("{:?}", &constraints);
-// let x = place(constraints);
-// println!("{}", x);
-// }

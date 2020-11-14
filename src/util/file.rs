@@ -32,10 +32,13 @@ pub fn write_to_file<P: AsRef<Path>>(path: P, contents: &str) {
 
 pub fn write_to_tempfile<P: AsRef<Path>>(path: P, contents: &str) -> PathBuf {
     let temp_path = create_tempfile_path(path);
-    let mut file = File::create(&temp_path).expect("Error: cannot create a file");
-    file.write_all(contents.as_bytes())
-        .expect("Error: writing the file");
+    write_to_file(&temp_path, contents);
     temp_path
+}
+
+pub fn read_from_tempfile<P: AsRef<Path>>(path: P) -> String {
+    let temp_path = create_tempfile_path(path);
+    read_to_string(&temp_path)
 }
 
 pub fn remove_tempfile<P: AsRef<Path>>(path: P) {
