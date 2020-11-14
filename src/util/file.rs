@@ -1,5 +1,5 @@
 use std::env;
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
 
@@ -36,4 +36,9 @@ pub fn write_to_tempfile<P: AsRef<Path>>(path: P, contents: &str) -> PathBuf {
     file.write_all(contents.as_bytes())
         .expect("Error: writing the file");
     temp_path
+}
+
+pub fn remove_tempfile<P: AsRef<Path>>(path: P) {
+    let temp_path = create_tempfile_path(path);
+    fs::remove_file(&temp_path).expect("Error: cannot remove temp file");
 }
