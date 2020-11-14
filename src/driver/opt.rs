@@ -3,8 +3,8 @@ use std::path::{Path, PathBuf};
 // use std::str::FromStr;
 use crate::asm::parser::parse_from_file;
 use crate::passes::layout::place;
-use structopt::StructOpt;
 use crate::util::file::write_to_file;
+use structopt::StructOpt;
 
 #[derive(Clone, Debug, StructOpt)]
 #[structopt(
