@@ -1,4 +1,4 @@
-use crate::asm::ast::{InstrPhy, Prim, Prog};
+use crate::asm::ast::{Instr, InstrPhy, Loc, Prim, Prog};
 use crate::util::file::{create_absolute, remove_tempfile, write_to_tempfile};
 use std::collections::HashMap;
 use std::fmt;
@@ -151,14 +151,12 @@ impl Placer {
         for i in res.lines() {
             self.add_output(i);
         }
-        for (k, v) in self.outputs.clone() {
-            println!("{} --> {}", k, v);
-        }
         remove_tempfile(filepath);
     }
 }
 
-pub fn place_basic(prog: &Prog) {
+pub fn place_basic(prog: &Prog) -> Prog {
+    let mut new_prog = Prog::new_with_signature(prog.signature().clone());
     let mut placer = Placer::default();
     for instr in prog.body() {
         if instr.is_phy() {
@@ -166,4 +164,18 @@ pub fn place_basic(prog: &Prog) {
         }
     }
     placer.run();
+    for instr in prog.body() {
+        if instr.is_phy() {
+            if let Some(output) = placer.lookup_output(&instr.dst().id()) {
+                let prim = instr.phy().loc().prim().clone();
+                let loc = Loc::new_with_xy(prim, output.x(), output.y());
+                let mut instr_phy = instr.phy().clone();
+                instr_phy.set_loc(loc);
+                new_prog.add_instr(Instr::from(instr_phy));
+            }
+        } else {
+            new_prog.add_instr(instr.clone());
+        }
+    }
+    new_prog
 }

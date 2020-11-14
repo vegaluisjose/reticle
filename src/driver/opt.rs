@@ -55,6 +55,7 @@ impl Optimize {
 
     pub fn run(&self) {
         let prog = parse_from_file(self.opts().input());
-        place::place_basic(&prog);
+        let new_prog = place::place_basic(&prog);
+        println!("input:\n{}\noutput:\n{}", prog, new_prog);
     }
 }
