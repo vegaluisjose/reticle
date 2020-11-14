@@ -105,6 +105,10 @@ impl Placer {
         self.num.get(&key)
     }
 
+    pub fn lookup_output(&self, key: &str) -> Option<&PlacerOutput> {
+        self.outputs.get(key)
+    }
+
     pub fn rename(&mut self, current: &str) -> u32 {
         let value = self.counter();
         self.counter += 1;
