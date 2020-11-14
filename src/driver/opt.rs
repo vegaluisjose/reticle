@@ -4,6 +4,7 @@ use std::path::{Path, PathBuf};
 use crate::asm::parser::parse_from_file;
 use crate::passes::layout::place;
 use structopt::StructOpt;
+use crate::util::file::write_to_file;
 
 #[derive(Clone, Debug, StructOpt)]
 #[structopt(
@@ -53,9 +54,17 @@ impl Optimize {
         &self.opts
     }
 
+    fn write_output(&self, contents: &str) {
+        if let Some(output) = self.opts().output() {
+            write_to_file(output, contents);
+        } else {
+            println!("{}", contents);
+        }
+    }
+
     pub fn run(&self) {
         let prog = parse_from_file(self.opts().input());
-        let new_prog = place::place_basic(&prog);
-        println!("input:\n{}\noutput:\n{}", prog, new_prog);
+        let placed = place::place_basic(&prog);
+        self.write_output(&placed.to_string());
     }
 }
