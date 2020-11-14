@@ -176,7 +176,7 @@ def place(
     # dsplocs = iterate(dsplocs, placedsps, dspslack)
 
     for k, v in lutlocs.items():
-        print("LUT {}: ({}, {})".format(k, v[0], v[1]))
+        print("{},{},{}".format(k, v[0], v[1]))
 
     for k, v in dsplocs.items():
         print("{},{},{}".format(k, v[0], v[1]))
