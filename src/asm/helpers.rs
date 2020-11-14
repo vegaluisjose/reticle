@@ -5,6 +5,10 @@ impl ExprCoord {
         ExprCoord::Hole
     }
 
+    pub fn new_lit(value: u32) -> ExprCoord {
+        ExprCoord::Lit(value)
+    }
+
     pub fn is_lit(&self) -> bool {
         match self {
             ExprCoord::Lit(_) => true,
@@ -26,6 +30,14 @@ impl Loc {
             prim,
             x: ExprCoord::new_hole(),
             y: ExprCoord::new_hole(),
+        }
+    }
+
+    pub fn new_with_xy(prim: Prim, x: u32, y: u32) -> Loc {
+        Loc {
+            prim,
+            x: ExprCoord::new_lit(x),
+            y: ExprCoord::new_lit(y),
         }
     }
 
