@@ -1,6 +1,7 @@
 // use std::fmt;
 use std::path::{Path, PathBuf};
 // use std::str::FromStr;
+use crate::asm::ast::Prim;
 use crate::asm::parser::parse_from_file;
 use crate::passes::layout::place;
 use crate::util::file::write_to_file;
@@ -17,9 +18,13 @@ pub struct Opt {
     #[structopt(parse(from_os_str))]
     pub input: PathBuf,
 
-    // Backend
+    // Output file
     #[structopt(short = "o", long = "output", parse(from_os_str))]
     pub output: Option<PathBuf>,
+
+    // Backend
+    #[structopt(short = "p", long = "prim")]
+    pub prim: Prim,
 }
 
 impl Opt {
@@ -29,6 +34,10 @@ impl Opt {
 
     pub fn output(&self) -> Option<&PathBuf> {
         self.output.as_ref()
+    }
+
+    pub fn prim(&self) -> &Prim {
+        &self.prim
     }
 }
 
@@ -64,7 +73,8 @@ impl Optimize {
 
     pub fn run(&self) {
         let prog = parse_from_file(self.opts().input());
-        let placed = place::place_basic(&prog);
+        let prim = self.opts().prim().clone();
+        let placed = place::place_basic(&prog, prim);
         self.write_output(&placed.to_string());
     }
 }

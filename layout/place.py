@@ -2,11 +2,6 @@ from z3 import *
 import argparse
 import sys
 
-# slack factor: use lists for rows like for cols
-#   careful with depends; needs to override off-limits rows
-
-# iterative shrinking
-
 
 def parse(program):
     luts = {}
@@ -56,32 +51,19 @@ def generateconstraints(
     return xloc, yloc
 
 
-def placeonce(program, lutcolumns, dspcolumns, lutrows, dsprows):
-    lutspercol = max(lutrows)
-    dspspercol = max(dsprows)
-    luts, dsps = parse(program)
+def placeonce(inputs, name, columns, rows):
+    total_row = max(rows)
 
     s = Solver()
     s.push()
 
-    lutvars = {}
-    for k, v in luts.items():
-        lutvars[k] = generateconstraints(
-            s, "lut", k, lutcolumns, lutrows, lutspercol, v
+    locvars = {}
+    for k, v in inputs.items():
+        locvars[k] = generateconstraints(
+            s, name, k, columns, rows, total_row, v
         )
-    for k1, v1 in lutvars.items():
-        for k2, v2 in lutvars.items():
-            if k1 == k2:
-                continue
-            s.add(Or(v1[0] != v2[0], v1[1] != v2[1]))
-
-    dspvars = {}
-    for k, v in dsps.items():
-        dspvars[k] = generateconstraints(
-            s, "dsp", k, dspcolumns, dsprows, dspspercol, v
-        )
-    for k1, v1 in dspvars.items():
-        for k2, v2 in dspvars.items():
+    for k1, v1 in locvars.items():
+        for k2, v2 in locvars.items():
             if k1 == k2:
                 continue
             s.add(Or(v1[0] != v2[0], v1[1] != v2[1]))
@@ -91,114 +73,45 @@ def placeonce(program, lutcolumns, dspcolumns, lutrows, dsprows):
         return None
     m = s.model()
 
-    lutlocs = {
-        k: (m[v[0]].as_long(), m[v[1]].as_long()) for k, v in lutvars.items()
-    }
-    dsplocs = {
-        k: (m[v[0]].as_long(), m[v[1]].as_long()) for k, v in dspvars.items()
+    locs = {
+        k: (m[v[0]].as_long(), m[v[1]].as_long()) for k, v in locvars.items()
     }
 
     s.pop()
-    return lutlocs, dsplocs
-
-
-def iterate(locs, placefunc, slack):
-
-    minx = 0
-    miny = 0
-    while True:
-
-        # for k,v in locs.items():
-        #    print("{}: ({}, {})".format(k, v[0], v[1]))
-
-        # Max x,y for last placement
-        maxx = max([x[0] for x in locs.values()])
-        maxy = max([x[1] for x in locs.values()])
-
-        # If we have no space left to shrink, we're done
-        if (minx + 1 >= maxx) and (miny + 1 >= maxy):
-            return locs
-
-        # Get new target bound: halfway to min
-        boundx = int((minx + maxx) / 2)
-        boundy = int((miny + maxy) / 2)
-        listx = list(range(0, boundx))
-        listy = list(range(0, boundy, slack))
-
-        # print(maxx, maxy, boundx, boundy)
-        # print(listy)
-
-        # Try placement
-        res = placefunc(listx, listy)
-        if not res:  # Didn't fit
-            # Raise min
-            minx = boundx
-            miny = boundy
-        else:  # it fit; iterate
-            locs = res
-
-
-def place(
-    program,
-    lutcolumns,
-    dspcolumns,
-    lutspercol,
-    dspspercol,
-    lutslack=1,
-    dspslack=1,
-):
-
-    # Do an inital place
-    lutrows = list(range(0, lutspercol, lutslack))
-    dsprows = list(range(0, dspspercol, dspslack))
-    lutlocs, dsplocs = placeonce(
-        program, lutcolumns, dspcolumns, lutrows, dsprows
-    )
-
-    # iteratively shrink luts
-    # print('shrink luts')
-    # def placeluts(lutxs, lutys):
-    #    res = placeonce(program, lutxs, dspcolumns, lutys, dsprows)
-    #    if res is None:
-    #        return None
-    #    else:
-    #        return res[0]
-    # lutlocs = iterate(lutlocs, placeluts, lutslack)
-
-    # iteratively shrink dsps
-    # print('shrink dsps')
-    # def placedsps(dspxs, dspys):
-    #    res = placeonce(program, lutcolumns, dspxs, lutrows, dspys)
-    #    if res is None:
-    #        return None
-    #    else:
-    #        return res[1]
-    # dsplocs = iterate(dsplocs, placedsps, dspslack)
-
-    for k, v in lutlocs.items():
-        print("{},{},{}".format(k, v[0], v[1]))
-
-    for k, v in dsplocs.items():
-        print("{},{},{}".format(k, v[0], v[1]))
+    return locs
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="place")
     parser.add_argument("inp", help="input file", type=str)
     parser.add_argument("-o", dest="out", help="output file", type=str)
+    parser.add_argument("-p", dest="prim", help="primitive", type=str)
     args = parser.parse_args()
     if not isinstance(args.inp, str):
         print("Error: missing input file")
         parser.print_help(sys.stderr)
         sys.exit(1)
-    return args.inp, args.out
+    if not isinstance(args.prim, str):
+        print("Error: missing primitive")
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+    assert args.prim == "dsp" or args.prim == "lut"
+    return args.inp, args.out, args.prim
 
 
 if __name__ == "__main__":
-    inp, out = parse_args()
-    LUTCOLUMNS = []
-    DSPCOLUMNS = [0, 1, 2, 3, 4]
-    DSPSPERCOL = 72
-    LUTSPERCOL = 1
+    inp, out, prim = parse_args()
+    dsp_col = [0, 1, 2, 3, 4]
+    lut_col = [0, 1, 2]
+    dsp_col_length = 72
+    lut_col_length = 30
+    dsp_row = list(range(0, dsp_col_length))
+    lut_row = list(range(0, lut_col_length))
     with open(inp, "r") as f:
-        place(f.read(), LUTCOLUMNS, DSPCOLUMNS, LUTSPERCOL, DSPSPERCOL)
+        luts, dsps = parse(f.read())
+        inputs = dsps if prim == "dsp" else luts
+        col = dsp_col if prim == "dsp" else lut_col
+        row = dsp_row if prim == "dsp" else lut_row
+        locs = placeonce(inputs, prim, col, row)
+        for k, v in locs.items():
+            print("{},{},{}".format(k, v[0], v[1]))

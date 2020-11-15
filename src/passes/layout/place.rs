@@ -22,7 +22,7 @@ pub struct PlacerOutput {
 impl FromStr for PlacerOutput {
     type Err = ParseIntError;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let values: Vec<&str> = input.split(",").collect();
+        let values: Vec<&str> = input.split(',').collect();
         match values.len() {
             3 => {
                 let id = values[0].parse::<u32>()?;
@@ -30,7 +30,7 @@ impl FromStr for PlacerOutput {
                 let y = values[2].parse::<u32>()?;
                 Ok(PlacerOutput::new(id, x, y))
             }
-            _ => panic!("Error: {} is not valid placer output format", input),
+            _ => panic!("{} is not valid placer output format", input),
         }
     }
 }
@@ -73,6 +73,7 @@ impl fmt::Display for PlacerOutput {
 
 #[derive(Clone, Debug)]
 pub struct Placer {
+    pub prim: Prim,
     pub counter: u32,
     pub var: HashMap<String, u32>,
     pub num: HashMap<u32, String>,
@@ -83,6 +84,7 @@ pub struct Placer {
 impl Default for Placer {
     fn default() -> Self {
         Placer {
+            prim: Prim::Lut,
             counter: 0,
             var: HashMap::new(),
             num: HashMap::new(),
@@ -93,8 +95,23 @@ impl Default for Placer {
 }
 
 impl Placer {
+    fn new(prim: Prim) -> Self {
+        Placer {
+            prim,
+            counter: 0,
+            var: HashMap::new(),
+            num: HashMap::new(),
+            inputs: Vec::new(),
+            outputs: HashMap::new(),
+        }
+    }
+
     pub fn counter(&self) -> u32 {
         self.counter
+    }
+
+    pub fn prim(&self) -> &Prim {
+        &self.prim
     }
 
     pub fn inputs(&self) -> &Vec<PlacerInput> {
@@ -145,6 +162,8 @@ impl Placer {
         let output = Command::new("python3")
             .arg(bin)
             .arg(&filepath)
+            .arg("-p")
+            .arg(self.prim().to_string())
             .output()
             .expect("failed to execute place.py");
         let res = String::from_utf8_lossy(&output.stdout).to_string();
@@ -155,17 +174,17 @@ impl Placer {
     }
 }
 
-pub fn place_basic(prog: &Prog) -> Prog {
+pub fn place_basic(prog: &Prog, prim: Prim) -> Prog {
     let mut new_prog = Prog::new_with_signature(prog.signature().clone());
-    let mut placer = Placer::default();
+    let mut placer = Placer::new(prim.clone());
     for instr in prog.body() {
-        if instr.is_phy() {
+        if instr.is_phy() && *instr.phy().loc().prim() == prim {
             placer.add_instr(instr.phy());
         }
     }
     placer.run();
     for instr in prog.body() {
-        if instr.is_phy() {
+        if instr.is_phy() && *instr.phy().loc().prim() == prim {
             if let Some(output) = placer.lookup_output(&instr.dst().id()) {
                 let prim = instr.phy().loc().prim().clone();
                 let loc = Loc::new_with_xy(prim, output.x(), output.y());
