@@ -306,6 +306,10 @@ impl InstrStd {
         self.params.push(expr);
     }
 
+    pub fn set_param(&mut self, expr: Expr, index: usize) {
+        self.params[index] = expr;
+    }
+
     pub fn clear_params(&mut self) {
         self.params.clear();
     }
