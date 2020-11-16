@@ -45,7 +45,7 @@ op_std = {
 
 instr_std = { expr ~ "=" ~ op_std ~ attrs? ~ params? ~ ";" }
 
-instr = { instr_phy | instr_std }
+instr = { instr_std | instr_phy }
 
 instrs = { instr ~ (instr)* }
 
