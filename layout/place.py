@@ -104,7 +104,7 @@ if __name__ == "__main__":
     dsp_col = [0, 1, 2, 3, 4]
     lut_col = [0, 1, 2]
     dsp_col_length = 72
-    lut_col_length = 30
+    lut_col_length = 72
     dsp_row = list(range(0, dsp_col_length))
     lut_row = list(range(0, lut_col_length))
     with open(inp, "r") as f:
