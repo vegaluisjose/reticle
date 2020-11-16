@@ -1,0 +1,12 @@
+def fsm(start: bool, done: bool) -> (state: i8) {
+    t0: i8 = const[0];
+    t1: i8 = const[1];
+    t2: i8 = lut_mux_i8_r1[0](t5, t1, t7, t9) @lut(??, ??);
+    t3: bool = lut_eq8_bool_r0(t2, t0) @lut(??, ??);
+    t4: bool = lut_eq8_bool_r0(t2, t1) @lut(??, ??);
+    t5: bool = lut_and_bool_r0(t3, start) @lut(??, ??);
+    t6: bool = lut_and_bool_r0(t4, done) @lut(??, ??);
+    t7: i8 = lut_mux_i8_r0(t6, t0, t2) @lut(??, ??);
+    t9: bool = lut_or_bool_r0(t5, t6) @lut(??, ??);
+    state: i8 = id(t2);
+}
