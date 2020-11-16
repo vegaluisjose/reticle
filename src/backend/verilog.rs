@@ -130,6 +130,48 @@ impl From<lang::InstrPrim> for Vec<verilog::Stmt> {
                     stmts.push(verilog::Stmt::from(assign));
                 }
             }
+            lang::PrimOp::Or => {
+                for ((a, b), y) in lhs.iter().zip(rhs.iter()).zip(res.iter()) {
+                    let ar = Expr::new_ref(a);
+                    let br = Expr::new_ref(b);
+                    let yr = Expr::new_ref(y);
+                    let or = verilog::Expr::new_bit_or(ar, br);
+                    let assign = verilog::Parallel::Assign(yr, or);
+                    stmts.push(verilog::Stmt::from(assign));
+                }
+            }
+            lang::PrimOp::And => {
+                for ((a, b), y) in lhs.iter().zip(rhs.iter()).zip(res.iter()) {
+                    let ar = Expr::new_ref(a);
+                    let br = Expr::new_ref(b);
+                    let yr = Expr::new_ref(y);
+                    let and = verilog::Expr::new_bit_and(ar, br);
+                    let assign = verilog::Parallel::Assign(yr, and);
+                    stmts.push(verilog::Stmt::from(assign));
+                }
+            }
+            lang::PrimOp::Equal => {
+                for ((a, b), y) in lhs.iter().zip(rhs.iter()).zip(res.iter()) {
+                    let ar = Expr::new_ref(a);
+                    let br = Expr::new_ref(b);
+                    let yr = Expr::new_ref(y);
+                    let equal = verilog::Expr::new_eq(ar, br);
+                    let assign = verilog::Parallel::Assign(yr, equal);
+                    stmts.push(verilog::Stmt::from(assign));
+                }
+            }
+            lang::PrimOp::Mux => {
+                let cond: Vec<verilog::Id> = instr.indexed_param(0).clone().into();
+                let tru: Vec<verilog::Id> = instr.indexed_param(1).clone().into();
+                let fal: Vec<verilog::Id> = instr.indexed_param(2).clone().into();
+                let cr = Expr::new_ref(&cond[0]);
+                let ar = Expr::new_ref(&tru[0]);
+                let br = Expr::new_ref(&fal[0]);
+                let yr = Expr::new_ref(&res[0]);
+                let mux = verilog::Expr::new_mux(cr, ar, br);
+                let assign = verilog::Parallel::Assign(yr, mux);
+                stmts.push(verilog::Stmt::from(assign));
+            }
             lang::PrimOp::Reg => {
                 let en = Expr::new_ref(&instr.indexed_param(1).id());
                 for (i, (a, y)) in lhs.iter().zip(res.iter()).enumerate() {
