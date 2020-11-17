@@ -153,9 +153,6 @@ pub fn tree_selection(descriptor: &Descriptor, input: &Tree) -> Tree {
         if let Some(node) = input.graph.node_weight(ix) {
             if !node.is_input() {
                 for tile in descriptor.tiles.iter() {
-                    // if tile.instr().op().as_str() == "lut_fsm3" {
-                    //     println!("{}", tile.pattern());
-                    // }
                     let (is_match, cur_cost) = tree_match(tile, &output, ix);
                     if is_match {
                         let pat_cost = tile.cost();
