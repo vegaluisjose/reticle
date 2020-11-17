@@ -1,4 +1,4 @@
-use crate::asm::ast::{InstrPhy, Loc, Prim, Ty};
+use crate::asm::ast::{InstrPhy, Loc, Prim};
 use crate::backend::target::spec::*;
 use crate::backend::target::*;
 use crate::passes::select::tree::{Tree, TreeNode, TreeOp, TreeTy};
@@ -6,7 +6,7 @@ use std::str::FromStr;
 
 impl From<SpecInstr> for InstrPhy {
     fn from(spec_instr: SpecInstr) -> Self {
-        let ty = Ty::from_str(&spec_instr.ty()).unwrap();
+        let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
         let loc = Loc::new(Prim::from_str(&spec_instr.loc()).unwrap());
         let mut instr = InstrPhy::new(loc);
         instr.set_op(&spec_instr.name());
@@ -36,9 +36,9 @@ impl From<SpecInstr> for Tree {
                     let dst_id = cnt.to_string();
                     tree.add_edge(&src_id, &dst_id);
                 }
-                SpecExpr::UnOp(op, input) => {
+                SpecExpr::UnOp(ty, op, input) => {
                     let name = cnt.to_string();
-                    let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
+                    let ty = TreeTy::from_str(&ty).unwrap();
                     let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
@@ -58,9 +58,9 @@ impl From<SpecInstr> for Tree {
                     stack_id.push(cnt);
                     stack_node.push(input.as_ref().clone());
                 }
-                SpecExpr::BinOp(op, lhs, rhs) => {
+                SpecExpr::BinOp(ty, op, lhs, rhs) => {
                     let name = cnt.to_string();
-                    let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
+                    let ty = TreeTy::from_str(&ty).unwrap();
                     let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root
@@ -82,9 +82,9 @@ impl From<SpecInstr> for Tree {
                     stack_node.push(rhs.as_ref().clone());
                     stack_node.push(lhs.as_ref().clone());
                 }
-                SpecExpr::TerOp(op, con, tru, fal) => {
+                SpecExpr::TerOp(ty, op, con, tru, fal) => {
                     let name = cnt.to_string();
-                    let ty = TreeTy::from_str(&spec_instr.ty()).unwrap();
+                    let ty = TreeTy::from_str(&ty).unwrap();
                     let op = TreeOp::from_str(&op).unwrap();
                     let node = if cnt == 0 {
                         // root

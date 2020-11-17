@@ -53,15 +53,26 @@ impl SpecInstr {
         self.cost.area()
     }
 
-    pub fn ty(&self) -> String {
-        self.ty.to_string()
-    }
-
     pub fn loc(&self) -> String {
         self.loc.to_string()
     }
 
     pub fn expr(&self) -> &SpecExpr {
         &self.expr
+    }
+
+    pub fn ty(&self) -> String {
+        self.expr().ty()
+    }
+}
+
+impl SpecExpr {
+    pub fn ty(&self) -> String {
+        match self {
+            SpecExpr::Input(s) => s.to_string(),
+            SpecExpr::UnOp(s, _, _) => s.to_string(),
+            SpecExpr::BinOp(s, _, _, _) => s.to_string(),
+            SpecExpr::TerOp(s, _, _, _, _) => s.to_string(),
+        }
     }
 }
