@@ -4,7 +4,7 @@
          "name":"lut_fsm3",
          "cost": {"delay":0, "area": 1},
          "loc":"lut",
-         "expr":["i2", "mux", ["bool", "and", "bool", "bool"], "i2", "i2"]
+         "expr":["i2", "reg", ["i2", "mux", ["bool", "and", ["bool", "eq", "i2", "i2"], "bool"], "i2", ["i2", "mux", ["bool", "and", ["bool", "eq", "i2", "i2"], "bool"], "i2", ["i2", "mux", ["bool", "and", ["bool", "eq", "i2", "i2"], "bool"], "i2", "i2"]]], "bool"]
       }
     ]
  }
