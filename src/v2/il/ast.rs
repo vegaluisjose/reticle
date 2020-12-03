@@ -14,7 +14,7 @@ pub enum Ty {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct ExprTup {
-    pub vals: Vec<Expr>,
+    pub exprs: Vec<Expr>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

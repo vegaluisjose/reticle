@@ -39,11 +39,25 @@ impl ILParser {
         ))
     }
 
+    fn name_or_val(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [name(name)] => name,
+            [val(val)] => val,
+        ))
+    }
+
+    fn expr_tup(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [name_or_val(exprs)..] => Expr::from(ExprTup{ exprs: exprs.collect()}),
+        ))
+    }
+
     fn file(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [name(name), _] => name,
-            [val(val), _] => val,
+            [expr_tup(expr), _] => expr,
         ))
     }
 }

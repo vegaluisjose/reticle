@@ -1,5 +1,5 @@
 use reticle::v2::il::parser::parse;
 
 fn main() {
-    parse("a:i8");
+    parse("a:i8, b:i8");
 }
