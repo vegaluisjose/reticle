@@ -1,7 +1,5 @@
-use reticle::v2::il::ast::Ty;
-use std::str::FromStr;
+use reticle::v2::il::parser::parse_from_file;
 
 fn main() {
-    let x = Ty::from_str("i8");
-    println!("{:?}", x);
+    parse_from_file("sample.ret");
 }
