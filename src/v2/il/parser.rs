@@ -39,25 +39,32 @@ impl ILParser {
         ))
     }
 
-    fn name_or_val(input: Node) -> Result<Expr> {
+    fn tup_name(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [name(name)] => name,
-            [val(val)] => val,
+            [name(names)..] => Expr::from(ExprTup{ exprs: names.collect()}),
         ))
     }
 
-    fn expr_tup(input: Node) -> Result<Expr> {
+    fn tup_val(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [name_or_val(exprs)..] => Expr::from(ExprTup{ exprs: exprs.collect()}),
+            [val(vals)..] => Expr::from(ExprTup{ exprs: vals.collect()}),
+        ))
+    }
+
+    fn io(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [name(name)] => name,
+            [tup_name(tup)] => tup,
         ))
     }
 
     fn file(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [expr_tup(expr), _] => expr,
+            [io(io), _] => io,
         ))
     }
 }

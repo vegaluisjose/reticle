@@ -18,8 +18,10 @@ val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
 name = ${ id ~ ":" ~ ty }
 
-name_or_val = { name | val }
+tup_name = { (name ~ ("," ~ name)*)? }
 
-expr_tup = { (name_or_val ~ ("," ~ name_or_val)*)? }
+tup_val = { (val ~ ("," ~ val)*)? }
 
-file = { SOI ~ expr_tup ~ EOI }
+io = { name | "(" ~ tup_name ~ ")" }
+
+file = { SOI ~ io ~ EOI }
