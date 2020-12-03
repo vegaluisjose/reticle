@@ -16,7 +16,7 @@ ty = ${ vector | int | bool }
 
 val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
-name = ${ id ~ ":" ~ ty }
+name = { id ~ ":" ~ ty }
 
 tup_name = { (name ~ ("," ~ name)*)? }
 
@@ -24,4 +24,8 @@ tup_val = { (val ~ ("," ~ val)*)? }
 
 io = { name | "(" ~ tup_name ~ ")" }
 
-file = { SOI ~ io ~ EOI }
+attrs = _{ "[" ~ tup_val ~ "]" }
+
+instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ ";" }
+
+file = { SOI ~ instr ~ EOI }

@@ -104,6 +104,13 @@ impl FromStr for WireOp {
     }
 }
 
+impl FromStr for CallOp {
+    type Err = String;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Ok(CallOp::Op(input.to_string()))
+    }
+}
+
 impl FromStr for Prim {
     type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {

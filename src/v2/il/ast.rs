@@ -12,7 +12,7 @@ pub enum Ty {
     Vector(Rc<Ty>, u64),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Default)]
 pub struct ExprTup {
     pub exprs: Vec<Expr>,
 }
@@ -60,6 +60,11 @@ pub enum CompOp {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum CallOp {
+    Op(Id),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrWire {
     pub op: WireOp,
     pub dst: Expr,
@@ -78,7 +83,7 @@ pub struct InstrComp {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrCall {
-    pub op: Id,
+    pub op: CallOp,
     pub dst: Expr,
     pub args: Expr,
 }

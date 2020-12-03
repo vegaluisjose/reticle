@@ -61,10 +61,47 @@ impl ILParser {
         ))
     }
 
-    fn file(input: Node) -> Result<Expr> {
+    fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [io(io), _] => io,
+            [io(dst), id(op)] => {
+                let wire = WireOp::from_str(&op);
+                let comp = CompOp::from_str(&op);
+                match (wire, comp) {
+                    (Ok(op), Err(_)) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attrs: Expr::Tup(ExprTup::default()),
+                            args: Expr::Tup(ExprTup::default()),
+                        }
+                    ),
+                    (Err(_), Ok(op)) => Instr::from(
+                        InstrComp {
+                            op,
+                            dst,
+                            attrs: Expr::Tup(ExprTup::default()),
+                            args: Expr::Tup(ExprTup::default()),
+                            prim: Prim::Var,
+                        }
+                    ),
+                    (Err(_), Err(_)) => Instr::from(
+                        InstrCall {
+                            op: CallOp::from_str(&op).unwrap(),
+                            dst,
+                            args: Expr::Tup(ExprTup::default())
+                        }
+                    ),
+                    (_, _) => panic!(format!("Error: {} is not valid operation", &op)),
+                }
+            }
+        ))
+    }
+
+    fn file(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr(instr), _] => instr,
         ))
     }
 }
