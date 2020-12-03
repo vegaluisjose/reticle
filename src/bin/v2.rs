@@ -1,5 +1,5 @@
-use reticle::v2::il::parser::parse_from_file;
+use reticle::v2::il::parser::parse;
 
 fn main() {
-    parse_from_file("sample.ret");
+    parse("a:i8");
 }

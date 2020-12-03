@@ -23,18 +23,27 @@ impl ILParser {
         Ok(input.as_str().to_string())
     }
 
-    fn num(input: Node) -> Result<i64> {
-        Ok(input.as_str().parse::<i64>().unwrap())
-    }
-
     fn ty(input: Node) -> Result<Ty> {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
 
-    fn file(input: Node) -> Result<Ty> {
+    fn val(input: Node) -> Result<Expr> {
+        let val = input.as_str().parse::<i64>().unwrap();
+        Ok(Expr::Val(val))
+    }
+
+    fn name(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [ty(ty), _] => ty,
+            [id(id), ty(ty)] => Expr::Name(id, ty)
+        ))
+    }
+
+    fn file(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [name(name), _] => name,
+            [val(val), _] => val,
         ))
     }
 }
@@ -43,8 +52,8 @@ impl ILParser {
 pub fn parse(input_str: &str) {
     let inputs = ILParser::parse(Rule::file, input_str).expect("Error: parsing input");
     let input = inputs.single().expect("Error: parsing root");
-    let ty = ILParser::file(input).expect("Error: parsing file");
-    println!("{:?}", ty);
+    let prog = ILParser::file(input).expect("Error: parsing file");
+    println!("{:?}", prog);
 }
 
 // pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {

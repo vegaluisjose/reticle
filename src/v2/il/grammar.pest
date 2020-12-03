@@ -6,14 +6,18 @@ sep = _{ "_" | "-"}
 
 id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
-num = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
-
 int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
 bool = @{ ASCII_ALPHA_LOWER+ }
 
 vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
-ty = { vector | int | bool }
+ty = ${ vector | int | bool }
 
-file = { SOI ~ ty ~ EOI }
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+
+name = ${ id ~ ":" ~ ty }
+
+name_or_val = _{ name | val }
+
+file = { SOI ~ name_or_val ~ EOI }

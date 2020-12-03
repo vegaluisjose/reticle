@@ -13,10 +13,15 @@ pub enum Ty {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct ExprTup {
+    pub vals: Vec<Expr>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Expr {
-    Int(i64),
+    Val(i64),
     Name(Id, Ty),
-    Tuple(Vec<Expr>),
+    Tup(ExprTup),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
