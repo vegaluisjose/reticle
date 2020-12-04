@@ -26,6 +26,10 @@ io = { name | "(" ~ tup_name ~ ")" }
 
 attrs = _{ "[" ~ tup_val ~ "]" }
 
+resource = { "??" | id }
+
+hint = _{ "@" ~ resource }
+
 instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ ";" }
 
 file = { SOI ~ instr ~ EOI }

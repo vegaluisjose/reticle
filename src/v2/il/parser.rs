@@ -27,6 +27,10 @@ impl ILParser {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
 
+    fn resource(input: Node) -> Result<Prim> {
+        Ok(Prim::from_str(input.as_str()).unwrap())
+    }
+
     fn val(input: Node) -> Result<Expr> {
         let val = input.as_str().parse::<i64>().unwrap();
         Ok(Expr::Val(val))
@@ -104,7 +108,7 @@ impl ILParser {
                     ),
                     (Err(_), Err(_)) => Instr::from(
                         InstrCall {
-                            op: CallOp::from_str(&op).unwrap(),
+                            op: CallOp::from_str(&opcode).unwrap(),
                             dst,
                             args,
                         }
