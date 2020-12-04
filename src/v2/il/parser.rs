@@ -66,9 +66,9 @@ impl ILParser {
         let instr = input.as_str().to_string();
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), id(op), tup_val(attrs)] => {
-                let wire = WireOp::from_str(&op);
-                let comp = CompOp::from_str(&op);
+            [io(dst), id(opcode), tup_val(attrs)] => {
+                let wire = WireOp::from_str(&opcode);
+                let comp = CompOp::from_str(&opcode);
                 match (wire, comp) {
                     (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
@@ -81,9 +81,9 @@ impl ILParser {
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(op), io(args)] => {
-                let wire = WireOp::from_str(&op);
-                let comp = CompOp::from_str(&op);
+            [io(dst), id(opcode), io(args)] => {
+                let wire = WireOp::from_str(&opcode);
+                let comp = CompOp::from_str(&opcode);
                 match (wire, comp) {
                     (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
@@ -112,9 +112,9 @@ impl ILParser {
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(op), tup_val(attrs), io(args)] => {
-                let wire = WireOp::from_str(&op);
-                let comp = CompOp::from_str(&op);
+            [io(dst), id(opcode), tup_val(attrs), io(args)] => {
+                let wire = WireOp::from_str(&opcode);
+                let comp = CompOp::from_str(&opcode);
                 match (wire, comp) {
                     (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
