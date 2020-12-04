@@ -16,7 +16,7 @@ ty = ${ vector | int | bool }
 
 val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
-name = { id ~ ":" ~ ty }
+name = { id ~ ":" ~ ty | id }
 
 tup_name = { (name ~ ("," ~ name)*)? }
 
