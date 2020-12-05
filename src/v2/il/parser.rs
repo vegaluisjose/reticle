@@ -164,10 +164,27 @@ impl ILParser {
         ))
     }
 
-    fn file(input: Node) -> Result<Instr> {
+    fn body(input: Node) -> Result<Vec<Instr>> {
         Ok(match_nodes!(
             input.into_children();
-            [instr(instr), _] => instr,
+            [instr(instr)..] => instr.collect(),
+        ))
+    }
+
+    fn def(input: Node) -> Result<Def> {
+        Ok(match_nodes!(
+            input.into_children();
+            [body(body)] => Def {
+                sig: Sig::default(),
+                body,
+            },
+        ))
+    }
+
+    fn file(input: Node) -> Result<Def> {
+        Ok(match_nodes!(
+            input.into_children();
+            [def(def), _] => def,
         ))
     }
 }

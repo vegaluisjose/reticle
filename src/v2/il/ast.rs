@@ -96,7 +96,7 @@ pub enum Instr {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct Signature {
+pub struct Sig {
     pub id: Id,
     pub inputs: Expr,
     pub outputs: Expr,
@@ -104,7 +104,7 @@ pub struct Signature {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Def {
-    pub sig: Signature,
+    pub sig: Sig,
     pub body: Vec<Instr>,
 }
 

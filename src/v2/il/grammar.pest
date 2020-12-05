@@ -32,4 +32,8 @@ hint = _{ "@" ~ resource }
 
 instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
 
-file = { SOI ~ instr ~ EOI }
+body = { (instr ~ ("," ~ instr)*)? }
+
+def = { body }
+
+file = { SOI ~ def ~ EOI }
