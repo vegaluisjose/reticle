@@ -9,3 +9,9 @@ impl Default for Sig {
         }
     }
 }
+
+impl Default for Expr {
+    fn default() -> Self {
+        Expr::Tup(ExprTup::default())
+    }
+}

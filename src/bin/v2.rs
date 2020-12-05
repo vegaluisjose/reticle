@@ -1,5 +1,5 @@
 use reticle::v2::il::parser::parse;
 
 fn main() {
-    parse("a:i8 = sll(x);");
+    parse("main -> (y:i8) { y:i8 = const[-3]; }");
 }

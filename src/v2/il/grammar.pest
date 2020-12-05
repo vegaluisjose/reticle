@@ -26,14 +26,18 @@ io = { name | "(" ~ tup_name ~ ")" }
 
 attrs = _{ "[" ~ tup_val ~ "]" }
 
-resource = { "??" | id }
+resrc = { "??" | id }
 
-hint = _{ "@" ~ resource }
+hint = _{ "@" ~ resrc }
 
 instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
 
 body = { (instr ~ ("," ~ instr)*)? }
 
-def = { body }
+sig = { id ~ io? ~ "->" ~ io }
 
-file = { SOI ~ def ~ EOI }
+def = { sig ~ "{" ~ body ~ "}" }
+
+prog = { (def ~ ("," ~ def)*)? }
+
+file = { SOI ~ prog ~ EOI }

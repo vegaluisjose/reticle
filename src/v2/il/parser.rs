@@ -27,7 +27,7 @@ impl ILParser {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
 
-    fn resource(input: Node) -> Result<Prim> {
+    fn resrc(input: Node) -> Result<Prim> {
         Ok(Prim::from_str(input.as_str()).unwrap())
     }
 
@@ -79,7 +79,7 @@ impl ILParser {
                             op,
                             dst,
                             attrs,
-                            args: Expr::Tup(ExprTup::default()),
+                            args: Expr::default(),
                         }
                     ),
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
@@ -93,7 +93,7 @@ impl ILParser {
                         InstrWire {
                             op,
                             dst,
-                            attrs: Expr::Tup(ExprTup::default()),
+                            attrs: Expr::default(),
                             args,
                         }
                     ),
@@ -101,7 +101,7 @@ impl ILParser {
                         InstrComp {
                             op,
                             dst,
-                            attrs: Expr::Tup(ExprTup::default()),
+                            attrs: Expr::default(),
                             args,
                             prim: Prim::Var,
                         }
@@ -140,17 +140,17 @@ impl ILParser {
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(opcode), io(args), resource(prim)] => {
+            [io(dst), id(opcode), io(args), resrc(prim)] => {
                 let comp = CompOp::from_str(&opcode);
                 Instr::from(InstrComp {
                     op: comp.unwrap(),
                     dst,
-                    attrs: Expr::Tup(ExprTup::default()),
+                    attrs: Expr::default(),
                     args,
                     prim,
                 })
             },
-            [io(dst), id(opcode), tup_val(attrs), io(args), resource(prim)] => {
+            [io(dst), id(opcode), tup_val(attrs), io(args), resrc(prim)] => {
                 let comp = CompOp::from_str(&opcode);
                 Instr::from(InstrComp {
                     op: comp.unwrap(),
@@ -171,20 +171,50 @@ impl ILParser {
         ))
     }
 
+    fn sig(input: Node) -> Result<Sig> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), io(outputs)] => Sig {
+                id,
+                inputs: Expr::default(),
+                outputs,
+            },
+            [id(id), io(inputs), io(outputs)] => Sig {
+                id,
+                inputs,
+                outputs,
+            },
+        ))
+    }
+
     fn def(input: Node) -> Result<Def> {
         Ok(match_nodes!(
             input.into_children();
-            [body(body)] => Def {
-                sig: Sig::default(),
+            [sig(sig), body(body)] => Def {
+                sig,
                 body,
             },
         ))
     }
 
-    fn file(input: Node) -> Result<Def> {
+    fn prog(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [def(def), _] => def,
+            [def(def)..] => {
+                let mut prog = Prog::default();
+                let defs: Vec<Def> = def.collect();
+                for d in defs {
+                    prog.add(&d.id(), d.clone());
+                }
+                prog
+            }
+        ))
+    }
+
+    fn file(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [prog(prog), _] => prog,
         ))
     }
 }

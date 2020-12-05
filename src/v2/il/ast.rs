@@ -108,7 +108,7 @@ pub struct Def {
     pub body: Vec<Instr>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Prog {
-    pub def_map: HashMap<Id, Def>,
+    pub map: HashMap<Id, Def>,
 }
