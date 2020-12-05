@@ -219,16 +219,13 @@ impl ILParser {
     }
 }
 
-// pub fn parse(input_str: &str) -> Prog {
-pub fn parse(input_str: &str) {
+pub fn parse(input_str: &str) -> Prog {
     let inputs = ILParser::parse(Rule::file, input_str).expect("Error: parsing input");
     let input = inputs.single().expect("Error: parsing root");
-    let prog = ILParser::file(input).expect("Error: parsing file");
-    println!("{:?}", prog);
+    ILParser::file(input).expect("Error: parsing file")
 }
 
-// pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
-pub fn parse_from_file<P: AsRef<Path>>(path: P) {
+pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
     let content = read_to_string(path);
     parse(&content)
 }

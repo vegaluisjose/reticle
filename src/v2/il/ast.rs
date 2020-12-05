@@ -110,5 +110,5 @@ pub struct Def {
 
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Prog {
-    pub map: HashMap<Id, Def>,
+    pub defs: HashMap<Id, Def>,
 }
