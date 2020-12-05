@@ -140,7 +140,27 @@ impl ILParser {
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [_, _] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+            [io(dst), id(opcode), io(args), resource(prim)] => {
+                let comp = CompOp::from_str(&opcode);
+                Instr::from(InstrComp {
+                    op: comp.unwrap(),
+                    dst,
+                    attrs: Expr::Tup(ExprTup::default()),
+                    args,
+                    prim,
+                })
+            },
+            [io(dst), id(opcode), tup_val(attrs), io(args), resource(prim)] => {
+                let comp = CompOp::from_str(&opcode);
+                Instr::from(InstrComp {
+                    op: comp.unwrap(),
+                    dst,
+                    attrs,
+                    args,
+                    prim,
+                })
+            },
+            [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
         ))
     }
 
