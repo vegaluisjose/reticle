@@ -28,6 +28,9 @@ pub trait PrettyHelper<'a>: Sized {
     fn braces(self) -> Self {
         self.surround("{", "}")
     }
+    fn comps(self) -> Self {
+        self.surround("<", ">")
+    }
     fn quotes(self) -> Self {
         self.surround("\"", "\"")
     }
