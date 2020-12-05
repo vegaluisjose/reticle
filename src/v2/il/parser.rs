@@ -204,7 +204,7 @@ impl ILParser {
                 let mut prog = Prog::default();
                 let defs: Vec<Def> = def.collect();
                 for d in defs {
-                    prog.add(&d.id(), d.clone());
+                    prog.insert(&d.id(), d.clone());
                 }
                 prog
             }

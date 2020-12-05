@@ -22,7 +22,11 @@ impl Prog {
         &self.defs
     }
 
-    pub fn add(&mut self, name: &str, def: Def) {
+    pub fn get(&self, name: &str) -> &Def {
+        self.defs.get(name).expect("Error: function not found")
+    }
+
+    pub fn insert(&mut self, name: &str, def: Def) {
         self.defs.insert(name.to_string(), def);
     }
 }
