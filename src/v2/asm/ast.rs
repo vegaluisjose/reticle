@@ -35,6 +35,8 @@ pub struct InstrAsm {
     pub attr: Expr,
     pub arg: Expr,
     pub loc: Loc,
+    pub area: u32,
+    pub lat: u32,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
