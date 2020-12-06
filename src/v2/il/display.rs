@@ -12,6 +12,17 @@ macro_rules! display {
     };
 }
 
+display!(Ty);
+display!(Prim);
+display!(ExprTup);
+display!(Expr);
+display!(WireOp);
+display!(CompOp);
+display!(CallOp);
+display!(InstrCall);
+display!(InstrComp);
+display!(InstrWire);
+display!(Instr);
 display!(Sig);
 display!(Def);
 display!(Prog);
