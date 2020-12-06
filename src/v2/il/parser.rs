@@ -47,14 +47,14 @@ impl ILParser {
     fn tup_name(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [name(names)..] => Expr::from(ExprTup{ exprs: names.collect()}),
+            [name(names)..] => Expr::from(ExprTup{ expr: names.collect()}),
         ))
     }
 
     fn tup_val(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [val(vals)..] => Expr::from(ExprTup{ exprs: vals.collect()}),
+            [val(vals)..] => Expr::from(ExprTup{ expr: vals.collect()}),
         ))
     }
 
@@ -70,7 +70,7 @@ impl ILParser {
         let instr = input.as_str().to_string();
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), id(opcode), tup_val(attrs)] => {
+            [io(dst), id(opcode), tup_val(attr)] => {
                 let wire = WireOp::from_str(&opcode);
                 let comp = CompOp::from_str(&opcode);
                 match (wire, comp) {
@@ -78,14 +78,14 @@ impl ILParser {
                         InstrWire {
                             op,
                             dst,
-                            attrs,
-                            args: Expr::default(),
+                            attr,
+                            arg: Expr::default(),
                         }
                     ),
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(opcode), io(args)] => {
+            [io(dst), id(opcode), io(arg)] => {
                 let wire = WireOp::from_str(&opcode);
                 let comp = CompOp::from_str(&opcode);
                 match (wire, comp) {
@@ -93,16 +93,16 @@ impl ILParser {
                         InstrWire {
                             op,
                             dst,
-                            attrs: Expr::default(),
-                            args,
+                            attr: Expr::default(),
+                            arg,
                         }
                     ),
                     (Err(_), Ok(op)) => Instr::from(
                         InstrComp {
                             op,
                             dst,
-                            attrs: Expr::default(),
-                            args,
+                            attr: Expr::default(),
+                            arg,
                             prim: Prim::Var,
                         }
                     ),
@@ -110,13 +110,13 @@ impl ILParser {
                         InstrCall {
                             op: CallOp::from_str(&opcode).unwrap(),
                             dst,
-                            args,
+                            arg,
                         }
                     ),
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(opcode), tup_val(attrs), io(args)] => {
+            [io(dst), id(opcode), tup_val(attr), io(arg)] => {
                 let wire = WireOp::from_str(&opcode);
                 let comp = CompOp::from_str(&opcode);
                 match (wire, comp) {
@@ -124,39 +124,39 @@ impl ILParser {
                         InstrWire {
                             op,
                             dst,
-                            attrs,
-                            args,
+                            attr,
+                            arg,
                         }
                     ),
                     (Err(_), Ok(op)) => Instr::from(
                         InstrComp {
                             op,
                             dst,
-                            attrs,
-                            args,
+                            attr,
+                            arg,
                             prim: Prim::Var,
                         }
                     ),
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(opcode), io(args), resrc(prim)] => {
+            [io(dst), id(opcode), io(arg), resrc(prim)] => {
                 let comp = CompOp::from_str(&opcode);
                 Instr::from(InstrComp {
                     op: comp.unwrap(),
                     dst,
-                    attrs: Expr::default(),
-                    args,
+                    attr: Expr::default(),
+                    arg,
                     prim,
                 })
             },
-            [io(dst), id(opcode), tup_val(attrs), io(args), resrc(prim)] => {
+            [io(dst), id(opcode), tup_val(attr), io(arg), resrc(prim)] => {
                 let comp = CompOp::from_str(&opcode);
                 Instr::from(InstrComp {
                     op: comp.unwrap(),
                     dst,
-                    attrs,
-                    args,
+                    attr,
+                    arg,
                     prim,
                 })
             },
@@ -174,15 +174,15 @@ impl ILParser {
     fn sig(input: Node) -> Result<Sig> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), io(outputs)] => Sig {
+            [id(id), io(output)] => Sig {
                 id,
-                inputs: Expr::default(),
-                outputs,
+                input: Expr::default(),
+                output,
             },
-            [id(id), io(inputs), io(outputs)] => Sig {
+            [id(id), io(input), io(output)] => Sig {
                 id,
-                inputs,
-                outputs,
+                input,
+                output,
             },
         ))
     }

@@ -14,7 +14,7 @@ pub enum Ty {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Default)]
 pub struct ExprTup {
-    pub exprs: Vec<Expr>,
+    pub expr: Vec<Expr>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -68,16 +68,16 @@ pub enum CallOp {
 pub struct InstrWire {
     pub op: WireOp,
     pub dst: Expr,
-    pub attrs: Expr,
-    pub args: Expr,
+    pub attr: Expr,
+    pub arg: Expr,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrComp {
     pub op: CompOp,
     pub dst: Expr,
-    pub attrs: Expr,
-    pub args: Expr,
+    pub attr: Expr,
+    pub arg: Expr,
     pub prim: Prim,
 }
 
@@ -85,7 +85,7 @@ pub struct InstrComp {
 pub struct InstrCall {
     pub op: CallOp,
     pub dst: Expr,
-    pub args: Expr,
+    pub arg: Expr,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -98,8 +98,8 @@ pub enum Instr {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Sig {
     pub id: Id,
-    pub inputs: Expr,
-    pub outputs: Expr,
+    pub input: Expr,
+    pub output: Expr,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -110,5 +110,5 @@ pub struct Def {
 
 #[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Prog {
-    pub defs: HashMap<Id, Def>,
+    pub def: HashMap<Id, Def>,
 }

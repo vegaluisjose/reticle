@@ -2,11 +2,11 @@ use crate::v2::il::ast::*;
 use std::collections::HashMap;
 
 impl ExprTup {
-    pub fn exprs(&self) -> &Vec<Expr> {
-        &self.exprs
+    pub fn expr(&self) -> &Vec<Expr> {
+        &self.expr
     }
     pub fn is_empty(&self) -> bool {
-        self.exprs.is_empty()
+        self.expr.is_empty()
     }
 }
 
@@ -25,15 +25,60 @@ impl Expr {
     }
 }
 
+impl InstrCall {
+    pub fn op(&self) -> &CallOp {
+        &self.op
+    }
+    pub fn dst(&self) -> &Expr {
+        &self.dst
+    }
+    pub fn arg(&self) -> &Expr {
+        &self.arg
+    }
+}
+
+impl InstrComp {
+    pub fn op(&self) -> &CompOp {
+        &self.op
+    }
+    pub fn dst(&self) -> &Expr {
+        &self.dst
+    }
+    pub fn attr(&self) -> &Expr {
+        &self.attr
+    }
+    pub fn arg(&self) -> &Expr {
+        &self.arg
+    }
+    pub fn prim(&self) -> &Prim {
+        &self.prim
+    }
+}
+
+impl InstrWire {
+    pub fn op(&self) -> &WireOp {
+        &self.op
+    }
+    pub fn dst(&self) -> &Expr {
+        &self.dst
+    }
+    pub fn attr(&self) -> &Expr {
+        &self.attr
+    }
+    pub fn arg(&self) -> &Expr {
+        &self.arg
+    }
+}
+
 impl Sig {
     pub fn id(&self) -> String {
         self.id.to_string()
     }
-    pub fn inputs(&self) -> &Expr {
-        &self.inputs
+    pub fn input(&self) -> &Expr {
+        &self.input
     }
-    pub fn outputs(&self) -> &Expr {
-        &self.outputs
+    pub fn output(&self) -> &Expr {
+        &self.output
     }
 }
 
@@ -44,16 +89,19 @@ impl Def {
     pub fn sig(&self) -> &Sig {
         &self.sig
     }
+    pub fn body(&self) -> &Vec<Instr> {
+        &self.body
+    }
 }
 
 impl Prog {
-    pub fn defs(&self) -> &HashMap<Id, Def> {
-        &self.defs
+    pub fn def(&self) -> &HashMap<Id, Def> {
+        &self.def
     }
     pub fn get(&self, name: &str) -> &Def {
-        self.defs.get(name).expect("Error: function not found")
+        self.def.get(name).expect("Error: function not found")
     }
     pub fn insert(&mut self, name: &str, def: Def) {
-        self.defs.insert(name.to_string(), def);
+        self.def.insert(name.to_string(), def);
     }
 }

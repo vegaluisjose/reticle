@@ -4,8 +4,8 @@ impl Default for Sig {
     fn default() -> Self {
         Sig {
             id: String::new(),
-            inputs: Expr::Tup(ExprTup::default()),
-            outputs: Expr::Tup(ExprTup::default()),
+            input: Expr::Tup(ExprTup::default()),
+            output: Expr::Tup(ExprTup::default()),
         }
     }
 }
