@@ -16,6 +16,16 @@ fn expr_names(expr: &Expr) -> RcDoc<()> {
     }
 }
 
+impl PrettyPrint for Prim {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            Prim::Var => RcDoc::text("??"),
+            Prim::Lut => RcDoc::text("lut"),
+            Prim::Dsp => RcDoc::text("dsp"),
+        }
+    }
+}
+
 impl PrettyPrint for Ty {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
@@ -123,7 +133,22 @@ impl PrettyPrint for InstrWire {
 
 impl PrettyPrint for InstrComp {
     fn to_doc(&self) -> RcDoc<()> {
-        RcDoc::nil()
+        let attr = if self.attr().is_tup() && self.attr().tup().is_empty() {
+            RcDoc::nil()
+        } else {
+            self.attr().to_doc().brackets()
+        };
+        self.dst()
+            .to_doc()
+            .append(RcDoc::space())
+            .append(RcDoc::text("="))
+            .append(RcDoc::space())
+            .append(self.op().to_doc())
+            .append(attr)
+            .append(expr_names(self.arg()))
+            .append(RcDoc::space())
+            .append(RcDoc::text("@"))
+            .append(self.prim().to_doc())
     }
 }
 
