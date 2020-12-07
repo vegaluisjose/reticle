@@ -1,3 +1,3 @@
 pub mod asm;
-pub mod il;
+pub mod ir;
 pub mod tdl;

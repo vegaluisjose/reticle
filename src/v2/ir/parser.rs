@@ -1,5 +1,5 @@
 use crate::util::file::read_to_string;
-use crate::v2::il::ast::*;
+use crate::v2::ir::ast::*;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
 use std::str::FromStr;
@@ -10,7 +10,7 @@ type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 const _GRAMMAR: &str = include_str!("grammar.pest");
 
 #[derive(Parser)]
-#[grammar = "v2/il/grammar.pest"]
+#[grammar = "v2/ir/grammar.pest"]
 struct ILParser;
 
 #[pest_consume::parser]

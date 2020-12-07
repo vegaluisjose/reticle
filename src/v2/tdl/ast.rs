@@ -1,15 +1,15 @@
-use crate::v2::il::ast as il;
+use crate::v2::ir::ast as ir;
 use std::collections::HashMap;
 
-pub type Id = il::Id;
-pub type Ty = il::Ty;
-pub type Prim = il::Prim;
-pub type ExprTup = il::ExprTup;
-pub type Expr = il::Expr;
-pub type WireOp = il::WireOp;
-pub type InstrWire = il::InstrWire;
-pub type InstrComp = il::InstrComp;
-pub type Sig = il::Sig;
+pub type Id = ir::Id;
+pub type Ty = ir::Ty;
+pub type Prim = ir::Prim;
+pub type ExprTup = ir::ExprTup;
+pub type Expr = ir::Expr;
+pub type WireOp = ir::WireOp;
+pub type InstrWire = ir::InstrWire;
+pub type InstrComp = ir::InstrComp;
+pub type Sig = ir::Sig;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Instr {
