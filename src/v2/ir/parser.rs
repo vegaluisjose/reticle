@@ -11,10 +11,10 @@ const _GRAMMAR: &str = include_str!("grammar.pest");
 
 #[derive(Parser)]
 #[grammar = "v2/ir/grammar.pest"]
-struct ILParser;
+pub struct IRParser;
 
 #[pest_consume::parser]
-impl ILParser {
+impl IRParser {
     fn EOI(_input: Node) -> Result<()> {
         Ok(())
     }
@@ -219,13 +219,14 @@ impl ILParser {
     }
 }
 
-pub fn parse(input_str: &str) -> Prog {
-    let inputs = ILParser::parse(Rule::file, input_str).expect("Error: parsing input");
-    let input = inputs.single().expect("Error: parsing root");
-    ILParser::file(input).expect("Error: parsing file")
-}
-
-pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
-    let content = read_to_string(path);
-    parse(&content)
+impl IRParser {
+    pub fn parse_from_str(input_str: &str) -> Result<Prog> {
+        let inputs = IRParser::parse(Rule::file, input_str)?;
+        let input = inputs.single()?;
+        Ok(IRParser::file(input)?)
+    }
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
+        let content = read_to_string(path);
+        IRParser::parse_from_str(&content)
+    }
 }

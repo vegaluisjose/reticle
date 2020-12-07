@@ -1,6 +1,9 @@
 use reticle::v2::asm::parser::AsmParser;
+use reticle::v2::ir::parser::IRParser;
 
 fn main() {
-    let x = AsmParser::parse_from_str("x");
-    println!("{:?}", x);
+    let ir = IRParser::parse_from_str("main -> (y:i8) { y:i8 = const[3]; }");
+    let asm = AsmParser::parse_from_str("x");
+    println!("{}", ir.unwrap());
+    println!("{:?}", asm);
 }
