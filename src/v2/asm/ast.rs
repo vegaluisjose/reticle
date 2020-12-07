@@ -11,9 +11,9 @@ pub type Sig = il::Sig;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum ExprCoord {
-    Var,
-    Name(Id),
-    Lit(u32),
+    Any,
+    Var(Id),
+    Val(u64),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -35,8 +35,8 @@ pub struct InstrAsm {
     pub attr: Expr,
     pub arg: Expr,
     pub loc: Loc,
-    pub area: u32,
-    pub lat: u32,
+    pub area: u64,
+    pub lat: u64,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

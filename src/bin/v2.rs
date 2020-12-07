@@ -1,6 +1,5 @@
-use reticle::v2::il::parser::parse;
+use reticle::v2::asm::parser::parse;
 
 fn main() {
-    let prog = parse("main(a:i8, b:bool) -> (y:i8) { y:i8 = reg[0](a, b); }");
-    println!("{}", prog);
+    parse("x");
 }
