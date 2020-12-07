@@ -7,10 +7,10 @@ use std::str::FromStr;
 pub type Result<T> = std::result::Result<T, Error<Rule>>;
 type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 
-const _GRAMMAR: &str = include_str!("grammar.pest");
+const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(Parser)]
-#[grammar = "v2/asm/grammar.pest"]
+#[grammar = "v2/asm/syntax.pest"]
 pub struct AsmParser;
 
 #[pest_consume::parser]
