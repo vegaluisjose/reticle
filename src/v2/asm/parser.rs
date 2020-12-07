@@ -11,7 +11,7 @@ const _GRAMMAR: &str = include_str!("grammar.pest");
 
 #[derive(Parser)]
 #[grammar = "v2/asm/grammar.pest"]
-struct AsmParser;
+pub struct AsmParser;
 
 #[pest_consume::parser]
 impl AsmParser {
@@ -39,16 +39,14 @@ impl AsmParser {
     }
 }
 
-// pub fn parse(input_str: &str) -> Prog {
-pub fn parse(input_str: &str) {
-    let inputs = AsmParser::parse(Rule::file, input_str).expect("Error: parsing input");
-    let input = inputs.single().expect("Error: parsing root");
-    let e = AsmParser::file(input).expect("Error: parsing file");
-    println!("{:?}", e);
-}
-
-// pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
-pub fn parse_from_file<P: AsRef<Path>>(path: P) {
-    let content = read_to_string(path);
-    parse(&content)
+impl AsmParser {
+    pub fn parse_from_str(input_str: &str) -> Result<ExprCoord> {
+        let inputs = AsmParser::parse(Rule::file, input_str)?;
+        let input = inputs.single()?;
+        Ok(AsmParser::file(input)?)
+    }
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<ExprCoord> {
+        let content = read_to_string(path);
+        AsmParser::parse_from_str(&content)
+    }
 }

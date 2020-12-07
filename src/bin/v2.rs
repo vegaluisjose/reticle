@@ -1,5 +1,6 @@
-use reticle::v2::asm::parser::parse;
+use reticle::v2::asm::parser::AsmParser;
 
 fn main() {
-    parse("x");
+    let x = AsmParser::parse_from_str("x");
+    println!("{:?}", x);
 }
