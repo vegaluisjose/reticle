@@ -27,7 +27,7 @@ impl IRParser {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
 
-    fn resrc(input: Node) -> Result<Prim> {
+    fn prim(input: Node) -> Result<Prim> {
         Ok(Prim::from_str(input.as_str()).unwrap())
     }
 
@@ -140,7 +140,7 @@ impl IRParser {
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
-            [io(dst), id(opcode), io(arg), resrc(prim)] => {
+            [io(dst), id(opcode), io(arg), prim(prim)] => {
                 let comp = CompOp::from_str(&opcode);
                 Instr::from(InstrComp {
                     op: comp.unwrap(),
@@ -150,7 +150,7 @@ impl IRParser {
                     prim,
                 })
             },
-            [io(dst), id(opcode), tup_val(attr), io(arg), resrc(prim)] => {
+            [io(dst), id(opcode), tup_val(attr), io(arg), prim(prim)] => {
                 let comp = CompOp::from_str(&opcode);
                 Instr::from(InstrComp {
                     op: comp.unwrap(),

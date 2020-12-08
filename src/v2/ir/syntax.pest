@@ -26,9 +26,9 @@ io = { name | "(" ~ tup_name ~ ")" }
 
 attrs = _{ "[" ~ tup_val ~ "]" }
 
-resrc = { "??" | id }
+prim = { "??" | id }
 
-hint = _{ "@" ~ resrc }
+hint = _{ "@" ~ prim }
 
 instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
 
