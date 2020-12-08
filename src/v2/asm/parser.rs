@@ -31,21 +31,45 @@ impl AsmParser {
         }
     }
 
-    fn file(input: Node) -> Result<ExprCoord> {
+    fn prim(input: Node) -> Result<Prim> {
+        let prim = Prim::from_str(input.as_str());
+        match prim {
+            Ok(p) => Ok(p),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn loc(input: Node) -> Result<Loc> {
         Ok(match_nodes!(
             input.into_children();
-            [expr_coord(e), _] => e,
+            [prim(prim)] => Loc {
+                prim,
+                x: ExprCoord::Any,
+                y: ExprCoord::Any,
+            },
+            [prim(prim), expr_coord(x), expr_coord(y)] => Loc {
+                prim,
+                x,
+                y,
+            },
+        ))
+    }
+
+    fn file(input: Node) -> Result<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [loc(l), _] => l,
         ))
     }
 }
 
 impl AsmParser {
-    pub fn parse_from_str(input_str: &str) -> Result<ExprCoord> {
+    pub fn parse_from_str(input_str: &str) -> Result<Loc> {
         let inputs = AsmParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
         Ok(AsmParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<ExprCoord> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Loc> {
         let content = read_to_string(path);
         AsmParser::parse_from_str(&content)
     }

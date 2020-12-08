@@ -26,13 +26,13 @@ id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
 // attrs = _{ "[" ~ tup_val ~ "]" }
 
-// resrc = { "??" | id }
+prim = { id }
 
 expr_coord = { "??" | id | ASCII_DIGIT+ }
 
-// hint = { "(" ~ coord ~ "," ~ coord ")" }
+hint = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
-// loc = { "@" ~ prim ~ hint? }
+loc = { "@" ~ prim ~ hint? }
 
 // instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
 
@@ -44,4 +44,4 @@ expr_coord = { "??" | id | ASCII_DIGIT+ }
 
 // prog = { (def ~ ("," ~ def)*)? }
 
-file = { SOI ~ expr_coord ~ EOI }
+file = { SOI ~ loc ~ EOI }
