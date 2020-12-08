@@ -3,7 +3,7 @@ use crate::v2::ir::ast::*;
 use itertools::Itertools;
 use pretty::RcDoc;
 
-fn expr_names(expr: &Expr) -> RcDoc<()> {
+pub fn expr_names(expr: &Expr) -> RcDoc<()> {
     match expr {
         Expr::Val(v) => RcDoc::as_string(v),
         Expr::Var(n, _) => RcDoc::as_string(n),
