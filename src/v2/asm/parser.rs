@@ -119,25 +119,120 @@ impl AsmParser {
                     Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
+            [io(dst), id(opcode), io(arg)] => {
+                let wop = WireOp::from_str(&opcode);
+                match wop {
+                    Ok(op) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attr: Expr::default(),
+                            arg,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), tup_val(attr), io(arg)] => {
+                let wop = WireOp::from_str(&opcode);
+                match wop {
+                    Ok(op) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attr,
+                            arg,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), io(arg), loc(loc)] => {
+                let aop = AsmOp::from_str(&opcode);
+                match aop {
+                    Ok(op) => Instr::from(
+                        InstrAsm {
+                            op,
+                            dst,
+                            attr: Expr::default(),
+                            arg,
+                            loc,
+                            area: 0,
+                            lat: 0,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), tup_val(attr), io(arg), loc(loc)] => {
+                let aop = AsmOp::from_str(&opcode);
+                match aop {
+                    Ok(op) => Instr::from(
+                        InstrAsm {
+                            op,
+                            dst,
+                            attr,
+                            arg,
+                            loc,
+                            area: 0,
+                            lat: 0,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
             [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
         ))
     }
 
-    fn file(input: Node) -> Result<Loc> {
+    fn body(input: Node) -> Result<Vec<Instr>> {
         Ok(match_nodes!(
             input.into_children();
-            [loc(l), _] => l,
+            [instr(instr)..] => instr.collect(),
+        ))
+    }
+
+    fn sig(input: Node) -> Result<Sig> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), io(output)] => Sig {
+                id,
+                input: Expr::default(),
+                output,
+            },
+            [id(id), io(input), io(output)] => Sig {
+                id,
+                input,
+                output,
+            },
+        ))
+    }
+
+    fn prog(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [sig(sig), body(body)] => Prog {
+                sig,
+                body,
+            },
+        ))
+    }
+
+    fn file(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [prog(p), _] => p,
         ))
     }
 }
 
 impl AsmParser {
-    pub fn parse_from_str(input_str: &str) -> Result<Loc> {
+    pub fn parse_from_str(input_str: &str) -> Result<Prog> {
         let inputs = AsmParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
         Ok(AsmParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Loc> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
         let content = read_to_string(path);
         AsmParser::parse_from_str(&content)
     }

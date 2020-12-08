@@ -36,12 +36,10 @@ loc = { "@" ~ prim ~ hint? }
 
 instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ loc? ~ ";" }
 
-// body = { (instr ~ ("," ~ instr)*)? }
+body = { (instr ~ ("," ~ instr)*)? }
 
-// sig = { id ~ io? ~ "->" ~ io }
+sig = { id ~ io? ~ "->" ~ io }
 
-// def = { sig ~ "{" ~ body ~ "}" }
+prog = { sig ~ "{" ~ body ~ "}" }
 
-// prog = { (def ~ ("," ~ def)*)? }
-
-file = { SOI ~ loc ~ EOI }
+file = { SOI ~ prog ~ EOI }
