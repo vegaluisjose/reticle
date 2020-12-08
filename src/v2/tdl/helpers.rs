@@ -1,6 +1,18 @@
 use crate::v2::tdl::ast::*;
 use std::collections::HashMap;
 
+impl Sig {
+    pub fn id(&self) -> String {
+        self.id.to_string()
+    }
+    pub fn input(&self) -> &Expr {
+        &self.input
+    }
+    pub fn output(&self) -> &Expr {
+        &self.output
+    }
+}
+
 impl Def {
     pub fn id(&self) -> String {
         self.sig.id()

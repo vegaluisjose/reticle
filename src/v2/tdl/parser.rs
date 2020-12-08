@@ -31,6 +31,14 @@ impl TDLParser {
         }
     }
 
+    fn cost(input: Node) -> Result<u64> {
+        let val = input.as_str().parse::<u64>();
+        match val {
+            Ok(v) => Ok(v),
+            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+        }
+    }
+
     fn ty(input: Node) -> Result<Ty> {
         let ty = Ty::from_str(input.as_str());
         match ty {
@@ -184,13 +192,11 @@ impl TDLParser {
     fn sig(input: Node) -> Result<Sig> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), io(output)] => Sig {
+            [id(id), prim(prim), cost(area), cost(lat), io(input), io(output)] => Sig {
                 id,
-                input: Expr::default(),
-                output,
-            },
-            [id(id), io(input), io(output)] => Sig {
-                id,
+                prim,
+                area,
+                lat,
                 input,
                 output,
             },
@@ -201,9 +207,6 @@ impl TDLParser {
         Ok(match_nodes!(
             input.into_children();
             [sig(sig), body(body)] => Def {
-                prim: Prim::Any,
-                area: 0,
-                lat: 0,
                 sig,
                 body,
             },

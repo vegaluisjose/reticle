@@ -8,6 +8,8 @@ id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
 val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
+cost = @{ ASCII_DIGIT+ }
+
 int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
 bool = @{ ASCII_ALPHA_LOWER+ }
@@ -24,17 +26,17 @@ tup_val = { (val ~ ("," ~ val)*)? }
 
 io = { var | "(" ~ tup_var ~ ")" }
 
-attrs = _{ "[" ~ tup_val ~ "]" }
+attr = _{ "[" ~ tup_val ~ "]" }
 
 prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
-instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
+instr = { io ~ "=" ~ id ~ attr? ~ io? ~ hint? ~ ";" }
 
 body = { (instr ~ ("," ~ instr)*)? }
 
-sig = { id ~ io? ~ "->" ~ io }
+sig = { id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
 
 def = { sig ~ "{" ~ body ~ "}" }
 

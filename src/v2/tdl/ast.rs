@@ -10,7 +10,6 @@ pub type WireOp = ir::WireOp;
 pub type CompOp = ir::CompOp;
 pub type InstrWire = ir::InstrWire;
 pub type InstrComp = ir::InstrComp;
-pub type Sig = ir::Sig;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Instr {
@@ -19,10 +18,17 @@ pub enum Instr {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct Def {
+pub struct Sig {
+    pub id: Id,
     pub prim: Prim,
-    pub area: u32,
-    pub lat: u32,
+    pub area: u64,
+    pub lat: u64,
+    pub input: Expr,
+    pub output: Expr,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct Def {
     pub sig: Sig,
     pub body: Vec<Instr>,
 }
