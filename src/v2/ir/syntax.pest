@@ -24,13 +24,13 @@ tup_val = { (val ~ ("," ~ val)*)? }
 
 io = { var | "(" ~ tup_var ~ ")" }
 
-attrs = _{ "[" ~ tup_val ~ "]" }
+attr = _{ "[" ~ tup_val ~ "]" }
 
 prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
-instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
+instr = { io ~ "=" ~ id ~ attr? ~ io? ~ hint? ~ ";" }
 
 body = { (instr ~ ("," ~ instr)*)? }
 

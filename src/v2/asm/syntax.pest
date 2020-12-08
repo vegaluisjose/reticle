@@ -24,7 +24,7 @@ tup_val = { (val ~ ("," ~ val)*)? }
 
 io = { var | "(" ~ tup_var ~ ")" }
 
-attrs = _{ "[" ~ tup_val ~ "]" }
+attr = _{ "[" ~ tup_val ~ "]" }
 
 prim = { id }
 
@@ -34,7 +34,7 @@ hint = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 loc = { "@" ~ prim ~ hint? }
 
-instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ loc? ~ ";" }
+instr = { io ~ "=" ~ id ~ attr? ~ io? ~ loc? ~ ";" }
 
 body = { (instr ~ ("," ~ instr)*)? }
 
