@@ -1,0 +1,43 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+
+COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+sep = _{ "_" | "-"}
+
+id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+bool = @{ ASCII_ALPHA_LOWER+ }
+
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+
+ty = ${ vector | int | bool }
+
+var = { id ~ ":" ~ ty | id }
+
+tup_var = { (var ~ ("," ~ var)*)? }
+
+tup_val = { (val ~ ("," ~ val)*)? }
+
+io = { var | "(" ~ tup_var ~ ")" }
+
+attrs = _{ "[" ~ tup_val ~ "]" }
+
+prim = { "??" | id }
+
+hint = _{ "@" ~ prim }
+
+instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
+
+body = { (instr ~ ("," ~ instr)*)? }
+
+sig = { id ~ io? ~ "->" ~ io }
+
+def = { sig ~ "{" ~ body ~ "}" }
+
+desc = { (def ~ ("," ~ def)*)? }
+
+file = { SOI ~ desc ~ EOI }

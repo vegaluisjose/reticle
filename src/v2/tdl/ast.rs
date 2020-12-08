@@ -7,6 +7,7 @@ pub type Prim = ir::Prim;
 pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
 pub type WireOp = ir::WireOp;
+pub type CompOp = ir::CompOp;
 pub type InstrWire = ir::InstrWire;
 pub type InstrComp = ir::InstrComp;
 pub type Sig = ir::Sig;
@@ -26,7 +27,7 @@ pub struct Def {
     pub body: Vec<Instr>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Default)]
 pub struct Desc {
     pub def: HashMap<Id, Def>,
 }
