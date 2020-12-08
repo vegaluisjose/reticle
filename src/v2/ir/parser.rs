@@ -82,9 +82,9 @@ impl IRParser {
         Ok(match_nodes!(
             input.into_children();
             [io(dst), id(opcode), tup_val(attr)] => {
-                let wire = WireOp::from_str(&opcode);
-                let comp = CompOp::from_str(&opcode);
-                match (wire, comp) {
+                let wop = WireOp::from_str(&opcode);
+                let cop = CompOp::from_str(&opcode);
+                match (wop, cop) {
                     (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
                             op,
@@ -97,9 +97,9 @@ impl IRParser {
                 }
             },
             [io(dst), id(opcode), io(arg)] => {
-                let wire = WireOp::from_str(&opcode);
-                let comp = CompOp::from_str(&opcode);
-                match (wire, comp) {
+                let wop = WireOp::from_str(&opcode);
+                let cop = CompOp::from_str(&opcode);
+                match (wop, cop) {
                     (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
                             op,
@@ -128,9 +128,9 @@ impl IRParser {
                 }
             },
             [io(dst), id(opcode), tup_val(attr), io(arg)] => {
-                let wire = WireOp::from_str(&opcode);
-                let comp = CompOp::from_str(&opcode);
-                match (wire, comp) {
+                let wop = WireOp::from_str(&opcode);
+                let cop = CompOp::from_str(&opcode);
+                match (wop, cop) {
                     (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
                             op,
@@ -152,24 +152,30 @@ impl IRParser {
                 }
             },
             [io(dst), id(opcode), io(arg), prim(prim)] => {
-                let comp = CompOp::from_str(&opcode);
-                Instr::from(InstrComp {
-                    op: comp.unwrap(),
-                    dst,
-                    attr: Expr::default(),
-                    arg,
-                    prim,
-                })
+                let cop = CompOp::from_str(&opcode);
+                match cop {
+                    Ok(op) => Instr::from(InstrComp {
+                        op,
+                        dst,
+                        attr: Expr::default(),
+                        arg,
+                        prim,
+                    }),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr)),
+                }
             },
             [io(dst), id(opcode), tup_val(attr), io(arg), prim(prim)] => {
-                let comp = CompOp::from_str(&opcode);
-                Instr::from(InstrComp {
-                    op: comp.unwrap(),
-                    dst,
-                    attr,
-                    arg,
-                    prim,
-                })
+                let cop = CompOp::from_str(&opcode);
+                match cop {
+                    Ok(op) => Instr::from(InstrComp {
+                        op,
+                        dst,
+                        attr,
+                        arg,
+                        prim,
+                    }),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr)),
+                }
             },
             [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
         ))
