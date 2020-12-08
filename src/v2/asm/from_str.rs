@@ -13,3 +13,10 @@ impl FromStr for ExprCoord {
         }
     }
 }
+
+impl FromStr for AsmOp {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Ok(AsmOp::Op(input.to_string()))
+    }
+}

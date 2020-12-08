@@ -6,25 +6,25 @@ sep = _{ "_" | "-"}
 
 id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
-// int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
-// bool = @{ ASCII_ALPHA_LOWER+ }
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
-// vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+bool = @{ ASCII_ALPHA_LOWER+ }
 
-// ty = ${ vector | int | bool }
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
-// val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+ty = ${ vector | int | bool }
 
-// name = { id ~ ":" ~ ty | id }
+var = { id ~ ":" ~ ty | id }
 
-// tup_name = { (name ~ ("," ~ name)*)? }
+tup_var = { (var ~ ("," ~ var)*)? }
 
-// tup_val = { (val ~ ("," ~ val)*)? }
+tup_val = { (val ~ ("," ~ val)*)? }
 
-// io = { name | "(" ~ tup_name ~ ")" }
+io = { var | "(" ~ tup_var ~ ")" }
 
-// attrs = _{ "[" ~ tup_val ~ "]" }
+attrs = _{ "[" ~ tup_val ~ "]" }
 
 prim = { id }
 

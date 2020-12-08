@@ -23,6 +23,22 @@ impl AsmParser {
         Ok(input.as_str().to_string())
     }
 
+    fn val(input: Node) -> Result<Expr> {
+        let val = input.as_str().parse::<i64>();
+        match val {
+            Ok(v) => Ok(Expr::Val(v)),
+            Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
+        }
+    }
+
+    fn ty(input: Node) -> Result<Ty> {
+        let ty = Ty::from_str(input.as_str());
+        match ty {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
     fn expr_coord(input: Node) -> Result<ExprCoord> {
         let expr = ExprCoord::from_str(input.as_str());
         match expr {
@@ -52,6 +68,36 @@ impl AsmParser {
                 x,
                 y,
             },
+        ))
+    }
+
+    fn var(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), ty(ty)] => Expr::Var(id, ty),
+            [id(id)] => Expr::Var(id, Ty::Any),
+        ))
+    }
+
+    fn tup_var(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [var(vars)..] => Expr::from(ExprTup{ expr: vars.collect()}),
+        ))
+    }
+
+    fn tup_val(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [val(vals)..] => Expr::from(ExprTup{ expr: vals.collect()}),
+        ))
+    }
+
+    fn io(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [var(var)] => var,
+            [tup_var(tup)] => tup,
         ))
     }
 

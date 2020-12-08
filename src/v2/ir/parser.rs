@@ -23,6 +23,14 @@ impl IRParser {
         Ok(input.as_str().to_string())
     }
 
+    fn val(input: Node) -> Result<Expr> {
+        let val = input.as_str().parse::<i64>();
+        match val {
+            Ok(v) => Ok(Expr::Val(v)),
+            Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
+        }
+    }
+
     fn ty(input: Node) -> Result<Ty> {
         Ok(Ty::from_str(input.as_str()).unwrap())
     }
@@ -31,12 +39,7 @@ impl IRParser {
         Ok(Prim::from_str(input.as_str()).unwrap())
     }
 
-    fn val(input: Node) -> Result<Expr> {
-        let val = input.as_str().parse::<i64>().unwrap();
-        Ok(Expr::Val(val))
-    }
-
-    fn name(input: Node) -> Result<Expr> {
+    fn var(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
             [id(id), ty(ty)] => Expr::Var(id, ty),
@@ -44,10 +47,10 @@ impl IRParser {
         ))
     }
 
-    fn tup_name(input: Node) -> Result<Expr> {
+    fn tup_var(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [name(names)..] => Expr::from(ExprTup{ expr: names.collect()}),
+            [var(vars)..] => Expr::from(ExprTup{ expr: vars.collect()}),
         ))
     }
 
@@ -61,8 +64,8 @@ impl IRParser {
     fn io(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [name(name)] => name,
-            [tup_name(tup)] => tup,
+            [var(var)] => var,
+            [tup_var(tup)] => tup,
         ))
     }
 

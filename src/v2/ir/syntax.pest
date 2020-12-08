@@ -6,6 +6,8 @@ sep = _{ "_" | "-"}
 
 id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+
 int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 
 bool = @{ ASCII_ALPHA_LOWER+ }
@@ -14,15 +16,13 @@ vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
 ty = ${ vector | int | bool }
 
-val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+var = { id ~ ":" ~ ty | id }
 
-name = { id ~ ":" ~ ty | id }
-
-tup_name = { (name ~ ("," ~ name)*)? }
+tup_var = { (var ~ ("," ~ var)*)? }
 
 tup_val = { (val ~ ("," ~ val)*)? }
 
-io = { name | "(" ~ tup_name ~ ")" }
+io = { var | "(" ~ tup_var ~ ")" }
 
 attrs = _{ "[" ~ tup_val ~ "]" }
 
