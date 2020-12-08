@@ -101,6 +101,28 @@ impl AsmParser {
         ))
     }
 
+    fn instr(input: Node) -> Result<Instr> {
+        let instr = input.as_str().to_string();
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), id(opcode), tup_val(attr)] => {
+                let wop = WireOp::from_str(&opcode);
+                match wop {
+                    Ok(op) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attr,
+                            arg: Expr::default(),
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+        ))
+    }
+
     fn file(input: Node) -> Result<Loc> {
         Ok(match_nodes!(
             input.into_children();

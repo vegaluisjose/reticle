@@ -34,7 +34,7 @@ hint = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 loc = { "@" ~ prim ~ hint? }
 
-// instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ hint? ~ ";" }
+instr = { io ~ "=" ~ id ~ attrs? ~ io? ~ loc? ~ ";" }
 
 // body = { (instr ~ ("," ~ instr)*)? }
 
