@@ -32,11 +32,19 @@ impl IRParser {
     }
 
     fn ty(input: Node) -> Result<Ty> {
-        Ok(Ty::from_str(input.as_str()).unwrap())
+        let ty = Ty::from_str(input.as_str());
+        match ty {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
     }
 
     fn prim(input: Node) -> Result<Prim> {
-        Ok(Prim::from_str(input.as_str()).unwrap())
+        let prim = Prim::from_str(input.as_str());
+        match prim {
+            Ok(p) => Ok(p),
+            Err(m) => panic!("{}", m),
+        }
     }
 
     fn var(input: Node) -> Result<Expr> {
