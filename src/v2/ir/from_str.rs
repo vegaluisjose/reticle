@@ -99,6 +99,7 @@ impl FromStr for WireOp {
         let err = format!("Error: {} is not valid wire operation", input);
         match input {
             "id" => Ok(WireOp::Id),
+            "inp" => Ok(WireOp::Inp),
             "const" => Ok(WireOp::Con),
             "sll" => Ok(WireOp::Sll),
             "srl" => Ok(WireOp::Srl),

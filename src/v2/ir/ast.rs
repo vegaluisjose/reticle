@@ -34,6 +34,7 @@ pub enum Prim {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum WireOp {
     Id,
+    Inp,
     Con,
     Sll,
     Srl,

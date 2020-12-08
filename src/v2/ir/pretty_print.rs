@@ -71,6 +71,7 @@ impl PrettyPrint for WireOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             WireOp::Id => RcDoc::text("id"),
+            WireOp::Inp => RcDoc::text("inp"),
             WireOp::Con => RcDoc::text("const"),
             WireOp::Sll => RcDoc::text("sll"),
             WireOp::Srl => RcDoc::text("srl"),
