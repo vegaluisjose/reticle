@@ -39,8 +39,8 @@ impl IRParser {
     fn name(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), ty(ty)] => Expr::Name(id, ty),
-            [id(id)] => Expr::Name(id, Ty::Var),
+            [id(id), ty(ty)] => Expr::Var(id, ty),
+            [id(id)] => Expr::Var(id, Ty::Any),
         ))
     }
 
@@ -103,7 +103,7 @@ impl IRParser {
                             dst,
                             attr: Expr::default(),
                             arg,
-                            prim: Prim::Var,
+                            prim: Prim::Any,
                         }
                     ),
                     (Err(_), Err(_)) => Instr::from(
@@ -134,7 +134,7 @@ impl IRParser {
                             dst,
                             attr,
                             arg,
-                            prim: Prim::Var,
+                            prim: Prim::Any,
                         }
                     ),
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))

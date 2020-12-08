@@ -5,7 +5,7 @@ pub type Id = String;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Ty {
-    Var,
+    Any,
     Bool,
     UInt(u64),
     SInt(u64),
@@ -20,13 +20,13 @@ pub struct ExprTup {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Expr {
     Val(i64),
-    Name(Id, Ty),
+    Var(Id, Ty),
     Tup(ExprTup),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Prim {
-    Var,
+    Any,
     Lut,
     Dsp,
 }

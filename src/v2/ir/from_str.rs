@@ -115,7 +115,7 @@ impl FromStr for Prim {
     type Err = String;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "??" => Ok(Prim::Var),
+            "??" => Ok(Prim::Any),
             "lut" => Ok(Prim::Lut),
             "dsp" => Ok(Prim::Dsp),
             _ => Err(format!("Error: {} is not valid primitive", input)),

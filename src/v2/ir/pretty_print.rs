@@ -6,7 +6,7 @@ use pretty::RcDoc;
 fn expr_names(expr: &Expr) -> RcDoc<()> {
     match expr {
         Expr::Val(v) => RcDoc::as_string(v),
-        Expr::Name(n, _) => RcDoc::as_string(n),
+        Expr::Var(n, _) => RcDoc::as_string(n),
         Expr::Tup(tup) if tup.is_empty() => RcDoc::nil(),
         Expr::Tup(tup) => intersperse(
             tup.expr().iter().map(|n| expr_names(n)),
@@ -19,7 +19,7 @@ fn expr_names(expr: &Expr) -> RcDoc<()> {
 impl PrettyPrint for Prim {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Prim::Var => RcDoc::text("??"),
+            Prim::Any => RcDoc::text("??"),
             Prim::Lut => RcDoc::text("lut"),
             Prim::Dsp => RcDoc::text("dsp"),
         }
@@ -29,7 +29,7 @@ impl PrettyPrint for Prim {
 impl PrettyPrint for Ty {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Ty::Var => RcDoc::text("??"),
+            Ty::Any => RcDoc::text("??"),
             Ty::Bool => RcDoc::text("bool"),
             Ty::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
             Ty::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),
@@ -51,7 +51,7 @@ impl PrettyPrint for Expr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Expr::Val(v) => RcDoc::as_string(v),
-            Expr::Name(n, ty) => RcDoc::as_string(n)
+            Expr::Var(n, ty) => RcDoc::as_string(n)
                 .append(RcDoc::text(":"))
                 .append(ty.to_doc()),
             Expr::Tup(tup) => tup.to_doc(),
