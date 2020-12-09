@@ -11,6 +11,15 @@ impl Sig {
     pub fn output(&self) -> &Expr {
         &self.output
     }
+    pub fn prim(&self) -> &Prim {
+        &self.prim
+    }
+    pub fn area(&self) -> u64 {
+        self.area
+    }
+    pub fn lat(&self) -> u64 {
+        self.lat
+    }
 }
 
 impl Def {
