@@ -1,4 +1,4 @@
-use crate::v2::tdl::ast::*;
+use crate::tdl::ast::*;
 use std::collections::HashMap;
 
 impl Sig {

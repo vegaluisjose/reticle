@@ -1,5 +1,4 @@
 use crate::asm::ast::*;
-use crate::asm::infer::infer_prog;
 use crate::util::file::read_to_string;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
@@ -8,11 +7,11 @@ use std::str::FromStr;
 pub type Result<T> = std::result::Result<T, Error<Rule>>;
 type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 
-const _GRAMMAR: &str = include_str!("grammar.pest");
+const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(Parser)]
-#[grammar = "asm/grammar.pest"]
-struct AsmParser;
+#[grammar = "asm/syntax.pest"]
+pub struct AsmParser;
 
 #[pest_consume::parser]
 impl AsmParser {
@@ -24,181 +23,217 @@ impl AsmParser {
         Ok(input.as_str().to_string())
     }
 
-    fn num(input: Node) -> Result<i64> {
-        Ok(input.as_str().parse::<i64>().unwrap())
+    fn val(input: Node) -> Result<Expr> {
+        let val = input.as_str().parse::<i64>();
+        match val {
+            Ok(v) => Ok(Expr::Val(v)),
+            Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
+        }
     }
 
     fn ty(input: Node) -> Result<Ty> {
-        Ok(Ty::from_str(input.as_str()).unwrap())
-    }
-
-    fn ty_prim(input: Node) -> Result<Prim> {
-        Ok(Prim::from_str(input.as_str()).unwrap())
-    }
-
-    fn expr(input: Node) -> Result<Expr> {
-        Ok(match_nodes!(
-            input.into_children();
-            [id(n), ty(ty)] => Expr::new_ref(&n, ty),
-            [id(n)] => Expr::new_ref(&n, Ty::Hole),
-            [num(n)] => Expr::new_int(n),
-        ))
+        let ty = Ty::from_str(input.as_str());
+        match ty {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
     }
 
     fn expr_coord(input: Node) -> Result<ExprCoord> {
-        Ok(ExprCoord::from_str(input.as_str()).unwrap())
+        let expr = ExprCoord::from_str(input.as_str());
+        match expr {
+            Ok(e) => Ok(e),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn prim(input: Node) -> Result<Prim> {
+        let prim = Prim::from_str(input.as_str());
+        match prim {
+            Ok(p) => Ok(p),
+            Err(m) => panic!("{}", m),
+        }
     }
 
     fn loc(input: Node) -> Result<Loc> {
         Ok(match_nodes!(
             input.into_children();
-            [ty_prim(prim), expr_coord(x), expr_coord(y)] => Loc { prim, x, y }
+            [prim(prim)] => Loc {
+                prim,
+                x: ExprCoord::Any,
+                y: ExprCoord::Any,
+            },
+            [prim(prim), expr_coord(x), expr_coord(y)] => Loc {
+                prim,
+                x,
+                y,
+            },
         ))
     }
 
-    fn op_std(input: Node) -> Result<StdOp> {
-        Ok(StdOp::from_str(input.as_str()).unwrap())
-    }
-
-    fn inputs(input: Node) -> Result<Vec<Port>> {
+    fn var(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(expr)..] => expr.into_iter().map(|e| Port::Input(e)).collect()
+            [id(id), ty(ty)] => Expr::Var(id, ty),
+            [id(id)] => Expr::Var(id, Ty::Any),
         ))
     }
 
-    fn outputs(input: Node) -> Result<Vec<Port>> {
+    fn tup_var(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(expr)..] => expr.into_iter().map(|e| Port::Output(e)).collect()
+            [var(vars)..] => Expr::from(ExprTup{ expr: vars.collect()}),
         ))
     }
 
-    fn params(input: Node) -> Result<Vec<Expr>> {
+    fn tup_val(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(params)..] => params.collect()
+            [val(vals)..] => Expr::from(ExprTup{ expr: vals.collect()}),
         ))
     }
 
-    fn attrs(input: Node) -> Result<Vec<Expr>> {
+    fn io(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [expr(attrs)..] => attrs.collect()
-        ))
-    }
-
-    fn instr_phy(input: Node) -> Result<InstrPhy> {
-        Ok(match_nodes!(
-            input.into_children();
-            [expr(dst), id(op), params(params)] => InstrPhy {
-                op,
-                dst,
-                attrs: vec![],
-                params,
-                loc: Loc {
-                    prim: Prim::Hole,
-                    x: ExprCoord::Hole,
-                    y: ExprCoord::Hole,
-                }
-            },
-            [expr(dst), id(op), attrs(attrs), params(params)] => InstrPhy {
-                op,
-                dst,
-                attrs,
-                params,
-                loc: Loc {
-                    prim: Prim::Hole,
-                    x: ExprCoord::Hole,
-                    y: ExprCoord::Hole,
-                }
-            },
-            [expr(dst), id(op), params(params), loc(loc)] => InstrPhy {
-                op,
-                dst,
-                attrs: vec![],
-                params,
-                loc,
-            },
-            [expr(dst), id(op), attrs(attrs), params(params), loc(loc)] => InstrPhy {
-                op,
-                dst,
-                attrs,
-                params,
-                loc,
-            }
-        ))
-    }
-
-    fn instr_std(input: Node) -> Result<InstrStd> {
-        Ok(match_nodes!(
-            input.into_children();
-            [expr(dst), op_std(op), params(params)] => InstrStd {
-                op,
-                dst,
-                attrs: vec![],
-                params,
-            },
-            [expr(dst), op_std(op), attrs(attrs)] => InstrStd {
-                op,
-                dst,
-                attrs,
-                params: vec![],
-            },
-            [expr(dst), op_std(op), params(params), attrs(attrs)] => InstrStd {
-                op,
-                dst,
-                attrs,
-                params,
-            },
+            [var(var)] => var,
+            [tup_var(tup)] => tup,
         ))
     }
 
     fn instr(input: Node) -> Result<Instr> {
+        let instr = input.as_str().to_string();
         Ok(match_nodes!(
             input.into_children();
-            [instr_std(instr)] => Instr::Std(instr),
-            [instr_phy(instr)] => Instr::Phy(instr),
+            [io(dst), id(opcode), tup_val(attr)] => {
+                let wop = WireOp::from_str(&opcode);
+                match wop {
+                    Ok(op) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attr,
+                            arg: Expr::default(),
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), io(arg)] => {
+                let wop = WireOp::from_str(&opcode);
+                match wop {
+                    Ok(op) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attr: Expr::default(),
+                            arg,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), tup_val(attr), io(arg)] => {
+                let wop = WireOp::from_str(&opcode);
+                match wop {
+                    Ok(op) => Instr::from(
+                        InstrWire {
+                            op,
+                            dst,
+                            attr,
+                            arg,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), io(arg), loc(loc)] => {
+                let aop = AsmOp::from_str(&opcode);
+                match aop {
+                    Ok(op) => Instr::from(
+                        InstrAsm {
+                            op,
+                            dst,
+                            attr: Expr::default(),
+                            arg,
+                            loc,
+                            area: 0,
+                            lat: 0,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), tup_val(attr), io(arg), loc(loc)] => {
+                let aop = AsmOp::from_str(&opcode);
+                match aop {
+                    Ok(op) => Instr::from(
+                        InstrAsm {
+                            op,
+                            dst,
+                            attr,
+                            arg,
+                            loc,
+                            area: 0,
+                            lat: 0,
+                        }
+                    ),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
         ))
     }
 
-    fn instrs(input: Node) -> Result<Vec<Instr>> {
+    fn body(input: Node) -> Result<Vec<Instr>> {
         Ok(match_nodes!(
             input.into_children();
-            [instr(instr)..] => instr.collect()
+            [instr(instr)..] => instr.collect(),
+        ))
+    }
+
+    fn sig(input: Node) -> Result<Sig> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), io(output)] => Sig {
+                id,
+                input: Expr::default(),
+                output,
+            },
+            [id(id), io(input), io(output)] => Sig {
+                id,
+                input,
+                output,
+            },
         ))
     }
 
     fn prog(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), inputs(inputs), outputs(outputs), instrs(body)] => Prog {
-                sig: Signature {
-                    id,
-                    inputs,
-                    outputs,
-                },
+            [sig(sig), body(body)] => Prog {
+                sig,
                 body,
-            }
+            },
         ))
     }
 
     fn file(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [prog(prog), _] => prog,
+            [prog(p), _] => p,
         ))
     }
 }
 
-pub fn parse(input_str: &str) -> Prog {
-    let inputs = AsmParser::parse(Rule::file, input_str).expect("Error: parsing inputs");
-    let input = inputs.single().expect("Error: parsing root");
-    let prog = AsmParser::file(input).expect("Error: parsing file");
-    infer_prog(&prog)
-}
-
-pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Prog {
-    let content = read_to_string(path);
-    parse(&content)
+impl AsmParser {
+    pub fn parse_from_str(input_str: &str) -> Result<Prog> {
+        let inputs = AsmParser::parse(Rule::file, input_str)?;
+        let input = inputs.single()?;
+        Ok(AsmParser::file(input)?)
+    }
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
+        let content = read_to_string(path);
+        AsmParser::parse_from_str(&content)
+    }
 }

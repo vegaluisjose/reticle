@@ -1,5 +1,5 @@
+use crate::ir::ast::*;
 use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
-use crate::v2::ir::ast::*;
 use itertools::Itertools;
 use pretty::RcDoc;
 

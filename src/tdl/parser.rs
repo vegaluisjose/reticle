@@ -1,5 +1,5 @@
+use crate::tdl::ast::*;
 use crate::util::file::read_to_string;
-use crate::v2::asm::ast::*;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
 use std::str::FromStr;
@@ -10,11 +10,11 @@ type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(Parser)]
-#[grammar = "v2/asm/syntax.pest"]
-pub struct AsmParser;
+#[grammar = "tdl/syntax.pest"]
+pub struct TDLParser;
 
 #[pest_consume::parser]
-impl AsmParser {
+impl TDLParser {
     fn EOI(_input: Node) -> Result<()> {
         Ok(())
     }
@@ -31,18 +31,18 @@ impl AsmParser {
         }
     }
 
+    fn cost(input: Node) -> Result<u64> {
+        let val = input.as_str().parse::<u64>();
+        match val {
+            Ok(v) => Ok(v),
+            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+        }
+    }
+
     fn ty(input: Node) -> Result<Ty> {
         let ty = Ty::from_str(input.as_str());
         match ty {
             Ok(t) => Ok(t),
-            Err(m) => panic!("{}", m),
-        }
-    }
-
-    fn expr_coord(input: Node) -> Result<ExprCoord> {
-        let expr = ExprCoord::from_str(input.as_str());
-        match expr {
-            Ok(e) => Ok(e),
             Err(m) => panic!("{}", m),
         }
     }
@@ -53,22 +53,6 @@ impl AsmParser {
             Ok(p) => Ok(p),
             Err(m) => panic!("{}", m),
         }
-    }
-
-    fn loc(input: Node) -> Result<Loc> {
-        Ok(match_nodes!(
-            input.into_children();
-            [prim(prim)] => Loc {
-                prim,
-                x: ExprCoord::Any,
-                y: ExprCoord::Any,
-            },
-            [prim(prim), expr_coord(x), expr_coord(y)] => Loc {
-                prim,
-                x,
-                y,
-            },
-        ))
     }
 
     fn var(input: Node) -> Result<Expr> {
@@ -107,8 +91,9 @@ impl AsmParser {
             input.into_children();
             [io(dst), id(opcode), tup_val(attr)] => {
                 let wop = WireOp::from_str(&opcode);
-                match wop {
-                    Ok(op) => Instr::from(
+                let cop = CompOp::from_str(&opcode);
+                match (wop, cop) {
+                    (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
                             op,
                             dst,
@@ -116,13 +101,14 @@ impl AsmParser {
                             arg: Expr::default(),
                         }
                     ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                    (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
             [io(dst), id(opcode), io(arg)] => {
                 let wop = WireOp::from_str(&opcode);
-                match wop {
-                    Ok(op) => Instr::from(
+                let cop = CompOp::from_str(&opcode);
+                match (wop, cop) {
+                    (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
                             op,
                             dst,
@@ -130,13 +116,23 @@ impl AsmParser {
                             arg,
                         }
                     ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                    (Err(_), Ok(op)) => Instr::from(
+                        InstrComp {
+                            op,
+                            dst,
+                            attr: Expr::default(),
+                            arg,
+                            prim: Prim::Any,
+                        }
+                    ),
+                    (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
             [io(dst), id(opcode), tup_val(attr), io(arg)] => {
                 let wop = WireOp::from_str(&opcode);
-                match wop {
-                    Ok(op) => Instr::from(
+                let cop = CompOp::from_str(&opcode);
+                match (wop, cop) {
+                    (Ok(op), Err(_)) => Instr::from(
                         InstrWire {
                             op,
                             dst,
@@ -144,41 +140,42 @@ impl AsmParser {
                             arg,
                         }
                     ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
-            },
-            [io(dst), id(opcode), io(arg), loc(loc)] => {
-                let aop = AsmOp::from_str(&opcode);
-                match aop {
-                    Ok(op) => Instr::from(
-                        InstrAsm {
-                            op,
-                            dst,
-                            attr: Expr::default(),
-                            arg,
-                            loc,
-                            area: 0,
-                            lat: 0,
-                        }
-                    ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
-            },
-            [io(dst), id(opcode), tup_val(attr), io(arg), loc(loc)] => {
-                let aop = AsmOp::from_str(&opcode);
-                match aop {
-                    Ok(op) => Instr::from(
-                        InstrAsm {
+                    (Err(_), Ok(op)) => Instr::from(
+                        InstrComp {
                             op,
                             dst,
                             attr,
                             arg,
-                            loc,
-                            area: 0,
-                            lat: 0,
+                            prim: Prim::Any,
                         }
                     ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                    (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+                }
+            },
+            [io(dst), id(opcode), io(arg), prim(prim)] => {
+                let cop = CompOp::from_str(&opcode);
+                match cop {
+                    Ok(op) => Instr::from(InstrComp {
+                        op,
+                        dst,
+                        attr: Expr::default(),
+                        arg,
+                        prim,
+                    }),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr)),
+                }
+            },
+            [io(dst), id(opcode), tup_val(attr), io(arg), prim(prim)] => {
+                let cop = CompOp::from_str(&opcode);
+                match cop {
+                    Ok(op) => Instr::from(InstrComp {
+                        op,
+                        dst,
+                        attr,
+                        arg,
+                        prim,
+                    }),
+                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr)),
                 }
             },
             [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
@@ -195,45 +192,57 @@ impl AsmParser {
     fn sig(input: Node) -> Result<Sig> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), io(output)] => Sig {
+            [id(id), prim(prim), cost(area), cost(lat), io(input), io(output)] => Sig {
                 id,
-                input: Expr::default(),
-                output,
-            },
-            [id(id), io(input), io(output)] => Sig {
-                id,
+                prim,
+                area,
+                lat,
                 input,
                 output,
             },
         ))
     }
 
-    fn prog(input: Node) -> Result<Prog> {
+    fn def(input: Node) -> Result<Def> {
         Ok(match_nodes!(
             input.into_children();
-            [sig(sig), body(body)] => Prog {
+            [sig(sig), body(body)] => Def {
                 sig,
                 body,
             },
         ))
     }
 
-    fn file(input: Node) -> Result<Prog> {
+    fn desc(input: Node) -> Result<Desc> {
         Ok(match_nodes!(
             input.into_children();
-            [prog(p), _] => p,
+            [def(def)..] => {
+                let mut desc = Desc::default();
+                let defs: Vec<Def> = def.collect();
+                for d in defs {
+                    desc.insert(&d.id(), d.clone());
+                }
+                desc
+            }
+        ))
+    }
+
+    fn file(input: Node) -> Result<Desc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [desc(desc), _] => desc,
         ))
     }
 }
 
-impl AsmParser {
-    pub fn parse_from_str(input_str: &str) -> Result<Prog> {
-        let inputs = AsmParser::parse(Rule::file, input_str)?;
+impl TDLParser {
+    pub fn parse_from_str(input_str: &str) -> Result<Desc> {
+        let inputs = TDLParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        Ok(AsmParser::file(input)?)
+        Ok(TDLParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Desc> {
         let content = read_to_string(path);
-        AsmParser::parse_from_str(&content)
+        TDLParser::parse_from_str(&content)
     }
 }

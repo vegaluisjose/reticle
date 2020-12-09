@@ -1,27 +1,13 @@
-use crate::asm::ast as asm;
-use crate::lang::ast as lang;
-use crate::passes::select::asmgen;
+use crate::asm::ast::*;
 
-impl From<asm::InstrStd> for asm::Instr {
-    fn from(std: asm::InstrStd) -> Self {
-        asm::Instr::Std(std)
+impl From<InstrWire> for Instr {
+    fn from(instr: InstrWire) -> Self {
+        Instr::Wire(instr)
     }
 }
 
-impl From<asm::InstrPhy> for asm::Instr {
-    fn from(prim: asm::InstrPhy) -> Self {
-        asm::Instr::Phy(prim)
-    }
-}
-
-impl From<lang::Prog> for asm::Prog {
-    fn from(prog: lang::Prog) -> Self {
-        asmgen(prog)
-    }
-}
-
-impl From<lang::Instr> for asm::Instr {
-    fn from(instr: lang::Instr) -> Self {
-        asm::Instr::from(instr.std().clone())
+impl From<InstrAsm> for Instr {
+    fn from(instr: InstrAsm) -> Self {
+        Instr::Asm(instr)
     }
 }

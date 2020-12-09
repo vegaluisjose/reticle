@@ -1,4 +1,4 @@
-use crate::v2::ir::ast::*;
+use crate::ir::ast::*;
 
 impl Default for Sig {
     fn default() -> Self {

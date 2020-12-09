@@ -1,4 +1,4 @@
-use crate::v2::ir::ast::*;
+use crate::ir::ast::*;
 
 impl From<ExprTup> for Expr {
     fn from(tup: ExprTup) -> Self {

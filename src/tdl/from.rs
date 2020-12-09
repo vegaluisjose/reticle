@@ -1,4 +1,4 @@
-use crate::v2::tdl::ast::*;
+use crate::tdl::ast::*;
 
 impl From<InstrWire> for Instr {
     fn from(instr: InstrWire) -> Self {

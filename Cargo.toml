@@ -17,10 +17,10 @@ vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "c336ef45fb9123
 structopt = { version = "0.3", default-features = false }
 itertools = "0.9.0"
 
-[[bin]]
-name = "reticle-translate"
-path = "src/bin/translate.rs"
-
-[[bin]]
-name = "reticle-opt"
-path = "src/bin/opt.rs"
+# [[bin]]
+# name = "reticle-translate"
+# path = "src/bin/translate.rs"
+# 
+# [[bin]]
+# name = "reticle-opt"
+# path = "src/bin/opt.rs"

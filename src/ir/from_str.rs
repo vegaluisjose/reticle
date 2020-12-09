@@ -1,5 +1,5 @@
+use crate::ir::ast::*;
 use crate::util::errors::Error;
-use crate::v2::ir::ast::*;
 use regex::Regex;
 use std::rc::Rc;
 use std::str::FromStr;

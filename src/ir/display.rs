@@ -1,5 +1,5 @@
+use crate::ir::ast::*;
 use crate::util::pretty_print::PrettyPrint;
-use crate::v2::asm::ast::*;
 use std::fmt;
 
 macro_rules! display {
@@ -12,9 +12,17 @@ macro_rules! display {
     };
 }
 
-display!(ExprCoord);
-display!(Loc);
-display!(AsmOp);
-display!(InstrAsm);
+display!(Ty);
+display!(Prim);
+display!(ExprTup);
+display!(Expr);
+display!(WireOp);
+display!(CompOp);
+display!(CallOp);
+display!(InstrCall);
+display!(InstrComp);
+display!(InstrWire);
 display!(Instr);
+display!(Sig);
+display!(Def);
 display!(Prog);

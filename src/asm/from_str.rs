@@ -1,17 +1,22 @@
-use crate::asm::ast::ExprCoord;
-use regex::Regex;
+use crate::asm::ast::*;
+use crate::util::errors::Error;
 use std::str::FromStr;
 
 impl FromStr for ExprCoord {
-    type Err = String;
+    type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let re_lit = Regex::new(r"^([[:digit:]]+)$").unwrap();
-        if input == "??" {
-            Ok(ExprCoord::Hole)
-        } else if re_lit.is_match(input) {
-            Ok(ExprCoord::Lit(input.parse::<u32>().unwrap()))
-        } else {
-            Ok(ExprCoord::Var(input.to_string()))
+        let num = input.parse::<u64>();
+        match num {
+            Ok(n) => Ok(ExprCoord::Val(n)),
+            Err(_) if input == "??" => Ok(ExprCoord::Any),
+            _ => Ok(ExprCoord::Var(input.to_string())),
         }
+    }
+}
+
+impl FromStr for AsmOp {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        Ok(AsmOp::Op(input.to_string()))
     }
 }

@@ -1,5 +1,5 @@
+use crate::ir::ast::*;
 use crate::util::file::read_to_string;
-use crate::v2::tdl::ast::*;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
 use std::str::FromStr;
@@ -10,11 +10,11 @@ type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(Parser)]
-#[grammar = "v2/tdl/syntax.pest"]
-pub struct TDLParser;
+#[grammar = "ir/syntax.pest"]
+pub struct IRParser;
 
 #[pest_consume::parser]
-impl TDLParser {
+impl IRParser {
     fn EOI(_input: Node) -> Result<()> {
         Ok(())
     }
@@ -28,14 +28,6 @@ impl TDLParser {
         match val {
             Ok(v) => Ok(Expr::Val(v)),
             Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
-        }
-    }
-
-    fn cost(input: Node) -> Result<u64> {
-        let val = input.as_str().parse::<u64>();
-        match val {
-            Ok(v) => Ok(v),
-            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
         }
     }
 
@@ -125,6 +117,13 @@ impl TDLParser {
                             prim: Prim::Any,
                         }
                     ),
+                    (Err(_), Err(_)) => Instr::from(
+                        InstrCall {
+                            op: CallOp::from_str(&opcode).unwrap(),
+                            dst,
+                            arg,
+                        }
+                    ),
                     (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
                 }
             },
@@ -192,11 +191,13 @@ impl TDLParser {
     fn sig(input: Node) -> Result<Sig> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), prim(prim), cost(area), cost(lat), io(input), io(output)] => Sig {
+            [id(id), io(output)] => Sig {
                 id,
-                prim,
-                area,
-                lat,
+                input: Expr::default(),
+                output,
+            },
+            [id(id), io(input), io(output)] => Sig {
+                id,
                 input,
                 output,
             },
@@ -213,36 +214,36 @@ impl TDLParser {
         ))
     }
 
-    fn desc(input: Node) -> Result<Desc> {
+    fn prog(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
             [def(def)..] => {
-                let mut desc = Desc::default();
+                let mut prog = Prog::default();
                 let defs: Vec<Def> = def.collect();
                 for d in defs {
-                    desc.insert(&d.id(), d.clone());
+                    prog.insert(&d.id(), d.clone());
                 }
-                desc
+                prog
             }
         ))
     }
 
-    fn file(input: Node) -> Result<Desc> {
+    fn file(input: Node) -> Result<Prog> {
         Ok(match_nodes!(
             input.into_children();
-            [desc(desc), _] => desc,
+            [prog(prog), _] => prog,
         ))
     }
 }
 
-impl TDLParser {
-    pub fn parse_from_str(input_str: &str) -> Result<Desc> {
-        let inputs = TDLParser::parse(Rule::file, input_str)?;
+impl IRParser {
+    pub fn parse_from_str(input_str: &str) -> Result<Prog> {
+        let inputs = IRParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        Ok(TDLParser::file(input)?)
+        Ok(IRParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Desc> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
         let content = read_to_string(path);
-        TDLParser::parse_from_str(&content)
+        IRParser::parse_from_str(&content)
     }
 }

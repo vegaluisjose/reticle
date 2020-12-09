@@ -1,4 +1,4 @@
-use crate::v2::ir::ast as ir;
+use crate::ir::ast as ir;
 use std::collections::HashMap;
 
 pub type Id = ir::Id;

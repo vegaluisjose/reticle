@@ -1,4 +1,4 @@
-use crate::v2::ir::ast::*;
+use crate::ir::ast::*;
 use std::collections::HashMap;
 
 impl ExprTup {
