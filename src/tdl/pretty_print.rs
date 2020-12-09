@@ -30,7 +30,7 @@ impl PrettyPrint for Sig {
             RcDoc::as_string(self.lat()),
         ];
         let attr = intersperse(
-            attr_val.iter().map(|i| i.clone()),
+            attr_val.iter().cloned(),
             RcDoc::text(",").append(RcDoc::space()),
         )
         .brackets();
