@@ -9,30 +9,42 @@ pub type Expr = ir::Expr;
 pub type OpWire = ir::OpWire;
 pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
+pub type OptMap = HashMap<Opt, OptVal>;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum RegOp {
+pub enum OpReg {
     Fdre,
     Fdse,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DspOp {
+pub enum OpDsp {
     Add,
     MulAdd,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum DspOpt {
+pub enum OptDsp {
     Ra,
     Rb,
     Rc,
     Rd,
     Rp,
+    Rm,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum RegBel {
+pub enum Opt {
+    Dsp(OptDsp),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum OptVal {
+    UInt(u32),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum BelReg {
     A,
     B,
     C,
@@ -45,14 +57,14 @@ pub enum RegBel {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrReg {
-    pub op: RegOp,
+    pub op: OpReg,
     pub dst: Expr,
     pub arg: Expr,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrDsp {
-    pub op: DspOp,
+    pub op: OpDsp,
     pub dst: Expr,
     pub arg: Expr,
 }
