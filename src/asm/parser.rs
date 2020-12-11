@@ -148,7 +148,7 @@ impl AsmParser {
                 }
             },
             [io(dst), id(opcode), io(arg), loc(loc)] => {
-                let aop = AsmOp::from_str(&opcode);
+                let aop = OpAsm::from_str(&opcode);
                 match aop {
                     Ok(op) => Instr::from(
                         InstrAsm {
@@ -165,7 +165,7 @@ impl AsmParser {
                 }
             },
             [io(dst), id(opcode), tup_val(attr), io(arg), loc(loc)] => {
-                let aop = AsmOp::from_str(&opcode);
+                let aop = OpAsm::from_str(&opcode);
                 match aop {
                     Ok(op) => Instr::from(
                         InstrAsm {

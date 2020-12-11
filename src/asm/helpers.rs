@@ -16,7 +16,7 @@ impl InstrAsm {
     pub fn dst(&self) -> &Expr {
         &self.dst
     }
-    pub fn op(&self) -> &AsmOp {
+    pub fn op(&self) -> &OpAsm {
         &self.op
     }
     pub fn attr(&self) -> &Expr {

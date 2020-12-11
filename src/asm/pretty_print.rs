@@ -25,10 +25,10 @@ impl PrettyPrint for Loc {
     }
 }
 
-impl PrettyPrint for AsmOp {
+impl PrettyPrint for OpAsm {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            AsmOp::Op(n) => RcDoc::as_string(n),
+            OpAsm::Op(n) => RcDoc::as_string(n),
         }
     }
 }

@@ -14,9 +14,9 @@ impl FromStr for ExprCoord {
     }
 }
 
-impl FromStr for AsmOp {
+impl FromStr for OpAsm {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        Ok(AsmOp::Op(input.to_string()))
+        Ok(OpAsm::Op(input.to_string()))
     }
 }

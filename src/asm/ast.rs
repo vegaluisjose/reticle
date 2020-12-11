@@ -24,13 +24,13 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum AsmOp {
+pub enum OpAsm {
     Op(Id),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrAsm {
-    pub op: AsmOp,
+    pub op: OpAsm,
     pub dst: Expr,
     pub attr: Expr,
     pub arg: Expr,

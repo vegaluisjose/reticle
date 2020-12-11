@@ -14,7 +14,7 @@ macro_rules! display {
 
 display!(ExprCoord);
 display!(Loc);
-display!(AsmOp);
+display!(OpAsm);
 display!(InstrAsm);
 display!(Instr);
 display!(Prog);
