@@ -61,9 +61,7 @@ impl PrettyPrint for Expr {
 
 impl PrettyPrint for OpCall {
     fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            OpCall::Op(n) => RcDoc::as_string(n),
-        }
+        RcDoc::as_string(self.op())
     }
 }
 

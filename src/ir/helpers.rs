@@ -1,6 +1,17 @@
 use crate::ir::ast::*;
 use std::collections::HashMap;
 
+impl OpCall {
+    pub fn new(op: &str) -> OpCall {
+        OpCall {
+            op: op.to_string(),
+        }
+    }
+    pub fn op(&self) -> String {
+        self.op.to_string()
+    }
+}
+
 impl ExprTup {
     pub fn expr(&self) -> &Vec<Expr> {
         &self.expr

@@ -61,8 +61,8 @@ pub enum OpComp {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum OpCall {
-    Op(Id),
+pub struct OpCall {
+    pub op: Id,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
