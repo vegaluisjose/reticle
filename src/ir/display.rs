@@ -17,7 +17,7 @@ display!(Prim);
 display!(ExprTup);
 display!(Expr);
 display!(OpWire);
-display!(CompOp);
+display!(OpComp);
 display!(CallOp);
 display!(InstrCall);
 display!(InstrComp);

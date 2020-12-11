@@ -80,24 +80,24 @@ impl PrettyPrint for OpWire {
     }
 }
 
-impl PrettyPrint for CompOp {
+impl PrettyPrint for OpComp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            CompOp::Reg => RcDoc::text("reg"),
-            CompOp::Add => RcDoc::text("add"),
-            CompOp::Sub => RcDoc::text("sub"),
-            CompOp::Mul => RcDoc::text("mul"),
-            CompOp::Not => RcDoc::text("not"),
-            CompOp::And => RcDoc::text("and"),
-            CompOp::Or => RcDoc::text("or"),
-            CompOp::Xor => RcDoc::text("xor"),
-            CompOp::Mux => RcDoc::text("mux"),
-            CompOp::Eql => RcDoc::text("eq"),
-            CompOp::Neql => RcDoc::text("neq"),
-            CompOp::Gt => RcDoc::text("gt"),
-            CompOp::Lt => RcDoc::text("lt"),
-            CompOp::Ge => RcDoc::text("ge"),
-            CompOp::Le => RcDoc::text("le"),
+            OpComp::Reg => RcDoc::text("reg"),
+            OpComp::Add => RcDoc::text("add"),
+            OpComp::Sub => RcDoc::text("sub"),
+            OpComp::Mul => RcDoc::text("mul"),
+            OpComp::Not => RcDoc::text("not"),
+            OpComp::And => RcDoc::text("and"),
+            OpComp::Or => RcDoc::text("or"),
+            OpComp::Xor => RcDoc::text("xor"),
+            OpComp::Mux => RcDoc::text("mux"),
+            OpComp::Eql => RcDoc::text("eq"),
+            OpComp::Neql => RcDoc::text("neq"),
+            OpComp::Gt => RcDoc::text("gt"),
+            OpComp::Lt => RcDoc::text("lt"),
+            OpComp::Ge => RcDoc::text("ge"),
+            OpComp::Le => RcDoc::text("le"),
         }
     }
 }

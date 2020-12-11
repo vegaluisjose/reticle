@@ -38,7 +38,7 @@ impl InstrCall {
 }
 
 impl InstrComp {
-    pub fn op(&self) -> &CompOp {
+    pub fn op(&self) -> &OpComp {
         &self.op
     }
     pub fn dst(&self) -> &Expr {

@@ -68,26 +68,26 @@ impl FromStr for Ty {
     }
 }
 
-impl FromStr for CompOp {
+impl FromStr for OpComp {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let err = format!("Error: {} is not valid compute operation", input);
         match input {
-            "reg" => Ok(CompOp::Reg),
-            "add" => Ok(CompOp::Add),
-            "sub" => Ok(CompOp::Sub),
-            "mul" => Ok(CompOp::Mul),
-            "not" => Ok(CompOp::Not),
-            "and" => Ok(CompOp::And),
-            "or" => Ok(CompOp::Or),
-            "xor" => Ok(CompOp::Xor),
-            "mux" => Ok(CompOp::Mux),
-            "eq" => Ok(CompOp::Eql),
-            "neq" => Ok(CompOp::Neql),
-            "gt" => Ok(CompOp::Gt),
-            "lt" => Ok(CompOp::Lt),
-            "ge" => Ok(CompOp::Ge),
-            "le" => Ok(CompOp::Le),
+            "reg" => Ok(OpComp::Reg),
+            "add" => Ok(OpComp::Add),
+            "sub" => Ok(OpComp::Sub),
+            "mul" => Ok(OpComp::Mul),
+            "not" => Ok(OpComp::Not),
+            "and" => Ok(OpComp::And),
+            "or" => Ok(OpComp::Or),
+            "xor" => Ok(OpComp::Xor),
+            "mux" => Ok(OpComp::Mux),
+            "eq" => Ok(OpComp::Eql),
+            "neq" => Ok(OpComp::Neql),
+            "gt" => Ok(OpComp::Gt),
+            "lt" => Ok(OpComp::Lt),
+            "ge" => Ok(OpComp::Ge),
+            "le" => Ok(OpComp::Le),
             _ => Err(Error::new_parse_error(&err)),
         }
     }

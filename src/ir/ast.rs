@@ -42,7 +42,7 @@ pub enum OpWire {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum CompOp {
+pub enum OpComp {
     Reg,
     Add,
     Sub,
@@ -75,7 +75,7 @@ pub struct InstrWire {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrComp {
-    pub op: CompOp,
+    pub op: OpComp,
     pub dst: Expr,
     pub attr: Expr,
     pub arg: Expr,
