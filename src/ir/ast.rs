@@ -32,7 +32,7 @@ pub enum Prim {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum WireOp {
+pub enum OpWire {
     Id,
     Inp,
     Con,
@@ -67,7 +67,7 @@ pub enum CallOp {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrWire {
-    pub op: WireOp,
+    pub op: OpWire,
     pub dst: Expr,
     pub attr: Expr,
     pub arg: Expr,

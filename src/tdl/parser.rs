@@ -90,7 +90,7 @@ impl TDLParser {
         Ok(match_nodes!(
             input.into_children();
             [io(dst), id(opcode), tup_val(attr)] => {
-                let wop = WireOp::from_str(&opcode);
+                let wop = OpWire::from_str(&opcode);
                 let cop = CompOp::from_str(&opcode);
                 match (wop, cop) {
                     (Ok(op), Err(_)) => Instr::from(
@@ -105,7 +105,7 @@ impl TDLParser {
                 }
             },
             [io(dst), id(opcode), io(arg)] => {
-                let wop = WireOp::from_str(&opcode);
+                let wop = OpWire::from_str(&opcode);
                 let cop = CompOp::from_str(&opcode);
                 match (wop, cop) {
                     (Ok(op), Err(_)) => Instr::from(
@@ -129,7 +129,7 @@ impl TDLParser {
                 }
             },
             [io(dst), id(opcode), tup_val(attr), io(arg)] => {
-                let wop = WireOp::from_str(&opcode);
+                let wop = OpWire::from_str(&opcode);
                 let cop = CompOp::from_str(&opcode);
                 match (wop, cop) {
                     (Ok(op), Err(_)) => Instr::from(

@@ -5,7 +5,7 @@ pub type Ty = ir::Ty;
 pub type Prim = ir::Prim;
 pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
-pub type WireOp = ir::WireOp;
+pub type OpWire = ir::OpWire;
 pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
 

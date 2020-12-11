@@ -56,7 +56,7 @@ impl InstrComp {
 }
 
 impl InstrWire {
-    pub fn op(&self) -> &WireOp {
+    pub fn op(&self) -> &OpWire {
         &self.op
     }
     pub fn dst(&self) -> &Expr {

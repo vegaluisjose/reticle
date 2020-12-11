@@ -93,17 +93,17 @@ impl FromStr for CompOp {
     }
 }
 
-impl FromStr for WireOp {
+impl FromStr for OpWire {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let err = format!("Error: {} is not valid wire operation", input);
         match input {
-            "id" => Ok(WireOp::Id),
-            "inp" => Ok(WireOp::Inp),
-            "const" => Ok(WireOp::Con),
-            "sll" => Ok(WireOp::Sll),
-            "srl" => Ok(WireOp::Srl),
-            "sra" => Ok(WireOp::Sra),
+            "id" => Ok(OpWire::Id),
+            "inp" => Ok(OpWire::Inp),
+            "const" => Ok(OpWire::Con),
+            "sll" => Ok(OpWire::Sll),
+            "srl" => Ok(OpWire::Srl),
+            "sra" => Ok(OpWire::Sra),
             _ => Err(Error::new_parse_error(&err)),
         }
     }

@@ -67,15 +67,15 @@ impl PrettyPrint for CallOp {
     }
 }
 
-impl PrettyPrint for WireOp {
+impl PrettyPrint for OpWire {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            WireOp::Id => RcDoc::text("id"),
-            WireOp::Inp => RcDoc::text("inp"),
-            WireOp::Con => RcDoc::text("const"),
-            WireOp::Sll => RcDoc::text("sll"),
-            WireOp::Srl => RcDoc::text("srl"),
-            WireOp::Sra => RcDoc::text("sra"),
+            OpWire::Id => RcDoc::text("id"),
+            OpWire::Inp => RcDoc::text("inp"),
+            OpWire::Con => RcDoc::text("const"),
+            OpWire::Sll => RcDoc::text("sll"),
+            OpWire::Srl => RcDoc::text("srl"),
+            OpWire::Sra => RcDoc::text("sra"),
         }
     }
 }
