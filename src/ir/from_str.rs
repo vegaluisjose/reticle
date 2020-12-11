@@ -109,10 +109,10 @@ impl FromStr for OpWire {
     }
 }
 
-impl FromStr for CallOp {
+impl FromStr for OpCall {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        Ok(CallOp::Op(input.to_string()))
+        Ok(OpCall::Op(input.to_string()))
     }
 }
 

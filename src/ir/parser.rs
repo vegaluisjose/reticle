@@ -119,7 +119,7 @@ impl IRParser {
                     ),
                     (Err(_), Err(_)) => Instr::from(
                         InstrCall {
-                            op: CallOp::from_str(&opcode).unwrap(),
+                            op: OpCall::from_str(&opcode).unwrap(),
                             dst,
                             arg,
                         }

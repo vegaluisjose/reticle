@@ -61,7 +61,7 @@ pub enum OpComp {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub enum CallOp {
+pub enum OpCall {
     Op(Id),
 }
 
@@ -84,7 +84,7 @@ pub struct InstrComp {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrCall {
-    pub op: CallOp,
+    pub op: OpCall,
     pub dst: Expr,
     pub arg: Expr,
 }

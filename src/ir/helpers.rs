@@ -26,7 +26,7 @@ impl Expr {
 }
 
 impl InstrCall {
-    pub fn op(&self) -> &CallOp {
+    pub fn op(&self) -> &OpCall {
         &self.op
     }
     pub fn dst(&self) -> &Expr {
