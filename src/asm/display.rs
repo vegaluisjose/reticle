@@ -12,6 +12,7 @@ macro_rules! display {
     };
 }
 
+display!(OpCoord);
 display!(ExprCoord);
 display!(Loc);
 display!(OpAsm);

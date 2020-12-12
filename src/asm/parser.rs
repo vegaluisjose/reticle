@@ -2,6 +2,7 @@ use crate::asm::ast::*;
 use crate::util::file::read_to_string;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
+use std::rc::Rc;
 use std::str::FromStr;
 
 pub type Result<T> = std::result::Result<T, Error<Rule>>;
@@ -39,12 +40,28 @@ impl AsmParser {
         }
     }
 
-    fn expr_coord(input: Node) -> Result<ExprCoord> {
+    fn op_coord(input: Node) -> Result<OpCoord> {
+        let op = OpCoord::from_str(input.as_str());
+        match op {
+            Ok(e) => Ok(e),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn coord(input: Node) -> Result<ExprCoord> {
         let expr = ExprCoord::from_str(input.as_str());
         match expr {
             Ok(e) => Ok(e),
             Err(m) => panic!("{}", m),
         }
+    }
+
+    fn expr_coord(input: Node) -> Result<ExprCoord> {
+        Ok(match_nodes!(
+            input.into_children();
+            [coord(coord)] => coord,
+            [coord(lhs), op_coord(op), coord(rhs)] => ExprCoord::Bin(op, Rc::new(lhs), Rc::new(rhs)),
+        ))
     }
 
     fn prim(input: Node) -> Result<Prim> {

@@ -3,9 +3,7 @@ use std::collections::HashMap;
 
 impl OpCall {
     pub fn new(op: &str) -> OpCall {
-        OpCall {
-            op: op.to_string(),
-        }
+        OpCall { op: op.to_string() }
     }
     pub fn op(&self) -> String {
         self.op.to_string()

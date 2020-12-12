@@ -28,7 +28,11 @@ attr = _{ "[" ~ tup_val ~ "]" }
 
 prim = { id }
 
-expr_coord = { "??" | id | ASCII_DIGIT+ }
+coord = { "??" | id | ASCII_DIGIT+ }
+
+op_coord = { "+" }
+
+expr_coord = { coord ~ (op_coord ~ coord)? }
 
 hint = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 

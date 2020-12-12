@@ -3,12 +3,21 @@ use crate::ir::pretty_print::expr_names;
 use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 use pretty::RcDoc;
 
+impl PrettyPrint for OpCoord {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            OpCoord::Add => RcDoc::text("+"),
+        }
+    }
+}
+
 impl PrettyPrint for ExprCoord {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             ExprCoord::Any => RcDoc::text("??"),
             ExprCoord::Val(n) => RcDoc::as_string(n),
             ExprCoord::Var(n) => RcDoc::as_string(n),
+            ExprCoord::Bin(op, lhs, rhs) => lhs.to_doc().append(op.to_doc()).append(rhs.to_doc()),
         }
     }
 }

@@ -1,4 +1,5 @@
 use crate::ir::ast as ir;
+use std::rc::Rc;
 
 pub type Id = ir::Id;
 pub type Ty = ir::Ty;
@@ -10,10 +11,16 @@ pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum OpCoord {
+    Add,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum ExprCoord {
     Any,
     Var(Id),
     Val(u64),
+    Bin(OpCoord, Rc<ExprCoord>, Rc<ExprCoord>),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
