@@ -62,14 +62,22 @@ pub enum OptVal {
 
 #[derive(Clone, Debug)]
 pub enum BelLut {
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-    G,
-    H,
+    A5,
+    B5,
+    C5,
+    D5,
+    E5,
+    F5,
+    G5,
+    H5,
+    A6,
+    B6,
+    C6,
+    D6,
+    E6,
+    F6,
+    G6,
+    H6,
 }
 
 #[derive(Clone, Debug)]
@@ -82,6 +90,14 @@ pub enum BelReg {
     F,
     G,
     H,
+    A2,
+    B2,
+    C2,
+    D2,
+    E2,
+    F2,
+    G2,
+    H2,
 }
 
 #[derive(Clone, Debug)]
