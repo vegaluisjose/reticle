@@ -1,5 +1,5 @@
-use crate::ir::ast as ir;
 use crate::asm::ast as asm;
+use crate::ir::ast as ir;
 use std::collections::HashMap;
 
 pub type Id = ir::Id;
@@ -14,24 +14,24 @@ pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
 pub type OptMap = HashMap<Opt, OptVal>;
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum OpReg {
     Fdre,
     Fdse,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum OpDsp {
     Add,
     MulAdd,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum OpCarry {
     Carry8,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum OpLut {
     Lut1,
     Lut2,
@@ -41,27 +41,26 @@ pub enum OpLut {
     Lut6,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum OptDsp {
     Ra,
     Rb,
     Rc,
-    Rd,
-    Rp,
     Rm,
+    Rp,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum Opt {
     Dsp(OptDsp),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum OptVal {
     UInt(u64),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum BelLut {
     A,
     B,
@@ -73,7 +72,7 @@ pub enum BelLut {
     H,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum BelReg {
     A,
     B,
@@ -85,40 +84,40 @@ pub enum BelReg {
     H,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum BelCarry {
     Carry8,
     Carry4,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct LocLut {
     pub bel: BelLut,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct LocReg {
     pub bel: BelReg,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct LocCarry {
     pub bel: BelCarry,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct LocDsp {
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct InstrReg {
     pub op: OpReg,
     pub dst: Expr,
@@ -126,7 +125,7 @@ pub struct InstrReg {
     pub loc: LocReg,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct InstrLut {
     pub op: OpLut,
     pub opt: OptMap,
@@ -135,7 +134,7 @@ pub struct InstrLut {
     pub loc: LocLut,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct InstrCarry {
     pub op: OpCarry,
     pub dst: Expr,
@@ -143,7 +142,7 @@ pub struct InstrCarry {
     pub loc: LocCarry,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct InstrDsp {
     pub op: OpDsp,
     pub opt: OptMap,
@@ -152,7 +151,7 @@ pub struct InstrDsp {
     pub loc: LocDsp,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub enum Instr {
     Wire(InstrWire),
     Reg(InstrReg),
@@ -161,13 +160,13 @@ pub enum Instr {
     Carry(InstrCarry),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct Def {
     pub sig: Sig,
     pub body: Vec<Instr>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Default)]
+#[derive(Clone, Debug, Default)]
 pub struct Desc {
     pub def: HashMap<Id, Def>,
 }
