@@ -19,6 +19,7 @@ impl ExprTup {
     }
 }
 
+#[allow(clippy::match_like_matches_macro)]
 impl Expr {
     pub fn is_tup(&self) -> bool {
         match self {

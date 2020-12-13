@@ -1,9 +1,12 @@
 use crate::ir::ast as ir;
+use crate::asm::ast as asm;
 use std::collections::HashMap;
 
 pub type Id = ir::Id;
 pub type Ty = ir::Ty;
 pub type Prim = ir::Prim;
+pub type ExprCoord = asm::ExprCoord;
+pub type OpCoord = asm::OpCoord;
 pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
 pub type OpWire = ir::OpWire;
@@ -24,6 +27,21 @@ pub enum OpDsp {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum OpCarry {
+    Carry8,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum OpLut {
+    Lut1,
+    Lut2,
+    Lut3,
+    Lut4,
+    Lut5,
+    Lut6,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum OptDsp {
     Ra,
     Rb,
@@ -40,7 +58,19 @@ pub enum Opt {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum OptVal {
-    UInt(u32),
+    UInt(u64),
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum BelLut {
+    A,
+    B,
+    C,
+    D,
+    E,
+    F,
+    G,
+    H,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -56,17 +86,70 @@ pub enum BelReg {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum BelCarry {
+    Carry8,
+    Carry4,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct LocLut {
+    pub bel: BelLut,
+    pub x: ExprCoord,
+    pub y: ExprCoord,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct LocReg {
+    pub bel: BelReg,
+    pub x: ExprCoord,
+    pub y: ExprCoord,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct LocCarry {
+    pub bel: BelCarry,
+    pub x: ExprCoord,
+    pub y: ExprCoord,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct LocDsp {
+    pub x: ExprCoord,
+    pub y: ExprCoord,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrReg {
     pub op: OpReg,
     pub dst: Expr,
     pub arg: Expr,
+    pub loc: LocReg,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct InstrLut {
+    pub op: OpLut,
+    pub opt: OptMap,
+    pub dst: Expr,
+    pub arg: Expr,
+    pub loc: LocLut,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub struct InstrCarry {
+    pub op: OpCarry,
+    pub dst: Expr,
+    pub arg: Expr,
+    pub loc: LocCarry,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct InstrDsp {
     pub op: OpDsp,
+    pub opt: OptMap,
     pub dst: Expr,
     pub arg: Expr,
+    pub loc: LocDsp,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -74,6 +157,8 @@ pub enum Instr {
     Wire(InstrWire),
     Reg(InstrReg),
     Dsp(InstrDsp),
+    Lut(InstrLut),
+    Carry(InstrCarry),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
