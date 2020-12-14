@@ -17,4 +17,4 @@ display!(OpDsp);
 display!(OpCarry);
 display!(OpLut);
 display!(BelLut);
-display!(LocLut);
+display!(Loc);

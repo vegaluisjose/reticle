@@ -12,8 +12,8 @@ fn main() {
     let tdl = TDLParser::parse_from_str(
         "lut_reg[lut, 0, 1](a:bool, b:bool) -> (y:bool) { y:bool = reg[0](a, b); }",
     );
-    let prog = mdl::LocLut {
-        bel: mdl::BelLut::A6,
+    let prog = mdl::Loc {
+        bel: Some(mdl::Bel::Lut(mdl::BelLut::A6)),
         x: mdl::ExprCoord::Var("x".to_string()),
         y: mdl::ExprCoord::Var("y".to_string()),
     };

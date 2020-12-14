@@ -1,8 +1,8 @@
 use crate::mdl::ast::*;
 
-impl LocLut {
-    pub fn bel(&self) -> &BelLut {
-        &self.bel
+impl Loc {
+    pub fn bel(&self) -> Option<&Bel> {
+        self.bel.as_ref()
     }
     pub fn x(&self) -> &ExprCoord {
         &self.x

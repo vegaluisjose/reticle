@@ -126,7 +126,17 @@ impl PrettyPrint for BelCarry {
     }
 }
 
-impl PrettyPrint for LocLut {
+impl PrettyPrint for Bel {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            Bel::Lut(lut) => lut.to_doc(),
+            Bel::Reg(reg) => reg.to_doc(),
+            Bel::Carry(carry) => carry.to_doc(),
+        }
+    }
+}
+
+impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
         let xy = self
             .x()
@@ -135,6 +145,11 @@ impl PrettyPrint for LocLut {
             .append(RcDoc::space())
             .append(self.y().to_doc())
             .parens();
-        self.bel().to_doc().append(xy)
+        if let Some(bel) = self.bel() {
+            bel.to_doc().append(xy)
+        } else {
+            xy
+        }
+        // self.bel().to_doc().append(xy)
     }
 }

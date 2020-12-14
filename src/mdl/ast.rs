@@ -15,6 +15,35 @@ pub type Sig = ir::Sig;
 pub type OptMap = HashMap<Opt, OptVal>;
 
 #[derive(Clone, Debug)]
+pub enum OptDsp {
+    Ra,
+    Rb,
+    Rc,
+    Rm,
+    Rp,
+}
+
+#[derive(Clone, Debug)]
+pub enum Opt {
+    Dsp(OptDsp),
+}
+
+#[derive(Clone, Debug)]
+pub enum OptVal {
+    UInt(u64),
+}
+
+#[derive(Clone, Debug)]
+pub enum OpLut {
+    Lut1,
+    Lut2,
+    Lut3,
+    Lut4,
+    Lut5,
+    Lut6,
+}
+
+#[derive(Clone, Debug)]
 pub enum OpReg {
     Fdre,
     Fdse,
@@ -32,32 +61,11 @@ pub enum OpCarry {
 }
 
 #[derive(Clone, Debug)]
-pub enum OpLut {
-    Lut1,
-    Lut2,
-    Lut3,
-    Lut4,
-    Lut5,
-    Lut6,
-}
-
-#[derive(Clone, Debug)]
-pub enum OptDsp {
-    Ra,
-    Rb,
-    Rc,
-    Rm,
-    Rp,
-}
-
-#[derive(Clone, Debug)]
-pub enum Opt {
-    Dsp(OptDsp),
-}
-
-#[derive(Clone, Debug)]
-pub enum OptVal {
-    UInt(u64),
+pub enum OpComp {
+    Lut(OpLut),
+    Reg(OpReg),
+    Dsp(OpDsp),
+    Carry(OpCarry),
 }
 
 #[derive(Clone, Debug)]
@@ -107,73 +115,32 @@ pub enum BelCarry {
 }
 
 #[derive(Clone, Debug)]
-pub struct LocLut {
-    pub bel: BelLut,
+pub enum Bel {
+    Lut(BelLut),
+    Reg(BelReg),
+    Carry(BelCarry),
+}
+
+#[derive(Clone, Debug)]
+pub struct Loc {
+    pub bel: Option<Bel>,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
 #[derive(Clone, Debug)]
-pub struct LocReg {
-    pub bel: BelReg,
-    pub x: ExprCoord,
-    pub y: ExprCoord,
-}
-
-#[derive(Clone, Debug)]
-pub struct LocCarry {
-    pub bel: BelCarry,
-    pub x: ExprCoord,
-    pub y: ExprCoord,
-}
-
-#[derive(Clone, Debug)]
-pub struct LocDsp {
-    pub x: ExprCoord,
-    pub y: ExprCoord,
-}
-
-#[derive(Clone, Debug)]
-pub struct InstrReg {
-    pub op: OpReg,
-    pub dst: Expr,
-    pub arg: Expr,
-    pub loc: LocReg,
-}
-
-#[derive(Clone, Debug)]
-pub struct InstrLut {
-    pub op: OpLut,
+pub struct InstrComp {
+    pub op: OpComp,
     pub opt: OptMap,
     pub dst: Expr,
     pub arg: Expr,
-    pub loc: LocLut,
-}
-
-#[derive(Clone, Debug)]
-pub struct InstrCarry {
-    pub op: OpCarry,
-    pub dst: Expr,
-    pub arg: Expr,
-    pub loc: LocCarry,
-}
-
-#[derive(Clone, Debug)]
-pub struct InstrDsp {
-    pub op: OpDsp,
-    pub opt: OptMap,
-    pub dst: Expr,
-    pub arg: Expr,
-    pub loc: LocDsp,
+    pub loc: Loc,
 }
 
 #[derive(Clone, Debug)]
 pub enum Instr {
     Wire(InstrWire),
-    Reg(InstrReg),
-    Dsp(InstrDsp),
-    Lut(InstrLut),
-    Carry(InstrCarry),
+    Comp(InstrComp),
 }
 
 #[derive(Clone, Debug)]
