@@ -74,22 +74,22 @@ impl PrettyPrint for OptVal {
 impl PrettyPrint for BelLut {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            BelLut::A5 => RcDoc::text("A5LUT"),
-            BelLut::B5 => RcDoc::text("B5LUT"),
-            BelLut::C5 => RcDoc::text("C5LUT"),
-            BelLut::D5 => RcDoc::text("D5LUT"),
-            BelLut::E5 => RcDoc::text("E5LUT"),
-            BelLut::F5 => RcDoc::text("F5LUT"),
-            BelLut::G5 => RcDoc::text("G5LUT"),
-            BelLut::H5 => RcDoc::text("H5LUT"),
-            BelLut::A6 => RcDoc::text("A6LUT"),
-            BelLut::B6 => RcDoc::text("B6LUT"),
-            BelLut::C6 => RcDoc::text("C6LUT"),
-            BelLut::D6 => RcDoc::text("D6LUT"),
-            BelLut::E6 => RcDoc::text("E6LUT"),
-            BelLut::F6 => RcDoc::text("F6LUT"),
-            BelLut::G6 => RcDoc::text("G6LUT"),
-            BelLut::H6 => RcDoc::text("H6LUT"),
+            BelLut::A5 => RcDoc::text("a5lut"),
+            BelLut::B5 => RcDoc::text("b5lut"),
+            BelLut::C5 => RcDoc::text("c5lut"),
+            BelLut::D5 => RcDoc::text("d5lut"),
+            BelLut::E5 => RcDoc::text("e5lut"),
+            BelLut::F5 => RcDoc::text("f5lut"),
+            BelLut::G5 => RcDoc::text("g5lut"),
+            BelLut::H5 => RcDoc::text("h5lut"),
+            BelLut::A6 => RcDoc::text("a6lut"),
+            BelLut::B6 => RcDoc::text("b6lut"),
+            BelLut::C6 => RcDoc::text("c6lut"),
+            BelLut::D6 => RcDoc::text("d6lut"),
+            BelLut::E6 => RcDoc::text("e6lut"),
+            BelLut::F6 => RcDoc::text("f6lut"),
+            BelLut::G6 => RcDoc::text("g6lut"),
+            BelLut::H6 => RcDoc::text("h6lut"),
         }
     }
 }
@@ -97,22 +97,22 @@ impl PrettyPrint for BelLut {
 impl PrettyPrint for BelReg {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            BelReg::A => RcDoc::text("AFF"),
-            BelReg::B => RcDoc::text("BFF"),
-            BelReg::C => RcDoc::text("CFF"),
-            BelReg::D => RcDoc::text("DFF"),
-            BelReg::E => RcDoc::text("EFF"),
-            BelReg::F => RcDoc::text("FFF"),
-            BelReg::G => RcDoc::text("GFF"),
-            BelReg::H => RcDoc::text("HFF"),
-            BelReg::A2 => RcDoc::text("AFF2"),
-            BelReg::B2 => RcDoc::text("BFF2"),
-            BelReg::C2 => RcDoc::text("CFF2"),
-            BelReg::D2 => RcDoc::text("DFF2"),
-            BelReg::E2 => RcDoc::text("EFF2"),
-            BelReg::F2 => RcDoc::text("FFF2"),
-            BelReg::G2 => RcDoc::text("GFF2"),
-            BelReg::H2 => RcDoc::text("HFF2"),
+            BelReg::A => RcDoc::text("aff"),
+            BelReg::B => RcDoc::text("bff"),
+            BelReg::C => RcDoc::text("cff"),
+            BelReg::D => RcDoc::text("dff"),
+            BelReg::E => RcDoc::text("eff"),
+            BelReg::F => RcDoc::text("fff"),
+            BelReg::G => RcDoc::text("gff"),
+            BelReg::H => RcDoc::text("hff"),
+            BelReg::A2 => RcDoc::text("aff2"),
+            BelReg::B2 => RcDoc::text("bff2"),
+            BelReg::C2 => RcDoc::text("cff2"),
+            BelReg::D2 => RcDoc::text("dff2"),
+            BelReg::E2 => RcDoc::text("eff2"),
+            BelReg::F2 => RcDoc::text("fff2"),
+            BelReg::G2 => RcDoc::text("gff2"),
+            BelReg::H2 => RcDoc::text("hff2"),
         }
     }
 }
@@ -120,8 +120,8 @@ impl PrettyPrint for BelReg {
 impl PrettyPrint for BelCarry {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            BelCarry::Carry8 => RcDoc::text("CARRY8"),
-            BelCarry::Carry4 => RcDoc::text("CARRY4"),
+            BelCarry::Carry8 => RcDoc::text("carry8"),
+            BelCarry::Carry4 => RcDoc::text("carry4"),
         }
     }
 }
