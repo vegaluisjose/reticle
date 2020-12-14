@@ -144,12 +144,7 @@ pub enum Instr {
 }
 
 #[derive(Clone, Debug)]
-pub struct Def {
+pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,
-}
-
-#[derive(Clone, Debug, Default)]
-pub struct Desc {
-    pub def: HashMap<Id, Def>,
 }

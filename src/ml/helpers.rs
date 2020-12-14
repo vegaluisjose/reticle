@@ -1,4 +1,4 @@
-use crate::mdl::ast::*;
+use crate::ml::ast::*;
 
 impl Loc {
     pub fn bel(&self) -> Option<&Bel> {

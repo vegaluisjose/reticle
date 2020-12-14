@@ -1,6 +1,6 @@
 use reticle::asm::parser::AsmParser;
 use reticle::ir::parser::IRParser;
-use reticle::mdl::ast as mdl;
+use reticle::ml::ast as ml;
 use reticle::tdl::parser::TDLParser;
 
 fn main() {
@@ -12,10 +12,10 @@ fn main() {
     let tdl = TDLParser::parse_from_str(
         "lut_reg[lut, 0, 1](a:bool, b:bool) -> (y:bool) { y:bool = reg[0](a, b); }",
     );
-    let prog = mdl::Loc {
-        bel: Some(mdl::Bel::Lut(mdl::BelLut::A6)),
-        x: mdl::ExprCoord::Var("x".to_string()),
-        y: mdl::ExprCoord::Var("y".to_string()),
+    let prog = ml::Loc {
+        bel: Some(ml::Bel::Lut(ml::BelLut::A6)),
+        x: ml::ExprCoord::Var("x".to_string()),
+        y: ml::ExprCoord::Var("y".to_string()),
     };
     println!("{}", ir.unwrap());
     println!("{}", asm.unwrap());
