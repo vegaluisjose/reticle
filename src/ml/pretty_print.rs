@@ -1,6 +1,6 @@
+use crate::ir::pretty_print::expr_names;
 use crate::ml::ast::*;
-// use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
-use crate::util::pretty_print::{PrettyHelper, PrettyPrint};
+use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 // use itertools::Itertools;
 use pretty::RcDoc;
 
@@ -39,6 +39,17 @@ impl PrettyPrint for OpLut {
             OpLut::Lut4 => RcDoc::text("lut4"),
             OpLut::Lut5 => RcDoc::text("lut5"),
             OpLut::Lut6 => RcDoc::text("lut6"),
+        }
+    }
+}
+
+impl PrettyPrint for OpMach {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            OpMach::Dsp(dsp) => dsp.to_doc(),
+            OpMach::Lut(lut) => lut.to_doc(),
+            OpMach::Carry(carry) => carry.to_doc(),
+            OpMach::Reg(reg) => reg.to_doc(),
         }
     }
 }
@@ -150,5 +161,59 @@ impl PrettyPrint for Loc {
         } else {
             xy
         }
+    }
+}
+
+impl PrettyPrint for OptMap {
+    fn to_doc(&self) -> RcDoc<()> {
+        intersperse(
+            self.iter()
+                .map(|(opt, val)| opt.to_doc().append(RcDoc::text("=")).append(val.to_doc())),
+            RcDoc::text(",").append(RcDoc::space()),
+        )
+    }
+}
+
+impl PrettyPrint for InstrMach {
+    fn to_doc(&self) -> RcDoc<()> {
+        let opt = if self.opt().is_empty() {
+            RcDoc::nil()
+        } else {
+            self.opt().to_doc().brackets()
+        };
+        self.dst()
+            .to_doc()
+            .append(RcDoc::space())
+            .append(RcDoc::text("="))
+            .append(RcDoc::space())
+            .append(self.op().to_doc())
+            .append(opt)
+            .append(expr_names(self.arg()))
+            .append(RcDoc::space())
+            .append(RcDoc::text("@"))
+            .append(self.loc().to_doc())
+    }
+}
+
+
+impl PrettyPrint for Instr {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            Instr::Wire(wire) => wire.to_doc(),
+            Instr::Mach(mach) => mach.to_doc(),
+        }
+    }
+}
+
+impl PrettyPrint for Prog {
+    fn to_doc(&self) -> RcDoc<()> {
+        let sig = self.sig().to_doc();
+        let body = intersperse(
+            self.body()
+                .iter()
+                .map(|i| i.to_doc().append(RcDoc::text(";"))),
+            RcDoc::hardline(),
+        );
+        block_with_braces(sig, body)
     }
 }
