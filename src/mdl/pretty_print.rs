@@ -1,6 +1,6 @@
 use crate::mdl::ast::*;
 // use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
-use crate::util::pretty_print::PrettyPrint;
+use crate::util::pretty_print::{PrettyHelper, PrettyPrint};
 // use itertools::Itertools;
 use pretty::RcDoc;
 
@@ -120,8 +120,21 @@ impl PrettyPrint for BelReg {
 impl PrettyPrint for BelCarry {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            BelCarry::Carry8 => RcDoc::text("carry8"),
-            BelCarry::Carry4 => RcDoc::text("carry4"),
+            BelCarry::Carry8 => RcDoc::text("CARRY8"),
+            BelCarry::Carry4 => RcDoc::text("CARRY4"),
         }
+    }
+}
+
+impl PrettyPrint for LocLut {
+    fn to_doc(&self) -> RcDoc<()> {
+        let xy = self
+            .x()
+            .to_doc()
+            .append(RcDoc::text(","))
+            .append(RcDoc::space())
+            .append(self.y().to_doc())
+            .parens();
+        self.bel().to_doc().append(xy)
     }
 }

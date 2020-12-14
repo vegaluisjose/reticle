@@ -13,3 +13,8 @@ macro_rules! display {
 }
 
 display!(OpReg);
+display!(OpDsp);
+display!(OpCarry);
+display!(OpLut);
+display!(BelLut);
+display!(LocLut);
