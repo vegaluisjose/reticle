@@ -150,6 +150,5 @@ impl PrettyPrint for Loc {
         } else {
             xy
         }
-        // self.bel().to_doc().append(xy)
     }
 }
