@@ -61,7 +61,7 @@ pub enum OpCarry {
 }
 
 #[derive(Clone, Debug)]
-pub enum OpComp {
+pub enum OpMach {
     Lut(OpLut),
     Reg(OpReg),
     Dsp(OpDsp),
@@ -129,8 +129,8 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
-pub struct InstrComp {
-    pub op: OpComp,
+pub struct InstrMach {
+    pub op: OpMach,
     pub opt: OptMap,
     pub dst: Expr,
     pub arg: Expr,
@@ -140,7 +140,7 @@ pub struct InstrComp {
 #[derive(Clone, Debug)]
 pub enum Instr {
     Wire(InstrWire),
-    Comp(InstrComp),
+    Mach(InstrMach),
 }
 
 #[derive(Clone, Debug)]
