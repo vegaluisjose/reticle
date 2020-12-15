@@ -6,23 +6,41 @@ sep = _{ "_" | "-"}
 
 id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
-bel = { id }
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 
-coord = { "??" | id | ASCII_DIGIT+ }
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+bool = @{ ASCII_ALPHA_LOWER+ }
+
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
 op_coord = { "+" }
-
-expr_coord = { coord ~ (op_coord ~ coord)? }
-
-loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 op_mach = { id }
 
 op_wire = { id }
 
-instr_mach = { op_mach ~ "@" ~ loc ~ ";" }
+ty = ${ vector | int | bool }
 
-instr_wire = { op_wire ~ ";" }
+var = { id ~ ":" ~ ty | id }
+
+tup_var = { (var ~ ("," ~ var)*)? }
+
+tup_val = { (val ~ ("," ~ val)*)? }
+
+io = { var | "(" ~ tup_var ~ ")" }
+
+bel = { id }
+
+coord = { "??" | id | ASCII_DIGIT+ }
+
+expr_coord = { coord ~ (op_coord ~ coord)? }
+
+loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
+instr_mach = { io ~ "=" ~ op_mach ~ io ~ "@" ~ loc ~ ";" }
+
+instr_wire = { io ~ "=" ~ op_wire ~ io? ~ ";" }
 
 instr = { instr_mach | instr_wire }
 

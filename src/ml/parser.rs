@@ -24,6 +24,22 @@ impl MLParser {
         Ok(input.as_str().to_string())
     }
 
+    fn val(input: Node) -> Result<Expr> {
+        let val = input.as_str().parse::<i64>();
+        match val {
+            Ok(v) => Ok(Expr::Val(v)),
+            Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
+        }
+    }
+
+    fn ty(input: Node) -> Result<Ty> {
+        let ty = Ty::from_str(input.as_str());
+        match ty {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
     fn op_coord(input: Node) -> Result<OpCoord> {
         let op = OpCoord::from_str(input.as_str());
         match op {
@@ -72,6 +88,36 @@ impl MLParser {
         ))
     }
 
+    fn var(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), ty(ty)] => Expr::Var(id, ty),
+            [id(id)] => Expr::Var(id, Ty::Any),
+        ))
+    }
+
+    fn tup_var(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [var(vars)..] => Expr::from(ExprTup{ expr: vars.collect()}),
+        ))
+    }
+
+    fn tup_val(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [val(vals)..] => Expr::from(ExprTup{ expr: vals.collect()}),
+        ))
+    }
+
+    fn io(input: Node) -> Result<Expr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [var(var)] => var,
+            [tup_var(tup)] => tup,
+        ))
+    }
+
     fn op_mach(input: Node) -> Result<OpMach> {
         let op = OpMach::from_str(input.as_str());
         match op {
@@ -88,40 +134,36 @@ impl MLParser {
         }
     }
 
-    fn instr_mach(input: Node) -> Result<Instr> {
+    fn instr_mach(input: Node) -> Result<InstrMach> {
         Ok(match_nodes!(
             input.into_children();
-            [op_mach(op), loc(loc)] => Instr::from(
-                InstrMach {
-                    op,
-                    opt: OptMap::new(),
-                    dst: Expr::default(),
-                    arg: Expr::default(),
-                    loc
-                }
-            )
+            [io(dst), op_mach(op), loc(loc)] => InstrMach {
+                op,
+                opt: OptMap::new(),
+                dst,
+                arg: Expr::default(),
+                loc
+            }
         ))
     }
 
-    fn instr_wire(input: Node) -> Result<Instr> {
+    fn instr_wire(input: Node) -> Result<InstrWire> {
         Ok(match_nodes!(
             input.into_children();
-            [op_wire(op)] => Instr::from(
-                InstrWire {
-                    op,
-                    dst: Expr::default(),
-                    attr: Expr::default(),
-                    arg: Expr::default(),
-                }
-            )
+            [io(dst), op_wire(op)] => InstrWire {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg: Expr::default(),
+            }
         ))
     }
 
     fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [instr_mach(instr)] => instr,
-            [instr_wire(instr)] => instr,
+            [instr_mach(instr)] => Instr::from(instr),
+            [instr_wire(instr)] => Instr::from(instr),
         ))
     }
 
