@@ -1,8 +1,7 @@
 use reticle::asm::parser::AsmParser;
 use reticle::ir::parser::IRParser;
-use reticle::ml::ast as ml;
+use reticle::ml::parser::MLParser;
 use reticle::tdl::parser::TDLParser;
-use std::str::FromStr;
 
 fn main() {
     let ir =
@@ -13,7 +12,7 @@ fn main() {
     let tdl = TDLParser::parse_from_str(
         "lut_reg[lut, 0, 1](a:bool, b:bool) -> (y:bool) { y:bool = reg[0](a, b); }",
     );
-    let mach = ml::Bel::from_str("aff");
+    let mach = MLParser::parse_from_str("aff");
     println!("{}", ir.unwrap());
     println!("{}", asm.unwrap());
     println!("{}", tdl.unwrap());
