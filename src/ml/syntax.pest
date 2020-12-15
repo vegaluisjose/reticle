@@ -8,4 +8,12 @@ id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
 bel = { id }
 
-file = { SOI ~ bel ~ EOI }
+coord = { "??" | id | ASCII_DIGIT+ }
+
+op_coord = { "+" }
+
+expr_coord = { coord ~ (op_coord ~ coord)? }
+
+loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
+file = { SOI ~ loc ~ EOI }
