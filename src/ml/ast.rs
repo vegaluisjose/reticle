@@ -14,7 +14,7 @@ pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
 pub type OptMap = HashMap<Opt, OptVal>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum OptDsp {
     Ra,
     Rb,
@@ -23,12 +23,12 @@ pub enum OptDsp {
     Rp,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum Opt {
     Dsp(OptDsp),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum OptVal {
     UInt(u64),
 }

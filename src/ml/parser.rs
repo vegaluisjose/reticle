@@ -134,12 +134,62 @@ impl MLParser {
         }
     }
 
+    fn opt_dsp(input: Node) -> Result<OptDsp> {
+        let opt = OptDsp::from_str(input.as_str());
+        match opt {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn opt_key(input: Node) -> Result<Opt> {
+        Ok(match_nodes!(
+            input.into_children();
+            [opt_dsp(opt)] => Opt::from(opt),
+        ))
+    }
+
+    fn opt_val(input: Node) -> Result<OptVal> {
+        let val = input.as_str().parse::<u64>();
+        match val {
+            Ok(v) => Ok(OptVal::UInt(v)),
+            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+        }
+    }
+
+    fn opt_tup(input: Node) -> Result<(Opt, OptVal)> {
+        Ok(match_nodes!(
+            input.into_children();
+            [opt_key(key), opt_val(val)] => (key, val)
+        ))
+    }
+
+    fn opt(input: Node) -> Result<OptMap> {
+        Ok(match_nodes!(
+            input.into_children();
+            [opt_tup(tup)..] => {
+                let mut map = OptMap::new();
+                for (key, val) in tup {
+                    map.insert(key, val);
+                }
+                map
+            }
+        ))
+    }
+
     fn instr_mach(input: Node) -> Result<InstrMach> {
         Ok(match_nodes!(
             input.into_children();
             [io(dst), op_mach(op), io(arg), loc(loc)] => InstrMach {
                 op,
                 opt: OptMap::new(),
+                dst,
+                arg,
+                loc
+            },
+            [io(dst), op_mach(op), opt(opt), io(arg), loc(loc)] => InstrMach {
+                op,
+                opt,
                 dst,
                 arg,
                 loc

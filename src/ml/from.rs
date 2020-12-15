@@ -1,5 +1,11 @@
 use crate::ml::ast::*;
 
+impl From<OptDsp> for Opt {
+    fn from(opt: OptDsp) -> Self {
+        Opt::Dsp(opt)
+    }
+}
+
 impl From<OpLut> for OpMach {
     fn from(op: OpLut) -> Self {
         OpMach::Lut(op)

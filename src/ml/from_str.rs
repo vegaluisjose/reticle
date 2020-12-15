@@ -2,6 +2,21 @@ use crate::ml::ast::*;
 use crate::util::errors::Error;
 use std::str::FromStr;
 
+impl FromStr for OptDsp {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let err = format!("Error: {} is not valid lut operation", input);
+        match input {
+            "ra" => Ok(OptDsp::Ra),
+            "rb" => Ok(OptDsp::Rb),
+            "rc" => Ok(OptDsp::Rc),
+            "rm" => Ok(OptDsp::Rm),
+            "rp" => Ok(OptDsp::Rp),
+            _ => Err(Error::new_parse_error(&err)),
+        }
+    }
+}
+
 impl FromStr for OpLut {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
