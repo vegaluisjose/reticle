@@ -13,9 +13,9 @@ fn main() {
     let tdl = TDLParser::parse_from_str(
         "lut_reg[lut, 0, 1](a:bool, b:bool) -> (y:bool) { y:bool = reg[0](a, b); }",
     );
-    let mach = ml::OpMach::from_str("dsp_add");
+    let mach = ml::Bel::from_str("aff");
     println!("{}", ir.unwrap());
     println!("{}", asm.unwrap());
     println!("{}", tdl.unwrap());
-    println!("{:?}", mach);
+    println!("{}", mach.unwrap());
 }

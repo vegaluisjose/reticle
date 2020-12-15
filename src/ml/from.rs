@@ -23,3 +23,21 @@ impl From<OpCarry> for OpMach {
         OpMach::Carry(op)
     }
 }
+
+impl From<BelLut> for Bel {
+    fn from(bel: BelLut) -> Self {
+        Bel::Lut(bel)
+    }
+}
+
+impl From<BelReg> for Bel {
+    fn from(bel: BelReg) -> Self {
+        Bel::Reg(bel)
+    }
+}
+
+impl From<BelCarry> for Bel {
+    fn from(bel: BelCarry) -> Self {
+        Bel::Carry(bel)
+    }
+}
