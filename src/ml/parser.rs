@@ -137,11 +137,11 @@ impl MLParser {
     fn instr_mach(input: Node) -> Result<InstrMach> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_mach(op), loc(loc)] => InstrMach {
+            [io(dst), op_mach(op), io(arg), loc(loc)] => InstrMach {
                 op,
                 opt: OptMap::new(),
                 dst,
-                arg: Expr::default(),
+                arg,
                 loc
             }
         ))
