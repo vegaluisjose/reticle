@@ -16,8 +16,8 @@ impl PrettyPrint for OpReg {
 impl PrettyPrint for OpDsp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            OpDsp::Add => RcDoc::text("add"),
-            OpDsp::MulAdd => RcDoc::text("muladd"),
+            OpDsp::Add => RcDoc::text("dsp_add"),
+            OpDsp::MulAdd => RcDoc::text("dsp_muladd"),
         }
     }
 }
@@ -194,7 +194,6 @@ impl PrettyPrint for InstrMach {
             .append(self.loc().to_doc())
     }
 }
-
 
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
