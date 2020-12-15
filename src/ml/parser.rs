@@ -150,11 +150,23 @@ impl MLParser {
     fn instr_wire(input: Node) -> Result<InstrWire> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_wire(op)] => InstrWire {
+            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
+                op,
+                dst,
+                attr,
+                arg: Expr::default(),
+            },
+            [io(dst), op_wire(op), io(arg)] => InstrWire {
                 op,
                 dst,
                 attr: Expr::default(),
-                arg: Expr::default(),
+                arg,
+            },
+            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
+                op,
+                dst,
+                attr,
+                arg,
             }
         ))
     }

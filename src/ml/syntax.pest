@@ -30,6 +30,8 @@ tup_val = { (val ~ ("," ~ val)*)? }
 
 io = { var | "(" ~ tup_var ~ ")" }
 
+attr = _{ "[" ~ tup_val ~ "]" }
+
 bel = { id }
 
 coord = { "??" | id | ASCII_DIGIT+ }
@@ -40,7 +42,7 @@ loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 instr_mach = { io ~ "=" ~ op_mach ~ io ~ "@" ~ loc ~ ";" }
 
-instr_wire = { io ~ "=" ~ op_wire ~ io? ~ ";" }
+instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
 
 instr = { instr_mach | instr_wire }
 
