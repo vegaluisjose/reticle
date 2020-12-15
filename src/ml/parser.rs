@@ -72,21 +72,44 @@ impl MLParser {
         ))
     }
 
-    fn file(input: Node) -> Result<Loc> {
+    fn op_mach(input: Node) -> Result<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn instr_mach(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [loc(loc), _] => loc,
+            [op_mach(op), loc(loc)] => Instr::from(
+                InstrMach {
+                    op,
+                    opt: OptMap::new(),
+                    dst: Expr::default(),
+                    arg: Expr::default(),
+                    loc
+                }
+            )
+        ))
+    }
+
+    fn file(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr_mach(instr), _] => instr,
         ))
     }
 }
 
 impl MLParser {
-    pub fn parse_from_str(input_str: &str) -> Result<Loc> {
+    pub fn parse_from_str(input_str: &str) -> Result<Instr> {
         let inputs = MLParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
         Ok(MLParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Loc> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Instr> {
         let content = read_to_string(path);
         MLParser::parse_from_str(&content)
     }

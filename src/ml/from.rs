@@ -41,3 +41,15 @@ impl From<BelCarry> for Bel {
         Bel::Carry(bel)
     }
 }
+
+impl From<InstrMach> for Instr {
+    fn from(instr: InstrMach) -> Self {
+        Instr::Mach(instr)
+    }
+}
+
+impl From<InstrWire> for Instr {
+    fn from(instr: InstrWire) -> Self {
+        Instr::Wire(instr)
+    }
+}

@@ -16,4 +16,8 @@ expr_coord = { coord ~ (op_coord ~ coord)? }
 
 loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
-file = { SOI ~ loc ~ EOI }
+op_mach = { id }
+
+instr_mach = { op_mach ~ "@" ~ loc }
+
+file = { SOI ~ instr_mach ~ EOI }
