@@ -80,6 +80,14 @@ impl MLParser {
         }
     }
 
+    fn op_wire(input: Node) -> Result<OpWire> {
+        let op = OpWire::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
     fn instr_mach(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
@@ -95,10 +103,32 @@ impl MLParser {
         ))
     }
 
+    fn instr_wire(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [op_wire(op)] => Instr::from(
+                InstrWire {
+                    op,
+                    dst: Expr::default(),
+                    attr: Expr::default(),
+                    arg: Expr::default(),
+                }
+            )
+        ))
+    }
+
+    fn instr(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr_mach(instr)] => instr,
+            [instr_wire(instr)] => instr,
+        ))
+    }
+
     fn file(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [instr_mach(instr), _] => instr,
+            [instr(instr), _] => instr,
         ))
     }
 }
