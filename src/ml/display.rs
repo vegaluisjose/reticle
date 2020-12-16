@@ -13,7 +13,7 @@ macro_rules! display {
 }
 
 display!(Opt);
-display!(OptOp);
+display!(OptValOp);
 display!(OptVal);
 display!(OpMach);
 display!(BelLut);

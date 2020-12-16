@@ -35,11 +35,11 @@ impl PrettyPrint for Opt {
     }
 }
 
-impl PrettyPrint for OptOp {
+impl PrettyPrint for OptValOp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            OptOp::Add => RcDoc::text("add"),
-            OptOp::MulAdd => RcDoc::text("muladd"),
+            OptValOp::Add => RcDoc::text("add"),
+            OptValOp::MulAdd => RcDoc::text("muladd"),
         }
     }
 }
