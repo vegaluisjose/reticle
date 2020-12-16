@@ -18,5 +18,5 @@ fn main() {
     println!("{}", ir.unwrap());
     println!("{}", asm.unwrap());
     println!("{}", tdl.unwrap());
-    println!("{:?}", mach);
+    println!("{}", mach.unwrap());
 }

@@ -173,7 +173,9 @@ impl PrettyPrint for Sig {
         } else {
             self.output().to_doc()
         };
-        RcDoc::text(self.id())
+        RcDoc::text("def")
+            .append(RcDoc::space())
+            .append(RcDoc::as_string(self.id()))
             .append(input)
             .append(RcDoc::space())
             .append(RcDoc::text("->"))
