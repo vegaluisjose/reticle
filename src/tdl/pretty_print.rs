@@ -33,7 +33,9 @@ impl PrettyPrint for Sig {
             RcDoc::text(",").append(RcDoc::space()),
         )
         .brackets();
-        RcDoc::text(self.id())
+        RcDoc::text("def")
+            .append(RcDoc::space())
+            .append(RcDoc::as_string(self.id()))
             .append(attr)
             .append(input)
             .append(RcDoc::space())
