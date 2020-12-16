@@ -14,20 +14,6 @@ bool = @{ ASCII_ALPHA_LOWER+ }
 
 vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
-op_coord = { "+" }
-
-op_mach = { id }
-
-op_wire = { id }
-
-opt_key = { id }
-
-opt_val = { ASCII_DIGIT+ }
-
-opt_tup = { opt_key ~ "=" ~ opt_val }
-
-opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
-
 ty = ${ vector | int | bool }
 
 var = { id ~ ":" ~ ty | id }
@@ -40,6 +26,8 @@ io = { var | "(" ~ tup_var ~ ")" }
 
 attr = _{ "[" ~ tup_val ~ "]" }
 
+op_coord = { "+" }
+
 bel = { id }
 
 coord = { "??" | id | ASCII_DIGIT+ }
@@ -47,6 +35,18 @@ coord = { "??" | id | ASCII_DIGIT+ }
 expr_coord = { coord ~ (op_coord ~ coord)? }
 
 loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
+op_mach = { id }
+
+op_wire = { id }
+
+opt_key = { id }
+
+opt_val = { ASCII_DIGIT+ }
+
+opt_tup = { opt_key ~ "=" ~ opt_val }
+
+opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
 
 instr_mach = { io ~ "=" ~ op_mach ~ opt ~ io ~ "@" ~ loc ~ ";" }
 
