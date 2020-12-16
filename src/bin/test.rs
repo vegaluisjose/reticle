@@ -12,9 +12,11 @@ fn main() {
     let tdl = TDLParser::parse_from_str(
         "lut_reg[lut, 0, 1](a:bool, b:bool) -> (y:bool) { y:bool = reg[0](a, b); }",
     );
-    let mach = MLParser::parse_from_str("y:i8 = dsp[ra=1](a,b) @(1,2);");
+    let mach = MLParser::parse_from_str(
+        "def main() -> () { y:i8 = dsp[ra=1](a,b) @(1,2); }",
+    );
     println!("{}", ir.unwrap());
     println!("{}", asm.unwrap());
     println!("{}", tdl.unwrap());
-    println!("{}", mach.unwrap());
+    println!("{:?}", mach);
 }

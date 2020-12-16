@@ -222,21 +222,54 @@ impl MLParser {
         ))
     }
 
-    fn file(input: Node) -> Result<Instr> {
+    fn body(input: Node) -> Result<Vec<Instr>> {
         Ok(match_nodes!(
             input.into_children();
-            [instr(instr), _] => instr,
+            [instr(instr)..] => instr.collect(),
+        ))
+    }
+
+    fn sig(input: Node) -> Result<Sig> {
+        Ok(match_nodes!(
+            input.into_children();
+            [id(id), io(output)] => Sig {
+                id,
+                input: Expr::default(),
+                output,
+            },
+            [id(id), io(input), io(output)] => Sig {
+                id,
+                input,
+                output,
+            },
+        ))
+    }
+
+    fn prog(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [sig(sig), body(body)] => Prog {
+                sig,
+                body,
+            },
+        ))
+    }
+
+    fn file(input: Node) -> Result<Prog> {
+        Ok(match_nodes!(
+            input.into_children();
+            [prog(prog), _] => prog,
         ))
     }
 }
 
 impl MLParser {
-    pub fn parse_from_str(input_str: &str) -> Result<Instr> {
+    pub fn parse_from_str(input_str: &str) -> Result<Prog> {
         let inputs = MLParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
         Ok(MLParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Instr> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog> {
         let content = read_to_string(path);
         MLParser::parse_from_str(&content)
     }

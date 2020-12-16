@@ -54,4 +54,10 @@ instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
 
 instr = { instr_mach | instr_wire }
 
-file = { SOI ~ instr ~ EOI }
+body = { (instr ~ ("," ~ instr)*)? }
+
+sig = { "def" ~ id ~ io? ~ "->" ~ io }
+
+prog = { sig ~ "{" ~ body ~ "}" }
+
+file = { SOI ~ prog ~ EOI }
