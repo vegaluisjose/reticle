@@ -20,9 +20,7 @@ op_mach = { id }
 
 op_wire = { id }
 
-opt_dsp = { id }
-
-opt_key = { opt_dsp }
+opt_key = { id }
 
 opt_val = { ASCII_DIGIT+ }
 

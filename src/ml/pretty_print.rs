@@ -4,64 +4,19 @@ use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, Pr
 // use itertools::Itertools;
 use pretty::RcDoc;
 
-impl PrettyPrint for OpReg {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            OpReg::Fdre => RcDoc::text("fdre"),
-            OpReg::Fdse => RcDoc::text("fdse"),
-        }
-    }
-}
-
-impl PrettyPrint for OpDsp {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            OpDsp::Add => RcDoc::text("dsp_add"),
-            OpDsp::MulAdd => RcDoc::text("dsp_muladd"),
-        }
-    }
-}
-
-impl PrettyPrint for OpCarry {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            OpCarry::Carry8 => RcDoc::text("carry8"),
-        }
-    }
-}
-
-impl PrettyPrint for OpLut {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            OpLut::Lut1 => RcDoc::text("lut1"),
-            OpLut::Lut2 => RcDoc::text("lut2"),
-            OpLut::Lut3 => RcDoc::text("lut3"),
-            OpLut::Lut4 => RcDoc::text("lut4"),
-            OpLut::Lut5 => RcDoc::text("lut5"),
-            OpLut::Lut6 => RcDoc::text("lut6"),
-        }
-    }
-}
-
 impl PrettyPrint for OpMach {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            OpMach::Dsp(dsp) => dsp.to_doc(),
-            OpMach::Lut(lut) => lut.to_doc(),
-            OpMach::Carry(carry) => carry.to_doc(),
-            OpMach::Reg(reg) => reg.to_doc(),
-        }
-    }
-}
-
-impl PrettyPrint for OptDsp {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            OptDsp::Ra => RcDoc::text("ra"),
-            OptDsp::Rb => RcDoc::text("rb"),
-            OptDsp::Rc => RcDoc::text("rc"),
-            OptDsp::Rm => RcDoc::text("rm"),
-            OptDsp::Rp => RcDoc::text("rp"),
+            OpMach::Lut1 => RcDoc::text("lut1"),
+            OpMach::Lut2 => RcDoc::text("lut2"),
+            OpMach::Lut3 => RcDoc::text("lut3"),
+            OpMach::Lut4 => RcDoc::text("lut4"),
+            OpMach::Lut5 => RcDoc::text("lut5"),
+            OpMach::Lut6 => RcDoc::text("lut6"),
+            OpMach::Fdre => RcDoc::text("fdre"),
+            OpMach::Fdse => RcDoc::text("fdse"),
+            OpMach::Dsp => RcDoc::text("dsp"),
+            OpMach::Carry => RcDoc::text("carry"),
         }
     }
 }
@@ -69,7 +24,21 @@ impl PrettyPrint for OptDsp {
 impl PrettyPrint for Opt {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Opt::Dsp(opt) => opt.to_doc(),
+            Opt::Ra => RcDoc::text("ra"),
+            Opt::Rb => RcDoc::text("rb"),
+            Opt::Rc => RcDoc::text("rc"),
+            Opt::Rm => RcDoc::text("rm"),
+            Opt::Rp => RcDoc::text("rp"),
+            Opt::Op => RcDoc::text("op"),
+        }
+    }
+}
+
+impl PrettyPrint for OptOp {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            OptOp::Add => RcDoc::text("add"),
+            OptOp::MulAdd => RcDoc::text("muladd"),
         }
     }
 }
@@ -78,6 +47,7 @@ impl PrettyPrint for OptVal {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             OptVal::UInt(n) => RcDoc::as_string(n),
+            OptVal::Op(op) => op.to_doc(),
         }
     }
 }

@@ -12,10 +12,9 @@ macro_rules! display {
     };
 }
 
-display!(OpReg);
-display!(OpDsp);
-display!(OpCarry);
-display!(OpLut);
+display!(Opt);
+display!(OptOp);
+display!(OptVal);
 display!(OpMach);
 display!(BelLut);
 display!(BelReg);

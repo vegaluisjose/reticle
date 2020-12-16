@@ -2,67 +2,17 @@ use crate::ml::ast::*;
 use crate::util::errors::Error;
 use std::str::FromStr;
 
-impl FromStr for OptDsp {
+impl FromStr for Opt {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let err = format!("Error: {} is not valid lut operation", input);
         match input {
-            "ra" => Ok(OptDsp::Ra),
-            "rb" => Ok(OptDsp::Rb),
-            "rc" => Ok(OptDsp::Rc),
-            "rm" => Ok(OptDsp::Rm),
-            "rp" => Ok(OptDsp::Rp),
-            _ => Err(Error::new_parse_error(&err)),
-        }
-    }
-}
-
-impl FromStr for OpLut {
-    type Err = Error;
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let err = format!("Error: {} is not valid lut operation", input);
-        match input {
-            "lut1" => Ok(OpLut::Lut1),
-            "lut2" => Ok(OpLut::Lut2),
-            "lut3" => Ok(OpLut::Lut3),
-            "lut4" => Ok(OpLut::Lut4),
-            "lut5" => Ok(OpLut::Lut5),
-            "lut6" => Ok(OpLut::Lut6),
-            _ => Err(Error::new_parse_error(&err)),
-        }
-    }
-}
-
-impl FromStr for OpReg {
-    type Err = Error;
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let err = format!("Error: {} is not valid reg operation", input);
-        match input {
-            "fdre" => Ok(OpReg::Fdre),
-            "fdse" => Ok(OpReg::Fdse),
-            _ => Err(Error::new_parse_error(&err)),
-        }
-    }
-}
-
-impl FromStr for OpDsp {
-    type Err = Error;
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let err = format!("Error: {} is not valid dsp operation", input);
-        match input {
-            "dsp_add" => Ok(OpDsp::Add),
-            "dsp_muladd" => Ok(OpDsp::MulAdd),
-            _ => Err(Error::new_parse_error(&err)),
-        }
-    }
-}
-
-impl FromStr for OpCarry {
-    type Err = Error;
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let err = format!("Error: {} is not valid carry operation", input);
-        match input {
-            "carry" => Ok(OpCarry::Carry8),
+            "ra" => Ok(Opt::Ra),
+            "rb" => Ok(Opt::Rb),
+            "rc" => Ok(Opt::Rc),
+            "rm" => Ok(Opt::Rm),
+            "rp" => Ok(Opt::Rp),
+            "op" => Ok(Opt::Op),
             _ => Err(Error::new_parse_error(&err)),
         }
     }
@@ -72,16 +22,18 @@ impl FromStr for OpMach {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let err = format!("Error: {} is not valid machine operation", input);
-        if let Ok(op) = OpLut::from_str(input) {
-            Ok(OpMach::from(op))
-        } else if let Ok(op) = OpReg::from_str(input) {
-            Ok(OpMach::from(op))
-        } else if let Ok(op) = OpDsp::from_str(input) {
-            Ok(OpMach::from(op))
-        } else if let Ok(op) = OpCarry::from_str(input) {
-            Ok(OpMach::from(op))
-        } else {
-            Err(Error::new_parse_error(&err))
+        match input {
+            "lut1" => Ok(OpMach::Lut1),
+            "lut2" => Ok(OpMach::Lut2),
+            "lut3" => Ok(OpMach::Lut3),
+            "lut4" => Ok(OpMach::Lut4),
+            "lut5" => Ok(OpMach::Lut5),
+            "lut6" => Ok(OpMach::Lut6),
+            "fdre" => Ok(OpMach::Fdre),
+            "fdse" => Ok(OpMach::Fdse),
+            "dsp" => Ok(OpMach::Dsp),
+            "carry" => Ok(OpMach::Carry),
+            _ => Err(Error::new_parse_error(&err)),
         }
     }
 }

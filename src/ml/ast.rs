@@ -15,57 +15,39 @@ pub type Sig = ir::Sig;
 pub type OptMap = HashMap<Opt, OptVal>;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub enum OptDsp {
+pub enum Opt {
     Ra,
     Rb,
     Rc,
     Rm,
     Rp,
+    Op,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub enum Opt {
-    Dsp(OptDsp),
+pub enum OptOp {
+    Add,
+    MulAdd,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum OptVal {
     UInt(u64),
+    Op(OptOp),
 }
 
 #[derive(Clone, Debug)]
-pub enum OpLut {
+pub enum OpMach {
     Lut1,
     Lut2,
     Lut3,
     Lut4,
     Lut5,
     Lut6,
-}
-
-#[derive(Clone, Debug)]
-pub enum OpReg {
     Fdre,
     Fdse,
-}
-
-#[derive(Clone, Debug)]
-pub enum OpDsp {
-    Add,
-    MulAdd,
-}
-
-#[derive(Clone, Debug)]
-pub enum OpCarry {
-    Carry8,
-}
-
-#[derive(Clone, Debug)]
-pub enum OpMach {
-    Lut(OpLut),
-    Reg(OpReg),
-    Dsp(OpDsp),
-    Carry(OpCarry),
+    Dsp,
+    Carry,
 }
 
 #[derive(Clone, Debug)]

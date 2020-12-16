@@ -134,19 +134,12 @@ impl MLParser {
         }
     }
 
-    fn opt_dsp(input: Node) -> Result<OptDsp> {
-        let opt = OptDsp::from_str(input.as_str());
+    fn opt_key(input: Node) -> Result<Opt> {
+        let opt = Opt::from_str(input.as_str());
         match opt {
             Ok(t) => Ok(t),
             Err(m) => panic!("{}", m),
         }
-    }
-
-    fn opt_key(input: Node) -> Result<Opt> {
-        Ok(match_nodes!(
-            input.into_children();
-            [opt_dsp(opt)] => Opt::from(opt),
-        ))
     }
 
     fn opt_val(input: Node) -> Result<OptVal> {
