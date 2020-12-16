@@ -113,10 +113,16 @@ impl FromStr for OpCall {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         if let Ok(_) = OpWire::from_str(input) {
-            let err = format!("Error: {} is a wire operation and cannot be a call operation", input);
+            let err = format!(
+                "Error: {} is a wire operation and cannot be a call operation",
+                input
+            );
             Err(Error::new_parse_error(&err))
         } else if let Ok(_) = OpComp::from_str(input) {
-            let err = format!("Error: {} is a comp operation and cannot be a call operation", input);
+            let err = format!(
+                "Error: {} is a comp operation and cannot be a call operation",
+                input
+            );
             Err(Error::new_parse_error(&err))
         } else {
             Ok(OpCall::new(input))

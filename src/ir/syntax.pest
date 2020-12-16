@@ -30,11 +30,23 @@ prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
-instr = { io ~ "=" ~ id ~ attr? ~ io? ~ hint? ~ ";" }
+op_comp = { id }
+
+op_wire = { id }
+
+op_call = { id }
+
+instr_comp = { io ~ "=" ~ op_comp ~ attr? ~ io? ~ hint? ~ ";" }
+
+instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
+
+instr_call = { io ~ "=" ~ op_call ~ io? ~ ";" }
+
+instr = { instr_comp | instr_wire | instr_call }
 
 body = { (instr ~ ("," ~ instr)*)? }
 
-sig = { id ~ io? ~ "->" ~ io }
+sig = { "def" ~ id ~ io? ~ "->" ~ io }
 
 def = { sig ~ "{" ~ body ~ "}" }
 
