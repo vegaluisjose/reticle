@@ -24,12 +24,13 @@ impl PrettyPrint for OpMach {
 impl PrettyPrint for Opt {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Opt::Ra => RcDoc::text("ra"),
-            Opt::Rb => RcDoc::text("rb"),
-            Opt::Rc => RcDoc::text("rc"),
-            Opt::Rm => RcDoc::text("rm"),
-            Opt::Rp => RcDoc::text("rp"),
+            Opt::RegA => RcDoc::text("ra"),
+            Opt::RegB => RcDoc::text("rb"),
+            Opt::RegC => RcDoc::text("rc"),
+            Opt::RegM => RcDoc::text("rm"),
+            Opt::RegP => RcDoc::text("rp"),
             Opt::Op => RcDoc::text("op"),
+            Opt::Table => RcDoc::text("tbl"),
         }
     }
 }

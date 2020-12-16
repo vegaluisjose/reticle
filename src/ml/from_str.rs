@@ -7,12 +7,13 @@ impl FromStr for Opt {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let err = format!("Error: {} is not valid lut operation", input);
         match input {
-            "ra" => Ok(Opt::Ra),
-            "rb" => Ok(Opt::Rb),
-            "rc" => Ok(Opt::Rc),
-            "rm" => Ok(Opt::Rm),
-            "rp" => Ok(Opt::Rp),
+            "ra" => Ok(Opt::RegA),
+            "rb" => Ok(Opt::RegB),
+            "rc" => Ok(Opt::RegC),
+            "rm" => Ok(Opt::RegM),
+            "rp" => Ok(Opt::RegP),
             "op" => Ok(Opt::Op),
+            "tbl" => Ok(Opt::Table),
             _ => Err(Error::new_parse_error(&err)),
         }
     }

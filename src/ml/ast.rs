@@ -16,12 +16,13 @@ pub type OptMap = HashMap<Opt, OptVal>;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum Opt {
-    Ra,
-    Rb,
-    Rc,
-    Rm,
-    Rp,
+    RegA,
+    RegB,
+    RegC,
+    RegM,
+    RegP,
     Op,
+    Table,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
