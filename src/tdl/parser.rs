@@ -85,100 +85,85 @@ impl TDLParser {
         ))
     }
 
-    fn instr(input: Node) -> Result<Instr> {
-        let instr = input.as_str().to_string();
+    fn op_comp(input: Node) -> Result<OpComp> {
+        let op = OpComp::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_wire(input: Node) -> Result<OpWire> {
+        let op = OpWire::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn instr_comp(input: Node) -> Result<InstrComp> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), id(opcode), tup_val(attr)] => {
-                let wop = OpWire::from_str(&opcode);
-                let cop = OpComp::from_str(&opcode);
-                match (wop, cop) {
-                    (Ok(op), Err(_)) => Instr::from(
-                        InstrWire {
-                            op,
-                            dst,
-                            attr,
-                            arg: Expr::default(),
-                        }
-                    ),
-                    (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
+            [io(dst), op_comp(op), io(arg)] => InstrComp {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+                prim: Prim::Any,
             },
-            [io(dst), id(opcode), io(arg)] => {
-                let wop = OpWire::from_str(&opcode);
-                let cop = OpComp::from_str(&opcode);
-                match (wop, cop) {
-                    (Ok(op), Err(_)) => Instr::from(
-                        InstrWire {
-                            op,
-                            dst,
-                            attr: Expr::default(),
-                            arg,
-                        }
-                    ),
-                    (Err(_), Ok(op)) => Instr::from(
-                        InstrComp {
-                            op,
-                            dst,
-                            attr: Expr::default(),
-                            arg,
-                            prim: Prim::Any,
-                        }
-                    ),
-                    (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
+            [io(dst), op_comp(op), tup_val(attr), io(arg)] => InstrComp {
+                op,
+                dst,
+                attr,
+                arg,
+                prim: Prim::Any,
             },
-            [io(dst), id(opcode), tup_val(attr), io(arg)] => {
-                let wop = OpWire::from_str(&opcode);
-                let cop = OpComp::from_str(&opcode);
-                match (wop, cop) {
-                    (Ok(op), Err(_)) => Instr::from(
-                        InstrWire {
-                            op,
-                            dst,
-                            attr,
-                            arg,
-                        }
-                    ),
-                    (Err(_), Ok(op)) => Instr::from(
-                        InstrComp {
-                            op,
-                            dst,
-                            attr,
-                            arg,
-                            prim: Prim::Any,
-                        }
-                    ),
-                    (_, _) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
+            [io(dst), op_comp(op), io(arg), prim(prim)] => InstrComp {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+                prim,
             },
-            [io(dst), id(opcode), io(arg), prim(prim)] => {
-                let cop = OpComp::from_str(&opcode);
-                match cop {
-                    Ok(op) => Instr::from(InstrComp {
-                        op,
-                        dst,
-                        attr: Expr::default(),
-                        arg,
-                        prim,
-                    }),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr)),
-                }
+            [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => InstrComp {
+                op,
+                dst,
+                attr,
+                arg,
+                prim,
+            }
+        ))
+    }
+
+    fn instr_wire(input: Node) -> Result<InstrWire> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
+                op,
+                dst,
+                attr,
+                arg: Expr::default(),
             },
-            [io(dst), id(opcode), tup_val(attr), io(arg), prim(prim)] => {
-                let cop = OpComp::from_str(&opcode);
-                match cop {
-                    Ok(op) => Instr::from(InstrComp {
-                        op,
-                        dst,
-                        attr,
-                        arg,
-                        prim,
-                    }),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr)),
-                }
+            [io(dst), op_wire(op), io(arg)] => InstrWire {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
             },
-            [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
+                op,
+                dst,
+                attr,
+                arg,
+            }
+        ))
+    }
+
+    fn instr(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr_comp(instr)] => Instr::from(instr),
+            [instr_wire(instr)] => Instr::from(instr),
         ))
     }
 
