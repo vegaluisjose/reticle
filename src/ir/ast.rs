@@ -39,6 +39,8 @@ pub enum OpWire {
     Sll,
     Srl,
     Sra,
+    Ext,
+    Cat,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

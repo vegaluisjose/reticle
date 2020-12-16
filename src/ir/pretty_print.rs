@@ -74,6 +74,8 @@ impl PrettyPrint for OpWire {
             OpWire::Sll => RcDoc::text("sll"),
             OpWire::Srl => RcDoc::text("srl"),
             OpWire::Sra => RcDoc::text("sra"),
+            OpWire::Ext => RcDoc::text("ext"),
+            OpWire::Cat => RcDoc::text("cat"),
         }
     }
 }

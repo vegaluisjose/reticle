@@ -104,6 +104,8 @@ impl FromStr for OpWire {
             "sll" => Ok(OpWire::Sll),
             "srl" => Ok(OpWire::Srl),
             "sra" => Ok(OpWire::Sra),
+            "ext" => Ok(OpWire::Ext),
+            "cat" => Ok(OpWire::Cat),
             _ => Err(Error::new_parse_error(&err)),
         }
     }
