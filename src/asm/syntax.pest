@@ -50,7 +50,7 @@ instr = { instr_asm | instr_wire }
 
 body = { (instr ~ ("," ~ instr)*)? }
 
-sig = { id ~ io? ~ "->" ~ io }
+sig = { "def" ~ id ~ io? ~ "->" ~ io }
 
 prog = { sig ~ "{" ~ body ~ "}" }
 

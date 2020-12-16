@@ -44,7 +44,7 @@ instr = { instr_comp | instr_wire }
 
 body = { (instr ~ ("," ~ instr)*)? }
 
-sig = { id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
+sig = { "def" ~ id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
 
 def = { sig ~ "{" ~ body ~ "}" }
 
