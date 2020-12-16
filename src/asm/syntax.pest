@@ -38,7 +38,15 @@ hint = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 loc = { "@" ~ prim ~ hint? }
 
-instr = { io ~ "=" ~ id ~ attr? ~ io? ~ loc? ~ ";" }
+op_asm = { id }
+
+op_wire = { id }
+
+instr_asm = { io ~ "=" ~ op_asm ~ io ~ loc ~ ";" }
+
+instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
+
+instr = { instr_asm | instr_wire }
 
 body = { (instr ~ ("," ~ instr)*)? }
 

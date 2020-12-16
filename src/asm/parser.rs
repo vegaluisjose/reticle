@@ -118,87 +118,66 @@ impl AsmParser {
         ))
     }
 
-    fn instr(input: Node) -> Result<Instr> {
-        let instr = input.as_str().to_string();
+    fn op_asm(input: Node) -> Result<OpAsm> {
+        let op = OpAsm::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_wire(input: Node) -> Result<OpWire> {
+        let op = OpWire::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn instr_asm(input: Node) -> Result<InstrAsm> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), id(opcode), tup_val(attr)] => {
-                let wop = OpWire::from_str(&opcode);
-                match wop {
-                    Ok(op) => Instr::from(
-                        InstrWire {
-                            op,
-                            dst,
-                            attr,
-                            arg: Expr::default(),
-                        }
-                    ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
+            [io(dst), op_asm(op), io(arg), loc(loc)] => InstrAsm {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+                loc,
+                area: 0,
+                lat: 0,
             },
-            [io(dst), id(opcode), io(arg)] => {
-                let wop = OpWire::from_str(&opcode);
-                match wop {
-                    Ok(op) => Instr::from(
-                        InstrWire {
-                            op,
-                            dst,
-                            attr: Expr::default(),
-                            arg,
-                        }
-                    ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
+        ))
+    }
+
+    fn instr_wire(input: Node) -> Result<InstrWire> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
+                op,
+                dst,
+                attr,
+                arg: Expr::default(),
             },
-            [io(dst), id(opcode), tup_val(attr), io(arg)] => {
-                let wop = OpWire::from_str(&opcode);
-                match wop {
-                    Ok(op) => Instr::from(
-                        InstrWire {
-                            op,
-                            dst,
-                            attr,
-                            arg,
-                        }
-                    ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
+            [io(dst), op_wire(op), io(arg)] => InstrWire {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
             },
-            [io(dst), id(opcode), io(arg), loc(loc)] => {
-                let aop = OpAsm::from_str(&opcode);
-                match aop {
-                    Ok(op) => Instr::from(
-                        InstrAsm {
-                            op,
-                            dst,
-                            attr: Expr::default(),
-                            arg,
-                            loc,
-                            area: 0,
-                            lat: 0,
-                        }
-                    ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
-            },
-            [io(dst), id(opcode), tup_val(attr), io(arg), loc(loc)] => {
-                let aop = OpAsm::from_str(&opcode);
-                match aop {
-                    Ok(op) => Instr::from(
-                        InstrAsm {
-                            op,
-                            dst,
-                            attr,
-                            arg,
-                            loc,
-                            area: 0,
-                            lat: 0,
-                        }
-                    ),
-                    Err(_) => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
-                }
-            },
-            [] => panic!(format!("Error: ~~~{}~~~ is not valid instruction", instr))
+            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
+                op,
+                dst,
+                attr,
+                arg,
+            }
+        ))
+    }
+
+    fn instr(input: Node) -> Result<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr_asm(instr)] => Instr::from(instr),
+            [instr_wire(instr)] => Instr::from(instr),
         ))
     }
 

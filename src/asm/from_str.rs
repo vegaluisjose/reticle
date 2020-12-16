@@ -17,7 +17,15 @@ impl FromStr for ExprCoord {
 impl FromStr for OpAsm {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        Ok(OpAsm::Op(input.to_string()))
+        if OpWire::from_str(input).is_ok() {
+            let err = format!(
+                "Error: {} is a wire operation and cannot be an asm operation",
+                input
+            );
+            Err(Error::new_parse_error(&err))
+        } else {
+            Ok(OpAsm::Op(input.to_string()))
+        }
     }
 }
 

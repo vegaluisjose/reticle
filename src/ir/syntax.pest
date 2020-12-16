@@ -36,7 +36,7 @@ op_wire = { id }
 
 op_call = { id }
 
-instr_comp = { io ~ "=" ~ op_comp ~ attr? ~ io? ~ hint? ~ ";" }
+instr_comp = { io ~ "=" ~ op_comp ~ attr? ~ io ~ hint? ~ ";" }
 
 instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
 
