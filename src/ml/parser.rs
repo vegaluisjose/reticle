@@ -93,6 +93,7 @@ impl MLParser {
             input.into_children();
             [id(id), ty(ty)] => Expr::Var(id, ty),
             [id(id)] => Expr::Var(id, Ty::Any),
+            [] => Expr::Any,
         ))
     }
 

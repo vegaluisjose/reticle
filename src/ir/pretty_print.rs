@@ -17,6 +17,17 @@ pub fn expr_names(expr: &Expr) -> RcDoc<()> {
     }
 }
 
+pub fn expr_attrs(expr: &Expr) -> RcDoc<()> {
+    match expr {
+        Expr::Any => RcDoc::text("_"),
+        Expr::Val(v) => RcDoc::as_string(v),
+        Expr::Var(n, ty) => RcDoc::as_string(n)
+            .append(RcDoc::text(":"))
+            .append(ty.to_doc()),
+        Expr::Tup(tup) => tup.to_doc().brackets(),
+    }
+}
+
 impl PrettyPrint for Prim {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
@@ -56,7 +67,7 @@ impl PrettyPrint for Expr {
             Expr::Var(n, ty) => RcDoc::as_string(n)
                 .append(RcDoc::text(":"))
                 .append(ty.to_doc()),
-            Expr::Tup(tup) => tup.to_doc(),
+            Expr::Tup(tup) => tup.to_doc().parens(),
         }
     }
 }
@@ -121,7 +132,7 @@ impl PrettyPrint for InstrWire {
         let attr = if self.attr().is_tup() && self.attr().tup().is_empty() {
             RcDoc::nil()
         } else {
-            self.attr().to_doc().brackets()
+            expr_attrs(self.attr())
         };
         self.dst()
             .to_doc()
@@ -139,7 +150,7 @@ impl PrettyPrint for InstrComp {
         let attr = if self.attr().is_tup() && self.attr().tup().is_empty() {
             RcDoc::nil()
         } else {
-            self.attr().to_doc().brackets()
+            expr_attrs(self.attr())
         };
         self.dst()
             .to_doc()
@@ -168,12 +179,12 @@ impl PrettyPrint for Instr {
 impl PrettyPrint for Sig {
     fn to_doc(&self) -> RcDoc<()> {
         let input = if self.input().is_tup() {
-            self.input().to_doc().parens()
+            self.input().to_doc()
         } else {
             self.input().to_doc()
         };
         let output = if self.output().is_tup() {
-            self.output().to_doc().parens()
+            self.output().to_doc()
         } else {
             self.output().to_doc()
         };

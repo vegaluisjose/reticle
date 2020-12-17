@@ -16,7 +16,7 @@ vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
 
 ty = ${ vector | int | bool }
 
-var = { id ~ ":" ~ ty | id }
+var = { id ~ ":" ~ ty | id | "_" }
 
 tup_var = { (var ~ ("," ~ var)*)? }
 

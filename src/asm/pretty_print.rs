@@ -44,18 +44,12 @@ impl PrettyPrint for OpAsm {
 
 impl PrettyPrint for InstrAsm {
     fn to_doc(&self) -> RcDoc<()> {
-        let attr = if self.attr().is_tup() && self.attr().tup().is_empty() {
-            RcDoc::nil()
-        } else {
-            self.attr().to_doc().brackets()
-        };
         self.dst()
             .to_doc()
             .append(RcDoc::space())
             .append(RcDoc::text("="))
             .append(RcDoc::space())
             .append(self.op().to_doc())
-            .append(attr)
             .append(expr_names(self.arg()))
             .append(RcDoc::space())
             .append(RcDoc::text("@"))

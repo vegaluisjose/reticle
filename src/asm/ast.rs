@@ -39,7 +39,6 @@ pub enum OpAsm {
 pub struct InstrAsm {
     pub op: OpAsm,
     pub dst: Expr,
-    pub attr: Expr,
     pub arg: Expr,
     pub loc: Loc,
     pub area: u64,

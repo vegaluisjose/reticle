@@ -140,7 +140,6 @@ impl AsmParser {
             [io(dst), op_asm(op), io(arg), loc(loc)] => InstrAsm {
                 op,
                 dst,
-                attr: Expr::default(),
                 arg,
                 loc,
                 area: 0,
