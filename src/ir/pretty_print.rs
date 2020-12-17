@@ -5,6 +5,7 @@ use pretty::RcDoc;
 
 pub fn expr_names(expr: &Expr) -> RcDoc<()> {
     match expr {
+        Expr::Any => RcDoc::text("_"),
         Expr::Val(v) => RcDoc::as_string(v),
         Expr::Var(n, _) => RcDoc::as_string(n),
         Expr::Tup(tup) if tup.is_empty() => RcDoc::nil(),
@@ -50,6 +51,7 @@ impl PrettyPrint for ExprTup {
 impl PrettyPrint for Expr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
+            Expr::Any => RcDoc::text("_"),
             Expr::Val(v) => RcDoc::as_string(v),
             Expr::Var(n, ty) => RcDoc::as_string(n)
                 .append(RcDoc::text(":"))

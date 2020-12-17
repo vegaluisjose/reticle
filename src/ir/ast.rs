@@ -19,6 +19,7 @@ pub struct ExprTup {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Expr {
+    Any,
     Val(i64),
     Var(Id, Ty),
     Tup(ExprTup),
