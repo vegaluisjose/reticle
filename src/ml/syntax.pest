@@ -48,16 +48,16 @@ opt_tup = { opt_key ~ "=" ~ opt_val }
 
 opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
 
-instr_mach = { io ~ "=" ~ op_mach ~ opt ~ io ~ "@" ~ loc ~ ";" }
+instr_mach = { io ~ "=" ~ op_mach ~ opt? ~ io ~ "@" ~ loc ~ ";" }
 
 instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
 
 instr = { instr_mach | instr_wire }
 
-body = { (instr ~ ("," ~ instr)*)? }
+body = { instr+ }
 
 sig = { "def" ~ id ~ io? ~ "->" ~ io }
 
-prog = { sig ~ "{" ~ body ~ "}" }
+prog = { sig ~ "{" ~ body? ~ "}" }
 
 file = { SOI ~ prog ~ EOI }

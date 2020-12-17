@@ -44,12 +44,12 @@ instr_call = { io ~ "=" ~ op_call ~ io? ~ ";" }
 
 instr = { instr_comp | instr_wire | instr_call }
 
-body = { (instr ~ ("," ~ instr)*)? }
+body = { instr ~ (instr)* }
 
 sig = { "def" ~ id ~ io? ~ "->" ~ io }
 
-def = { sig ~ "{" ~ body ~ "}" }
+def = { sig ~ "{" ~ body? ~ "}" }
 
-prog = { (def ~ ("," ~ def)*)? }
+prog = { def ~ (def)* }
 
 file = { SOI ~ prog ~ EOI }
