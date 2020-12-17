@@ -42,12 +42,12 @@ instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
 
 instr = { instr_comp | instr_wire }
 
-body = { (instr ~ ("," ~ instr)*)? }
+body = { instr+ }
 
 sig = { "def" ~ id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
 
 def = { sig ~ "{" ~ body ~ "}" }
 
-desc = { (def ~ ("," ~ def)*)? }
+desc = { def+ }
 
 file = { SOI ~ desc ~ EOI }

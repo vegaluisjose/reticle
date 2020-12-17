@@ -214,10 +214,6 @@ impl IRParser {
                 sig,
                 body,
             },
-            [sig(sig)] => Def {
-                sig,
-                body: Vec::new(),
-            },
         ))
     }
 

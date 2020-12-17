@@ -48,7 +48,7 @@ instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
 
 instr = { instr_asm | instr_wire }
 
-body = { (instr ~ ("," ~ instr)*)? }
+body = { instr+ }
 
 sig = { "def" ~ id ~ io? ~ "->" ~ io }
 

@@ -58,6 +58,6 @@ body = { instr+ }
 
 sig = { "def" ~ id ~ io? ~ "->" ~ io }
 
-prog = { sig ~ "{" ~ body? ~ "}" }
+prog = { sig ~ "{" ~ body ~ "}" }
 
 file = { SOI ~ prog ~ EOI }
