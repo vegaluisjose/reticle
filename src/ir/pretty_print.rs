@@ -178,24 +178,14 @@ impl PrettyPrint for Instr {
 
 impl PrettyPrint for Sig {
     fn to_doc(&self) -> RcDoc<()> {
-        let input = if self.input().is_tup() {
-            self.input().to_doc()
-        } else {
-            self.input().to_doc()
-        };
-        let output = if self.output().is_tup() {
-            self.output().to_doc()
-        } else {
-            self.output().to_doc()
-        };
         RcDoc::text("def")
             .append(RcDoc::space())
             .append(RcDoc::as_string(self.id()))
-            .append(input)
+            .append(self.input().to_doc())
             .append(RcDoc::space())
             .append(RcDoc::text("->"))
             .append(RcDoc::space())
-            .append(output)
+            .append(self.output().to_doc())
     }
 }
 
