@@ -1,6 +1,12 @@
 use crate::ir::ast::*;
 use std::collections::HashMap;
 
+impl Ty {
+    pub fn is_vector(&self) -> bool {
+        matches!(self, Ty::Vector(_, _))
+    }
+}
+
 impl OpCall {
     pub fn new(op: &str) -> OpCall {
         OpCall { op: op.to_string() }
