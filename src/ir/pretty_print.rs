@@ -129,10 +129,14 @@ impl PrettyPrint for InstrCall {
 
 impl PrettyPrint for InstrWire {
     fn to_doc(&self) -> RcDoc<()> {
-        let attr = if self.attr().is_tup() && self.attr().tup().is_empty() {
-            RcDoc::nil()
+        let attr = if let Some(tup) = self.attr().tup() {
+            if tup.is_empty() {
+                RcDoc::nil()
+            } else {
+                expr_attrs(self.attr())
+            }
         } else {
-            expr_attrs(self.attr())
+            RcDoc::nil()
         };
         self.dst()
             .to_doc()
@@ -147,10 +151,14 @@ impl PrettyPrint for InstrWire {
 
 impl PrettyPrint for InstrComp {
     fn to_doc(&self) -> RcDoc<()> {
-        let attr = if self.attr().is_tup() && self.attr().tup().is_empty() {
-            RcDoc::nil()
+        let attr = if let Some(tup) = self.attr().tup() {
+            if tup.is_empty() {
+                RcDoc::nil()
+            } else {
+                expr_attrs(self.attr())
+            }
         } else {
-            expr_attrs(self.attr())
+            RcDoc::nil()
         };
         self.dst()
             .to_doc()
