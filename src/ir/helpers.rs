@@ -33,10 +33,10 @@ impl Expr {
             _ => false,
         }
     }
-    pub fn tup(&self) -> &ExprTup {
+    pub fn tup(&self) -> Option<&ExprTup> {
         match self {
-            Expr::Tup(e) => e,
-            _ => panic!("Error: expr is not tuple"),
+            Expr::Tup(e) => Some(e),
+            _ => None,
         }
     }
 }
