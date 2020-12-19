@@ -3,38 +3,40 @@ use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, Pr
 use itertools::Itertools;
 use pretty::RcDoc;
 
-// pub fn expr_names(expr: &Expr) -> RcDoc<()> {
-//     match expr {
-//         Expr::Any => RcDoc::text("_"),
-//         Expr::Val(v) => RcDoc::as_string(v),
-//         Expr::Var(n, _) => RcDoc::as_string(n),
-//         Expr::Tup(tup) if tup.is_empty() => RcDoc::nil(),
-//         Expr::Tup(tup) => intersperse(
-//             tup.expr().iter().map(|n| expr_names(n)),
-//             RcDoc::text(",").append(RcDoc::space()),
-//         )
-//         .parens(),
-//     }
-// }
-
-pub fn expr_names(_: &Expr) -> RcDoc<()> {
-    RcDoc::nil()
+fn term_names(term: &ExprTerm) -> RcDoc<()> {
+    match term {
+        ExprTerm::Any => RcDoc::text("_"),
+        ExprTerm::Val(v) => RcDoc::as_string(v),
+        ExprTerm::Var(n, _) => RcDoc::as_string(n),
+    }
 }
 
-pub fn expr_attrs(_: &Expr) -> RcDoc<()> {
-    RcDoc::nil()
+fn tup_names(tup: &ExprTup) -> RcDoc<()> {
+    if tup.is_empty() {
+        RcDoc::nil()
+    } else {
+        intersperse(
+            tup.term().iter().map(|n| term_names(n)),
+            RcDoc::text(",").append(RcDoc::space()),
+        )
+        .parens()
+    }
 }
 
-// pub fn expr_attrs(expr: &Expr) -> RcDoc<()> {
-//     match expr {
-//         Expr::Any => RcDoc::text("_"),
-//         Expr::Val(v) => RcDoc::as_string(v),
-//         Expr::Var(n, ty) => RcDoc::as_string(n)
-//             .append(RcDoc::text(":"))
-//             .append(ty.to_doc()),
-//         Expr::Tup(tup) => tup.to_doc().brackets(),
-//     }
-// }
+pub fn expr_names(expr: &Expr) -> RcDoc<()> {
+    match expr {
+        Expr::Term(term) => term_names(term),
+        Expr::Tup(tup) => tup_names(tup),
+    }
+}
+
+pub fn expr_attrs(expr: &Expr) -> RcDoc<()> {
+    match expr {
+        Expr::Term(_) => RcDoc::nil(),
+        Expr::Tup(tup) if tup.is_empty() => RcDoc::nil(),
+        Expr::Tup(tup) => tup.to_doc().brackets(),
+    }
+}
 
 impl PrettyPrint for Prim {
     fn to_doc(&self) -> RcDoc<()> {
@@ -145,44 +147,26 @@ impl PrettyPrint for InstrCall {
 
 impl PrettyPrint for InstrWire {
     fn to_doc(&self) -> RcDoc<()> {
-        let attr = if let Some(tup) = self.attr().tup() {
-            if tup.is_empty() {
-                RcDoc::nil()
-            } else {
-                expr_attrs(self.attr())
-            }
-        } else {
-            RcDoc::nil()
-        };
         self.dst()
             .to_doc()
             .append(RcDoc::space())
             .append(RcDoc::text("="))
             .append(RcDoc::space())
             .append(self.op().to_doc())
-            .append(attr)
+            .append(expr_attrs(self.attr()))
             .append(expr_names(self.arg()))
     }
 }
 
 impl PrettyPrint for InstrComp {
     fn to_doc(&self) -> RcDoc<()> {
-        let attr = if let Some(tup) = self.attr().tup() {
-            if tup.is_empty() {
-                RcDoc::nil()
-            } else {
-                expr_attrs(self.attr())
-            }
-        } else {
-            RcDoc::nil()
-        };
         self.dst()
             .to_doc()
             .append(RcDoc::space())
             .append(RcDoc::text("="))
             .append(RcDoc::space())
             .append(self.op().to_doc())
-            .append(attr)
+            .append(expr_attrs(self.attr()))
             .append(expr_names(self.arg()))
             .append(RcDoc::space())
             .append(RcDoc::text("@"))
