@@ -4,6 +4,7 @@ use std::rc::Rc;
 pub type Id = ir::Id;
 pub type Ty = ir::Ty;
 pub type Prim = ir::Prim;
+pub type ExprTerm = ir::ExprTerm;
 pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
 pub type OpWire = ir::OpWire;

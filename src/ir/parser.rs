@@ -23,10 +23,10 @@ impl IRParser {
         Ok(input.as_str().to_string())
     }
 
-    fn val(input: Node) -> Result<Expr> {
+    fn val(input: Node) -> Result<ExprTerm> {
         let val = input.as_str().parse::<i64>();
         match val {
-            Ok(v) => Ok(Expr::Val(v)),
+            Ok(v) => Ok(ExprTerm::Val(v)),
             Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
         }
     }
@@ -47,33 +47,33 @@ impl IRParser {
         }
     }
 
-    fn var(input: Node) -> Result<Expr> {
+    fn var(input: Node) -> Result<ExprTerm> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), ty(ty)] => Expr::Var(id, ty),
-            [id(id)] => Expr::Var(id, Ty::Any),
+            [id(id), ty(ty)] => ExprTerm::Var(id, ty),
+            [id(id)] => ExprTerm::Var(id, Ty::Any),
         ))
     }
 
-    fn tup_var(input: Node) -> Result<Expr> {
+    fn tup_var(input: Node) -> Result<ExprTup> {
         Ok(match_nodes!(
             input.into_children();
-            [var(vars)..] => Expr::from(ExprTup{ expr: vars.collect()}),
+            [var(vars)..] => ExprTup{ term: vars.collect() },
         ))
     }
 
-    fn tup_val(input: Node) -> Result<Expr> {
+    fn tup_val(input: Node) -> Result<ExprTup> {
         Ok(match_nodes!(
             input.into_children();
-            [val(vals)..] => Expr::from(ExprTup{ expr: vals.collect()}),
+            [val(vals)..] => ExprTup{ term: vals.collect() },
         ))
     }
 
     fn io(input: Node) -> Result<Expr> {
         Ok(match_nodes!(
             input.into_children();
-            [var(var)] => var,
-            [tup_var(tup)] => tup,
+            [var(var)] => Expr::from(var),
+            [tup_var(tup)] => Expr::from(tup),
         ))
     }
 
@@ -114,7 +114,7 @@ impl IRParser {
             [io(dst), op_comp(op), tup_val(attr), io(arg)] => InstrComp {
                 op,
                 dst,
-                attr,
+                attr: Expr::from(attr),
                 arg,
                 prim: Prim::Any,
             },
@@ -128,7 +128,7 @@ impl IRParser {
             [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => InstrComp {
                 op,
                 dst,
-                attr,
+                attr: Expr::from(attr),
                 arg,
                 prim,
             }
@@ -141,7 +141,7 @@ impl IRParser {
             [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
                 op,
                 dst,
-                attr,
+                attr: Expr::from(attr),
                 arg: Expr::default(),
             },
             [io(dst), op_wire(op), io(arg)] => InstrWire {
@@ -153,7 +153,7 @@ impl IRParser {
             [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
                 op,
                 dst,
-                attr,
+                attr: Expr::from(attr),
                 arg,
             }
         ))

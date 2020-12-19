@@ -6,6 +6,12 @@ impl From<ExprTup> for Expr {
     }
 }
 
+impl From<ExprTerm> for Expr {
+    fn from(term: ExprTerm) -> Self {
+        Expr::Term(term)
+    }
+}
+
 impl From<InstrCall> for Instr {
     fn from(instr: InstrCall) -> Self {
         Instr::Call(instr)

@@ -2,6 +2,21 @@ use crate::ir::ast::*;
 use std::collections::HashMap;
 
 impl Ty {
+    pub fn width(&self) -> Option<u64> {
+        match self {
+            Ty::Bool => Some(1),
+            Ty::UInt(w) => Some(*w),
+            Ty::SInt(w) => Some(*w),
+            Ty::Vector(d, _) => d.width(),
+            _ => None,
+        }
+    }
+    pub fn length(&self) -> Option<u64> {
+        match self {
+            Ty::Vector(_, l) => Some(*l),
+            _ => None,
+        }
+    }
     pub fn is_vector(&self) -> bool {
         matches!(self, Ty::Vector(_, _))
     }
@@ -16,26 +31,49 @@ impl OpCall {
     }
 }
 
-impl ExprTup {
-    pub fn expr(&self) -> &Vec<Expr> {
-        &self.expr
+impl ExprTerm {
+    pub fn is_var(&self) -> bool {
+        matches!(self, ExprTerm::Var(_, _))
     }
-    pub fn is_empty(&self) -> bool {
-        self.expr.is_empty()
+    pub fn id(&self) -> Option<Id> {
+        match self {
+            ExprTerm::Var(n, _) => Some(n.to_string()),
+            _ => None,
+        }
+    }
+    pub fn ty(&self) -> Option<&Ty> {
+        match self {
+            ExprTerm::Var(_, ty) => Some(ty),
+            _ => None,
+        }
     }
 }
 
-#[allow(clippy::match_like_matches_macro)]
+impl ExprTup {
+    pub fn term(&self) -> &Vec<ExprTerm> {
+        &self.term
+    }
+    pub fn is_empty(&self) -> bool {
+        self.term.is_empty()
+    }
+}
+
 impl Expr {
     pub fn is_tup(&self) -> bool {
-        match self {
-            Expr::Tup(_) => true,
-            _ => false,
-        }
+        matches!(self, Expr::Tup(_))
+    }
+    pub fn is_term(&self) -> bool {
+        matches!(self, Expr::Term(_))
     }
     pub fn tup(&self) -> Option<&ExprTup> {
         match self {
             Expr::Tup(e) => Some(e),
+            _ => None,
+        }
+    }
+    pub fn term(&self) -> Option<&ExprTerm> {
+        match self {
+            Expr::Term(e) => Some(e),
             _ => None,
         }
     }

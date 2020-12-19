@@ -12,16 +12,21 @@ pub enum Ty {
     Vector(Rc<Ty>, u64),
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum ExprTerm {
+    Any,
+    Val(i64),
+    Var(Id, Ty),
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash, Default)]
 pub struct ExprTup {
-    pub expr: Vec<Expr>,
+    pub term: Vec<ExprTerm>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Expr {
-    Any,
-    Val(i64),
-    Var(Id, Ty),
+    Term(ExprTerm),
     Tup(ExprTup),
 }
 

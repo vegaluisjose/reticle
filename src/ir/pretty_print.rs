@@ -3,30 +3,38 @@ use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, Pr
 use itertools::Itertools;
 use pretty::RcDoc;
 
-pub fn expr_names(expr: &Expr) -> RcDoc<()> {
-    match expr {
-        Expr::Any => RcDoc::text("_"),
-        Expr::Val(v) => RcDoc::as_string(v),
-        Expr::Var(n, _) => RcDoc::as_string(n),
-        Expr::Tup(tup) if tup.is_empty() => RcDoc::nil(),
-        Expr::Tup(tup) => intersperse(
-            tup.expr().iter().map(|n| expr_names(n)),
-            RcDoc::text(",").append(RcDoc::space()),
-        )
-        .parens(),
-    }
+// pub fn expr_names(expr: &Expr) -> RcDoc<()> {
+//     match expr {
+//         Expr::Any => RcDoc::text("_"),
+//         Expr::Val(v) => RcDoc::as_string(v),
+//         Expr::Var(n, _) => RcDoc::as_string(n),
+//         Expr::Tup(tup) if tup.is_empty() => RcDoc::nil(),
+//         Expr::Tup(tup) => intersperse(
+//             tup.expr().iter().map(|n| expr_names(n)),
+//             RcDoc::text(",").append(RcDoc::space()),
+//         )
+//         .parens(),
+//     }
+// }
+
+pub fn expr_names(_: &Expr) -> RcDoc<()> {
+    RcDoc::nil()
 }
 
-pub fn expr_attrs(expr: &Expr) -> RcDoc<()> {
-    match expr {
-        Expr::Any => RcDoc::text("_"),
-        Expr::Val(v) => RcDoc::as_string(v),
-        Expr::Var(n, ty) => RcDoc::as_string(n)
-            .append(RcDoc::text(":"))
-            .append(ty.to_doc()),
-        Expr::Tup(tup) => tup.to_doc().brackets(),
-    }
+pub fn expr_attrs(_: &Expr) -> RcDoc<()> {
+    RcDoc::nil()
 }
+
+// pub fn expr_attrs(expr: &Expr) -> RcDoc<()> {
+//     match expr {
+//         Expr::Any => RcDoc::text("_"),
+//         Expr::Val(v) => RcDoc::as_string(v),
+//         Expr::Var(n, ty) => RcDoc::as_string(n)
+//             .append(RcDoc::text(":"))
+//             .append(ty.to_doc()),
+//         Expr::Tup(tup) => tup.to_doc().brackets(),
+//     }
+// }
 
 impl PrettyPrint for Prim {
     fn to_doc(&self) -> RcDoc<()> {
@@ -50,10 +58,22 @@ impl PrettyPrint for Ty {
     }
 }
 
+impl PrettyPrint for ExprTerm {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            ExprTerm::Any => RcDoc::text("_"),
+            ExprTerm::Val(v) => RcDoc::as_string(v),
+            ExprTerm::Var(n, ty) => RcDoc::as_string(n)
+                .append(RcDoc::text(":"))
+                .append(ty.to_doc()),
+        }
+    }
+}
+
 impl PrettyPrint for ExprTup {
     fn to_doc(&self) -> RcDoc<()> {
         intersperse(
-            self.expr().iter().map(|e| e.to_doc()),
+            self.term().iter().map(|e| e.to_doc()),
             RcDoc::text(",").append(RcDoc::space()),
         )
     }
@@ -62,11 +82,7 @@ impl PrettyPrint for ExprTup {
 impl PrettyPrint for Expr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Expr::Any => RcDoc::text("_"),
-            Expr::Val(v) => RcDoc::as_string(v),
-            Expr::Var(n, ty) => RcDoc::as_string(n)
-                .append(RcDoc::text(":"))
-                .append(ty.to_doc()),
+            Expr::Term(term) => term.to_doc(),
             Expr::Tup(tup) => tup.to_doc().parens(),
         }
     }
