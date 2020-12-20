@@ -55,7 +55,7 @@ impl PrettyPrint for Ty {
             Ty::Bool => RcDoc::text("bool"),
             Ty::UInt(width) => RcDoc::text("u").append(RcDoc::as_string(width)),
             Ty::SInt(width) => RcDoc::text("i").append(RcDoc::as_string(width)),
-            Ty::Vector(dtype, len) => dtype.to_doc().append(RcDoc::as_string(len)).comps(),
+            Ty::Vector(dtype, len) => dtype.to_doc().append(RcDoc::as_string(len).comps()),
         }
     }
 }

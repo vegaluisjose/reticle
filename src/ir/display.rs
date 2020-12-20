@@ -14,6 +14,7 @@ macro_rules! display {
 
 display!(Ty);
 display!(Prim);
+display!(ExprTerm);
 display!(ExprTup);
 display!(Expr);
 display!(OpWire);
