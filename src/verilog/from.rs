@@ -34,3 +34,24 @@ impl From<ir::ExprTerm> for Vec<verilog::Decl> {
         decls
     }
 }
+
+impl From<ir::ExprTup> for Vec<verilog::Decl> {
+    fn from(tup: ir::ExprTup) -> Self {
+        let mut decls: Vec<verilog::Decl> = Vec::new();
+        for term in tup.term() {
+            let t: Vec<verilog::Decl> = term.clone().into();
+            decls.extend(t);
+        }
+        decls
+    }
+}
+
+impl From<ir::Expr> for Vec<verilog::Decl> {
+    fn from(expr: ir::Expr) -> Self {
+        let decls: Vec<verilog::Decl> = match expr {
+            ir::Expr::Tup(tup) => tup.clone().into(),
+            ir::Expr::Term(term) => term.clone().into(),
+        };
+        decls
+    }
+}
