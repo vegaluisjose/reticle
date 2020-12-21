@@ -1,4 +1,5 @@
 use crate::ir::ast as ir;
+use crate::ml::ast as ml;
 use crate::verilog::ast as verilog;
 
 impl From<ir::ExprTerm> for Vec<verilog::Id> {
@@ -88,7 +89,35 @@ impl From<ir::Sig> for verilog::Module {
 
 impl From<ir::Def> for verilog::Module {
     fn from(def: ir::Def) -> Self {
-        let module = verilog::Module::from(def.sig().clone());
+        let mut module = verilog::Module::from(def.sig().clone());
+        for instr in def.body() {
+            let decls: Vec<verilog::Decl> = instr.clone().into();
+            for d in decls {
+                module.add_decl(d.clone());
+            }
+        }
+        module
+    }
+}
+
+impl From<ml::Instr> for Vec<verilog::Decl> {
+    fn from(instr: ml::Instr) -> Self {
+        match instr {
+            ml::Instr::Wire(instr) => instr.clone().into(),
+            _ => unimplemented!(),
+        }
+    }
+}
+
+impl From<ml::Prog> for verilog::Module {
+    fn from(prog: ml::Prog) -> Self {
+        let mut module = verilog::Module::from(prog.sig().clone());
+        for instr in prog.body() {
+            let decls: Vec<verilog::Decl> = instr.clone().into();
+            for d in decls {
+                module.add_decl(d.clone());
+            }
+        }
         module
     }
 }

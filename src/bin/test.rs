@@ -4,14 +4,14 @@ use reticle::verilog::ast as verilog;
 
 fn main() {
     let parsed_prog =
-        IRParser::parse_from_str("def main(a:bool, b:bool) -> (y:bool) { y:bool = reg[0](a, b); }");
+        IRParser::parse_from_str("def main(a:bool, b:bool) -> (y:bool) { y:bool = const[1]; }");
     let parsed_ml = MLParser::parse_from_file("examples/add.rml");
     if let Ok(prog) = parsed_prog {
         if let Some(main) = prog.get("main") {
-            println!("{}", verilog::Module::from(main.sig().clone()));
+            println!("{}", verilog::Module::from(main.clone()));
         }
     }
     if let Ok(prog) = parsed_ml {
-        println!("{}", verilog::Module::from(prog.sig().clone()));
+        println!("{}", verilog::Module::from(prog.clone()));
     }
 }
