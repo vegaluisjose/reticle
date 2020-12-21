@@ -48,11 +48,25 @@ impl From<ir::ExprTup> for Vec<verilog::Decl> {
 
 impl From<ir::Expr> for Vec<verilog::Decl> {
     fn from(expr: ir::Expr) -> Self {
-        let decls: Vec<verilog::Decl> = match expr {
+        match expr {
             ir::Expr::Tup(tup) => tup.clone().into(),
             ir::Expr::Term(term) => term.clone().into(),
-        };
-        decls
+        }
+    }
+}
+
+impl From<ir::InstrWire> for Vec<verilog::Decl> {
+    fn from(wire: ir::InstrWire) -> Self {
+        wire.dst().clone().into()
+    }
+}
+
+impl From<ir::Instr> for Vec<verilog::Decl> {
+    fn from(instr: ir::Instr) -> Self {
+        match instr {
+            ir::Instr::Wire(instr) => instr.clone().into(),
+            _ => unimplemented!(),
+        }
     }
 }
 
@@ -68,6 +82,13 @@ impl From<ir::Sig> for verilog::Module {
         for o in output {
             module.add_port(verilog::Port::Output(o.clone()))
         }
+        module
+    }
+}
+
+impl From<ir::Def> for verilog::Module {
+    fn from(def: ir::Def) -> Self {
+        let module = verilog::Module::from(def.sig().clone());
         module
     }
 }
