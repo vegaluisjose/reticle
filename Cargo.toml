@@ -16,6 +16,7 @@ pest_consume = "1.0.5"
 vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "c336ef45fb912343d18a19252b335d8c3c735f09" }
 structopt = { version = "0.3", default-features = false }
 itertools = "0.9.0"
+lazy_static = "1.4.0"
 
 # [[bin]]
 # name = "reticle-translate"

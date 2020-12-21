@@ -4,6 +4,7 @@ use reticle::ir::parser::IRParser;
 use reticle::ml::parser::MLParser;
 use reticle::tdl::parser::TDLParser;
 use std::rc::Rc;
+use std::str::FromStr;
 
 fn main() {
     let ir =
@@ -23,4 +24,5 @@ fn main() {
     println!("{}", mach.unwrap());
     println!("{}", term);
     println!("{:?}", ids);
+    println!("{}", ir::Ty::from_str("i8<3>").unwrap())
 }

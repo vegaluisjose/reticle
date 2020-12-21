@@ -4,64 +4,89 @@ use regex::Regex;
 use std::rc::Rc;
 use std::str::FromStr;
 
+const RE_UINT: &str = r"^u([[:alnum:]]+)$";
+const RE_SINT: &str = r"^i([[:alnum:]]+)$";
+const RE_UVEC: &str = r"^u[[:alnum:]]+<[[:alnum:]]+>$";
+const RE_SVEC: &str = r"^i[[:alnum:]]+<[[:alnum:]]+>$";
+const RE_LENGTH: &str = r"^[ui][[:alnum:]]+<([[:alnum:]]+)>$";
+const RE_WIDTH: &str = r"^[ui]([[:alnum:]]+)[<[[:alnum:]]+>]*$";
+
+fn is_uint(input: &str) -> bool {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_UINT).unwrap();
+    }
+    RE.is_match(input)
+}
+
+fn is_sint(input: &str) -> bool {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_SINT).unwrap();
+    }
+    RE.is_match(input)
+}
+
+fn is_uvec(input: &str) -> bool {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_UVEC).unwrap();
+    }
+    RE.is_match(input)
+}
+
+fn is_svec(input: &str) -> bool {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_SVEC).unwrap();
+    }
+    RE.is_match(input)
+}
+
+fn width(input: &str) -> Result<u64, Error> {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_WIDTH).unwrap();
+    }
+    let caps = RE.captures(input).unwrap();
+    let err = format!("{} is not valid width", input);
+    if let Some(first) = caps.get(1) {
+        if let Ok(width) = first.as_str().parse::<u64>() {
+            Ok(width)
+        } else {
+            Err(Error::new_parse_error(&err))
+        }
+    } else {
+        Err(Error::new_parse_error(&err))
+    }
+}
+
+fn length(input: &str) -> Result<u64, Error> {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_LENGTH).unwrap();
+    }
+    let caps = RE.captures(input).unwrap();
+    let err = format!("{} is not valid length", input);
+    if let Some(first) = caps.get(1) {
+        if let Ok(width) = first.as_str().parse::<u64>() {
+            Ok(width)
+        } else {
+            Err(Error::new_parse_error(&err))
+        }
+    } else {
+        Err(Error::new_parse_error(&err))
+    }
+}
+
 impl FromStr for Ty {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let re_uint = Regex::new(r"^u([[:alnum:]]+)$").unwrap();
-        let re_sint = Regex::new(r"^i([[:alnum:]]+)$").unwrap();
-        let re_uvec = Regex::new(r"^u([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
-        let re_svec = Regex::new(r"^i([[:alnum:]]+)<([[:alnum:]]+)>$").unwrap();
         let err = format!("Error: {} is not valid type", input);
         if input == "bool" {
             Ok(Ty::Bool)
-        } else if re_uint.is_match(input) {
-            let caps = re_uint.captures(input).unwrap();
-            if let Some(w) = caps.get(1) {
-                let width = w.as_str().parse::<u64>().unwrap();
-                assert!(width > 0, "Error: width must be greater than zero");
-                Ok(Ty::UInt(width))
-            } else {
-                Err(Error::new_parse_error(&err))
-            }
-        } else if re_sint.is_match(input) {
-            let caps = re_sint.captures(input).unwrap();
-            if let Some(w) = caps.get(1) {
-                let width = w.as_str().parse::<u64>().unwrap();
-                assert!(width > 1, "Error: width must be greater than one");
-                Ok(Ty::SInt(width))
-            } else {
-                Err(Error::new_parse_error(&err))
-            }
-        } else if re_uvec.is_match(input) {
-            let caps = re_uvec.captures(input).unwrap();
-            if let Some(w) = caps.get(1) {
-                if let Some(l) = caps.get(2) {
-                    let width = w.as_str().parse::<u64>().unwrap();
-                    let len = l.as_str().parse::<u64>().unwrap();
-                    assert!(width > 0, "Error: width must be greater than zero");
-                    assert!(len > 0, "Error: length must be greater than zero");
-                    Ok(Ty::Vector(Rc::new(Ty::UInt(width)), len))
-                } else {
-                    Err(Error::new_parse_error(&err))
-                }
-            } else {
-                Err(Error::new_parse_error(&err))
-            }
-        } else if re_svec.is_match(input) {
-            let caps = re_svec.captures(input).unwrap();
-            if let Some(w) = caps.get(1) {
-                if let Some(l) = caps.get(2) {
-                    let width = w.as_str().parse::<u64>().unwrap();
-                    let len = l.as_str().parse::<u64>().unwrap();
-                    assert!(width > 1, "Error: width must be greater than one");
-                    assert!(len > 0, "Error: length must be greater than zero");
-                    Ok(Ty::Vector(Rc::new(Ty::SInt(width)), len))
-                } else {
-                    Err(Error::new_parse_error(&err))
-                }
-            } else {
-                Err(Error::new_parse_error(&err))
-            }
+        } else if is_uint(input) {
+            Ok(Ty::UInt(width(input)?))
+        } else if is_sint(input) {
+            Ok(Ty::SInt(width(input)?))
+        } else if is_uvec(input) {
+            Ok(Ty::Vector(Rc::new(Ty::UInt(width(input)?)), length(input)?))
+        } else if is_svec(input) {
+            Ok(Ty::Vector(Rc::new(Ty::SInt(width(input)?)), length(input)?))
         } else {
             Err(Error::new_parse_error(&err))
         }
