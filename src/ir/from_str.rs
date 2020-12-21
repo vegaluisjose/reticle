@@ -6,10 +6,10 @@ use std::str::FromStr;
 
 const RE_UINT: &str = r"^u([[:alnum:]]+)$";
 const RE_SINT: &str = r"^i([[:alnum:]]+)$";
-const RE_UVEC: &str = r"^u[[:alnum:]]+<[[:alnum:]]+>$";
-const RE_SVEC: &str = r"^i[[:alnum:]]+<[[:alnum:]]+>$";
-const RE_LENGTH: &str = r"^[ui][[:alnum:]]+<([[:alnum:]]+)>$";
-const RE_WIDTH: &str = r"^[ui]([[:alnum:]]+)[<[[:alnum:]]+>]*$";
+const RE_UVEC: &str = r"^[\s\t]*u[[:alnum:]]+[\s\t]*<[[:alnum:]]+>[\s\t]*$";
+const RE_SVEC: &str = r"^[\s\t]*i[[:alnum:]]+[\s\t]*<[[:alnum:]]+>[\s\t]*$";
+const RE_LENGTH: &str = r"^[\s\t]*[ui][[:alnum:]]+[\s\t]*<([[:alnum:]]+)>[\s\t]*$";
+const RE_WIDTH: &str = r"^[\s\t]*[ui]([[:alnum:]]+)[[\s\t]*<[[:alnum:]]+>]*[\s\t]*$";
 
 fn is_uint(input: &str) -> bool {
     lazy_static::lazy_static! {
