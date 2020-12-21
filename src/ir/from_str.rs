@@ -4,12 +4,20 @@ use regex::Regex;
 use std::rc::Rc;
 use std::str::FromStr;
 
+const RE_BOOL: &str = r"^[\s\t]*bool+[\s\t]*$";
 const RE_UINT: &str = r"^[\s\t]*u[[:digit:]]+[\s\t]*$";
 const RE_SINT: &str = r"^[\s\t]*i[[:digit:]]+[\s\t]*$";
 const RE_UVEC: &str = r"^[\s\t]*u[[:digit:]]+<[[:digit:]]+>[\s\t]*$";
 const RE_SVEC: &str = r"^[\s\t]*i[[:digit:]]+<[[:digit:]]+>[\s\t]*$";
 const RE_LENGTH: &str = r"^[\s\t]*[ui][[:digit:]]+<([[:digit:]]+)>[\s\t]*$";
 const RE_WIDTH: &str = r"^[\s\t]*[ui]([[:digit:]]+)[<[[:digit:]]+>]*[\s\t]*$";
+
+fn is_bool(input: &str) -> bool {
+    lazy_static::lazy_static! {
+        static ref RE: Regex = Regex::new(RE_BOOL).unwrap();
+    }
+    RE.is_match(input)
+}
 
 fn is_uint(input: &str) -> bool {
     lazy_static::lazy_static! {
@@ -77,7 +85,7 @@ impl FromStr for Ty {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let err = format!("Error: {} is not valid type", input);
-        if input == "bool" {
+        if is_bool(input) {
             Ok(Ty::Bool)
         } else if is_uint(input) {
             Ok(Ty::UInt(width(input)?))
