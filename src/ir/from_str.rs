@@ -4,12 +4,12 @@ use regex::Regex;
 use std::rc::Rc;
 use std::str::FromStr;
 
-const RE_UINT: &str = r"^u([[:alnum:]]+)$";
-const RE_SINT: &str = r"^i([[:alnum:]]+)$";
-const RE_UVEC: &str = r"^[\s\t]*u[[:alnum:]]+[\s\t]*<[[:alnum:]]+>[\s\t]*$";
-const RE_SVEC: &str = r"^[\s\t]*i[[:alnum:]]+[\s\t]*<[[:alnum:]]+>[\s\t]*$";
-const RE_LENGTH: &str = r"^[\s\t]*[ui][[:alnum:]]+[\s\t]*<([[:alnum:]]+)>[\s\t]*$";
-const RE_WIDTH: &str = r"^[\s\t]*[ui]([[:alnum:]]+)[[\s\t]*<[[:alnum:]]+>]*[\s\t]*$";
+const RE_UINT: &str = r"^[\s\t]*u[[:digit:]]+[\s\t]*$";
+const RE_SINT: &str = r"^[\s\t]*i[[:digit:]]+[\s\t]*$";
+const RE_UVEC: &str = r"^[\s\t]*u[[:digit:]]+[\s\t]*<[[:digit:]]+>[\s\t]*$";
+const RE_SVEC: &str = r"^[\s\t]*i[[:digit:]]+[\s\t]*<[[:digit:]]+>[\s\t]*$";
+const RE_LENGTH: &str = r"^[\s\t]*[ui][[:digit:]]+[\s\t]*<([[:digit:]]+)>[\s\t]*$";
+const RE_WIDTH: &str = r"^[\s\t]*[ui]([[:digit:]]+)[[\s\t]*<[[:digit:]]+>]*[\s\t]*$";
 
 fn is_uint(input: &str) -> bool {
     lazy_static::lazy_static! {
