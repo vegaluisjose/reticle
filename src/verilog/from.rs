@@ -18,3 +18,19 @@ impl From<ir::ExprTerm> for Vec<verilog::Id> {
         ids
     }
 }
+
+impl From<ir::ExprTerm> for Vec<verilog::Decl> {
+    fn from(term: ir::ExprTerm) -> Self {
+        let ids: Vec<verilog::Id> = term.clone().into();
+        let mut decls: Vec<verilog::Decl> = Vec::new();
+        if let Some(ty) = term.ty() {
+            if let Some(width) = ty.width() {
+                for id in ids {
+                    let wire = verilog::Decl::new_wire(&id, width);
+                    decls.push(wire);
+                }
+            }
+        }
+        decls
+    }
+}

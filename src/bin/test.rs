@@ -3,8 +3,8 @@ use reticle::ir::ast as ir;
 use reticle::ir::parser::IRParser;
 use reticle::ml::parser::MLParser;
 use reticle::tdl::parser::TDLParser;
+use reticle::verilog::ast as verilog;
 use std::rc::Rc;
-use std::str::FromStr;
 
 fn main() {
     let ir =
@@ -17,12 +17,13 @@ fn main() {
     );
     let mach = MLParser::parse_from_file("examples/add.rml");
     let term = ir::ExprTerm::Var("a".to_string(), ir::Ty::Vector(Rc::new(ir::Ty::SInt(8)), 8));
-    let ids: Vec<ir::Id> = term.clone().into();
+    let ids: Vec<verilog::Decl> = term.clone().into();
     println!("{}", ir.unwrap());
     println!("{}", asm.unwrap());
     println!("{}", tdl.unwrap());
     println!("{}", mach.unwrap());
     println!("{}", term);
-    println!("{:?}", ids);
-    println!("{}", ir::Ty::from_str("i8<3>").unwrap())
+    for i in ids {
+        println!("{}", i);
+    }
 }
