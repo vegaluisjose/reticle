@@ -2,9 +2,7 @@ WHITESPACE = _{ " " | "\t" | NEWLINE }
 
 COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
 
-sep = _{ "_" | "-"}
-
-id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+id = @{ ASCII_ALPHA+ ~ (ASCII_ALPHA | ASCII_DIGIT)* }
 
 val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
 

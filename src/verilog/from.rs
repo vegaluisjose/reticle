@@ -55,3 +55,19 @@ impl From<ir::Expr> for Vec<verilog::Decl> {
         decls
     }
 }
+
+impl From<ir::Sig> for verilog::Module {
+    fn from(sig: ir::Sig) -> Self {
+        let id = sig.id();
+        let mut module = verilog::Module::new(&id);
+        let input: Vec<verilog::Decl> = sig.input().clone().into();
+        let output: Vec<verilog::Decl> = sig.output().clone().into();
+        for i in input {
+            module.add_port(verilog::Port::Input(i.clone()))
+        }
+        for o in output {
+            module.add_port(verilog::Port::Output(o.clone()))
+        }
+        module
+    }
+}

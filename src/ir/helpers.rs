@@ -152,8 +152,8 @@ impl Prog {
     pub fn def(&self) -> &HashMap<Id, Def> {
         &self.def
     }
-    pub fn get(&self, name: &str) -> &Def {
-        self.def.get(name).expect("Error: function not found")
+    pub fn get(&self, name: &str) -> Option<&Def> {
+        self.def.get(name)
     }
     pub fn insert(&mut self, name: &str, def: Def) {
         self.def.insert(name.to_string(), def);

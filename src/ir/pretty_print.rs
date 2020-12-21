@@ -212,20 +212,18 @@ impl PrettyPrint for Def {
 
 impl PrettyPrint for Prog {
     fn to_doc(&self) -> RcDoc<()> {
-        let main = self.get("main");
-        if self.def().len() == 1 {
-            main.to_doc()
+        let preamble = intersperse(
+            self.def()
+                .iter()
+                .filter(|(id, _)| id.as_str() != "main")
+                .sorted_by_key(|(id, _)| (*id).clone())
+                .map(|(_, def)| def.to_doc()),
+            RcDoc::hardline(),
+        );
+        if let Some(main) = self.get("main") {
+            preamble.append(RcDoc::hardline()).append(main.to_doc())
         } else {
-            intersperse(
-                self.def()
-                    .iter()
-                    .filter(|(id, _)| id.as_str() != "main")
-                    .sorted_by_key(|(id, _)| (*id).clone())
-                    .map(|(_, def)| def.to_doc()),
-                RcDoc::hardline(),
-            )
-            .append(RcDoc::hardline())
-            .append(main.to_doc())
+            preamble
         }
     }
 }
