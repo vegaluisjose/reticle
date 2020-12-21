@@ -12,6 +12,6 @@ fn main() {
         }
     }
     if let Ok(prog) = parsed_ml {
-        println!("{}", verilog::Module::from(prog.clone()));
+        println!("{}", verilog::Module::from(prog));
     }
 }

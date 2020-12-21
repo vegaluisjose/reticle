@@ -1,6 +1,7 @@
 use crate::ir::ast as ir;
 use crate::ml::ast as ml;
 use crate::verilog::ast as verilog;
+// use std::collections::HashSet;
 
 impl From<ir::ExprTerm> for Vec<verilog::Id> {
     fn from(term: ir::ExprTerm) -> Self {
@@ -49,7 +50,7 @@ impl From<ir::ExprTup> for Vec<verilog::Decl> {
 
 impl From<ir::Expr> for Vec<verilog::Decl> {
     fn from(expr: ir::Expr) -> Self {
-        match expr {
+        match &expr {
             ir::Expr::Tup(tup) => tup.clone().into(),
             ir::Expr::Term(term) => term.clone().into(),
         }
@@ -64,7 +65,7 @@ impl From<ir::InstrWire> for Vec<verilog::Decl> {
 
 impl From<ir::Instr> for Vec<verilog::Decl> {
     fn from(instr: ir::Instr) -> Self {
-        match instr {
+        match &instr {
             ir::Instr::Wire(instr) => instr.clone().into(),
             _ => unimplemented!(),
         }
@@ -102,7 +103,7 @@ impl From<ir::Def> for verilog::Module {
 
 impl From<ml::Instr> for Vec<verilog::Decl> {
     fn from(instr: ml::Instr) -> Self {
-        match instr {
+        match &instr {
             ml::Instr::Wire(instr) => instr.clone().into(),
             _ => unimplemented!(),
         }
