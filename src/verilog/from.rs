@@ -1,7 +1,7 @@
 use crate::ir::ast as ir;
 use crate::ml::ast as ml;
 use crate::verilog::ast as verilog;
-// use std::collections::HashSet;
+use std::collections::HashSet;
 
 impl From<ir::ExprTerm> for Vec<verilog::Id> {
     fn from(term: ir::ExprTerm) -> Self {
@@ -91,11 +91,16 @@ impl From<ir::Sig> for verilog::Module {
 impl From<ir::Def> for verilog::Module {
     fn from(def: ir::Def) -> Self {
         let mut module = verilog::Module::from(def.sig().clone());
+        let output: Vec<verilog::Decl> = def.sig().output().clone().into();
+        let output_set: HashSet<verilog::Decl> = output.into_iter().collect();
+        let mut decls: Vec<verilog::Decl> = Vec::new();
         for instr in def.body() {
-            let decls: Vec<verilog::Decl> = instr.clone().into();
-            for d in decls {
-                module.add_decl(d.clone());
-            }
+            let d: Vec<verilog::Decl> = instr.clone().into();
+            decls.extend(d);
+        }
+        let instr_set: HashSet<verilog::Decl> = decls.into_iter().collect();
+        for d in instr_set.difference(&output_set) {
+            module.add_decl(d.clone());
         }
         module
     }
