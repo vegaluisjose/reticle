@@ -38,6 +38,15 @@ pub enum OptVal {
     Op(OptValOp),
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum OpBasc {
+    Id,
+    Gnd,
+    Vcc,
+    Ext,
+    Cat,
+}
+
 #[derive(Clone, Debug)]
 pub enum OpMach {
     Lut1,
@@ -113,6 +122,14 @@ pub struct Loc {
 }
 
 #[derive(Clone, Debug)]
+pub struct InstrBasc {
+    pub op: OpBasc,
+    pub attr: Expr,
+    pub dst: Expr,
+    pub arg: Expr,
+}
+
+#[derive(Clone, Debug)]
 pub struct InstrMach {
     pub op: OpMach,
     pub opt: OptMap,
@@ -124,6 +141,7 @@ pub struct InstrMach {
 #[derive(Clone, Debug)]
 pub enum Instr {
     Wire(InstrWire),
+    Basc(InstrBasc),
     Mach(InstrMach),
 }
 

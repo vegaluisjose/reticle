@@ -58,8 +58,8 @@ impl From<ir::Expr> for Vec<verilog::Decl> {
 }
 
 impl From<ir::InstrWire> for Vec<verilog::Decl> {
-    fn from(wire: ir::InstrWire) -> Self {
-        wire.dst().clone().into()
+    fn from(instr: ir::InstrWire) -> Self {
+        instr.dst().clone().into()
     }
 }
 
@@ -106,10 +106,17 @@ impl From<ir::Def> for verilog::Module {
     }
 }
 
+impl From<ml::InstrBasc> for Vec<verilog::Decl> {
+    fn from(instr: ml::InstrBasc) -> Self {
+        instr.dst().clone().into()
+    }
+}
+
 impl From<ml::Instr> for Vec<verilog::Decl> {
     fn from(instr: ml::Instr) -> Self {
         match &instr {
             ml::Instr::Wire(instr) => instr.clone().into(),
+            ml::Instr::Basc(instr) => instr.clone().into(),
             _ => unimplemented!(),
         }
     }

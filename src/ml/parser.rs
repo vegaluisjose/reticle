@@ -127,8 +127,8 @@ impl MLParser {
         }
     }
 
-    fn op_wire(input: Node) -> Result<OpWire> {
-        let op = OpWire::from_str(input.as_str());
+    fn op_basc(input: Node) -> Result<OpBasc> {
+        let op = OpBasc::from_str(input.as_str());
         match op {
             Ok(t) => Ok(t),
             Err(m) => panic!("{}", m),
@@ -191,22 +191,22 @@ impl MLParser {
         ))
     }
 
-    fn instr_wire(input: Node) -> Result<InstrWire> {
+    fn instr_basc(input: Node) -> Result<InstrBasc> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
+            [io(dst), op_basc(op), tup_val(attr)] => InstrBasc {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg: Expr::default(),
             },
-            [io(dst), op_wire(op), io(arg)] => InstrWire {
+            [io(dst), op_basc(op), io(arg)] => InstrBasc {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
             },
-            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
+            [io(dst), op_basc(op), tup_val(attr), io(arg)] => InstrBasc {
                 op,
                 dst,
                 attr: Expr::from(attr),
@@ -219,7 +219,7 @@ impl MLParser {
         Ok(match_nodes!(
             input.into_children();
             [instr_mach(instr)] => Instr::from(instr),
-            [instr_wire(instr)] => Instr::from(instr),
+            [instr_basc(instr)] => Instr::from(instr),
         ))
     }
 

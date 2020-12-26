@@ -36,7 +36,7 @@ loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 op_mach = { id }
 
-op_wire = { id }
+op_basc = { id }
 
 opt_key = { id }
 
@@ -48,9 +48,9 @@ opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
 
 instr_mach = { io ~ "=" ~ op_mach ~ opt? ~ io ~ "@" ~ loc ~ ";" }
 
-instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
+instr_basc = { io ~ "=" ~ op_basc ~ attr? ~ io? ~ ";" }
 
-instr = { instr_mach | instr_wire }
+instr = { instr_mach | instr_basc }
 
 body = { instr+ }
 

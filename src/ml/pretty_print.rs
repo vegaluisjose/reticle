@@ -1,8 +1,20 @@
-use crate::ir::pretty_print::expr_names;
+use crate::ir::pretty_print::{expr_attrs, expr_names};
 use crate::ml::ast::*;
 use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 // use itertools::Itertools;
 use pretty::RcDoc;
+
+impl PrettyPrint for OpBasc {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            OpBasc::Id => RcDoc::text("id"),
+            OpBasc::Gnd => RcDoc::text("gnd"),
+            OpBasc::Vcc => RcDoc::text("vcc"),
+            OpBasc::Ext => RcDoc::text("ext"),
+            OpBasc::Cat => RcDoc::text("cat"),
+        }
+    }
+}
 
 impl PrettyPrint for OpMach {
     fn to_doc(&self) -> RcDoc<()> {
@@ -145,6 +157,19 @@ impl PrettyPrint for OptMap {
     }
 }
 
+impl PrettyPrint for InstrBasc {
+    fn to_doc(&self) -> RcDoc<()> {
+        self.dst()
+            .to_doc()
+            .append(RcDoc::space())
+            .append(RcDoc::text("="))
+            .append(RcDoc::space())
+            .append(self.op().to_doc())
+            .append(expr_attrs(self.attr()))
+            .append(expr_names(self.arg()))
+    }
+}
+
 impl PrettyPrint for InstrMach {
     fn to_doc(&self) -> RcDoc<()> {
         let opt = if self.opt().is_empty() {
@@ -170,6 +195,7 @@ impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Instr::Wire(wire) => wire.to_doc(),
+            Instr::Basc(basc) => basc.to_doc(),
             Instr::Mach(mach) => mach.to_doc(),
         }
     }

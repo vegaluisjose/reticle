@@ -15,12 +15,14 @@ macro_rules! display {
 display!(Opt);
 display!(OptValOp);
 display!(OptVal);
+display!(OpBasc);
 display!(OpMach);
 display!(BelLut);
 display!(BelReg);
 display!(BelCarry);
 display!(Bel);
 display!(Loc);
+display!(InstrBasc);
 display!(InstrMach);
 display!(Instr);
 display!(Prog);

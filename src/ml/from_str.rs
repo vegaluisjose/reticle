@@ -19,6 +19,21 @@ impl FromStr for Opt {
     }
 }
 
+impl FromStr for OpBasc {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let err = format!("Error: {} is not valid basic operation", input);
+        match input {
+            "id" => Ok(OpBasc::Id),
+            "gnd" => Ok(OpBasc::Gnd),
+            "vcc" => Ok(OpBasc::Vcc),
+            "ext" => Ok(OpBasc::Ext),
+            "cat" => Ok(OpBasc::Cat),
+            _ => Err(Error::new_parse_error(&err)),
+        }
+    }
+}
+
 impl FromStr for OpMach {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {

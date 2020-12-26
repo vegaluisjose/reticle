@@ -12,6 +12,21 @@ impl Loc {
     }
 }
 
+impl InstrBasc {
+    pub fn op(&self) -> &OpBasc {
+        &self.op
+    }
+    pub fn dst(&self) -> &Expr {
+        &self.dst
+    }
+    pub fn attr(&self) -> &Expr {
+        &self.attr
+    }
+    pub fn arg(&self) -> &Expr {
+        &self.arg
+    }
+}
+
 impl InstrMach {
     pub fn op(&self) -> &OpMach {
         &self.op
