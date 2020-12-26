@@ -80,9 +80,9 @@ impl Expr {
             _ => None,
         }
     }
-    pub fn index(&self, idx: usize) -> Option<&ExprTerm> {
+    pub fn idx(&self, val: usize) -> Option<&ExprTerm> {
         match self {
-            Expr::Tup(t) => Some(t.idx(idx)),
+            Expr::Tup(t) => Some(t.idx(val)),
             _ => None,
         }
     }
