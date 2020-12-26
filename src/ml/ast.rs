@@ -5,14 +5,12 @@ use std::collections::HashMap;
 pub type Id = ir::Id;
 pub type Ty = ir::Ty;
 pub type Prim = ir::Prim;
-pub type OpWire = ir::OpWire;
 pub type OpCoord = asm::OpCoord;
 pub type OptMap = HashMap<Opt, OptVal>;
 pub type ExprTerm = ir::ExprTerm;
 pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
 pub type ExprCoord = asm::ExprCoord;
-pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
@@ -140,7 +138,6 @@ pub struct InstrMach {
 
 #[derive(Clone, Debug)]
 pub enum Instr {
-    Wire(InstrWire),
     Basc(InstrBasc),
     Mach(InstrMach),
 }

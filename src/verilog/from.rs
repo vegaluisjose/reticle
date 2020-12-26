@@ -115,7 +115,6 @@ impl From<ml::InstrBasc> for Vec<verilog::Decl> {
 impl From<ml::Instr> for Vec<verilog::Decl> {
     fn from(instr: ml::Instr) -> Self {
         match &instr {
-            ml::Instr::Wire(instr) => instr.clone().into(),
             ml::Instr::Basc(instr) => instr.clone().into(),
             _ => unimplemented!(),
         }

@@ -194,7 +194,6 @@ impl PrettyPrint for InstrMach {
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
-            Instr::Wire(wire) => wire.to_doc(),
             Instr::Basc(basc) => basc.to_doc(),
             Instr::Mach(mach) => mach.to_doc(),
         }

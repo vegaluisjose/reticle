@@ -29,9 +29,3 @@ impl From<InstrMach> for Instr {
         Instr::Mach(instr)
     }
 }
-
-impl From<InstrWire> for Instr {
-    fn from(instr: InstrWire) -> Self {
-        Instr::Wire(instr)
-    }
-}
