@@ -35,6 +35,12 @@ impl ExprTerm {
     pub fn is_var(&self) -> bool {
         matches!(self, ExprTerm::Var(_, _))
     }
+    pub fn val(&self) -> Option<i64> {
+        match self {
+            ExprTerm::Val(n) => Some(*n),
+            _ => None,
+        }
+    }
     pub fn id(&self) -> Option<Id> {
         match self {
             ExprTerm::Var(n, _) => Some(n.to_string()),
