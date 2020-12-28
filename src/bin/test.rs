@@ -1,6 +1,7 @@
 use reticle::ir::parser::IRParser;
 use reticle::ml::parser::MLParser;
 use reticle::verilog::ast as verilog;
+use std::convert::TryFrom;
 
 fn main() {
     let parsed_prog =
@@ -12,6 +13,6 @@ fn main() {
         }
     }
     if let Ok(prog) = parsed_ml {
-        println!("{}", verilog::Module::from(prog));
+        println!("{}", verilog::Module::try_from(prog).unwrap());
     }
 }
