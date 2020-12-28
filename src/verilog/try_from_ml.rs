@@ -4,7 +4,7 @@ use crate::verilog::ast as verilog;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 
-fn expr_try_from_basc_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
+fn expr_try_from_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
     match instr.op() {
         ml::OpBasc::Ext => {
             if let Some(attr) = instr.attr().tup() {
@@ -38,13 +38,6 @@ fn expr_try_from_basc_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error>
     }
 }
 
-fn expr_try_from_arg(instr: &ml::Instr) -> Result<verilog::Expr, Error> {
-    match instr {
-        ml::Instr::Basc(instr) => Ok(expr_try_from_basc_arg(instr)?),
-        _ => Err(Error::new_conv_error("not implemented yet")),
-    }
-}
-
 fn expr_try_from_dst(instr: &ml::Instr) -> Result<verilog::Expr, Error> {
     match instr {
         ml::Instr::Basc(instr) => {
@@ -65,9 +58,14 @@ fn expr_try_from_dst(instr: &ml::Instr) -> Result<verilog::Expr, Error> {
 impl TryFrom<ml::Instr> for verilog::Stmt {
     type Error = Error;
     fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
-        let rval = expr_try_from_arg(&instr)?;
         let lval = expr_try_from_dst(&instr)?;
-        Ok(verilog::Stmt::from(verilog::Parallel::Assign(lval, rval)))
+        match instr {
+            ml::Instr::Basc(basc) => {
+                let rval = expr_try_from_arg(&basc)?;
+                Ok(verilog::Stmt::from(verilog::Parallel::Assign(lval, rval)))
+            }
+            _ => Err(Error::new_conv_error("not implemented yet")),
+        }
     }
 }
 
