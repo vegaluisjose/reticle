@@ -214,12 +214,14 @@ impl TryFrom<ml::Prog> for verilog::Module {
         let mut decl: Vec<verilog::Decl> = Vec::new();
         for i in prog.body() {
             let d: Vec<verilog::Decl> = i.clone().into();
-            module.add_stmt(verilog::Stmt::try_from(i.clone())?);
             decl.extend(d);
         }
         let decl_set: HashSet<verilog::Decl> = decl.into_iter().collect();
         for d in decl_set.difference(&output_set) {
             module.add_decl(d.clone());
+        }
+        for i in prog.body() {
+            module.add_stmt(verilog::Stmt::try_from(i.clone())?);
         }
         Ok(module)
     }
