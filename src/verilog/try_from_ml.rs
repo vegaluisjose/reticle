@@ -4,7 +4,7 @@ use crate::verilog::ast as verilog;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 
-fn expr_try_from_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
+fn expr_try_from_basc_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
     match instr.op() {
         ml::OpBasc::Ext => {
             if let Some(attr) = instr.attr().tup() {
@@ -38,33 +38,37 @@ fn expr_try_from_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
     }
 }
 
-fn expr_try_from_dst(instr: &ml::Instr) -> Result<verilog::Expr, Error> {
-    match instr {
-        ml::Instr::Basc(instr) => {
-            if let Some(dst) = instr.dst().term() {
-                if let Some(id) = dst.id() {
-                    Ok(verilog::Expr::new_ref(&id))
-                } else {
-                    Err(Error::new_conv_error("arg is not var expr"))
-                }
-            } else {
-                Err(Error::new_conv_error("tup dst not supported"))
-            }
+fn expr_try_from_dst_term(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
+    if let Some(dst) = instr.dst().term() {
+        if let Some(id) = dst.id() {
+            Ok(verilog::Expr::new_ref(&id))
+        } else {
+            Err(Error::new_conv_error("arg is not var expr"))
         }
-        _ => Err(Error::new_conv_error("not implemented yet")),
+    } else {
+        Err(Error::new_conv_error("tup dst not supported"))
     }
+}
+
+fn gen_instance_name(instr: &ml::InstrMach) -> verilog::Id {
+    let dst: Vec<verilog::Id> = instr.dst().clone().into();
+    format!("__{}", dst[0])
 }
 
 impl TryFrom<ml::Instr> for verilog::Stmt {
     type Error = Error;
     fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
-        let lval = expr_try_from_dst(&instr)?;
         match instr {
             ml::Instr::Basc(basc) => {
-                let rval = expr_try_from_arg(&basc)?;
+                let lval = expr_try_from_dst_term(&basc)?;
+                let rval = expr_try_from_basc_arg(&basc)?;
                 Ok(verilog::Stmt::from(verilog::Parallel::Assign(lval, rval)))
             }
-            _ => Err(Error::new_conv_error("not implemented yet")),
+            ml::Instr::Mach(mach) => {
+                let prim: verilog::Id = mach.op().clone().into();
+                let id = gen_instance_name(&mach);
+                Ok(verilog::Stmt::from(verilog::Instance::new(&id, &prim)))
+            }
         }
     }
 }

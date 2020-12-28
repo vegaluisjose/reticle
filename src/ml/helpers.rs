@@ -45,6 +45,21 @@ impl InstrMach {
     }
 }
 
+impl Instr {
+    pub fn dst(&self) -> &Expr {
+        match self {
+            Instr::Basc(instr) => instr.dst(),
+            Instr::Mach(instr) => instr.dst(),
+        }
+    }
+    pub fn arg(&self) -> &Expr {
+        match self {
+            Instr::Basc(instr) => instr.arg(),
+            Instr::Mach(instr) => instr.arg(),
+        }
+    }
+}
+
 impl Prog {
     pub fn sig(&self) -> &Sig {
         &self.sig

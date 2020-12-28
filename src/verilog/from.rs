@@ -59,6 +59,15 @@ impl From<ir::ExprTup> for Vec<verilog::Decl> {
     }
 }
 
+impl From<ir::Expr> for Vec<verilog::Id> {
+    fn from(expr: ir::Expr) -> Self {
+        match &expr {
+            ir::Expr::Tup(tup) => tup.clone().into(),
+            ir::Expr::Term(term) => term.clone().into(),
+        }
+    }
+}
+
 impl From<ir::Expr> for Vec<verilog::Decl> {
     fn from(expr: ir::Expr) -> Self {
         match &expr {
@@ -123,11 +132,34 @@ impl From<ml::InstrBasc> for Vec<verilog::Decl> {
     }
 }
 
+impl From<ml::InstrMach> for Vec<verilog::Decl> {
+    fn from(instr: ml::InstrMach) -> Self {
+        instr.dst().clone().into()
+    }
+}
+
 impl From<ml::Instr> for Vec<verilog::Decl> {
     fn from(instr: ml::Instr) -> Self {
         match &instr {
             ml::Instr::Basc(instr) => instr.clone().into(),
-            _ => unimplemented!(),
+            ml::Instr::Mach(instr) => instr.clone().into(),
+        }
+    }
+}
+
+impl From<ml::OpMach> for verilog::Id {
+    fn from(op: ml::OpMach) -> Self {
+        match op {
+            ml::OpMach::Lut1 => "LUT1".to_string(),
+            ml::OpMach::Lut2 => "LUT2".to_string(),
+            ml::OpMach::Lut3 => "LUT3".to_string(),
+            ml::OpMach::Lut4 => "LUT4".to_string(),
+            ml::OpMach::Lut5 => "LUT5".to_string(),
+            ml::OpMach::Lut6 => "LUT6".to_string(),
+            ml::OpMach::Fdre => "FDRE".to_string(),
+            ml::OpMach::Fdse => "FDSE".to_string(),
+            ml::OpMach::Dsp => "DSP48E2".to_string(),
+            ml::OpMach::Carry => "CARRY8".to_string(),
         }
     }
 }
