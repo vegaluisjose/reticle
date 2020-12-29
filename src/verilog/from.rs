@@ -48,14 +48,14 @@ fn term_helper(term: ir::ExprTerm) -> Vec<verilog::Id> {
     ids
 }
 
-fn tup_helper(tup: ir::ExprTup) -> Vec<verilog::Id> {
-    let mut ids: Vec<verilog::Id> = Vec::new();
-    for t in tup.term() {
-        let i: Vec<verilog::Id> = term_helper(t.clone());
-        ids.extend(i);
-    }
-    ids
-}
+// fn tup_helper(tup: ir::ExprTup) -> Vec<verilog::Id> {
+//     let mut ids: Vec<verilog::Id> = Vec::new();
+//     for t in tup.term() {
+//         let i: Vec<verilog::Id> = term_helper(t.clone());
+//         ids.extend(i);
+//     }
+//     ids
+// }
 
 impl From<ir::ExprTerm> for Vec<verilog::Expr> {
     fn from(term: ir::ExprTerm) -> Self {
@@ -112,14 +112,14 @@ impl From<ir::ExprTup> for Vec<verilog::Decl> {
     }
 }
 
-impl From<ir::Expr> for Vec<verilog::Id> {
-    fn from(expr: ir::Expr) -> Self {
-        match &expr {
-            ir::Expr::Tup(tup) => tup_helper(tup.clone()),
-            ir::Expr::Term(term) => term_helper(term.clone()),
-        }
-    }
-}
+// impl From<ir::Expr> for Vec<verilog::Id> {
+//     fn from(expr: ir::Expr) -> Self {
+//         match &expr {
+//             ir::Expr::Tup(tup) => tup_helper(tup.clone()),
+//             ir::Expr::Term(term) => term_helper(term.clone()),
+//         }
+//     }
+// }
 
 impl From<ir::Expr> for Vec<verilog::Expr> {
     fn from(expr: ir::Expr) -> Self {

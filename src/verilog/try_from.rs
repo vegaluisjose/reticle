@@ -42,9 +42,9 @@ const LUT_OUT: [&str; 1] = ["O"];
 //     }
 // }
 
-fn gen_instance_name(instr: &ml::InstrMach) -> verilog::Id {
-    let dst: Vec<verilog::Id> = instr.dst().clone().into();
-    format!("__{}", dst[0])
+fn instance_name_try_from_instr(instr: &ml::InstrMach) -> Result<verilog::Id, Error> {
+    let dst: Vec<verilog::Id> = instr.dst().clone().try_into()?;
+    Ok(format!("__{}", dst[0]))
 }
 
 fn assign_try_from_instr(instr: &ml::InstrBasc) -> Result<(), Error> {
@@ -71,7 +71,7 @@ fn lut_width_try_from_op(op: &ml::OpMach) -> Result<u32, Error> {
 
 fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<verilog::Stmt, Error> {
     let prim: verilog::Id = instr.op().clone().into();
-    let id = gen_instance_name(instr);
+    let id = instance_name_try_from_instr(instr)?;
     let mut instance = verilog::Instance::new(&id, &prim);
     let dst: Vec<verilog::Expr> = instr.dst().clone().into();
     let arg: Vec<verilog::Expr> = instr.arg().clone().into();
