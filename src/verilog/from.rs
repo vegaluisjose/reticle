@@ -3,33 +3,58 @@ use crate::ml::ast as ml;
 use crate::verilog::ast as verilog;
 use std::collections::HashSet;
 
-impl From<ir::ExprTerm> for Vec<verilog::Id> {
-    fn from(term: ir::ExprTerm) -> Self {
-        let mut ids: Vec<verilog::Id> = Vec::new();
-        if let Some(ty) = term.ty() {
-            if let Some(id) = term.id() {
-                if let Some(length) = ty.length() {
-                    for i in 0..length {
-                        ids.push(format!("{}_{}", id, i));
-                    }
-                } else {
-                    ids.push(id);
+// impl From<ir::ExprTerm> for Vec<verilog::Id> {
+//     fn from(term: ir::ExprTerm) -> Self {
+//         let mut ids: Vec<verilog::Id> = Vec::new();
+//         if let Some(ty) = term.ty() {
+//             if let Some(id) = term.id() {
+//                 if let Some(length) = ty.length() {
+//                     for i in 0..length {
+//                         ids.push(format!("{}_{}", id, i));
+//                     }
+//                 } else {
+//                     ids.push(id);
+//                 }
+//             }
+//         }
+//         ids
+//     }
+// }
+
+// impl From<ir::ExprTup> for Vec<verilog::Id> {
+//     fn from(tup: ir::ExprTup) -> Self {
+//         let mut ids: Vec<verilog::Id> = Vec::new();
+//         for t in tup.term() {
+//             let i: Vec<verilog::Id> = term_helper(t.clone());
+//             ids.extend(i);
+//         }
+//         ids
+//     }
+// }
+
+fn term_helper(term: ir::ExprTerm) -> Vec<verilog::Id> {
+    let mut ids: Vec<verilog::Id> = Vec::new();
+    if let Some(ty) = term.ty() {
+        if let Some(id) = term.id() {
+            if let Some(length) = ty.length() {
+                for i in 0..length {
+                    ids.push(format!("{}_{}", id, i));
                 }
+            } else {
+                ids.push(id);
             }
         }
-        ids
     }
+    ids
 }
 
-impl From<ir::ExprTup> for Vec<verilog::Id> {
-    fn from(tup: ir::ExprTup) -> Self {
-        let mut ids: Vec<verilog::Id> = Vec::new();
-        for t in tup.term() {
-            let i: Vec<verilog::Id> = t.clone().into();
-            ids.extend(i);
-        }
-        ids
+fn tup_helper(tup: ir::ExprTup) -> Vec<verilog::Id> {
+    let mut ids: Vec<verilog::Id> = Vec::new();
+    for t in tup.term() {
+        let i: Vec<verilog::Id> = term_helper(t.clone());
+        ids.extend(i);
     }
+    ids
 }
 
 impl From<ir::ExprTerm> for Vec<verilog::Expr> {
@@ -38,7 +63,7 @@ impl From<ir::ExprTerm> for Vec<verilog::Expr> {
         match term {
             ir::ExprTerm::Any => exprs.push(verilog::Expr::new_ref("")),
             ir::ExprTerm::Var(_, _) => {
-                let ids: Vec<verilog::Id> = term.into();
+                let ids: Vec<verilog::Id> = term_helper(term);
                 for id in ids {
                     exprs.push(verilog::Expr::new_ref(&id));
                 }
@@ -62,7 +87,7 @@ impl From<ir::ExprTup> for Vec<verilog::Expr> {
 
 impl From<ir::ExprTerm> for Vec<verilog::Decl> {
     fn from(term: ir::ExprTerm) -> Self {
-        let ids: Vec<verilog::Id> = term.clone().into();
+        let ids: Vec<verilog::Id> = term_helper(term.clone());
         let mut decls: Vec<verilog::Decl> = Vec::new();
         if let Some(ty) = term.ty() {
             if let Some(width) = ty.width() {
@@ -90,8 +115,8 @@ impl From<ir::ExprTup> for Vec<verilog::Decl> {
 impl From<ir::Expr> for Vec<verilog::Id> {
     fn from(expr: ir::Expr) -> Self {
         match &expr {
-            ir::Expr::Tup(tup) => tup.clone().into(),
-            ir::Expr::Term(term) => term.clone().into(),
+            ir::Expr::Tup(tup) => tup_helper(tup.clone()),
+            ir::Expr::Term(term) => term_helper(term.clone()),
         }
     }
 }

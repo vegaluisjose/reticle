@@ -3,47 +3,58 @@ use crate::util::errors::Error;
 use crate::verilog::ast as verilog;
 use std::collections::HashSet;
 use std::convert::TryFrom;
+use std::convert::TryInto;
 
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
 
-fn expr_from_basc_op(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
-    match instr.op() {
-        ml::OpBasc::Ext => {
-            if let Some(attr) = instr.attr().tup() {
-                if let Some(idx) = attr.idx(0).val() {
-                    if let Ok(udx) = usize::try_from(idx) {
-                        if let Some(arg) = instr.arg().tup() {
-                            let ids: Vec<verilog::Id> = arg.clone().into();
-                            if let Some(ty) = arg.idx(0).ty() {
-                                if ty.is_vector() {
-                                    Ok(verilog::Expr::new_ref(&ids[udx]))
-                                } else {
-                                    Ok(verilog::Expr::new_index_bit(&ids[0], udx as i32))
-                                }
-                            } else {
-                                Err(Error::new_conv_error("arg is not var expr"))
-                            }
-                        } else {
-                            Err(Error::new_conv_error("term arg not implemented"))
-                        }
-                    } else {
-                        Err(Error::new_conv_error("index overflow"))
-                    }
-                } else {
-                    Err(Error::new_conv_error("attr is not a value"))
-                }
-            } else {
-                Err(Error::new_conv_error("attr must be a tuple"))
-            }
-        }
-        _ => Err(Error::new_conv_error("not implemented yet")),
-    }
-}
+// fn expr_from_basc_op(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
+//     match instr.op() {
+//         ml::OpBasc::Ext => {
+//             if let Some(attr) = instr.attr().tup() {
+//                 if let Some(idx) = attr.idx(0).val() {
+//                     if let Ok(udx) = usize::try_from(idx) {
+//                         if let Some(arg) = instr.arg().tup() {
+//                             let ids: Vec<verilog::Id> = arg.clone().into();
+//                             if let Some(ty) = arg.idx(0).ty() {
+//                                 if ty.is_vector() {
+//                                     Ok(verilog::Expr::new_ref(&ids[udx]))
+//                                 } else {
+//                                     Ok(verilog::Expr::new_index_bit(&ids[0], udx as i32))
+//                                 }
+//                             } else {
+//                                 Err(Error::new_conv_error("arg is not var expr"))
+//                             }
+//                         } else {
+//                             Err(Error::new_conv_error("term arg not implemented"))
+//                         }
+//                     } else {
+//                         Err(Error::new_conv_error("index overflow"))
+//                     }
+//                 } else {
+//                     Err(Error::new_conv_error("attr is not a value"))
+//                 }
+//             } else {
+//                 Err(Error::new_conv_error("attr must be a tuple"))
+//             }
+//         }
+//         _ => Err(Error::new_conv_error("not implemented yet")),
+//     }
+// }
 
 fn gen_instance_name(instr: &ml::InstrMach) -> verilog::Id {
     let dst: Vec<verilog::Id> = instr.dst().clone().into();
     format!("__{}", dst[0])
+}
+
+fn assign_try_from_instr(instr: &ml::InstrBasc) -> Result<(), Error> {
+    if let Some(tup) = instr.attr().tup() {
+        let vals: Vec<i64> = tup.clone().try_into()?;
+        println!("{:?}", vals);
+        Ok(())
+    } else {
+        Err(Error::new_conv_error("attr must be a tuple"))
+    }
 }
 
 fn lut_width_try_from_op(op: &ml::OpMach) -> Result<u32, Error> {
@@ -95,11 +106,10 @@ impl TryFrom<ml::Instr> for verilog::Stmt {
     fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
         match instr {
             ml::Instr::Basc(basc) => {
-                let lval: Vec<verilog::Expr> = basc.dst().clone().into();
-                let rval = expr_from_basc_op(&basc)?;
+                assign_try_from_instr(&basc)?;
                 Ok(verilog::Stmt::from(verilog::Parallel::Assign(
-                    lval[0].clone(),
-                    rval,
+                    verilog::Expr::new_ref("foo"),
+                    verilog::Expr::new_ref("bar"),
                 )))
             }
             ml::Instr::Mach(mach) => match mach.op() {
