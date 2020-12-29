@@ -17,7 +17,7 @@ impl TryFrom<ExprTerm> for Id {
     type Error = Error;
     fn try_from(term: ExprTerm) -> Result<Self, Self::Error> {
         match term {
-            ExprTerm::Var(n, _) => Ok(n.to_string()),
+            ExprTerm::Var(n, _) => Ok(n),
             _ => Err(Error::new_conv_error("not a term variable")),
         }
     }
@@ -50,7 +50,7 @@ impl TryFrom<Expr> for Vec<i64> {
     fn try_from(expr: Expr) -> Result<Self, Self::Error> {
         match expr {
             Expr::Term(term) => Ok(vec![i64::try_from(term)?]),
-            Expr::Tup(tup) => Ok(tup.clone().try_into()?)
+            Expr::Tup(tup) => Ok(tup.try_into()?)
         }
     }
 }
@@ -60,7 +60,7 @@ impl TryFrom<Expr> for Vec<Id> {
     fn try_from(expr: Expr) -> Result<Self, Self::Error> {
         match expr {
             Expr::Term(term) => Ok(vec![Id::try_from(term)?]),
-            Expr::Tup(tup) => Ok(tup.clone().try_into()?)
+            Expr::Tup(tup) => Ok(tup.try_into()?)
         }
     }
 }
