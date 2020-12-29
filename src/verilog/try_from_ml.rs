@@ -4,7 +4,10 @@ use crate::verilog::ast as verilog;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 
-fn expr_try_from_basc_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
+const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
+const LUT_OUT: [&str; 1] = ["O"];
+
+fn expr_from_basc_op(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
     match instr.op() {
         ml::OpBasc::Ext => {
             if let Some(attr) = instr.attr().tup() {
@@ -38,21 +41,53 @@ fn expr_try_from_basc_arg(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error>
     }
 }
 
-fn expr_try_from_dst_term(instr: &ml::InstrBasc) -> Result<verilog::Expr, Error> {
-    if let Some(dst) = instr.dst().term() {
-        if let Some(id) = dst.id() {
-            Ok(verilog::Expr::new_ref(&id))
-        } else {
-            Err(Error::new_conv_error("arg is not var expr"))
-        }
-    } else {
-        Err(Error::new_conv_error("tup dst not supported"))
-    }
-}
-
 fn gen_instance_name(instr: &ml::InstrMach) -> verilog::Id {
     let dst: Vec<verilog::Id> = instr.dst().clone().into();
     format!("__{}", dst[0])
+}
+
+fn lut_width_try_from_op(op: &ml::OpMach) -> Result<u32, Error> {
+    match op {
+        ml::OpMach::Lut1 => Ok(2),
+        ml::OpMach::Lut2 => Ok(4),
+        ml::OpMach::Lut3 => Ok(8),
+        ml::OpMach::Lut4 => Ok(16),
+        ml::OpMach::Lut5 => Ok(32),
+        ml::OpMach::Lut6 => Ok(64),
+        _ => Err(Error::new_conv_error("not a lut op")),
+    }
+}
+
+fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<verilog::Stmt, Error> {
+    let prim: verilog::Id = instr.op().clone().into();
+    let id = gen_instance_name(instr);
+    let mut instance = verilog::Instance::new(&id, &prim);
+    let dst: Vec<verilog::Expr> = instr.dst().clone().into();
+    let arg: Vec<verilog::Expr> = instr.arg().clone().into();
+    for (p, e) in LUT_INP.iter().zip(arg) {
+        instance.connect(p, e.clone());
+    }
+    for (p, e) in LUT_OUT.iter().zip(dst) {
+        instance.connect(p, e.clone());
+    }
+    if let Some(opt_val) = instr.opt_lookup(&ml::Opt::Table) {
+        let table = format!("{:X}", u64::try_from(opt_val.clone())?);
+        let width = lut_width_try_from_op(instr.op())?;
+        instance.add_param("INIT", verilog::Expr::new_ulit_hex(width, &table));
+        Ok(verilog::Stmt::from(instance))
+    } else {
+        Err(Error::new_conv_error("invalid lut2 option"))
+    }
+}
+
+impl TryFrom<ml::OptVal> for u64 {
+    type Error = Error;
+    fn try_from(val: ml::OptVal) -> Result<Self, Self::Error> {
+        match val {
+            ml::OptVal::UInt(n) => Ok(n),
+            _ => Err(Error::new_conv_error("not a uint value")),
+        }
+    }
 }
 
 impl TryFrom<ml::Instr> for verilog::Stmt {
@@ -60,15 +95,22 @@ impl TryFrom<ml::Instr> for verilog::Stmt {
     fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
         match instr {
             ml::Instr::Basc(basc) => {
-                let lval = expr_try_from_dst_term(&basc)?;
-                let rval = expr_try_from_basc_arg(&basc)?;
-                Ok(verilog::Stmt::from(verilog::Parallel::Assign(lval, rval)))
+                let lval: Vec<verilog::Expr> = basc.dst().clone().into();
+                let rval = expr_from_basc_op(&basc)?;
+                Ok(verilog::Stmt::from(verilog::Parallel::Assign(
+                    lval[0].clone(),
+                    rval,
+                )))
             }
-            ml::Instr::Mach(mach) => {
-                let prim: verilog::Id = mach.op().clone().into();
-                let id = gen_instance_name(&mach);
-                Ok(verilog::Stmt::from(verilog::Instance::new(&id, &prim)))
-            }
+            ml::Instr::Mach(mach) => match mach.op() {
+                ml::OpMach::Lut1
+                | ml::OpMach::Lut2
+                | ml::OpMach::Lut3
+                | ml::OpMach::Lut4
+                | ml::OpMach::Lut5
+                | ml::OpMach::Lut6 => Ok(lut_try_from_instr(&mach)?),
+                _ => Err(Error::new_conv_error("not implemented yet")),
+            },
         }
     }
 }

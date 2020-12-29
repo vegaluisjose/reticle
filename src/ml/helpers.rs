@@ -43,6 +43,9 @@ impl InstrMach {
     pub fn loc(&self) -> &Loc {
         &self.loc
     }
+    pub fn opt_lookup(&self, key: &Opt) -> Option<&OptVal> {
+        self.opt.get(key)
+    }
 }
 
 impl Instr {
