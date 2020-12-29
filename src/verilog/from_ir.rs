@@ -42,8 +42,8 @@ impl TryFrom<ir::Expr> for Vec<vl::Expr> {
     type Error = Error;
     fn try_from(expr: ir::Expr) -> Result<Vec<vl::Expr>, Error> {
         match expr {
-            ir::Expr::Tup(tup) => Ok(tup.clone().try_into()?),
-            ir::Expr::Term(term) => Ok(term.clone().try_into()?),
+            ir::Expr::Tup(tup) => Ok(tup.try_into()?),
+            ir::Expr::Term(term) => Ok(term.try_into()?),
         }
     }
 }
