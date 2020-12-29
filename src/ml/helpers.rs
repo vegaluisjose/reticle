@@ -40,8 +40,8 @@ impl InstrMach {
     pub fn arg(&self) -> &Expr {
         &self.arg
     }
-    pub fn loc(&self) -> &Loc {
-        &self.loc
+    pub fn loc(&self) -> Option<&Loc> {
+        self.loc.as_ref()
     }
     pub fn opt_lookup(&self, key: &Opt) -> Option<&OptVal> {
         self.opt.get(key)

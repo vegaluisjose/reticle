@@ -177,6 +177,11 @@ impl PrettyPrint for InstrMach {
         } else {
             self.opt().to_doc().brackets()
         };
+        let loc = if let Some(loc) = self.loc() {
+            RcDoc::space().append(RcDoc::text("@")).append(loc.to_doc())
+        } else {
+            RcDoc::nil()
+        };
         self.dst()
             .to_doc()
             .append(RcDoc::space())
@@ -185,9 +190,7 @@ impl PrettyPrint for InstrMach {
             .append(self.op().to_doc())
             .append(opt)
             .append(expr_names(self.arg()))
-            .append(RcDoc::space())
-            .append(RcDoc::text("@"))
-            .append(self.loc().to_doc())
+            .append(loc)
     }
 }
 

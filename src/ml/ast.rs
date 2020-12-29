@@ -133,7 +133,7 @@ pub struct InstrMach {
     pub opt: OptMap,
     pub dst: Expr,
     pub arg: Expr,
-    pub loc: Loc,
+    pub loc: Option<Loc>,
 }
 
 #[derive(Clone, Debug)]

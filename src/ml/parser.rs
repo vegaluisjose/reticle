@@ -174,19 +174,33 @@ impl MLParser {
     fn instr_mach(input: Node) -> Result<InstrMach> {
         Ok(match_nodes!(
             input.into_children();
+            [io(dst), op_mach(op), io(arg)] => InstrMach {
+                op,
+                opt: OptMap::new(),
+                dst,
+                arg,
+                loc: None,
+            },
+            [io(dst), op_mach(op), opt(opt), io(arg)] => InstrMach {
+                op,
+                opt,
+                dst,
+                arg,
+                loc: None,
+            },
             [io(dst), op_mach(op), io(arg), loc(loc)] => InstrMach {
                 op,
                 opt: OptMap::new(),
                 dst,
                 arg,
-                loc
+                loc: Some(loc),
             },
             [io(dst), op_mach(op), opt(opt), io(arg), loc(loc)] => InstrMach {
                 op,
                 opt,
                 dst,
                 arg,
-                loc
+                loc: Some(loc),
             }
         ))
     }
