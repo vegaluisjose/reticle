@@ -38,7 +38,7 @@ impl From<ir::ExprTerm> for Vec<verilog::Expr> {
         match term {
             ir::ExprTerm::Any => exprs.push(verilog::Expr::new_ref("")),
             ir::ExprTerm::Var(_, _) => {
-                let ids: Vec<verilog::Id> = term.clone().into();
+                let ids: Vec<verilog::Id> = term.into();
                 for id in ids {
                     exprs.push(verilog::Expr::new_ref(&id));
                 }
