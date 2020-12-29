@@ -6,3 +6,4 @@ pub mod from_str;
 pub mod helpers;
 pub mod parser;
 pub mod pretty_print;
+pub mod try_from;
