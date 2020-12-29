@@ -46,15 +46,6 @@ impl From<ir::ExprTup> for Vec<verilog::Decl> {
     }
 }
 
-// impl From<ir::Expr> for Vec<verilog::Id> {
-//     fn from(expr: ir::Expr) -> Self {
-//         match &expr {
-//             ir::Expr::Tup(tup) => tup_helper(tup.clone()),
-//             ir::Expr::Term(term) => term_helper(term.clone()),
-//         }
-//     }
-// }
-
 impl From<ir::Expr> for Vec<verilog::Decl> {
     fn from(expr: ir::Expr) -> Self {
         match &expr {
