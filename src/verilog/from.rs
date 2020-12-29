@@ -3,35 +3,6 @@ use crate::ml::ast as ml;
 use crate::verilog::ast as verilog;
 use std::collections::HashSet;
 
-// impl From<ir::ExprTerm> for Vec<verilog::Id> {
-//     fn from(term: ir::ExprTerm) -> Self {
-//         let mut ids: Vec<verilog::Id> = Vec::new();
-//         if let Some(ty) = term.ty() {
-//             if let Some(id) = term.id() {
-//                 if let Some(length) = ty.length() {
-//                     for i in 0..length {
-//                         ids.push(format!("{}_{}", id, i));
-//                     }
-//                 } else {
-//                     ids.push(id);
-//                 }
-//             }
-//         }
-//         ids
-//     }
-// }
-
-// impl From<ir::ExprTup> for Vec<verilog::Id> {
-//     fn from(tup: ir::ExprTup) -> Self {
-//         let mut ids: Vec<verilog::Id> = Vec::new();
-//         for t in tup.term() {
-//             let i: Vec<verilog::Id> = term_helper(t.clone());
-//             ids.extend(i);
-//         }
-//         ids
-//     }
-// }
-
 fn term_helper(term: ir::ExprTerm) -> Vec<verilog::Id> {
     let mut ids: Vec<verilog::Id> = Vec::new();
     if let Some(ty) = term.ty() {
@@ -47,15 +18,6 @@ fn term_helper(term: ir::ExprTerm) -> Vec<verilog::Id> {
     }
     ids
 }
-
-// fn tup_helper(tup: ir::ExprTup) -> Vec<verilog::Id> {
-//     let mut ids: Vec<verilog::Id> = Vec::new();
-//     for t in tup.term() {
-//         let i: Vec<verilog::Id> = term_helper(t.clone());
-//         ids.extend(i);
-//     }
-//     ids
-// }
 
 impl From<ir::ExprTerm> for Vec<verilog::Expr> {
     fn from(term: ir::ExprTerm) -> Self {
