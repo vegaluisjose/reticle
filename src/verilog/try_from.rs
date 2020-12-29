@@ -73,8 +73,8 @@ fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<verilog::Stmt, Error> {
     let prim: verilog::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
     let mut instance = verilog::Instance::new(&id, &prim);
-    let dst: Vec<verilog::Expr> = instr.dst().clone().into();
-    let arg: Vec<verilog::Expr> = instr.arg().clone().into();
+    let dst: Vec<verilog::Expr> = instr.dst().clone().try_into()?;
+    let arg: Vec<verilog::Expr> = instr.arg().clone().try_into()?;
     for (p, e) in LUT_INP.iter().zip(arg) {
         instance.connect(p, e.clone());
     }
