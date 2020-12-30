@@ -53,6 +53,24 @@ impl ExprTerm {
             _ => None,
         }
     }
+    pub fn width(&self) -> Option<u64> {
+        match self {
+            ExprTerm::Var(_, ty) => ty.width(),
+            _ => None,
+        }
+    }
+    pub fn length(&self) -> Option<u64> {
+        match self {
+            ExprTerm::Var(_, ty) => ty.length(),
+            _ => None,
+        }
+    }
+    pub fn is_vector(&self) -> bool {
+        match self {
+            ExprTerm::Var(_, ty) => ty.is_vector(),
+            _ => false,
+        }
+    }
 }
 
 impl ExprTup {

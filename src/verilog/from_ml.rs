@@ -101,6 +101,30 @@ impl TryFrom<ml::OptVal> for u64 {
     }
 }
 
+impl TryFrom<ml::InstrBasc> for Vec<verilog::Decl> {
+    type Error = Error;
+    fn try_from(instr: ml::InstrBasc) -> Result<Self, Self::Error> {
+        Ok(instr.dst().clone().try_into()?)
+    }
+}
+
+impl TryFrom<ml::InstrMach> for Vec<verilog::Decl> {
+    type Error = Error;
+    fn try_from(instr: ml::InstrMach) -> Result<Self, Self::Error> {
+        Ok(instr.dst().clone().try_into()?)
+    }
+}
+
+impl TryFrom<ml::Instr> for Vec<verilog::Decl> {
+    type Error = Error;
+    fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
+        match instr {
+            ml::Instr::Basc(instr) => Ok(instr.try_into()?),
+            ml::Instr::Mach(instr) => Ok(instr.try_into()?),
+        }
+    }
+}
+
 impl TryFrom<ml::Instr> for verilog::Stmt {
     type Error = Error;
     fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
@@ -128,15 +152,15 @@ impl TryFrom<ml::Instr> for verilog::Stmt {
 impl TryFrom<ml::Prog> for verilog::Module {
     type Error = Error;
     fn try_from(prog: ml::Prog) -> Result<Self, Self::Error> {
-        let mut module = verilog::Module::from(prog.sig().clone());
-        let output: Vec<verilog::Decl> = prog.sig().output().clone().into();
-        let output_set: HashSet<verilog::Decl> = output.into_iter().collect();
         let mut decl: Vec<verilog::Decl> = Vec::new();
         for i in prog.body() {
-            let d: Vec<verilog::Decl> = i.clone().into();
+            let d: Vec<verilog::Decl> = i.clone().try_into()?;
             decl.extend(d);
         }
         let decl_set: HashSet<verilog::Decl> = decl.into_iter().collect();
+        let output: Vec<verilog::Decl> = prog.sig().output().clone().try_into()?;
+        let output_set: HashSet<verilog::Decl> = output.into_iter().collect();
+        let mut module = verilog::Module::try_from(prog.sig().clone())?;
         for d in decl_set.difference(&output_set) {
             module.add_decl(d.clone());
         }
