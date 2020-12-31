@@ -159,6 +159,10 @@ impl PrettyPrint for OptMap {
 
 impl PrettyPrint for InstrBasc {
     fn to_doc(&self) -> RcDoc<()> {
+        let arg = match self.op() {
+            OpBasc::Gnd | OpBasc::Vcc => RcDoc::nil().parens(),
+            _ => expr_names(self.arg()),
+        };
         self.dst()
             .to_doc()
             .append(RcDoc::space())
@@ -166,7 +170,7 @@ impl PrettyPrint for InstrBasc {
             .append(RcDoc::space())
             .append(self.op().to_doc())
             .append(expr_attrs(self.attr()))
-            .append(expr_names(self.arg()))
+            .append(arg)
     }
 }
 

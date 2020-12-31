@@ -208,12 +208,6 @@ impl MLParser {
     fn instr_basc(input: Node) -> Result<InstrBasc> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_basc(op)] => InstrBasc {
-                op,
-                dst,
-                attr: Expr::default(),
-                arg: Expr::default(),
-            },
             [io(dst), op_basc(op), tup_val(attr)] => InstrBasc {
                 op,
                 dst,

@@ -20,7 +20,7 @@ tup_var = { (var ~ ("," ~ var)*)? }
 
 tup_val = { (val ~ ("," ~ val)*)? }
 
-io = { var | "(" ~ tup_var ~ ")" }
+io = { var | "(" ~ tup_var? ~ ")" }
 
 attr = _{ "[" ~ tup_val ~ "]" }
 
@@ -50,9 +50,9 @@ opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
 
 instr_mach = { io ~ "=" ~ op_mach ~ opt? ~ io ~ hint? ~ ";" }
 
-instr_basc = { io ~ "=" ~ op_basc ~ attr? ~ io? ~ ";" }
+instr_basc = { io ~ "=" ~ op_basc ~ attr? ~ io ~ ";" }
 
-instr = { instr_mach | instr_basc }
+instr = { instr_basc | instr_mach }
 
 body = { instr+ }
 
