@@ -5,6 +5,7 @@ use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
+const GND: &str = "gnd";
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
 
@@ -19,20 +20,32 @@ fn assign_try_from_instr(instr: &ml::InstrBasc) -> Result<vl::Stmt, Error> {
             let dst: Vec<vl::Expr> = instr.dst().clone().try_into()?;
             let arg: Vec<vl::Expr> = instr.arg().clone().try_into()?;
             let val: Vec<i64> = attr.clone().try_into()?;
-            if let Ok(idx) = usize::try_from(val[0]) {
-                if expr.idx(0).is_vector() {
-                    Ok(vl::Stmt::from(vl::Parallel::Assign(
-                        dst[0].clone(),
-                        arg[idx].clone(),
-                    )))
-                } else {
-                    Ok(vl::Stmt::from(vl::Parallel::Assign(
-                        dst[0].clone(),
-                        vl::Expr::new_index_bit(&arg[0].id(), idx as i32),
-                    )))
+            match instr.op() {
+                ml::OpBasc::Ext if expr.idx(0).is_vector() => {
+                    if let Ok(idx) = usize::try_from(val[0]) {
+                        Ok(vl::Stmt::from(vl::Parallel::Assign(
+                            dst[0].clone(),
+                            arg[idx].clone(),
+                        )))
+                    } else {
+                        Err(Error::new_conv_error("invalid usize conversion"))
+                    }
                 }
-            } else {
-                Err(Error::new_conv_error("invalid usize conversion"))
+                ml::OpBasc::Ext => {
+                    if let Ok(idx) = i32::try_from(val[0]) {
+                        Ok(vl::Stmt::from(vl::Parallel::Assign(
+                            dst[0].clone(),
+                            vl::Expr::new_index_bit(&arg[0].id(), idx),
+                        )))
+                    } else {
+                        Err(Error::new_conv_error("invalid usize conversion"))
+                    }
+                }
+                ml::OpBasc::Gnd => Ok(vl::Stmt::from(vl::Parallel::Assign(
+                    dst[0].clone(),
+                    vl::Expr::new_ref(GND),
+                ))),
+                _ => Err(Error::new_conv_error("not implemented yet")),
             }
         } else {
             Err(Error::new_conv_error("not implemented yet"))
