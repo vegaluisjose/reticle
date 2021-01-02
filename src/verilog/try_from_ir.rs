@@ -52,17 +52,15 @@ impl TryFrom<ir::Expr> for Vec<vl::Expr> {
 impl TryFrom<ir::ExprTerm> for Vec<vl::Decl> {
     type Error = Error;
     fn try_from(term: ir::ExprTerm) -> Result<Self, Self::Error> {
+        let mut decls: Vec<vl::Decl> = Vec::new();
         if let Some(width) = term.width() {
             let exprs: Vec<vl::Expr> = term.try_into()?;
-            let mut decls: Vec<vl::Decl> = Vec::new();
             for e in exprs {
                 let d = vl::Decl::new_wire(&e.id(), width);
                 decls.push(d);
             }
-            Ok(decls)
-        } else {
-            Err(Error::new_conv_error("not a variable expression"))
         }
+        Ok(decls)
     }
 }
 

@@ -18,6 +18,7 @@ impl TryFrom<ExprTerm> for Id {
     fn try_from(term: ExprTerm) -> Result<Self, Self::Error> {
         match term {
             ExprTerm::Var(n, _) => Ok(n),
+            ExprTerm::Any => Ok(String::new()),
             _ => Err(Error::new_conv_error("not a term variable")),
         }
     }
