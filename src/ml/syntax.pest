@@ -32,7 +32,7 @@ coord = { "??" | id | ASCII_DIGIT+ }
 
 expr_coord = { coord ~ (op_coord ~ coord)? }
 
-loc = { bel? ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+loc = { bel ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 hint = _{ "@" ~ loc }
 

@@ -114,7 +114,7 @@ pub enum Bel {
 
 #[derive(Clone, Debug)]
 pub struct Loc {
-    pub bel: Option<Bel>,
+    pub bel: Bel,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }

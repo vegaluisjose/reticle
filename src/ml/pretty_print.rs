@@ -132,18 +132,13 @@ impl PrettyPrint for Bel {
 
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
-        let xy = self
-            .x()
+        self.bel()
             .to_doc()
+            .append(self.x().to_doc())
             .append(RcDoc::text(","))
             .append(RcDoc::space())
             .append(self.y().to_doc())
-            .parens();
-        if let Some(bel) = self.bel() {
-            bel.to_doc().append(xy)
-        } else {
-            xy
-        }
+            .parens()
     }
 }
 

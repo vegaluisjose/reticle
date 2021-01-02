@@ -76,12 +76,7 @@ impl MLParser {
         Ok(match_nodes!(
             input.into_children();
             [bel(bel), expr_coord(x), expr_coord(y)] => Loc {
-                bel: Some(bel),
-                x,
-                y,
-            },
-            [expr_coord(x), expr_coord(y)] => Loc {
-                bel: None,
+                bel,
                 x,
                 y,
             },

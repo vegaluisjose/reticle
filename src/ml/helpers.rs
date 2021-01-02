@@ -1,8 +1,8 @@
 use crate::ml::ast::*;
 
 impl Loc {
-    pub fn bel(&self) -> Option<&Bel> {
-        self.bel.as_ref()
+    pub fn bel(&self) -> &Bel {
+        &self.bel
     }
     pub fn x(&self) -> &ExprCoord {
         &self.x
