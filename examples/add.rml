@@ -24,6 +24,6 @@ def main(a:i8, b:i8) -> (y:i8) {
     t22:bool = lut2[tbl=6](t6, t14) @g6lut(0, 0);
     t23:bool = lut2[tbl=6](t7, t15) @h6lut(0, 0);
     t24:bool = gnd();
-    //t25:i8 = cat(t16,t17,t18,t19,t20,t21,t22,t23);
+    t25:i8 = cat(t16,t17,t18,t19,t20,t21,t22,t23);
     //(y:i8, _) = carry(a, t25, t24, t24) @carry8(0, 0);
 }

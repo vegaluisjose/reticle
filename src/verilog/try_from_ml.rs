@@ -115,6 +115,16 @@ impl TryFrom<ml::InstrBasc> for vl::Stmt {
                         dst[0].clone(),
                         vl::Expr::new_ref(GND),
                     ))),
+                    ml::OpBasc::Cat => {
+                        let mut concat = vl::ExprConcat::default();
+                        for a in arg {
+                            concat.add_expr(a.clone());
+                        }
+                        Ok(vl::Stmt::from(vl::Parallel::Assign(
+                            dst[0].clone(),
+                            vl::Expr::from(concat),
+                        )))
+                    }
                     _ => Err(Error::new_conv_error("not implemented yet")),
                 }
             } else {
