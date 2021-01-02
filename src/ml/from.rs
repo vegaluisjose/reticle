@@ -18,6 +18,12 @@ impl From<BelCarry> for Bel {
     }
 }
 
+impl From<BelDsp> for Bel {
+    fn from(bel: BelDsp) -> Self {
+        Bel::Dsp(bel)
+    }
+}
+
 impl From<InstrBasc> for Instr {
     fn from(instr: InstrBasc) -> Self {
         Instr::Basc(instr)

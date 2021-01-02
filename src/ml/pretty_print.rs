@@ -120,25 +120,32 @@ impl PrettyPrint for BelCarry {
     }
 }
 
+impl PrettyPrint for BelDsp {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            BelDsp::Alu => RcDoc::text("alu"),
+        }
+    }
+}
+
 impl PrettyPrint for Bel {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             Bel::Lut(lut) => lut.to_doc(),
             Bel::Reg(reg) => reg.to_doc(),
             Bel::Carry(carry) => carry.to_doc(),
+            Bel::Dsp(dsp) => dsp.to_doc(),
         }
     }
 }
 
 impl PrettyPrint for Loc {
     fn to_doc(&self) -> RcDoc<()> {
-        self.bel()
-            .to_doc()
-            .append(self.x().to_doc())
+        let xy = self.x().to_doc()
             .append(RcDoc::text(","))
             .append(RcDoc::space())
-            .append(self.y().to_doc())
-            .parens()
+            .append(self.y().to_doc());
+        self.bel().to_doc().append(xy.parens())
     }
 }
 

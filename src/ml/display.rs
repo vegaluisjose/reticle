@@ -20,6 +20,7 @@ display!(OpMach);
 display!(BelLut);
 display!(BelReg);
 display!(BelCarry);
+display!(BelDsp);
 display!(Bel);
 display!(Loc);
 display!(InstrBasc);

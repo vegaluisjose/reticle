@@ -118,6 +118,17 @@ impl FromStr for BelCarry {
     }
 }
 
+impl FromStr for BelDsp {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let err = format!("Error: {} is not valid dsp bel", input);
+        match input {
+            "alu" => Ok(BelDsp::Alu),
+            _ => Err(Error::new_parse_error(&err)),
+        }
+    }
+}
+
 impl FromStr for Bel {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
@@ -127,6 +138,8 @@ impl FromStr for Bel {
         } else if let Ok(bel) = BelReg::from_str(input) {
             Ok(Bel::from(bel))
         } else if let Ok(bel) = BelCarry::from_str(input) {
+            Ok(Bel::from(bel))
+        } else if let Ok(bel) = BelDsp::from_str(input) {
             Ok(Bel::from(bel))
         } else {
             Err(Error::new_parse_error(&err))

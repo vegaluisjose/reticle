@@ -106,10 +106,16 @@ pub enum BelCarry {
 }
 
 #[derive(Clone, Debug)]
+pub enum BelDsp {
+    Alu,
+}
+
+#[derive(Clone, Debug)]
 pub enum Bel {
     Lut(BelLut),
     Reg(BelReg),
     Carry(BelCarry),
+    Dsp(BelDsp),
 }
 
 #[derive(Clone, Debug)]
