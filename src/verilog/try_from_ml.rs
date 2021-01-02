@@ -8,6 +8,8 @@ use std::convert::TryInto;
 const GND: &str = "gnd";
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
+const CAR_INP: [&str; 4] = ["DI", "S", "CI", "CI_TOP"];
+const CAR_OUT: [&str; 2] = ["O", "CO"];
 
 fn instance_name_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Id, Error> {
     let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
@@ -46,6 +48,22 @@ fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
     } else {
         Err(Error::new_conv_error("invalid lut2 option"))
     }
+}
+
+fn carry_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
+    let prim: vl::Id = instr.op().clone().into();
+    let id = instance_name_try_from_instr(instr)?;
+    let mut instance = vl::Instance::new(&id, &prim);
+    let dst: Vec<vl::Expr> = instr.dst().clone().try_into()?;
+    let arg: Vec<vl::Expr> = instr.arg().clone().try_into()?;
+    for (p, e) in CAR_INP.iter().zip(arg) {
+        instance.connect(p, e.clone());
+    }
+    for (p, e) in CAR_OUT.iter().zip(dst) {
+        instance.connect(p, e.clone());
+    }
+    instance.add_param_str("CARRY_TYPE", "SINGLE_CY8");
+    Ok(vl::Stmt::from(instance))
 }
 
 impl TryFrom<ml::OptVal> for u64 {
@@ -148,6 +166,7 @@ impl TryFrom<ml::Instr> for vl::Stmt {
                 | ml::OpMach::Lut4
                 | ml::OpMach::Lut5
                 | ml::OpMach::Lut6 => Ok(lut_try_from_instr(&mach)?),
+                ml::OpMach::Carry => Ok(carry_try_from_instr(&mach)?),
                 _ => Err(Error::new_conv_error("not implemented yet")),
             },
         }
