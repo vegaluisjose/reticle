@@ -14,47 +14,6 @@ fn instance_name_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Id, Error> 
     Ok(format!("__{}", dst[0]))
 }
 
-fn assign_try_from_instr(instr: &ml::InstrBasc) -> Result<vl::Stmt, Error> {
-    if let Some(attr) = instr.attr().tup() {
-        if let Some(expr) = instr.arg().tup() {
-            let dst: Vec<vl::Expr> = instr.dst().clone().try_into()?;
-            let arg: Vec<vl::Expr> = instr.arg().clone().try_into()?;
-            let val: Vec<i64> = attr.clone().try_into()?;
-            match instr.op() {
-                ml::OpBasc::Ext if expr.idx(0).is_vector() => {
-                    if let Ok(idx) = usize::try_from(val[0]) {
-                        Ok(vl::Stmt::from(vl::Parallel::Assign(
-                            dst[0].clone(),
-                            arg[idx].clone(),
-                        )))
-                    } else {
-                        Err(Error::new_conv_error("invalid usize conversion"))
-                    }
-                }
-                ml::OpBasc::Ext => {
-                    if let Ok(idx) = i32::try_from(val[0]) {
-                        Ok(vl::Stmt::from(vl::Parallel::Assign(
-                            dst[0].clone(),
-                            vl::Expr::new_index_bit(&arg[0].id(), idx),
-                        )))
-                    } else {
-                        Err(Error::new_conv_error("invalid usize conversion"))
-                    }
-                }
-                ml::OpBasc::Gnd => Ok(vl::Stmt::from(vl::Parallel::Assign(
-                    dst[0].clone(),
-                    vl::Expr::new_ref(GND),
-                ))),
-                _ => Err(Error::new_conv_error("not implemented yet")),
-            }
-        } else {
-            Err(Error::new_conv_error("not implemented yet"))
-        }
-    } else {
-        Err(Error::new_conv_error("attr must be a tuple"))
-    }
-}
-
 fn lut_width_try_from_op(op: &ml::OpMach) -> Result<u32, Error> {
     match op {
         ml::OpMach::Lut1 => Ok(2),
@@ -123,11 +82,55 @@ impl TryFrom<ml::Instr> for Vec<vl::Decl> {
     }
 }
 
+impl TryFrom<ml::InstrBasc> for vl::Stmt {
+    type Error = Error;
+    fn try_from(instr: ml::InstrBasc) -> Result<Self, Self::Error> {
+        if let Some(attr) = instr.attr().tup() {
+            if let Some(expr) = instr.arg().tup() {
+                let dst: Vec<vl::Expr> = instr.dst().clone().try_into()?;
+                let arg: Vec<vl::Expr> = instr.arg().clone().try_into()?;
+                let val: Vec<i64> = attr.clone().try_into()?;
+                match instr.op() {
+                    ml::OpBasc::Ext if expr.idx(0).is_vector() => {
+                        if let Ok(idx) = usize::try_from(val[0]) {
+                            Ok(vl::Stmt::from(vl::Parallel::Assign(
+                                dst[0].clone(),
+                                arg[idx].clone(),
+                            )))
+                        } else {
+                            Err(Error::new_conv_error("invalid usize conversion"))
+                        }
+                    }
+                    ml::OpBasc::Ext => {
+                        if let Ok(idx) = i32::try_from(val[0]) {
+                            Ok(vl::Stmt::from(vl::Parallel::Assign(
+                                dst[0].clone(),
+                                vl::Expr::new_index_bit(&arg[0].id(), idx),
+                            )))
+                        } else {
+                            Err(Error::new_conv_error("invalid usize conversion"))
+                        }
+                    }
+                    ml::OpBasc::Gnd => Ok(vl::Stmt::from(vl::Parallel::Assign(
+                        dst[0].clone(),
+                        vl::Expr::new_ref(GND),
+                    ))),
+                    _ => Err(Error::new_conv_error("not implemented yet")),
+                }
+            } else {
+                Err(Error::new_conv_error("not implemented yet"))
+            }
+        } else {
+            Err(Error::new_conv_error("attr must be a tuple"))
+        }
+    }
+}
+
 impl TryFrom<ml::Instr> for vl::Stmt {
     type Error = Error;
     fn try_from(instr: ml::Instr) -> Result<Self, Self::Error> {
         match instr {
-            ml::Instr::Basc(basc) => Ok(assign_try_from_instr(&basc)?),
+            ml::Instr::Basc(basc) => Ok(vl::Stmt::try_from(basc)?),
             ml::Instr::Mach(mach) => match mach.op() {
                 ml::OpMach::Lut1
                 | ml::OpMach::Lut2
