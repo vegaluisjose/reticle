@@ -1,6 +1,7 @@
 use crate::ir::ast as ir;
 use crate::util::errors::Error;
 use crate::verilog::ast as vl;
+use crate::verilog::constant;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
@@ -110,6 +111,8 @@ impl TryFrom<ir::Sig> for vl::Module {
         let mut module = vl::Module::new(&id);
         let input: Vec<vl::Decl> = sig.input().clone().try_into()?;
         let output: Vec<vl::Decl> = sig.output().clone().try_into()?;
+        module.add_input(constant::CLOCK, 1);
+        module.add_input(constant::RESET, 1);
         for decl in input {
             module.add_port(vl::Port::Input(decl.clone()))
         }
