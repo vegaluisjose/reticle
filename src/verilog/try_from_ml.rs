@@ -6,10 +6,23 @@ use std::convert::TryFrom;
 use std::convert::TryInto;
 
 const GND: &str = "gnd";
+const VCC: &str = "vcc";
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
 const CAR_INP: [&str; 4] = ["DI", "S", "CI", "CI_TOP"];
 const CAR_OUT: [&str; 2] = ["O", "CO"];
+
+fn gen_gnd_prim() -> vl::Stmt {
+    let mut instance = vl::Instance::new("GND", "GND");
+    instance.connect_ref("G", GND);
+    vl::Stmt::from(instance)
+}
+
+fn gen_vcc_prim() -> vl::Stmt {
+    let mut instance = vl::Instance::new("VCC", "VCC");
+    instance.connect_ref("P", VCC);
+    vl::Stmt::from(instance)
+}
 
 fn instance_name_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Id, Error> {
     let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
@@ -176,6 +189,9 @@ impl TryFrom<ml::Instr> for vl::Stmt {
 impl TryFrom<ml::Prog> for vl::Module {
     type Error = Error;
     fn try_from(prog: ml::Prog) -> Result<Self, Self::Error> {
+        let mut module = vl::Module::try_from(prog.sig().clone())?;
+        module.add_stmt(gen_gnd_prim());
+        module.add_stmt(gen_vcc_prim());
         let mut decl: Vec<vl::Decl> = Vec::new();
         for i in prog.body() {
             let d: Vec<vl::Decl> = i.clone().try_into()?;
@@ -184,7 +200,6 @@ impl TryFrom<ml::Prog> for vl::Module {
         let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
         let output: Vec<vl::Decl> = prog.sig().output().clone().try_into()?;
         let output_set: HashSet<vl::Decl> = output.into_iter().collect();
-        let mut module = vl::Module::try_from(prog.sig().clone())?;
         for d in decl_set.difference(&output_set) {
             module.add_decl(d.clone());
         }
