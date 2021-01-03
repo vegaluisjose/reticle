@@ -57,6 +57,10 @@ fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
         let table = format!("{:X}", u64::try_from(opt_val.clone())?);
         let width = lut_width_try_from_op(instr.op())?;
         instance.add_param("INIT", vl::Expr::new_ulit_hex(width, &table));
+        if let Some(loc) = instr.loc() {
+            let attr = vl::Attribute::from(loc.clone());
+            instance.set_attr(attr);
+        }
         Ok(vl::Stmt::from(instance))
     } else {
         Err(Error::new_conv_error("invalid lut2 option"))
@@ -76,6 +80,10 @@ fn carry_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
         instance.connect(p, e.clone());
     }
     instance.add_param_str("CARRY_TYPE", "SINGLE_CY8");
+    if let Some(loc) = instr.loc() {
+        let attr = vl::Attribute::from(loc.clone());
+        instance.set_attr(attr);
+    }
     Ok(vl::Stmt::from(instance))
 }
 
