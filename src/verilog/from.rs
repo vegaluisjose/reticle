@@ -1,7 +1,7 @@
 use crate::ml::ast as ml;
-use crate::verilog::ast as verilog;
+use crate::verilog::ast as vl;
 
-impl From<ml::OpMach> for verilog::Id {
+impl From<ml::OpMach> for vl::Id {
     fn from(op: ml::OpMach) -> Self {
         match op {
             ml::OpMach::Lut1 => "LUT1".to_string(),
