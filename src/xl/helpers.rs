@@ -62,6 +62,12 @@ impl InstrMach {
             None
         }
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        self.dst = dst
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        self.arg = arg
+    }
 }
 
 impl Instr {
