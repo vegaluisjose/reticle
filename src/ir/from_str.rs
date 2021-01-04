@@ -57,10 +57,10 @@ fn width(input: &str) -> Result<u64, Error> {
         if let Ok(width) = first.as_str().parse::<u64>() {
             Ok(width)
         } else {
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         }
     } else {
-        Err(Error::new_parse_error(&err))
+        Err(Error::new_conv_error(&err))
     }
 }
 
@@ -74,10 +74,10 @@ fn length(input: &str) -> Result<u64, Error> {
         if let Ok(width) = first.as_str().parse::<u64>() {
             Ok(width)
         } else {
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         }
     } else {
-        Err(Error::new_parse_error(&err))
+        Err(Error::new_conv_error(&err))
     }
 }
 
@@ -96,7 +96,7 @@ impl FromStr for Ty {
         } else if is_svec(input) {
             Ok(Ty::Vector(Rc::new(Ty::SInt(width(input)?)), length(input)?))
         } else {
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         }
     }
 }
@@ -121,7 +121,7 @@ impl FromStr for OpComp {
             "lt" => Ok(OpComp::Lt),
             "ge" => Ok(OpComp::Ge),
             "le" => Ok(OpComp::Le),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -139,7 +139,7 @@ impl FromStr for OpWire {
             "sra" => Ok(OpWire::Sra),
             "ext" => Ok(OpWire::Ext),
             "cat" => Ok(OpWire::Cat),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -152,13 +152,13 @@ impl FromStr for OpCall {
                 "Error: {} is a wire operation and cannot be a call operation",
                 input
             );
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         } else if OpComp::from_str(input).is_ok() {
             let err = format!(
                 "Error: {} is a comp operation and cannot be a call operation",
                 input
             );
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         } else {
             Ok(OpCall::new(input))
         }
@@ -173,7 +173,7 @@ impl FromStr for Prim {
             "??" => Ok(Prim::Any),
             "lut" => Ok(Prim::Lut),
             "dsp" => Ok(Prim::Dsp),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }

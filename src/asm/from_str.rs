@@ -22,7 +22,7 @@ impl FromStr for OpAsm {
                 "Error: {} is a wire operation and cannot be an asm operation",
                 input
             );
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         } else {
             Ok(OpAsm::Op(input.to_string()))
         }
@@ -35,7 +35,7 @@ impl FromStr for OpCoord {
         let err = format!("Error: {} is not valid coordinate operation", input);
         match input {
             "+" => Ok(OpCoord::Add),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }

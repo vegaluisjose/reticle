@@ -14,7 +14,7 @@ impl FromStr for Opt {
             "rp" => Ok(Opt::RegP),
             "op" => Ok(Opt::Op),
             "tbl" => Ok(Opt::Table),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -27,7 +27,7 @@ impl FromStr for OpDsp {
             "add" => Ok(OpDsp::Add),
             "mul" => Ok(OpDsp::Mul),
             "muladd" => Ok(OpDsp::MulAdd),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -42,7 +42,7 @@ impl FromStr for OpBasc {
             "vcc" => Ok(OpBasc::Vcc),
             "ext" => Ok(OpBasc::Ext),
             "cat" => Ok(OpBasc::Cat),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -62,7 +62,7 @@ impl FromStr for OpMach {
             "fdse" => Ok(OpMach::Fdse),
             "dsp" => Ok(OpMach::Dsp),
             "carry" => Ok(OpMach::Carry),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -88,7 +88,7 @@ impl FromStr for BelLut {
             "f6lut" => Ok(BelLut::F6),
             "g6lut" => Ok(BelLut::G6),
             "h6lut" => Ok(BelLut::H6),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -114,7 +114,7 @@ impl FromStr for BelReg {
             "fff2" => Ok(BelReg::F2),
             "gff2" => Ok(BelReg::G2),
             "hff2" => Ok(BelReg::H2),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -126,7 +126,7 @@ impl FromStr for BelCarry {
         match input {
             "carry8" => Ok(BelCarry::Carry8),
             "carry4" => Ok(BelCarry::Carry4),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -137,7 +137,7 @@ impl FromStr for BelDsp {
         let err = format!("Error: {} is not valid dsp bel", input);
         match input {
             "alu" => Ok(BelDsp::Alu),
-            _ => Err(Error::new_parse_error(&err)),
+            _ => Err(Error::new_conv_error(&err)),
         }
     }
 }
@@ -155,7 +155,7 @@ impl FromStr for Bel {
         } else if let Ok(bel) = BelDsp::from_str(input) {
             Ok(Bel::from(bel))
         } else {
-            Err(Error::new_parse_error(&err))
+            Err(Error::new_conv_error(&err))
         }
     }
 }
