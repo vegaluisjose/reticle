@@ -12,6 +12,15 @@ impl Loc {
     }
 }
 
+impl OptVal {
+    pub fn op(&self) -> Option<&OpDsp> {
+        match self {
+            OptVal::Op(op) => Some(op),
+            _ => None,
+        }
+    }
+}
+
 impl InstrBasc {
     pub fn op(&self) -> &OpBasc {
         &self.op
@@ -45,6 +54,13 @@ impl InstrMach {
     }
     pub fn opt_lookup(&self, key: &Opt) -> Option<&OptVal> {
         self.opt.get(key)
+    }
+    pub fn opt_op(&self) -> Option<&OpDsp> {
+        if let Some(val) = self.opt.get(&Opt::Op) {
+            val.op()
+        } else {
+            None
+        }
     }
 }
 

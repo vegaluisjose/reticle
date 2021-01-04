@@ -27,6 +27,7 @@ pub enum Opt {
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum OpDsp {
     Add,
+    Mul,
     MulAdd,
 }
 

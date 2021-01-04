@@ -25,6 +25,7 @@ impl FromStr for OpDsp {
         let err = format!("Error: {} is not valid dsp operation", input);
         match input {
             "add" => Ok(OpDsp::Add),
+            "mul" => Ok(OpDsp::Mul),
             "muladd" => Ok(OpDsp::MulAdd),
             _ => Err(Error::new_parse_error(&err)),
         }

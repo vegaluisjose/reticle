@@ -23,6 +23,31 @@ fn gen_vcc_prim() -> vl::Stmt {
     vl::Stmt::from(instance)
 }
 
+fn create_literal(value: i64, width: i64) -> vl::Expr {
+    if width == 1 {
+        let mask = value & 1;
+        let is_one = mask == 1;
+        if is_one {
+            vl::Expr::new_ref(constant::VCC)
+        } else {
+            vl::Expr::new_ref(constant::GND)
+        }
+    } else {
+        let mut concat = vl::ExprConcat::default();
+        for i in 0..width {
+            let shift = value >> i;
+            let mask = shift & 1;
+            let is_one = mask == 1;
+            if is_one {
+                concat.add_expr(vl::Expr::new_ref(constant::VCC));
+            } else {
+                concat.add_expr(vl::Expr::new_ref(constant::GND));
+            }
+        }
+        vl::Expr::from(concat)
+    }
+}
+
 fn instance_name_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Id, Error> {
     let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
     Ok(format!("__{}", dst[0]))
@@ -69,7 +94,29 @@ fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
 fn dsp_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
-    let instance = vl::Instance::new(&id, &prim);
+    let mut instance = vl::Instance::new(&id, &prim);
+    if let Some(op) = instr.opt_op() {
+        match op {
+            ml::OpDsp::Add => {
+                instance.add_param("USE_MULT", vl::Expr::new_str("NONE"));
+                instance.connect("ALUMODE", create_literal(0, 4));
+                instance.connect("INMODE", create_literal(0, 5));
+                instance.connect("OPMODE", create_literal(51, 9));
+            }
+            ml::OpDsp::Mul => {
+                instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
+                instance.connect("ALUMODE", create_literal(0, 4));
+                instance.connect("INMODE", create_literal(0, 5));
+                instance.connect("OPMODE", create_literal(5, 9));
+            }
+            ml::OpDsp::MulAdd => {
+                instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
+                instance.connect("ALUMODE", create_literal(0, 4));
+                instance.connect("INMODE", create_literal(0, 5));
+                instance.connect("OPMODE", create_literal(53, 9));
+            }
+        }
+    }
     Ok(vl::Stmt::from(instance))
 }
 

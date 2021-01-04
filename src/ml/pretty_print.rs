@@ -51,6 +51,7 @@ impl PrettyPrint for OpDsp {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             OpDsp::Add => RcDoc::text("add"),
+            OpDsp::Mul => RcDoc::text("mul"),
             OpDsp::MulAdd => RcDoc::text("muladd"),
         }
     }
