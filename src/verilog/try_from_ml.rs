@@ -1,12 +1,11 @@
 use crate::ml::ast as ml;
 use crate::util::errors::Error;
 use crate::verilog::ast as vl;
+use crate::verilog::constant;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
-const GND: &str = "gnd";
-const VCC: &str = "vcc";
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
 const CAR_INP: [&str; 4] = ["DI", "S", "CI", "CI_TOP"];
@@ -14,13 +13,13 @@ const CAR_OUT: [&str; 2] = ["O", "CO"];
 
 fn gen_gnd_prim() -> vl::Stmt {
     let mut instance = vl::Instance::new("GND", "GND");
-    instance.connect_ref("G", GND);
+    instance.connect_ref("G", constant::GND);
     vl::Stmt::from(instance)
 }
 
 fn gen_vcc_prim() -> vl::Stmt {
     let mut instance = vl::Instance::new("VCC", "VCC");
-    instance.connect_ref("P", VCC);
+    instance.connect_ref("P", constant::VCC);
     vl::Stmt::from(instance)
 }
 
@@ -159,7 +158,7 @@ impl TryFrom<ml::InstrBasc> for vl::Stmt {
                     }
                     ml::OpBasc::Gnd => Ok(vl::Stmt::from(vl::Parallel::Assign(
                         dst[0].clone(),
-                        vl::Expr::new_ref(GND),
+                        vl::Expr::new_ref(constant::GND),
                     ))),
                     ml::OpBasc::Cat => {
                         let mut concat = vl::ExprConcat::default();
