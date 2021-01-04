@@ -83,6 +83,9 @@ impl ExprTup {
     pub fn is_empty(&self) -> bool {
         self.term.is_empty()
     }
+    pub fn add_term(&mut self, term: ExprTerm) {
+        self.term.push(term);
+    }
 }
 
 impl Expr {
