@@ -3,4 +3,4 @@ pub mod ir;
 pub mod tdl;
 pub mod util;
 pub mod verilog;
-pub mod xml;
+pub mod xl;

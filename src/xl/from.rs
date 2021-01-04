@@ -1,4 +1,4 @@
-use crate::xml::ast::*;
+use crate::xl::ast::*;
 
 impl From<BelLut> for Bel {
     fn from(bel: BelLut) -> Self {
