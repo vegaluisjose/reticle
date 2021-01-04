@@ -25,7 +25,7 @@ pub enum Opt {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub enum OptValOp {
+pub enum OpDsp {
     Add,
     MulAdd,
 }
@@ -33,7 +33,7 @@ pub enum OptValOp {
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum OptVal {
     UInt(u64),
-    Op(OptValOp),
+    Op(OpDsp),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
