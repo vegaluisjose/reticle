@@ -138,7 +138,7 @@ impl MLParser {
         }
     }
 
-    fn opt_val(input: Node) -> Result<OptVal> {
+    fn opt_num(input: Node) -> Result<OptVal> {
         let val = input.as_str().parse::<u64>();
         match val {
             Ok(v) => Ok(OptVal::UInt(v)),
@@ -146,10 +146,19 @@ impl MLParser {
         }
     }
 
+    fn opt_op(input: Node) -> Result<OptVal> {
+        let op = OpDsp::from_str(input.as_str());
+        match op {
+            Ok(v) => Ok(OptVal::Op(v)),
+            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+        }
+    }
+
     fn opt_tup(input: Node) -> Result<(Opt, OptVal)> {
         Ok(match_nodes!(
             input.into_children();
-            [opt_key(key), opt_val(val)] => (key, val)
+            [opt_key(key), opt_num(val)] => (key, val),
+            [opt_key(key), opt_op(val)] => (key, val)
         ))
     }
 

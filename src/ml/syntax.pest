@@ -42,7 +42,11 @@ op_basc = { id }
 
 opt_key = { id }
 
-opt_val = { ASCII_DIGIT+ }
+opt_num = { ASCII_DIGIT+ }
+
+opt_op = { id }
+
+opt_val = _{ opt_num | opt_op }
 
 opt_tup = { opt_key ~ "=" ~ opt_val }
 

@@ -67,6 +67,13 @@ fn lut_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
     }
 }
 
+fn dsp_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
+    let prim: vl::Id = instr.op().clone().into();
+    let id = instance_name_try_from_instr(instr)?;
+    let instance = vl::Instance::new(&id, &prim);
+    Ok(vl::Stmt::from(instance))
+}
+
 fn carry_try_from_instr(instr: &ml::InstrMach) -> Result<vl::Stmt, Error> {
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
@@ -188,6 +195,7 @@ impl TryFrom<ml::Instr> for vl::Stmt {
                 | ml::OpMach::Lut5
                 | ml::OpMach::Lut6 => Ok(lut_try_from_instr(&mach)?),
                 ml::OpMach::Carry => Ok(carry_try_from_instr(&mach)?),
+                ml::OpMach::Dsp => Ok(dsp_try_from_instr(&mach)?),
                 _ => Err(Error::new_conv_error("not implemented yet")),
             },
         }

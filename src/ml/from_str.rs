@@ -19,6 +19,18 @@ impl FromStr for Opt {
     }
 }
 
+impl FromStr for OpDsp {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let err = format!("Error: {} is not valid dsp operation", input);
+        match input {
+            "add" => Ok(OpDsp::Add),
+            "muladd" => Ok(OpDsp::MulAdd),
+            _ => Err(Error::new_parse_error(&err)),
+        }
+    }
+}
+
 impl FromStr for OpBasc {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
