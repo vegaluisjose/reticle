@@ -1,4 +1,4 @@
-use crate::ml::ast::*;
+use crate::xml::ast::*;
 
 impl Loc {
     pub fn bel(&self) -> &Bel {

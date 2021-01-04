@@ -1,5 +1,5 @@
-use reticle::ml::parser::MLParser;
 use reticle::verilog::ast as verilog;
+use reticle::xml::parser::MLParser;
 use std::convert::TryFrom;
 
 fn main() {

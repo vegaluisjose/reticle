@@ -1,5 +1,5 @@
-use crate::ml::ast::*;
 use crate::util::file::read_to_string;
+use crate::xml::ast::*;
 use pest_consume::{match_nodes, Error, Parser};
 use std::path::Path;
 use std::rc::Rc;
@@ -11,7 +11,7 @@ type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(Parser)]
-#[grammar = "ml/syntax.pest"]
+#[grammar = "xml/syntax.pest"]
 pub struct MLParser;
 
 #[pest_consume::parser]
