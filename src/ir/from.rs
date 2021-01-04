@@ -34,8 +34,8 @@ impl From<InstrComp> for Instr {
 impl From<Expr> for Vec<ExprTerm> {
     fn from(expr: Expr) -> Self {
         match expr {
-            Expr::Tup(tup) => tup.term().clone(),
-            Expr::Term(term) => vec![term.clone()],
+            Expr::Tup(t) => t.term().clone(),
+            Expr::Term(t) => vec![t],
         }
     }
 }
@@ -43,14 +43,14 @@ impl From<Expr> for Vec<ExprTerm> {
 impl From<Expr> for HashSet<Expr> {
     fn from(expr: Expr) -> Self {
         let mut set: HashSet<Expr> = HashSet::new();
-        match &expr {
+        match expr {
             Expr::Tup(tup) => {
-                for term in tup.term() {
-                    set.insert(Expr::from(term.clone()));
+                for t in tup.term() {
+                    set.insert(Expr::from(t.clone()));
                 }
             }
-            Expr::Term(term) => {
-                set.insert(Expr::from(term.clone()));
+            Expr::Term(t) => {
+                set.insert(Expr::from(t));
             }
         }
         set
