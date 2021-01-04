@@ -91,7 +91,15 @@ fn lut_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
     }
 }
 
+fn dsp_operand_try_from_term(term: &xl::ExprTerm) {
+    println!("{}", term);
+}
+
 fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
+    let arg: Vec<xl::ExprTerm> = instr.arg().clone().into();
+    for e in arg {
+        dsp_operand_try_from_term(&e);
+    }
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
     let mut instance = vl::Instance::new(&id, &prim);

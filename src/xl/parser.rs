@@ -1,8 +1,8 @@
+use crate::util::errors::Error;
 use crate::util::file::read_to_string;
-use crate::util::errors::Error as Error;
 use crate::xl::ast::*;
-use pest_consume::{match_nodes, Parser};
 use pest_consume::Error as PestError;
+use pest_consume::{match_nodes, Parser};
 use std::path::Path;
 use std::rc::Rc;
 use std::str::FromStr;
@@ -14,10 +14,10 @@ const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(Parser)]
 #[grammar = "xl/syntax.pest"]
-pub struct MLParser;
+pub struct XLParser;
 
 #[pest_consume::parser]
-impl MLParser {
+impl XLParser {
     fn EOI(_input: Node) -> ParseResult<()> {
         Ok(())
     }
@@ -284,14 +284,14 @@ impl MLParser {
     }
 }
 
-impl MLParser {
+impl XLParser {
     pub fn parse_from_str(input_str: &str) -> Result<Prog, Error> {
-        let inputs = MLParser::parse(Rule::file, input_str)?;
+        let inputs = XLParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        Ok(MLParser::file(input)?)
+        Ok(XLParser::file(input)?)
     }
     pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog, Error> {
         let content = read_to_string(path);
-        MLParser::parse_from_str(&content)
+        XLParser::parse_from_str(&content)
     }
 }

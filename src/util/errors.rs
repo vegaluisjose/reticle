@@ -1,10 +1,10 @@
-use std::fmt;
 use crate::xl::parser as xlparser;
+use std::fmt;
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::MLParse(msg) => write!(f, "[Error][Parsing] {}", msg),
+            Error::XLParse(msg) => write!(f, "[Error][Parsing] {}", msg),
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
         }
@@ -13,7 +13,7 @@ impl fmt::Display for Error {
 
 #[derive(Debug)]
 pub enum Error {
-    MLParse(pest_consume::Error<xlparser::Rule>),
+    XLParse(pest_consume::Error<xlparser::Rule>),
     Conversion(String),
     Type(String),
 }
@@ -29,6 +29,6 @@ impl Error {
 
 impl From<pest_consume::Error<xlparser::Rule>> for Error {
     fn from(e: pest_consume::Error<xlparser::Rule>) -> Self {
-        Error::MLParse(e)
+        Error::XLParse(e)
     }
 }
