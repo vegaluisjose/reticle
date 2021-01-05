@@ -91,15 +91,35 @@ fn lut_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
     }
 }
 
-fn dsp_operand_try_from_term(term: &xl::ExprTerm) {
-    println!("{}", term);
+fn expr_try_from_term(term: &xl::ExprTerm, max_width: u64) -> Result<vl::Expr, Error> {
+    let mut op = vl::ExprConcat::default();
+    if let Some(id) = term.id() {
+        if let Some(width) = term.width() {
+            if let Some(length) = term.length() {
+                if length > 0 && length <= 4 {
+                    let rem = (max_width / length) - width;
+                    for _ in 0..length {
+                        op.add_expr(vl::Expr::new_ref(&id));
+                        for _ in 0..rem {
+                            op.add_expr(vl::Expr::new_ref(constant::GND));
+                        }
+                    }
+                    Ok(vl::Expr::from(op))
+                } else {
+                    Err(Error::new_conv_error("vector length must be 1-4"))
+                }
+            } else {
+                Err(Error::new_conv_error("not implemented yet"))
+            }
+        } else {
+            Err(Error::new_conv_error("term must be var"))
+        }
+    } else {
+        Err(Error::new_conv_error("term must be var"))
+    }
 }
 
 fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
-    let arg: Vec<xl::ExprTerm> = instr.arg().clone().into();
-    for e in arg {
-        dsp_operand_try_from_term(&e);
-    }
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
     let mut instance = vl::Instance::new(&id, &prim);
@@ -110,6 +130,9 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
                 instance.connect("ALUMODE", create_literal(0, 4));
                 instance.connect("INMODE", create_literal(0, 5));
                 instance.connect("OPMODE", create_literal(51, 9));
+                if let Some(e) = instr.arg().idx(0) {
+                    instance.connect("C", expr_try_from_term(&e, 48)?);
+                }
             }
             xl::OpDsp::Mul => {
                 instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));

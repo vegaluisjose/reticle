@@ -1,6 +1,7 @@
 use crate::util::errors::Error;
 use crate::util::file::read_to_string;
 use crate::xl::ast::*;
+use crate::xl::infer::infer_type_try_from_prog;
 use pest_consume::Error as PestError;
 use pest_consume::{match_nodes, Parser};
 use std::path::Path;
@@ -288,7 +289,8 @@ impl XLParser {
     pub fn parse_from_str(input_str: &str) -> Result<Prog, Error> {
         let inputs = XLParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        Ok(XLParser::file(input)?)
+        let prog = XLParser::file(input)?;
+        Ok(infer_type_try_from_prog(prog)?)
     }
     pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog, Error> {
         let content = read_to_string(path);
