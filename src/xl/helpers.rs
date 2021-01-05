@@ -34,6 +34,12 @@ impl InstrBasc {
     pub fn arg(&self) -> &Expr {
         &self.arg
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        self.dst = dst
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        self.arg = arg
+    }
 }
 
 impl InstrMach {
@@ -81,6 +87,18 @@ impl Instr {
         match self {
             Instr::Basc(instr) => instr.arg(),
             Instr::Mach(instr) => instr.arg(),
+        }
+    }
+    pub fn set_dst(&mut self, dst: Expr) {
+        match self {
+            Instr::Basc(instr) => instr.set_dst(dst),
+            Instr::Mach(instr) => instr.set_dst(dst),
+        }
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        match self {
+            Instr::Basc(instr) => instr.set_arg(arg),
+            Instr::Mach(instr) => instr.set_arg(arg),
         }
     }
 }
