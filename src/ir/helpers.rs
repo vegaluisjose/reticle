@@ -182,6 +182,9 @@ impl Def {
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
+    pub fn body_mut(&mut self) -> &mut Vec<Instr> {
+        &mut self.body
+    }
 }
 
 impl Prog {
