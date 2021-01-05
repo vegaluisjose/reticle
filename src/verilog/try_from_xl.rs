@@ -6,6 +6,11 @@ use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
+const DSP_WIDTH_A: usize = 30;
+const DSP_WIDTH_B: usize = 18;
+const DSP_WIDTH_C: usize = 48;
+// const DSP_WIDTH_P: usize = 48;
+
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
 const CAR_INP: [&str; 4] = ["DI", "S", "CI", "CI_TOP"];
@@ -91,31 +96,48 @@ fn lut_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
     }
 }
 
-fn expr_try_from_term(term: &xl::ExprTerm, max_width: u64) -> Result<vl::Expr, Error> {
-    let mut op = vl::ExprConcat::default();
-    if let Some(id) = term.id() {
-        if let Some(width) = term.width() {
-            if let Some(length) = term.length() {
-                if length > 0 && length <= 4 {
-                    let rem = (max_width / length) - width;
-                    for _ in 0..length {
-                        op.add_expr(vl::Expr::new_ref(&id));
-                        for _ in 0..rem {
-                            op.add_expr(vl::Expr::new_ref(constant::GND));
-                        }
+fn expr_try_from_term(
+    term: &xl::ExprTerm,
+    word_width: u64,
+    lsb: usize,
+    msb: usize,
+) -> Result<vl::Expr, Error> {
+    let mut bits: Vec<vl::Expr> = Vec::new();
+    let expr: Vec<vl::Expr> = term.clone().try_into()?;
+    if let Some(width) = term.width() {
+        for e in expr {
+            if let Ok(wbits) = i32::try_from(width) {
+                if let Ok(pbits) = i32::try_from(word_width - width) {
+                    for i in 0..wbits {
+                        bits.push(vl::Expr::new_index_bit(&e.id(), i));
                     }
-                    Ok(vl::Expr::from(op))
-                } else {
-                    Err(Error::new_conv_error("vector length must be 1-4"))
+                    for _ in 0..pbits {
+                        bits.push(vl::Expr::new_ref(constant::GND));
+                    }
                 }
-            } else {
-                Err(Error::new_conv_error("not implemented yet"))
             }
-        } else {
-            Err(Error::new_conv_error("term must be var"))
         }
+        let mut cat = vl::ExprConcat::default();
+        for i in bits.iter().take(msb+1).skip(lsb) {
+            cat.add_expr(i.clone());
+        }
+        Ok(vl::Expr::from(cat))
     } else {
         Err(Error::new_conv_error("term must be var"))
+    }
+}
+
+fn word_width_try_from_term(term: &xl::ExprTerm) -> Result<u64, Error> {
+    if let Some(length) = term.length() {
+        match length {
+            4 => Ok(12),
+            3 => Ok(12),
+            2 => Ok(24),
+            1 => Ok(48),
+            _ => Err(Error::new_conv_error("unsupported length")),
+        }
+    } else {
+        Ok(48)
     }
 }
 
@@ -131,7 +153,16 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
                 instance.connect("INMODE", create_literal(0, 5));
                 instance.connect("OPMODE", create_literal(51, 9));
                 if let Some(e) = instr.arg().idx(0) {
-                    instance.connect("C", expr_try_from_term(&e, 48)?);
+                    let word_width = word_width_try_from_term(e)?;
+                    instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C-1)?);
+                }
+                if let Some(e) = instr.arg().idx(1) {
+                    let word_width = word_width_try_from_term(e)?;
+                    instance.connect("B", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_B-1)?);
+                    instance.connect(
+                        "A",
+                        expr_try_from_term(&e, word_width, DSP_WIDTH_B, DSP_WIDTH_B+DSP_WIDTH_A-1)?,
+                    );
                 }
             }
             xl::OpDsp::Mul => {
