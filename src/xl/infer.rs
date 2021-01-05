@@ -46,7 +46,7 @@ fn build_env(prog: &Prog) -> Result<HashMap<String, Ty>, Error> {
 
 pub fn infer_type_try_from_prog(prog: Prog) -> Result<Prog, Error> {
     let env = build_env(&prog)?;
-    let mut prog = prog.clone();
+    let mut prog = prog;
     // solve instr arg types with environment
     for instr in prog.body_mut() {
         let mut arg = ExprTup::default();
