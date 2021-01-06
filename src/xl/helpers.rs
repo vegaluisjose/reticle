@@ -77,6 +77,18 @@ impl InstrMach {
 }
 
 impl Instr {
+    pub fn mach(&self) -> Option<&InstrMach> {
+        match self {
+            Instr::Mach(mach) => Some(mach),
+            _ => None,
+        }
+    }
+    pub fn basc(&self) -> Option<&InstrBasc> {
+        match self {
+            Instr::Basc(basc) => Some(basc),
+            _ => None,
+        }
+    }
     pub fn dst(&self) -> &Expr {
         match self {
             Instr::Basc(instr) => instr.dst(),
