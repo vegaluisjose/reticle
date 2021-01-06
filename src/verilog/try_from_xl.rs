@@ -9,7 +9,7 @@ use std::convert::TryInto;
 const DSP_WIDTH_A: usize = 30;
 const DSP_WIDTH_B: usize = 18;
 const DSP_WIDTH_C: usize = 48;
-// const DSP_WIDTH_P: usize = 48;
+const DSP_WIDTH_P: usize = 48;
 
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
@@ -58,7 +58,7 @@ fn instance_name_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Id, Error> 
     Ok(format!("_i_{}", dst[0]))
 }
 
-fn temp_name_try_from_term(term: &xl::ExprTerm) -> Result<xl::Id, Error> {
+fn tmp_name_try_from_term(term: &xl::ExprTerm) -> Result<xl::Id, Error> {
     let dst: xl::Id = term.clone().try_into()?;
     Ok(format!("_t_{}", dst))
 }
@@ -146,6 +146,24 @@ fn word_width_try_from_term(term: &xl::ExprTerm) -> Result<u64, Error> {
     }
 }
 
+fn dsp_tmp_decl_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Decl, Error> {
+    match instr.op() {
+        xl::OpMach::Dsp => {
+            if let Some(e) = instr.dst().term() {
+                let name = tmp_name_try_from_term(e)?;
+                if let Ok(width) = u64::try_from(DSP_WIDTH_P) {
+                    Ok(vl::Decl::new_wire(&name, width))
+                } else {
+                    Err(Error::new_conv_error("converting width constant"))
+                }
+            } else {
+                Err(Error::new_conv_error("dsp instr supports only output term"))
+            }
+        }
+        _ => Err(Error::new_conv_error("not a dsp instr")),
+    }
+}
+
 fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
@@ -176,7 +194,7 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                     );
                 }
                 if let Some(e) = instr.dst().term() {
-                    let temp = temp_name_try_from_term(e)?;
+                    let temp = tmp_name_try_from_term(e)?;
                     instance.connect("P", vl::Expr::new_ref(&temp));
                     let dst: Vec<vl::Expr> = e.clone().try_into()?;
                     let word_width = word_width_try_from_term(e)?;
@@ -358,6 +376,11 @@ impl TryFrom<xl::Prog> for vl::Module {
         for i in prog.body() {
             let d: Vec<vl::Decl> = i.clone().try_into()?;
             decl.extend(d);
+            if let Some(instr) = i.mach() {
+                if let Ok(d) = dsp_tmp_decl_try_from_instr(instr) {
+                    decl.push(d);
+                }
+            }
         }
         let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
         let output: Vec<vl::Decl> = prog.sig().output().clone().try_into()?;
