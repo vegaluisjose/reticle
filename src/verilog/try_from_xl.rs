@@ -55,7 +55,12 @@ fn create_literal(value: i64, width: i64) -> vl::Expr {
 
 fn instance_name_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Id, Error> {
     let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
-    Ok(format!("__{}", dst[0]))
+    Ok(format!("_i_{}", dst[0]))
+}
+
+fn temp_name_try_from_term(term: &xl::ExprTerm) -> Result<xl::Id, Error> {
+    let dst: xl::Id = term.clone().try_into()?;
+    Ok(format!("_t_{}", dst))
 }
 
 fn lut_width_try_from_op(op: &xl::OpMach) -> Result<u32, Error> {
@@ -118,7 +123,7 @@ fn expr_try_from_term(
             }
         }
         let mut cat = vl::ExprConcat::default();
-        for i in bits.iter().take(msb+1).skip(lsb) {
+        for i in bits.iter().take(msb + 1).skip(lsb) {
             cat.add_expr(i.clone());
         }
         Ok(vl::Expr::from(cat))
@@ -141,10 +146,11 @@ fn word_width_try_from_term(term: &xl::ExprTerm) -> Result<u64, Error> {
     }
 }
 
-fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
+fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
     let mut instance = vl::Instance::new(&id, &prim);
+    let mut stmt: Vec<vl::Stmt> = Vec::new();
     if let Some(op) = instr.opt_op() {
         match op {
             xl::OpDsp::Add => {
@@ -154,15 +160,46 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
                 instance.connect("OPMODE", create_literal(51, 9));
                 if let Some(e) = instr.arg().idx(0) {
                     let word_width = word_width_try_from_term(e)?;
-                    instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C-1)?);
+                    instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C - 1)?);
                 }
                 if let Some(e) = instr.arg().idx(1) {
                     let word_width = word_width_try_from_term(e)?;
-                    instance.connect("B", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_B-1)?);
+                    instance.connect("B", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_B - 1)?);
                     instance.connect(
                         "A",
-                        expr_try_from_term(&e, word_width, DSP_WIDTH_B, DSP_WIDTH_B+DSP_WIDTH_A-1)?,
+                        expr_try_from_term(
+                            &e,
+                            word_width,
+                            DSP_WIDTH_B,
+                            DSP_WIDTH_B + DSP_WIDTH_A - 1,
+                        )?,
                     );
+                }
+                if let Some(e) = instr.dst().term() {
+                    let temp = temp_name_try_from_term(e)?;
+                    instance.connect("P", vl::Expr::new_ref(&temp));
+                    let dst: Vec<vl::Expr> = e.clone().try_into()?;
+                    let word_width = word_width_try_from_term(e)?;
+                    if let Some(width) = e.width() {
+                        if let Ok(ebits) = i32::try_from(width) {
+                            if let Ok(wbits) = i32::try_from(word_width) {
+                                for (i, e) in dst.iter().enumerate() {
+                                    let i = i as i32;
+                                    let hi = i * wbits + (ebits - 1);
+                                    let lo = i * wbits;
+                                    let assign = vl::Parallel::Assign(
+                                        e.clone(),
+                                        vl::Expr::new_slice(
+                                            &temp,
+                                            vl::Expr::new_int(hi),
+                                            vl::Expr::new_int(lo),
+                                        ),
+                                    );
+                                    stmt.push(vl::Stmt::from(assign));
+                                }
+                            }
+                        }
+                    }
                 }
             }
             xl::OpDsp::Mul => {
@@ -179,7 +216,8 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
             }
         }
     }
-    Ok(vl::Stmt::from(instance))
+    stmt.push(vl::Stmt::from(instance));
+    Ok(stmt)
 }
 
 fn carry_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
@@ -290,19 +328,19 @@ impl TryFrom<xl::InstrBasc> for vl::Stmt {
     }
 }
 
-impl TryFrom<xl::Instr> for vl::Stmt {
+impl TryFrom<xl::Instr> for Vec<vl::Stmt> {
     type Error = Error;
     fn try_from(instr: xl::Instr) -> Result<Self, Self::Error> {
         match instr {
-            xl::Instr::Basc(basc) => Ok(vl::Stmt::try_from(basc)?),
+            xl::Instr::Basc(basc) => Ok(vec![vl::Stmt::try_from(basc)?]),
             xl::Instr::Mach(mach) => match mach.op() {
                 xl::OpMach::Lut1
                 | xl::OpMach::Lut2
                 | xl::OpMach::Lut3
                 | xl::OpMach::Lut4
                 | xl::OpMach::Lut5
-                | xl::OpMach::Lut6 => Ok(lut_try_from_instr(&mach)?),
-                xl::OpMach::Carry => Ok(carry_try_from_instr(&mach)?),
+                | xl::OpMach::Lut6 => Ok(vec![lut_try_from_instr(&mach)?]),
+                xl::OpMach::Carry => Ok(vec![carry_try_from_instr(&mach)?]),
                 xl::OpMach::Dsp => Ok(dsp_try_from_instr(&mach)?),
                 _ => Err(Error::new_conv_error("not implemented yet")),
             },
@@ -328,7 +366,10 @@ impl TryFrom<xl::Prog> for vl::Module {
             module.add_decl(d.clone());
         }
         for i in prog.body() {
-            module.add_stmt(vl::Stmt::try_from(i.clone())?);
+            let stmt: Vec<vl::Stmt> = i.clone().try_into()?;
+            for s in stmt {
+                module.add_stmt(s.clone());
+            }
         }
         Ok(module)
     }
