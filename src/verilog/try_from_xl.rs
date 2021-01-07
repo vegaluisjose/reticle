@@ -234,6 +234,17 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
             }
         }
     }
+    instance.connect("CLK", vl::Expr::new_ref(constant::CLOCK));
+    instance.connect("RSTA", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTALLCARRYIN", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTALUMODE", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTB", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTC", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTCTRL", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTD", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTINMODE", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTM", vl::Expr::new_ref(constant::RESET));
+    instance.connect("RSTP", vl::Expr::new_ref(constant::RESET));
     stmt.push(vl::Stmt::from(instance));
     Ok(stmt)
 }
