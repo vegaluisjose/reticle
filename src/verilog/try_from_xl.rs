@@ -146,6 +146,20 @@ fn word_width_try_from_term(term: &xl::ExprTerm) -> Result<u64, Error> {
     }
 }
 
+fn simd_opt_try_from_term(term: &xl::ExprTerm) -> Result<vl::Expr, Error> {
+    if let Some(length) = term.length() {
+        match length {
+            4 => Ok(vl::Expr::new_str("FOUR12")),
+            3 => Ok(vl::Expr::new_str("FOUR12")),
+            2 => Ok(vl::Expr::new_str("TWO24")),
+            1 => Ok(vl::Expr::new_str("ONE48")),
+            _ => Err(Error::new_conv_error("unsupported length")),
+        }
+    } else {
+        Ok(vl::Expr::new_str("ONE48"))
+    }
+}
+
 fn dsp_tmp_decl_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Decl, Error> {
     match instr.op() {
         xl::OpMach::Dsp => {
@@ -169,6 +183,26 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let id = instance_name_try_from_instr(instr)?;
     let mut instance = vl::Instance::new(&id, &prim);
     let mut stmt: Vec<vl::Stmt> = Vec::new();
+    // setup SIMD option
+    if let Some(e) = instr.dst().term() {
+        instance.connect("USE_SIMD", simd_opt_try_from_term(e)?);
+    }
+    // setup ra
+    instance.add_param("CREG", vl::Expr::new_int(0));
+    instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+    // setup rb
+    instance.add_param("AREG", vl::Expr::new_int(0));
+    instance.add_param("BREG", vl::Expr::new_int(0));
+    instance.add_param("ACASCREG", vl::Expr::new_int(0));
+    instance.add_param("BCASCREG", vl::Expr::new_int(0));
+    instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+    instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+    instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+    instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+    // setup rp
+    instance.add_param("PREG", vl::Expr::new_int(0));
+    instance.connect("CEP", vl::Expr::new_ref(constant::GND));
+    // set opcode
     if let Some(op) = instr.opt_op() {
         match op {
             xl::OpDsp::Add => {
@@ -176,6 +210,25 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                 instance.connect("ALUMODE", create_literal(0, 4));
                 instance.connect("INMODE", create_literal(0, 5));
                 instance.connect("OPMODE", create_literal(51, 9));
+            }
+            xl::OpDsp::Mul => {
+                instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
+                instance.connect("ALUMODE", create_literal(0, 4));
+                instance.connect("INMODE", create_literal(0, 5));
+                instance.connect("OPMODE", create_literal(5, 9));
+            }
+            xl::OpDsp::MulAdd => {
+                instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
+                instance.connect("ALUMODE", create_literal(0, 4));
+                instance.connect("INMODE", create_literal(0, 5));
+                instance.connect("OPMODE", create_literal(53, 9));
+            }
+        }
+    }
+    // connect args
+    if let Some(op) = instr.opt_op() {
+        match op {
+            xl::OpDsp::Add => {
                 if let Some(e) = instr.arg().idx(0) {
                     let word_width = word_width_try_from_term(e)?;
                     instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C - 1)?);
@@ -220,20 +273,10 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                     }
                 }
             }
-            xl::OpDsp::Mul => {
-                instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
-                instance.connect("ALUMODE", create_literal(0, 4));
-                instance.connect("INMODE", create_literal(0, 5));
-                instance.connect("OPMODE", create_literal(5, 9));
-            }
-            xl::OpDsp::MulAdd => {
-                instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
-                instance.connect("ALUMODE", create_literal(0, 4));
-                instance.connect("INMODE", create_literal(0, 5));
-                instance.connect("OPMODE", create_literal(53, 9));
-            }
+            _ => (),
         }
     }
+    // connect clock and reset
     instance.connect("CLK", vl::Expr::new_ref(constant::CLOCK));
     instance.connect("RSTA", vl::Expr::new_ref(constant::RESET));
     instance.connect("RSTALLCARRYIN", vl::Expr::new_ref(constant::RESET));
@@ -245,6 +288,71 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.connect("RSTINMODE", vl::Expr::new_ref(constant::RESET));
     instance.connect("RSTM", vl::Expr::new_ref(constant::RESET));
     instance.connect("RSTP", vl::Expr::new_ref(constant::RESET));
+    // setup default params and ports
+    instance.add_param("A_INPUT", vl::Expr::new_str("DIRECT"));
+    instance.add_param("AMULTSEL", vl::Expr::new_str("A"));
+    instance.add_param("B_INPUT", vl::Expr::new_str("DIRECT"));
+    instance.add_param("BMULTSEL", vl::Expr::new_str("B"));
+    instance.add_param("PREADDINSEL", vl::Expr::new_str("A"));
+    instance.add_param("RND", vl::Expr::new_ulit_hex(48, "0"));
+    instance.add_param("USE_WIDEXOR", vl::Expr::new_str("FALSE"));
+    instance.add_param("XORSIMD", vl::Expr::new_str("XOR24_48_96"));
+    instance.add_param("AUTORESET_PATDET", vl::Expr::new_str("NO_RESET"));
+    instance.add_param("AUTORESET_PRIORITY", vl::Expr::new_str("RESET"));
+    instance.add_param("MASK", vl::Expr::new_ulit_hex(48, "3fffffffffff"));
+    instance.add_param("PATTERN", vl::Expr::new_ulit_hex(48, "0"));
+    instance.add_param("SEL_MASK", vl::Expr::new_str("MASK"));
+    instance.add_param("SEL_PATTERN", vl::Expr::new_str("PATTERN"));
+    instance.add_param("USE_PATTERN_DETECT", vl::Expr::new_str("NO_PATDET"));
+    instance.add_param("IS_ALUMODE_INVERTED", vl::Expr::new_ulit_bin(4, "0000"));
+    instance.add_param("IS_CARRYIN_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_CLK_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_INMODE_INVERTED", vl::Expr::new_ulit_bin(5, "00000"));
+    instance.add_param("IS_OPMODE_INVERTED", vl::Expr::new_ulit_bin(9, "000000000"));
+    instance.add_param("IS_RSTALLCARRYIN_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTALUMODE_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTA_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTB_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTCTRL_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTC_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTD_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTINMODE_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTM_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.add_param("IS_RSTP_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+    instance.connect("CEAD", vl::Expr::new_ref(constant::GND));
+    instance.connect("CEALUMODE", vl::Expr::new_ref(constant::GND));
+    instance.connect("CECARRYIN", vl::Expr::new_ref(constant::GND));
+    instance.connect("CECTRL", vl::Expr::new_ref(constant::GND));
+    instance.connect("CED", vl::Expr::new_ref(constant::GND));
+    instance.connect("CEINMODE", vl::Expr::new_ref(constant::GND));
+    instance.connect("CEM", vl::Expr::new_ref(constant::GND));
+    instance.add_param("ADREG", vl::Expr::new_int(0));
+    instance.add_param("ALUMODEREG", vl::Expr::new_int(0));
+    instance.add_param("CARRYINREG", vl::Expr::new_int(0));
+    instance.add_param("CARRYINSELREG", vl::Expr::new_int(0));
+    instance.add_param("DREG", vl::Expr::new_int(0));
+    instance.add_param("INMODEREG", vl::Expr::new_int(0));
+    instance.add_param("OPMODEREG", vl::Expr::new_int(0));
+    instance.add_param("MREG", vl::Expr::new_int(0));
+    instance.connect("ACIN", create_literal(0, 30));
+    instance.connect("BCIN", create_literal(0, 18));
+    instance.connect("CARRYCASCIN", vl::Expr::new_ref(constant::GND));
+    instance.connect("MULTSIGNIN", vl::Expr::new_ref(constant::GND));
+    instance.connect("PCIN", create_literal(0, 48));
+    instance.connect("CARRYIN", vl::Expr::new_ref(constant::GND));
+    instance.connect("CARRYINSEL", create_literal(0, 3));
+    instance.connect("D", create_literal(0, 27));
+    instance.connect("ACOUT", vl::Expr::new_ref(""));
+    instance.connect("BCOUT", vl::Expr::new_ref(""));
+    instance.connect("CARRYCASCOUT", vl::Expr::new_ref(""));
+    instance.connect("MULTSIGNOUT", vl::Expr::new_ref(""));
+    instance.connect("PCOUT", vl::Expr::new_ref(""));
+    instance.connect("OVERFLOW", vl::Expr::new_ref(""));
+    instance.connect("PATTERNBDETECT", vl::Expr::new_ref(""));
+    instance.connect("PATTERNDETECT", vl::Expr::new_ref(""));
+    instance.connect("UNDERFLOW", vl::Expr::new_ref(""));
+    instance.connect("CARRYOUT", vl::Expr::new_ref(""));
+    instance.connect("XOROUT", vl::Expr::new_ref(""));
     stmt.push(vl::Stmt::from(instance));
     Ok(stmt)
 }
