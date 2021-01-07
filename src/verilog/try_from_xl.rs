@@ -185,7 +185,7 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut stmt: Vec<vl::Stmt> = Vec::new();
     // setup SIMD option
     if let Some(e) = instr.dst().term() {
-        instance.connect("USE_SIMD", simd_opt_try_from_term(e)?);
+        instance.add_param("USE_SIMD", simd_opt_try_from_term(e)?);
     }
     // setup ra
     instance.add_param("CREG", vl::Expr::new_int(0));
