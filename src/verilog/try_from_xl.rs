@@ -55,12 +55,12 @@ fn create_literal(value: i64, width: i64) -> vl::Expr {
 
 fn instance_name_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Id, Error> {
     let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
-    Ok(format!("_i_{}", dst[0]))
+    Ok(format!("__{}", dst[0]))
 }
 
 fn tmp_name_try_from_term(term: &xl::ExprTerm) -> Result<xl::Id, Error> {
     let dst: xl::Id = term.clone().try_into()?;
-    Ok(format!("_t_{}", dst))
+    Ok(format!("_{}", dst))
 }
 
 fn lut_width_try_from_op(op: &xl::OpMach) -> Result<u32, Error> {
