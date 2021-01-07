@@ -77,8 +77,8 @@ impl ExprTup {
     pub fn term(&self) -> &Vec<ExprTerm> {
         &self.term
     }
-    pub fn idx(&self, val: usize) -> &ExprTerm {
-        &self.term[val]
+    pub fn idx(&self, val: usize) -> Option<&ExprTerm> {
+        self.term.get(val)
     }
     pub fn is_empty(&self) -> bool {
         self.term.is_empty()
@@ -109,7 +109,8 @@ impl Expr {
     }
     pub fn idx(&self, val: usize) -> Option<&ExprTerm> {
         match self {
-            Expr::Tup(t) => Some(t.idx(val)),
+            Expr::Tup(t) => t.idx(val),
+            Expr::Term(t) if val == 0 => Some(t),
             _ => None,
         }
     }

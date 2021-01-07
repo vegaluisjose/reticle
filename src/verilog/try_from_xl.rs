@@ -457,24 +457,37 @@ impl TryFrom<xl::InstrBasc> for vl::Stmt {
                 let arg: Vec<vl::Expr> = instr.arg().clone().try_into()?;
                 let val: Vec<i64> = attr.clone().try_into()?;
                 match instr.op() {
-                    xl::OpBasc::Ext if expr.idx(0).is_vector() => {
-                        if let Ok(idx) = usize::try_from(val[0]) {
-                            Ok(vl::Stmt::from(vl::Parallel::Assign(
-                                dst[0].clone(),
-                                arg[idx].clone(),
-                            )))
-                        } else {
-                            Err(Error::new_conv_error("invalid usize conversion"))
-                        }
-                    }
                     xl::OpBasc::Ext => {
-                        if let Ok(idx) = i32::try_from(val[0]) {
-                            Ok(vl::Stmt::from(vl::Parallel::Assign(
-                                dst[0].clone(),
-                                vl::Expr::new_index_bit(&arg[0].id(), idx),
-                            )))
+                        if let Some(v) = val.get(0) {
+                            if let Ok(idx) = usize::try_from(*v) {
+                                if let Some(a) = expr.idx(0) {
+                                    if let Some(d) = dst.get(0) {
+                                        if a.is_vector() {
+                                            if let Some(i) = arg.get(idx) {
+                                                Ok(vl::Stmt::from(vl::Parallel::Assign(
+                                                    d.clone(),
+                                                    i.clone(),
+                                                )))
+                                            } else {
+                                                Err(Error::new_conv_error("elem out of bounds"))
+                                            }
+                                        } else {
+                                            Ok(vl::Stmt::from(vl::Parallel::Assign(
+                                                d.clone(),
+                                                vl::Expr::new_index_bit(&arg[0].id(), idx as i32),
+                                            )))
+                                        }
+                                    } else {
+                                        Err(Error::new_conv_error("must have one dst"))
+                                    }
+                                } else {
+                                    Err(Error::new_conv_error("must have one arg"))
+                                }
+                            } else {
+                                Err(Error::new_conv_error("attr overflow"))
+                            }
                         } else {
-                            Err(Error::new_conv_error("invalid usize conversion"))
+                            Err(Error::new_conv_error("must have one attr"))
                         }
                     }
                     xl::OpBasc::Gnd => Ok(vl::Stmt::from(vl::Parallel::Assign(
