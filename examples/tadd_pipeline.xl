@@ -1,0 +1,3 @@
+def main(a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
+    y: i8<4> = dsp[op=add, ra=1, rb=1, rp=1](a, b, en, en, en);
+}
