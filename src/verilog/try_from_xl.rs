@@ -354,7 +354,15 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.connect("CARRYOUT", vl::Expr::new_ref(""));
     instance.connect("XOROUT", vl::Expr::new_ref(""));
     stmt.push(vl::Stmt::from(instance));
-    Ok(stmt)
+    // check what is currently supported
+    if let Some(op) = instr.opt_op() {
+        match op {
+            xl::OpDsp::Add => Ok(stmt),
+            _ => Err(Error::new_conv_error("dsp op not supported yet")),
+        }
+    } else {
+        Err(Error::new_conv_error("dsp instr must have an op"))
+    }
 }
 
 fn carry_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
