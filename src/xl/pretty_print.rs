@@ -1,7 +1,7 @@
 use crate::ir::pretty_print::{expr_attrs, expr_names};
 use crate::util::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
 use crate::xl::ast::*;
-// use itertools::Itertools;
+use itertools::Itertools;
 use pretty::RcDoc;
 
 impl PrettyPrint for OpBasc {
@@ -156,6 +156,7 @@ impl PrettyPrint for OptMap {
     fn to_doc(&self) -> RcDoc<()> {
         intersperse(
             self.iter()
+                .sorted_by_key(|(opt, _)| opt.to_string())
                 .map(|(opt, val)| opt.to_doc().append(RcDoc::text("=")).append(val.to_doc())),
             RcDoc::text(",").append(RcDoc::space()),
         )
