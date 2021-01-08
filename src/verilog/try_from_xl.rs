@@ -179,9 +179,9 @@ fn dsp_tmp_decl_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Decl, Error>
 }
 
 fn dsp_param_creg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
-    if let Some(ra) = instr.opt_lookup(&xl::Opt::RegA) {
-        let ra_val = u64::try_from(ra.clone())?;
-        if let Ok(val) = i32::try_from(ra_val) {
+    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegA) {
+        let rval = u64::try_from(reg.clone())?;
+        if let Ok(val) = i32::try_from(rval) {
             if val == 0 || val == 1 {
                 Ok(vl::Expr::new_int(val))
             } else {
@@ -196,9 +196,9 @@ fn dsp_param_creg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Erro
 }
 
 fn dsp_port_cec_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
-    if let Some(ra) = instr.opt_lookup(&xl::Opt::RegA) {
-        let ra_val = u64::try_from(ra.clone())?;
-        if let Ok(val) = i32::try_from(ra_val) {
+    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegA) {
+        let rval = u64::try_from(reg.clone())?;
+        if let Ok(val) = i32::try_from(rval) {
             if val == 0 || val == 1 {
                 if let Some(op) = instr.opt_op() {
                     match op {
@@ -206,7 +206,7 @@ fn dsp_port_cec_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error>
                             if let Some(e) = instr.arg().idx(2) {
                                 Ok(vl::Expr::new_ref(&String::try_from(e.clone())?))
                             } else {
-                                Err(Error::new_conv_error("must have 3 args"))
+                                Err(Error::new_conv_error("number of args"))
                             }
                         }
                         _ => Err(Error::new_conv_error("not supported yet")),
@@ -218,7 +218,59 @@ fn dsp_port_cec_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error>
                 Err(Error::new_conv_error("ra must be 0 or 1"))
             }
         } else {
-            Err(Error::new_conv_error("ra overflow"))
+            Err(Error::new_conv_error("ra ce overflow"))
+        }
+    } else {
+        Ok(vl::Expr::new_ref(constant::GND))
+    }
+}
+
+fn dsp_param_abreg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
+    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegB) {
+        let rval = u64::try_from(reg.clone())?;
+        if let Ok(val) = i32::try_from(rval) {
+            if val < 3 {
+                Ok(vl::Expr::new_int(val))
+            } else {
+                Err(Error::new_conv_error("rb must be 0, 1 or 2"))
+            }
+        } else {
+            Err(Error::new_conv_error("rb overflow"))
+        }
+    } else {
+        Ok(vl::Expr::new_int(0))
+    }
+}
+
+fn dsp_port_abce_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
+    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegB) {
+        let idx: usize = if instr.opt_lookup(&xl::Opt::RegA).is_some() {
+            3
+        } else {
+            2
+        };
+        let rval = u64::try_from(reg.clone())?;
+        if let Ok(val) = i32::try_from(rval) {
+            if val < 3 {
+                if let Some(op) = instr.opt_op() {
+                    match op {
+                        xl::OpDsp::Add => {
+                            if let Some(e) = instr.arg().idx(idx) {
+                                Ok(vl::Expr::new_ref(&String::try_from(e.clone())?))
+                            } else {
+                                Err(Error::new_conv_error("number of args"))
+                            }
+                        }
+                        _ => Err(Error::new_conv_error("not supported yet")),
+                    }
+                } else {
+                    Err(Error::new_conv_error("dsp op must be defined"))
+                }
+            } else {
+                Err(Error::new_conv_error("rb must be 0, 1, or 2"))
+            }
+        } else {
+            Err(Error::new_conv_error("rb ce overflow"))
         }
     } else {
         Ok(vl::Expr::new_ref(constant::GND))
@@ -238,14 +290,14 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.add_param("CREG", dsp_param_creg_try_from_instr(instr)?);
     instance.connect("CEC", dsp_port_cec_try_from_instr(instr)?);
     // setup rb
-    instance.add_param("AREG", vl::Expr::new_int(0));
-    instance.add_param("BREG", vl::Expr::new_int(0));
-    instance.add_param("ACASCREG", vl::Expr::new_int(0));
-    instance.add_param("BCASCREG", vl::Expr::new_int(0));
-    instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
-    instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
-    instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
-    instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+    instance.add_param("AREG", dsp_param_abreg_try_from_instr(instr)?);
+    instance.add_param("BREG", dsp_param_abreg_try_from_instr(instr)?);
+    instance.add_param("ACASCREG", dsp_param_abreg_try_from_instr(instr)?);
+    instance.add_param("BCASCREG", dsp_param_abreg_try_from_instr(instr)?);
+    instance.connect("CEA1", dsp_port_abce_try_from_instr(instr)?);
+    instance.connect("CEA2", dsp_port_abce_try_from_instr(instr)?);
+    instance.connect("CEB1", dsp_port_abce_try_from_instr(instr)?);
+    instance.connect("CEB2", dsp_port_abce_try_from_instr(instr)?);
     // setup rp
     instance.add_param("PREG", vl::Expr::new_int(0));
     instance.connect("CEP", vl::Expr::new_ref(constant::GND));
