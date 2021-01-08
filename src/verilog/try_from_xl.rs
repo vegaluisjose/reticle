@@ -11,6 +11,11 @@ const DSP_WIDTH_B: usize = 18;
 const DSP_WIDTH_C: usize = 48;
 const DSP_WIDTH_P: usize = 48;
 
+const DSP_MAX_REG_A: i32 = 2;
+const DSP_MAX_REG_B: i32 = 2;
+const DSP_MAX_REG_C: i32 = 1;
+const DSP_MAX_REG_P: i32 = 1;
+
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
 const LUT_OUT: [&str; 1] = ["O"];
 const CAR_INP: [&str; 4] = ["DI", "S", "CI", "CI_TOP"];
@@ -178,99 +183,60 @@ fn dsp_tmp_decl_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Decl, Error>
     }
 }
 
-fn dsp_param_creg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
-    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegA) {
-        let rval = u64::try_from(reg.clone())?;
-        if let Ok(val) = i32::try_from(rval) {
-            if val == 0 || val == 1 {
-                Ok(vl::Expr::new_int(val))
-            } else {
-                Err(Error::new_conv_error("ra must be 0 or 1"))
-            }
+fn dsp_param_reg_try_from_instr(
+    instr: &xl::InstrMach,
+    reg: &xl::Opt,
+    max: i32,
+) -> Result<vl::Expr, Error> {
+    if let Some(r) = instr.opt_lookup(reg) {
+        let val = i32::try_from(r.clone())?;
+        if val <= max {
+            Ok(vl::Expr::new_int(val))
         } else {
-            Err(Error::new_conv_error("ra overflow"))
+            let err = format!("reg {} must be less or equal than {}", reg, max);
+            Err(Error::new_conv_error(&err))
         }
     } else {
         Ok(vl::Expr::new_int(0))
     }
 }
 
-fn dsp_port_cec_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
-    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegA) {
-        let rval = u64::try_from(reg.clone())?;
-        if let Ok(val) = i32::try_from(rval) {
-            if val == 0 || val == 1 {
-                if let Some(op) = instr.opt_op() {
-                    match op {
-                        xl::OpDsp::Add => {
-                            if let Some(e) = instr.arg().idx(2) {
-                                Ok(vl::Expr::new_ref(&String::try_from(e.clone())?))
-                            } else {
-                                Err(Error::new_conv_error("number of args"))
-                            }
-                        }
-                        _ => Err(Error::new_conv_error("not supported yet")),
-                    }
-                } else {
-                    Err(Error::new_conv_error("dsp op must be defined"))
-                }
-            } else {
-                Err(Error::new_conv_error("ra must be 0 or 1"))
-            }
-        } else {
-            Err(Error::new_conv_error("ra ce overflow"))
+// op type must be involved, because not all ops are binary
+fn dsp_ce_idx_try_from_instr(instr: &xl::InstrMach, reg: &xl::Opt) -> Result<usize, Error> {
+    match reg {
+        xl::Opt::RegA => Ok(2),
+        xl::Opt::RegB if instr.opt_lookup(&xl::Opt::RegA).is_some() => Ok(3),
+        xl::Opt::RegB => Ok(2),
+        xl::Opt::RegP
+            if instr.opt_lookup(&xl::Opt::RegA).is_some()
+                && instr.opt_lookup(&xl::Opt::RegB).is_none() =>
+        {
+            Ok(3)
         }
-    } else {
-        Ok(vl::Expr::new_ref(constant::GND))
+        xl::Opt::RegP
+            if instr.opt_lookup(&xl::Opt::RegA).is_none()
+                && instr.opt_lookup(&xl::Opt::RegB).is_some() =>
+        {
+            Ok(3)
+        }
+        xl::Opt::RegP
+            if instr.opt_lookup(&xl::Opt::RegA).is_some()
+                && instr.opt_lookup(&xl::Opt::RegB).is_some() =>
+        {
+            Ok(4)
+        }
+        xl::Opt::RegP => Ok(5),
+        _ => Err(Error::new_conv_error("not supported yet")),
     }
 }
 
-fn dsp_param_abreg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
-    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegB) {
-        let rval = u64::try_from(reg.clone())?;
-        if let Ok(val) = i32::try_from(rval) {
-            if val < 3 {
-                Ok(vl::Expr::new_int(val))
-            } else {
-                Err(Error::new_conv_error("rb must be 0, 1 or 2"))
-            }
+fn dsp_port_ce_try_from_instr(instr: &xl::InstrMach, reg: &xl::Opt) -> Result<vl::Expr, Error> {
+    if instr.opt_lookup(reg).is_some() {
+        let idx = dsp_ce_idx_try_from_instr(instr, reg)?;
+        if let Some(e) = instr.arg().idx(idx) {
+            Ok(vl::Expr::new_ref(&String::try_from(e.clone())?))
         } else {
-            Err(Error::new_conv_error("rb overflow"))
-        }
-    } else {
-        Ok(vl::Expr::new_int(0))
-    }
-}
-
-fn dsp_port_abce_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Expr, Error> {
-    if let Some(reg) = instr.opt_lookup(&xl::Opt::RegB) {
-        let idx: usize = if instr.opt_lookup(&xl::Opt::RegA).is_some() {
-            3
-        } else {
-            2
-        };
-        let rval = u64::try_from(reg.clone())?;
-        if let Ok(val) = i32::try_from(rval) {
-            if val < 3 {
-                if let Some(op) = instr.opt_op() {
-                    match op {
-                        xl::OpDsp::Add => {
-                            if let Some(e) = instr.arg().idx(idx) {
-                                Ok(vl::Expr::new_ref(&String::try_from(e.clone())?))
-                            } else {
-                                Err(Error::new_conv_error("number of args"))
-                            }
-                        }
-                        _ => Err(Error::new_conv_error("not supported yet")),
-                    }
-                } else {
-                    Err(Error::new_conv_error("dsp op must be defined"))
-                }
-            } else {
-                Err(Error::new_conv_error("rb must be 0, 1, or 2"))
-            }
-        } else {
-            Err(Error::new_conv_error("rb ce overflow"))
+            Err(Error::new_conv_error("ce port does not exist?"))
         }
     } else {
         Ok(vl::Expr::new_ref(constant::GND))
@@ -287,20 +253,38 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
         instance.add_param("USE_SIMD", simd_opt_try_from_term(e)?);
     }
     // setup ra (DSP C)
-    instance.add_param("CREG", dsp_param_creg_try_from_instr(instr)?);
-    instance.connect("CEC", dsp_port_cec_try_from_instr(instr)?);
+    instance.add_param(
+        "CREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegA, DSP_MAX_REG_C)?,
+    );
+    instance.connect("CEC", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegA)?);
     // setup rb
-    instance.add_param("AREG", dsp_param_abreg_try_from_instr(instr)?);
-    instance.add_param("BREG", dsp_param_abreg_try_from_instr(instr)?);
-    instance.add_param("ACASCREG", dsp_param_abreg_try_from_instr(instr)?);
-    instance.add_param("BCASCREG", dsp_param_abreg_try_from_instr(instr)?);
-    instance.connect("CEA1", dsp_port_abce_try_from_instr(instr)?);
-    instance.connect("CEA2", dsp_port_abce_try_from_instr(instr)?);
-    instance.connect("CEB1", dsp_port_abce_try_from_instr(instr)?);
-    instance.connect("CEB2", dsp_port_abce_try_from_instr(instr)?);
+    instance.add_param(
+        "AREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegB, DSP_MAX_REG_A)?,
+    );
+    instance.add_param(
+        "BREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegB, DSP_MAX_REG_B)?,
+    );
+    instance.add_param(
+        "ACASCREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegB, DSP_MAX_REG_A)?,
+    );
+    instance.add_param(
+        "BCASCREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegB, DSP_MAX_REG_B)?,
+    );
+    instance.connect("CEA1", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
+    instance.connect("CEA2", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
+    instance.connect("CEB1", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
+    instance.connect("CEB2", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
     // setup rp
-    instance.add_param("PREG", vl::Expr::new_int(0));
-    instance.connect("CEP", vl::Expr::new_ref(constant::GND));
+    instance.add_param(
+        "PREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegP, DSP_MAX_REG_P)?,
+    );
+    instance.connect("CEP", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegP)?);
     // set opcode
     if let Some(op) = instr.opt_op() {
         match op {
