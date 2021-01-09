@@ -575,8 +575,6 @@ impl TryFrom<xl::Prog> for vl::Module {
     type Error = Error;
     fn try_from(prog: xl::Prog) -> Result<Self, Self::Error> {
         let mut module = vl::Module::try_from(prog.sig().clone())?;
-        module.add_stmt(gen_gnd_prim());
-        module.add_stmt(gen_vcc_prim());
         let mut decl: Vec<vl::Decl> = Vec::new();
         for i in prog.body() {
             let d: Vec<vl::Decl> = i.clone().try_into()?;
@@ -590,9 +588,13 @@ impl TryFrom<xl::Prog> for vl::Module {
         let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
         let output: Vec<vl::Decl> = prog.sig().output().clone().try_into()?;
         let output_set: HashSet<vl::Decl> = output.into_iter().collect();
+        module.add_decl(vl::Decl::new_wire(constant::GND, 1));
+        module.add_decl(vl::Decl::new_wire(constant::VCC, 1));
         for d in decl_set.difference(&output_set) {
             module.add_decl(d.clone());
         }
+        module.add_stmt(gen_gnd_prim());
+        module.add_stmt(gen_vcc_prim());
         for i in prog.body() {
             let stmt: Vec<vl::Stmt> = i.clone().try_into()?;
             for s in stmt {
