@@ -247,6 +247,10 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
     let mut instance = vl::Instance::new(&id, &prim);
+    if let Some(loc) = instr.loc() {
+        let attr = vl::Attribute::from(loc.clone());
+        instance.set_attr(attr);
+    }
     let mut stmt: Vec<vl::Stmt> = Vec::new();
     // setup SIMD option
     if let Some(e) = instr.dst().term() {
