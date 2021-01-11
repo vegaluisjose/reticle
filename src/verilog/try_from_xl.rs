@@ -14,6 +14,7 @@ const DSP_WIDTH_P: usize = 48;
 const DSP_MAX_REG_A: i32 = 2;
 const DSP_MAX_REG_B: i32 = 2;
 const DSP_MAX_REG_C: i32 = 1;
+const DSP_MAX_REG_M: i32 = 1;
 const DSP_MAX_REG_P: i32 = 1;
 
 const LUT_INP: [&str; 6] = ["I0", "I1", "I2", "I3", "I4", "I5"];
@@ -235,6 +236,11 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.add_param(
         "BCASCREG",
         dsp_param_reg_try_from_instr(instr, &xl::Opt::RegB, DSP_MAX_REG_B)?,
+    );
+    // setup rm
+    instance.add_param(
+        "MREG",
+        dsp_param_reg_try_from_instr(instr, &xl::Opt::RegM, DSP_MAX_REG_M)?,
     );
     // setup rp
     instance.add_param(
@@ -618,7 +624,6 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.add_param("DREG", vl::Expr::new_int(0));
     instance.add_param("INMODEREG", vl::Expr::new_int(0));
     instance.add_param("OPMODEREG", vl::Expr::new_int(0));
-    instance.add_param("MREG", vl::Expr::new_int(0));
     instance.connect("ACIN", create_literal(0, 30));
     instance.connect("BCIN", create_literal(0, 18));
     instance.connect("CARRYCASCIN", vl::Expr::new_ref(constant::GND));
