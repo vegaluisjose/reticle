@@ -201,48 +201,6 @@ fn dsp_param_reg_try_from_instr(
     }
 }
 
-// op type must be involved, because not all ops are binary
-fn dsp_ce_idx_try_from_instr(instr: &xl::InstrMach, reg: &xl::Opt) -> Result<usize, Error> {
-    match reg {
-        xl::Opt::RegA => Ok(2),
-        xl::Opt::RegB if instr.opt_lookup(&xl::Opt::RegA).is_some() => Ok(3),
-        xl::Opt::RegB => Ok(2),
-        xl::Opt::RegP
-            if instr.opt_lookup(&xl::Opt::RegA).is_some()
-                && instr.opt_lookup(&xl::Opt::RegB).is_none() =>
-        {
-            Ok(3)
-        }
-        xl::Opt::RegP
-            if instr.opt_lookup(&xl::Opt::RegA).is_none()
-                && instr.opt_lookup(&xl::Opt::RegB).is_some() =>
-        {
-            Ok(3)
-        }
-        xl::Opt::RegP
-            if instr.opt_lookup(&xl::Opt::RegA).is_some()
-                && instr.opt_lookup(&xl::Opt::RegB).is_some() =>
-        {
-            Ok(4)
-        }
-        xl::Opt::RegP => Ok(5),
-        _ => Err(Error::new_conv_error("not supported yet")),
-    }
-}
-
-fn dsp_port_ce_try_from_instr(instr: &xl::InstrMach, reg: &xl::Opt) -> Result<vl::Expr, Error> {
-    if instr.opt_lookup(reg).is_some() {
-        let idx = dsp_ce_idx_try_from_instr(instr, reg)?;
-        if let Some(e) = instr.arg().idx(idx) {
-            Ok(vl::Expr::new_ref(&String::try_from(e.clone())?))
-        } else {
-            Err(Error::new_conv_error("ce port does not exist?"))
-        }
-    } else {
-        Ok(vl::Expr::new_ref(constant::GND))
-    }
-}
-
 fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let prim: vl::Id = instr.op().clone().into();
     let id = instance_name_try_from_instr(instr)?;
@@ -261,7 +219,6 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
         "CREG",
         dsp_param_reg_try_from_instr(instr, &xl::Opt::RegA, DSP_MAX_REG_C)?,
     );
-    instance.connect("CEC", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegA)?);
     // setup rb
     instance.add_param(
         "AREG",
@@ -279,17 +236,12 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
         "BCASCREG",
         dsp_param_reg_try_from_instr(instr, &xl::Opt::RegB, DSP_MAX_REG_B)?,
     );
-    instance.connect("CEA1", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
-    instance.connect("CEA2", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
-    instance.connect("CEB1", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
-    instance.connect("CEB2", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegB)?);
     // setup rp
     instance.add_param(
         "PREG",
         dsp_param_reg_try_from_instr(instr, &xl::Opt::RegP, DSP_MAX_REG_P)?,
     );
-    instance.connect("CEP", dsp_port_ce_try_from_instr(instr, &xl::Opt::RegP)?);
-    // set opcode
+    // set options based on operation
     if let Some(op) = instr.opt_op() {
         match op {
             xl::OpDsp::Add => {
@@ -297,6 +249,7 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                 instance.connect("ALUMODE", create_literal(0, 4));
                 instance.connect("INMODE", create_literal(0, 5));
                 instance.connect("OPMODE", create_literal(51, 9));
+                instance.connect("CEM", vl::Expr::new_ref(constant::GND));
             }
             xl::OpDsp::Mul => {
                 instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
@@ -320,12 +273,10 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                     let word_width = vec_word_width_try_from_term(e)?;
                     instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C - 1)?);
                 }
-                xl::OpDsp::MulAdd => {
-                    instance.connect(
-                        "A",
-                        expr_try_from_term(&e, DSP_WIDTH_A as u64, 0, DSP_WIDTH_A - 1)?,
-                    );
-                }
+                xl::OpDsp::MulAdd => instance.connect(
+                    "A",
+                    expr_try_from_term(&e, DSP_WIDTH_A as u64, 0, DSP_WIDTH_A - 1)?,
+                ),
                 _ => (),
             }
         }
@@ -356,43 +307,258 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
             }
         }
     }
-    if let Some(e) = instr.dst().term() {
+    if let Some(e) = instr.arg().idx(2) {
         if let Some(op) = instr.opt_op() {
             match op {
                 xl::OpDsp::Add => {
-                    let temp = tmp_name_try_from_term(e)?;
-                    instance.connect("P", vl::Expr::new_ref(&temp));
-                    let dst: Vec<vl::Expr> = e.clone().try_into()?;
-                    let word_width = vec_word_width_try_from_term(e)?;
-                    if let Some(width) = e.width() {
-                        if let Ok(ebits) = i32::try_from(width) {
-                            if let Ok(wbits) = i32::try_from(word_width) {
-                                for (i, e) in dst.iter().enumerate() {
-                                    let i = i as i32;
-                                    let hi = i * wbits + (ebits - 1);
-                                    let lo = i * wbits;
-                                    let assign = vl::Parallel::Assign(
-                                        e.clone(),
-                                        vl::Expr::new_slice(
-                                            &temp,
-                                            vl::Expr::new_int(hi),
-                                            vl::Expr::new_int(lo),
-                                        ),
-                                    );
-                                    stmt.push(vl::Stmt::from(assign));
-                                }
-                            }
+                    let ra = instr.opt_lookup(&xl::Opt::RegA);
+                    let rb = instr.opt_lookup(&xl::Opt::RegB);
+                    let rp = instr.opt_lookup(&xl::Opt::RegP);
+                    match (ra, rb, rp) {
+                        (Some(_), _, _) => {
+                            instance
+                                .connect("CEC", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, Some(_), _) => {
+                            instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEA1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEA2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEB1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEB2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, Some(_)) => {
+                            instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, _) => {
+                            instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+                        }
+                    }
+                }
+                xl::OpDsp::MulAdd => instance.connect(
+                    "C",
+                    expr_try_from_term(&e, DSP_WIDTH_C as u64, 0, DSP_WIDTH_C - 1)?,
+                ),
+                _ => (),
+            }
+        }
+    }
+    if let Some(e) = instr.arg().idx(3) {
+        if let Some(op) = instr.opt_op() {
+            match op {
+                xl::OpDsp::Add => {
+                    let rb = instr.opt_lookup(&xl::Opt::RegB);
+                    let rp = instr.opt_lookup(&xl::Opt::RegP);
+                    match (rb, rp) {
+                        (Some(_), _) => {
+                            instance
+                                .connect("CEA1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEA2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEB1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEB2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, Some(_)) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
                         }
                     }
                 }
                 xl::OpDsp::MulAdd => {
-                    if let Some(width) = e.width() {
-                        if let Ok(msb) = usize::try_from(width - 1) {
-                            instance.connect("P", expr_try_from_term(&e, width, 0, msb)?);
+                    let ra = instr.opt_lookup(&xl::Opt::RegA);
+                    let rb = instr.opt_lookup(&xl::Opt::RegB);
+                    let rc = instr.opt_lookup(&xl::Opt::RegC);
+                    let rm = instr.opt_lookup(&xl::Opt::RegM);
+                    let rp = instr.opt_lookup(&xl::Opt::RegP);
+                    match (ra, rb, rc, rm, rp) {
+                        (Some(_), _, _, _, _) => {
+                            instance
+                                .connect("CEA1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEA2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, Some(_), _, _, _) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEB1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEB2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, Some(_), _, _) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEC", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, _, Some(_), _) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEM", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, _, _, Some(_)) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, _, _, _) => {
+                            instance.connect("CEA1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEA2", vl::Expr::new_ref(constant::GND));
                         }
                     }
                 }
                 _ => (),
+            }
+        }
+    }
+    if let Some(e) = instr.arg().idx(4) {
+        if let Some(op) = instr.opt_op() {
+            match op {
+                xl::OpDsp::Add => match instr.opt_lookup(&xl::Opt::RegP) {
+                    Some(_) => {
+                        instance.connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?))
+                    }
+                    _ => instance.connect("CEP", vl::Expr::new_ref(constant::GND)),
+                },
+                xl::OpDsp::MulAdd => {
+                    let rb = instr.opt_lookup(&xl::Opt::RegB);
+                    let rc = instr.opt_lookup(&xl::Opt::RegC);
+                    let rm = instr.opt_lookup(&xl::Opt::RegM);
+                    let rp = instr.opt_lookup(&xl::Opt::RegP);
+                    match (rb, rc, rm, rp) {
+                        (Some(_), _, _, _) => {
+                            instance
+                                .connect("CEB1", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                            instance
+                                .connect("CEB2", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, Some(_), _, _) => {
+                            instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEC", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, Some(_), _) => {
+                            instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEM", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, _, Some(_)) => {
+                            instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+                            instance
+                                .connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                        }
+                        (_, _, _, _) => {
+                            instance.connect("CEB1", vl::Expr::new_ref(constant::GND));
+                            instance.connect("CEB2", vl::Expr::new_ref(constant::GND));
+                        }
+                    }
+                }
+                _ => (),
+            }
+        }
+    }
+    if let Some(e) = instr.arg().idx(5) {
+        if let Some(op) = instr.opt_op() {
+            if let xl::OpDsp::MulAdd = op {
+                let rc = instr.opt_lookup(&xl::Opt::RegC);
+                let rm = instr.opt_lookup(&xl::Opt::RegM);
+                let rp = instr.opt_lookup(&xl::Opt::RegP);
+                match (rc, rm, rp) {
+                    (Some(_), _, _) => {
+                        instance.connect("CEC", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                    }
+                    (_, Some(_), _) => {
+                        instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+                        instance.connect("CEM", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                    }
+                    (_, _, Some(_)) => {
+                        instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+                        instance.connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                    }
+                    (_, _, _) => {
+                        instance.connect("CEC", vl::Expr::new_ref(constant::GND));
+                    }
+                }
+            }
+        }
+    }
+    if let Some(e) = instr.arg().idx(6) {
+        if let Some(op) = instr.opt_op() {
+            if let xl::OpDsp::MulAdd = op {
+                let rm = instr.opt_lookup(&xl::Opt::RegM);
+                let rp = instr.opt_lookup(&xl::Opt::RegP);
+                match (rm, rp) {
+                    (Some(_), _) => {
+                        instance.connect("CEM", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                    }
+                    (_, Some(_)) => {
+                        instance.connect("CEM", vl::Expr::new_ref(constant::GND));
+                        instance.connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                    }
+                    (_, _) => {
+                        instance.connect("CEM", vl::Expr::new_ref(constant::GND));
+                    }
+                }
+            }
+        }
+    }
+    if let Some(e) = instr.arg().idx(7) {
+        if let Some(op) = instr.opt_op() {
+            if let xl::OpDsp::MulAdd = op {
+                match instr.opt_lookup(&xl::Opt::RegP) {
+                    Some(_) => {
+                        instance.connect("CEP", vl::Expr::new_ref(&String::try_from(e.clone())?))
+                    }
+                    _ => instance.connect("CEP", vl::Expr::new_ref(constant::GND)),
+                }
+            }
+        }
+    }
+    if let Some(e) = instr.dst().term() {
+        let temp = tmp_name_try_from_term(e)?;
+        instance.connect("P", vl::Expr::new_ref(&temp));
+        let dst: Vec<vl::Expr> = e.clone().try_into()?;
+        let word_width = vec_word_width_try_from_term(e)?;
+        if let Some(width) = e.width() {
+            if let Ok(ebits) = i32::try_from(width) {
+                if let Ok(wbits) = i32::try_from(word_width) {
+                    for (i, e) in dst.iter().enumerate() {
+                        let i = i as i32;
+                        let hi = i * wbits + (ebits - 1);
+                        let lo = i * wbits;
+                        let assign = vl::Parallel::Assign(
+                            e.clone(),
+                            vl::Expr::new_slice(
+                                &temp,
+                                vl::Expr::new_int(hi),
+                                vl::Expr::new_int(lo),
+                            ),
+                        );
+                        stmt.push(vl::Stmt::from(assign));
+                    }
+                }
             }
         }
     }
@@ -445,7 +611,6 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.connect("CECTRL", vl::Expr::new_ref(constant::GND));
     instance.connect("CED", vl::Expr::new_ref(constant::GND));
     instance.connect("CEINMODE", vl::Expr::new_ref(constant::GND));
-    instance.connect("CEM", vl::Expr::new_ref(constant::GND));
     instance.add_param("ADREG", vl::Expr::new_int(0));
     instance.add_param("ALUMODEREG", vl::Expr::new_int(0));
     instance.add_param("CARRYINREG", vl::Expr::new_int(0));
