@@ -137,7 +137,7 @@ fn expr_try_from_term(
     }
 }
 
-fn word_width_try_from_term(term: &xl::ExprTerm) -> Result<u64, Error> {
+fn vec_word_width_try_from_term(term: &xl::ExprTerm) -> Result<u64, Error> {
     if let Some(length) = term.length() {
         match length {
             4 => Ok(12),
@@ -312,46 +312,87 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
             }
         }
     }
-    // connect args
-    if let Some(op) = instr.opt_op() {
-        if let xl::OpDsp::Add = op {
-            if let Some(e) = instr.arg().idx(0) {
-                let word_width = word_width_try_from_term(e)?;
-                instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C - 1)?);
+    // setup args
+    if let Some(e) = instr.arg().idx(0) {
+        if let Some(op) = instr.opt_op() {
+            match op {
+                xl::OpDsp::Add => {
+                    let word_width = vec_word_width_try_from_term(e)?;
+                    instance.connect("C", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_C - 1)?);
+                }
+                xl::OpDsp::MulAdd => {
+                    instance.connect(
+                        "A",
+                        expr_try_from_term(&e, DSP_WIDTH_A as u64, 0, DSP_WIDTH_A - 1)?,
+                    );
+                }
+                _ => (),
             }
-            if let Some(e) = instr.arg().idx(1) {
-                let word_width = word_width_try_from_term(e)?;
-                instance.connect("B", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_B - 1)?);
-                instance.connect(
-                    "A",
-                    expr_try_from_term(&e, word_width, DSP_WIDTH_B, DSP_WIDTH_B + DSP_WIDTH_A - 1)?,
-                );
+        }
+    }
+    if let Some(e) = instr.arg().idx(1) {
+        if let Some(op) = instr.opt_op() {
+            match op {
+                xl::OpDsp::Add => {
+                    let word_width = vec_word_width_try_from_term(e)?;
+                    instance.connect("B", expr_try_from_term(&e, word_width, 0, DSP_WIDTH_B - 1)?);
+                    instance.connect(
+                        "A",
+                        expr_try_from_term(
+                            &e,
+                            word_width,
+                            DSP_WIDTH_B,
+                            DSP_WIDTH_B + DSP_WIDTH_A - 1,
+                        )?,
+                    );
+                }
+                xl::OpDsp::MulAdd => {
+                    instance.connect(
+                        "B",
+                        expr_try_from_term(&e, DSP_WIDTH_B as u64, 0, DSP_WIDTH_B - 1)?,
+                    );
+                }
+                _ => (),
             }
-            if let Some(e) = instr.dst().term() {
-                let temp = tmp_name_try_from_term(e)?;
-                instance.connect("P", vl::Expr::new_ref(&temp));
-                let dst: Vec<vl::Expr> = e.clone().try_into()?;
-                let word_width = word_width_try_from_term(e)?;
-                if let Some(width) = e.width() {
-                    if let Ok(ebits) = i32::try_from(width) {
-                        if let Ok(wbits) = i32::try_from(word_width) {
-                            for (i, e) in dst.iter().enumerate() {
-                                let i = i as i32;
-                                let hi = i * wbits + (ebits - 1);
-                                let lo = i * wbits;
-                                let assign = vl::Parallel::Assign(
-                                    e.clone(),
-                                    vl::Expr::new_slice(
-                                        &temp,
-                                        vl::Expr::new_int(hi),
-                                        vl::Expr::new_int(lo),
-                                    ),
-                                );
-                                stmt.push(vl::Stmt::from(assign));
+        }
+    }
+    if let Some(e) = instr.dst().term() {
+        if let Some(op) = instr.opt_op() {
+            match op {
+                xl::OpDsp::Add => {
+                    let temp = tmp_name_try_from_term(e)?;
+                    instance.connect("P", vl::Expr::new_ref(&temp));
+                    let dst: Vec<vl::Expr> = e.clone().try_into()?;
+                    let word_width = vec_word_width_try_from_term(e)?;
+                    if let Some(width) = e.width() {
+                        if let Ok(ebits) = i32::try_from(width) {
+                            if let Ok(wbits) = i32::try_from(word_width) {
+                                for (i, e) in dst.iter().enumerate() {
+                                    let i = i as i32;
+                                    let hi = i * wbits + (ebits - 1);
+                                    let lo = i * wbits;
+                                    let assign = vl::Parallel::Assign(
+                                        e.clone(),
+                                        vl::Expr::new_slice(
+                                            &temp,
+                                            vl::Expr::new_int(hi),
+                                            vl::Expr::new_int(lo),
+                                        ),
+                                    );
+                                    stmt.push(vl::Stmt::from(assign));
+                                }
                             }
                         }
                     }
                 }
+                xl::OpDsp::MulAdd => {
+                    if let Some(width) = e.width() {
+                        if let Ok(msb) = usize::try_from(width - 1) {
+                            instance.connect("P", expr_try_from_term(&e, width, 0, msb)?);
+                        }
+                    }
+                }
+                _ => (),
             }
         }
     }
@@ -437,6 +478,7 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     if let Some(op) = instr.opt_op() {
         match op {
             xl::OpDsp::Add => Ok(stmt),
+            xl::OpDsp::MulAdd => Ok(stmt),
             _ => Err(Error::new_conv_error("dsp op not supported yet")),
         }
     } else {
