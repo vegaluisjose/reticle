@@ -126,6 +126,10 @@ fn reg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
     if let Some(e) = instr.dst().idx(0) {
         instance.connect("Q", vl::Expr::new_ref(&String::try_from(e.clone())?));
     }
+    if let Some(loc) = instr.loc() {
+        let attr = vl::Attribute::from(loc.clone());
+        instance.set_attr(attr);
+    }
     Ok(vl::Stmt::from(instance))
 }
 
