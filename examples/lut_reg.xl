@@ -1,4 +1,4 @@
-def main(a:i8, b:i8, en:bool) -> (y:i8) {
+def main(a:i8, en:bool) -> (y:i8) {
     t0:bool = ext[0](a);
     t1:bool = ext[1](a);
     t2:bool = ext[2](a);
