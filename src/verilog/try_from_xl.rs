@@ -107,6 +107,28 @@ fn lut_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
     }
 }
 
+fn reg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
+    let prim: vl::Id = instr.op().clone().into();
+    let id = instance_name_try_from_instr(instr)?;
+    let mut instance = vl::Instance::new(&id, &prim);
+    instance.connect("C", vl::Expr::new_ref(constant::CLOCK));
+    match instr.op() {
+        xl::OpMach::Fdre => instance.connect("R", vl::Expr::new_ref(constant::RESET)),
+        xl::OpMach::Fdse => instance.connect("S", vl::Expr::new_ref(constant::RESET)),
+        _ => (),
+    }
+    if let Some(e) = instr.arg().idx(0) {
+        instance.connect("D", vl::Expr::new_ref(&String::try_from(e.clone())?));
+    }
+    if let Some(e) = instr.arg().idx(1) {
+        instance.connect("CE", vl::Expr::new_ref(&String::try_from(e.clone())?));
+    }
+    if let Some(e) = instr.dst().idx(0) {
+        instance.connect("Q", vl::Expr::new_ref(&String::try_from(e.clone())?));
+    }
+    Ok(vl::Stmt::from(instance))
+}
+
 fn expr_try_from_term(
     term: &xl::ExprTerm,
     word_width: u64,
@@ -675,7 +697,7 @@ impl TryFrom<xl::Instr> for Vec<vl::Stmt> {
                 | xl::OpMach::Lut6 => Ok(vec![lut_try_from_instr(&mach)?]),
                 xl::OpMach::Carry => Ok(vec![carry_try_from_instr(&mach)?]),
                 xl::OpMach::Dsp => Ok(dsp_try_from_instr(&mach)?),
-                _ => Err(Error::new_conv_error("not implemented yet")),
+                xl::OpMach::Fdre | xl::OpMach::Fdse => Ok(vec![reg_try_from_instr(&mach)?]),
             },
         }
     }

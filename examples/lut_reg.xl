@@ -7,8 +7,8 @@ def main(a:i8, b:i8, en:bool) -> (y:i8) {
     t5:bool = ext[5](a);
     t6:bool = ext[6](a);
     t7:bool = ext[7](a);
-    t8:bool = fdre(t0, en);
-    t9:bool = fdre(t1, en);
+    t8:bool = fdse(t0, en);
+    t9:bool = fdse(t1, en);
     t10:bool = fdre(t2, en);
     t11:bool = fdre(t3, en);
     t12:bool = fdre(t4, en);
