@@ -1,0 +1,19 @@
+def main(a:i8, b:i8, en:bool) -> (y:i8) {
+    t0:bool = ext[0](a);
+    t1:bool = ext[1](a);
+    t2:bool = ext[2](a);
+    t3:bool = ext[3](a);
+    t4:bool = ext[4](a);
+    t5:bool = ext[5](a);
+    t6:bool = ext[6](a);
+    t7:bool = ext[7](a);
+    t8:bool = fdre(t0, en);
+    t9:bool = fdre(t1, en);
+    t10:bool = fdre(t2, en);
+    t11:bool = fdre(t3, en);
+    t12:bool = fdre(t4, en);
+    t13:bool = fdre(t5, en);
+    t14:bool = fdre(t6, en);
+    t15:bool = fdre(t7, en);
+    y:i8 = cat(t8, t9, t10, t11, t12, t13, t14, t15);
+}

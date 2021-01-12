@@ -36,9 +36,9 @@ loc = { bel ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
 hint = _{ "@" ~ loc }
 
-op_mach = { id }
+op_mach = { "lut1" | "lut2" | "lut3" | "lut4" | "lut5" | "lut6" | "dsp" | "carry" | "fdre" | "fdse" }
 
-op_basc = { id }
+op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
 
 opt_key = { id }
 
@@ -62,7 +62,7 @@ instr_mach = { io ~ "=" ~ op_mach ~ opt? ~ io ~ hint? ~ ";" }
 
 instr_basc = { io ~ "=" ~ op_basc ~ attr? ~ io ~ ";" }
 
-instr = { instr_basc | instr_mach }
+instr = { instr_mach | instr_basc }
 
 body = { instr+ }
 
