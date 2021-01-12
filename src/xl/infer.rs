@@ -5,19 +5,12 @@ use std::collections::HashMap;
 fn build_env(prog: &Prog) -> Result<HashMap<String, Ty>, Error> {
     let mut env: HashMap<String, Ty> = HashMap::new();
     let inp: Vec<ExprTerm> = prog.sig().input().clone().into();
-    let mut err = false;
     // add prog inputs to environment
     for e in inp {
         if let Some(id) = e.id() {
             if let Some(ty) = e.ty() {
                 env.insert(id, ty.clone());
-            } else {
-                err = true;
-                break;
             }
-        } else {
-            err = true;
-            break;
         }
     }
     // add instr outputs to environment
@@ -27,21 +20,11 @@ fn build_env(prog: &Prog) -> Result<HashMap<String, Ty>, Error> {
             if let Some(id) = e.id() {
                 if let Some(ty) = e.ty() {
                     env.insert(id, ty.clone());
-                } else {
-                    err = true;
-                    break;
                 }
-            } else {
-                err = true;
-                break;
             }
         }
     }
-    if err {
-        Err(Error::new_type_error("terms must be vars"))
-    } else {
-        Ok(env)
-    }
+    Ok(env)
 }
 
 pub fn infer_type_try_from_prog(prog: Prog) -> Result<Prog, Error> {
