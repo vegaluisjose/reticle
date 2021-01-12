@@ -454,7 +454,10 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                     );
                 }
                 if let Some(e) = instr.arg().idx(2) {
-                    instance.connect("CEC", vl::Expr::new_ref(&String::try_from(e.clone())?));
+                    instance.connect(
+                        "C",
+                        expr_try_from_term(&e, DSP_WIDTH_C as u64, 0, DSP_WIDTH_C - 1)?,
+                    );
                 }
                 let i3 = instr.arg().idx(3);
                 let i4 = instr.arg().idx(4);

@@ -1,0 +1,3 @@
+def main(a: i8, b: i8, c: i16, en: bool) -> (y: i16) {
+    y: i16 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en);
+}
