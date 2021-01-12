@@ -42,7 +42,13 @@ op_basc = { id }
 
 opt_key = { id }
 
-opt_num = { ASCII_DIGIT+ }
+dec_num = { ASCII_DIGIT+ }
+
+bin_num = { ASCII_BIN_DIGIT+ }
+
+hex_num = { ASCII_HEX_DIGIT+ }
+
+opt_num = { "0b" ~ bin_num | "0x" ~ hex_num | dec_num }
 
 opt_op = { id }
 

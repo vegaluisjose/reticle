@@ -141,12 +141,37 @@ impl XLParser {
         }
     }
 
-    fn opt_num(input: Node) -> ParseResult<OptVal> {
+    fn dec_num(input: Node) -> ParseResult<OptVal> {
         let val = input.as_str().parse::<u64>();
         match val {
             Ok(v) => Ok(OptVal::UInt(v)),
-            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+            Err(_) => panic!("Error: parsing {} as dec u64", input.as_str()),
         }
+    }
+
+    fn bin_num(input: Node) -> ParseResult<OptVal> {
+        let val = u64::from_str_radix(input.as_str(), 2);
+        match val {
+            Ok(v) => Ok(OptVal::UInt(v)),
+            Err(_) => panic!("Error: parsing {} as bin u64", input.as_str()),
+        }
+    }
+
+    fn hex_num(input: Node) -> ParseResult<OptVal> {
+        let val = u64::from_str_radix(input.as_str(), 16);
+        match val {
+            Ok(v) => Ok(OptVal::UInt(v)),
+            Err(_) => panic!("Error: parsing {} as hex u64", input.as_str()),
+        }
+    }
+
+    fn opt_num(input: Node) -> ParseResult<OptVal> {
+        Ok(match_nodes!(
+            input.into_children();
+            [dec_num(num)] => num,
+            [hex_num(num)] => num,
+            [bin_num(num)] => num,
+        ))
     }
 
     fn opt_op(input: Node) -> ParseResult<OptVal> {
