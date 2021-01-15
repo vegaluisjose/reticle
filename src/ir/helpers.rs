@@ -144,6 +144,12 @@ impl InstrComp {
     pub fn prim(&self) -> &Prim {
         &self.prim
     }
+    pub fn is_reg(&self) -> bool {
+        match self.op() {
+            OpComp::Reg => true,
+            _ => false,
+        }
+    }
 }
 
 impl InstrWire {
@@ -158,6 +164,15 @@ impl InstrWire {
     }
     pub fn arg(&self) -> &Expr {
         &self.arg
+    }
+}
+
+impl Instr {
+    pub fn is_reg(&self) -> bool {
+        match self {
+            Instr::Comp(instr) => instr.is_reg(),
+            _ => false,
+        }
     }
 }
 
