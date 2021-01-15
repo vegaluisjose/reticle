@@ -174,6 +174,13 @@ impl Instr {
             _ => false,
         }
     }
+    pub fn dst(&self) -> &Expr {
+        match self {
+            Instr::Comp(instr) => instr.dst(),
+            Instr::Wire(instr) => instr.dst(),
+            Instr::Call(instr) => instr.dst(),
+        }
+    }
 }
 
 impl Sig {

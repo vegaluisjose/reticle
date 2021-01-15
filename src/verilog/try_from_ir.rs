@@ -2,7 +2,7 @@ use crate::ir::ast as ir;
 use crate::util::errors::Error;
 use crate::verilog::ast as vl;
 use crate::verilog::constant;
-// use std::collections::HashSet;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
@@ -171,18 +171,21 @@ impl TryFrom<ir::Def> for vl::Module {
         for i in input {
             module.add_port(i.clone());
         }
-        // let mut decl: Vec<vl::Decl> = Vec::new();
-        // for instr in def.body() {
-        //     let d: Vec<vl::Decl> = instr.clone().try_into()?;
-        //     decl.extend(d);
-        // }
-        // let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
-        // let output: Vec<vl::Decl> = wire_try_from_expr(def.sig().output().clone())?;
-        // let output_set: HashSet<vl::Decl> = output.into_iter().collect();
-        // let mut module = vl::Module::try_from(def.sig().clone())?;
-        // for decl in decl_set.difference(&output_set) {
-        //     module.add_decl(decl.clone());
-        // }
+        let output: Vec<ir::ExprTerm> = def.sig().output().clone().into();
+        let output_set: HashSet<ir::ExprTerm> = output.into_iter().collect();
+        for instr in def.body() {
+            let dst: Vec<ir::ExprTerm> = instr.dst().clone().into();
+            let decl: Vec<vl::Decl> = instr.clone().try_into()?;
+            for e in dst {
+                for d in &decl {
+                    if instr.is_reg() && output_set.contains(&e) {
+                        module.add_port(vl::Port::Output(d.clone()));
+                    } else {
+                        module.add_decl(d.clone())
+                    }
+                }
+            }
+        }
         Ok(module)
     }
 }
