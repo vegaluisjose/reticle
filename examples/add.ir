@@ -1,6 +1,6 @@
 def main(a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
     t0:i8<4> = reg[0](a, en);
-    //t1:i8<4> = reg[0](b, en);
-    //t2:i8<4> = add(t0, t1);
-    //y:i8<4> = reg[0](t2, en);
+    t1:i8<4> = reg[0](b, en);
+    t2:i8<4> = add(t0, t1);
+    y:i8<4> = reg[0](t2, en);
 }
