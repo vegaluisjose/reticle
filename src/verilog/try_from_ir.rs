@@ -2,7 +2,7 @@ use crate::ir::ast as ir;
 use crate::util::errors::Error;
 use crate::verilog::ast as vl;
 use crate::verilog::constant;
-use std::collections::HashSet;
+// use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
@@ -134,18 +134,27 @@ impl TryFrom<ir::Instr> for Vec<vl::Decl> {
     }
 }
 
+fn input_try_from_sig(sig: ir::Sig) -> Result<Vec<vl::Port>, Error> {
+    let mut port: Vec<vl::Port> = Vec::new();
+    port.push(vl::Port::Input(vl::Decl::new_wire(constant::CLOCK, 1)));
+    port.push(vl::Port::Input(vl::Decl::new_wire(constant::RESET, 1)));
+    let input: Vec<vl::Decl> = wire_try_from_expr(sig.input().clone())?;
+    for decl in input {
+        port.push(vl::Port::Input(decl.clone()));
+    }
+    Ok(port)
+}
+
 impl TryFrom<ir::Sig> for vl::Module {
     type Error = Error;
     fn try_from(sig: ir::Sig) -> Result<Self, Self::Error> {
         let id = sig.id();
         let mut module = vl::Module::new(&id);
-        let input: Vec<vl::Decl> = wire_try_from_expr(sig.input().clone())?;
-        let output: Vec<vl::Decl> = wire_try_from_expr(sig.output().clone())?;
-        module.add_input(constant::CLOCK, 1);
-        module.add_input(constant::RESET, 1);
-        for decl in input {
-            module.add_port(vl::Port::Input(decl.clone()))
+        let input = input_try_from_sig(sig.clone())?;
+        for port in input {
+            module.add_port(port.clone())
         }
+        let output: Vec<vl::Decl> = wire_try_from_expr(sig.output().clone())?;
         for decl in output {
             module.add_port(vl::Port::Output(decl.clone()))
         }
@@ -156,18 +165,24 @@ impl TryFrom<ir::Sig> for vl::Module {
 impl TryFrom<ir::Def> for vl::Module {
     type Error = Error;
     fn try_from(def: ir::Def) -> Result<Self, Self::Error> {
-        let mut decl: Vec<vl::Decl> = Vec::new();
-        for instr in def.body() {
-            let d: Vec<vl::Decl> = instr.clone().try_into()?;
-            decl.extend(d);
+        let id = def.sig().id();
+        let mut module = vl::Module::new(&id);
+        let input = input_try_from_sig(def.sig().clone())?;
+        for i in input {
+            module.add_port(i.clone());
         }
-        let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
-        let output: Vec<vl::Decl> = wire_try_from_expr(def.sig().output().clone())?;
-        let output_set: HashSet<vl::Decl> = output.into_iter().collect();
-        let mut module = vl::Module::try_from(def.sig().clone())?;
-        for decl in decl_set.difference(&output_set) {
-            module.add_decl(decl.clone());
-        }
+        // let mut decl: Vec<vl::Decl> = Vec::new();
+        // for instr in def.body() {
+        //     let d: Vec<vl::Decl> = instr.clone().try_into()?;
+        //     decl.extend(d);
+        // }
+        // let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
+        // let output: Vec<vl::Decl> = wire_try_from_expr(def.sig().output().clone())?;
+        // let output_set: HashSet<vl::Decl> = output.into_iter().collect();
+        // let mut module = vl::Module::try_from(def.sig().clone())?;
+        // for decl in decl_set.difference(&output_set) {
+        //     module.add_decl(decl.clone());
+        // }
         Ok(module)
     }
 }
