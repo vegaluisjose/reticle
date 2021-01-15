@@ -1,6 +1,7 @@
 use crate::util::errors::Error;
 use crate::verilog::ast as vl;
 use crate::verilog::constant;
+use crate::verilog::try_from_ir;
 use crate::xl::ast as xl;
 use std::collections::HashSet;
 use std::convert::TryFrom;
@@ -599,14 +600,14 @@ fn carry_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
 impl TryFrom<xl::InstrBasc> for Vec<vl::Decl> {
     type Error = Error;
     fn try_from(instr: xl::InstrBasc) -> Result<Self, Self::Error> {
-        Ok(instr.dst().clone().try_into()?)
+        Ok(try_from_ir::wire_try_from_expr(instr.dst().clone())?)
     }
 }
 
 impl TryFrom<xl::InstrMach> for Vec<vl::Decl> {
     type Error = Error;
     fn try_from(instr: xl::InstrMach) -> Result<Self, Self::Error> {
-        Ok(instr.dst().clone().try_into()?)
+        Ok(try_from_ir::wire_try_from_expr(instr.dst().clone())?)
     }
 }
 
@@ -722,7 +723,7 @@ impl TryFrom<xl::Prog> for vl::Module {
             }
         }
         let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
-        let output: Vec<vl::Decl> = prog.sig().output().clone().try_into()?;
+        let output: Vec<vl::Decl> = try_from_ir::wire_try_from_expr(prog.sig().output().clone())?;
         let output_set: HashSet<vl::Decl> = output.into_iter().collect();
         module.add_decl(vl::Decl::new_wire(constant::GND, 1));
         module.add_decl(vl::Decl::new_wire(constant::VCC, 1));

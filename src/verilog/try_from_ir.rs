@@ -50,47 +50,76 @@ impl TryFrom<ir::Expr> for Vec<vl::Expr> {
     }
 }
 
-impl TryFrom<ir::ExprTerm> for Vec<vl::Decl> {
-    type Error = Error;
-    fn try_from(term: ir::ExprTerm) -> Result<Self, Self::Error> {
-        let mut decls: Vec<vl::Decl> = Vec::new();
-        if let Some(width) = term.width() {
-            let exprs: Vec<vl::Expr> = term.try_into()?;
-            for e in exprs {
-                let d = vl::Decl::new_wire(&e.id(), width);
-                decls.push(d);
-            }
+fn wire_try_from_term(term: ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
+    let mut decls: Vec<vl::Decl> = Vec::new();
+    if let Some(width) = term.width() {
+        let exprs: Vec<vl::Expr> = term.try_into()?;
+        for e in exprs {
+            let d = vl::Decl::new_wire(&e.id(), width);
+            decls.push(d);
         }
-        Ok(decls)
+    }
+    Ok(decls)
+}
+
+fn wire_try_from_tup(tup: ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
+    let mut decls: Vec<vl::Decl> = Vec::new();
+    for term in tup.term() {
+        let t: Vec<vl::Decl> = wire_try_from_term(term.clone())?;
+        decls.extend(t);
+    }
+    Ok(decls)
+}
+
+pub fn wire_try_from_expr(expr: ir::Expr) -> Result<Vec<vl::Decl>, Error> {
+    match expr {
+        ir::Expr::Tup(tup) => Ok(wire_try_from_tup(tup)?),
+        ir::Expr::Term(term) => Ok(wire_try_from_term(term)?),
     }
 }
 
-impl TryFrom<ir::ExprTup> for Vec<vl::Decl> {
-    type Error = Error;
-    fn try_from(tup: ir::ExprTup) -> Result<Self, Self::Error> {
-        let mut decls: Vec<vl::Decl> = Vec::new();
-        for term in tup.term() {
-            let t: Vec<vl::Decl> = term.clone().try_into()?;
-            decls.extend(t);
+fn reg_try_from_term(term: ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
+    let mut decls: Vec<vl::Decl> = Vec::new();
+    if let Some(width) = term.width() {
+        let exprs: Vec<vl::Expr> = term.try_into()?;
+        for e in exprs {
+            let d = vl::Decl::new_reg(&e.id(), width);
+            decls.push(d);
         }
-        Ok(decls)
     }
+    Ok(decls)
 }
 
-impl TryFrom<ir::Expr> for Vec<vl::Decl> {
-    type Error = Error;
-    fn try_from(expr: ir::Expr) -> Result<Self, Self::Error> {
-        match expr {
-            ir::Expr::Tup(tup) => Ok(tup.try_into()?),
-            ir::Expr::Term(term) => Ok(term.try_into()?),
-        }
+fn reg_try_from_tup(tup: ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
+    let mut decls: Vec<vl::Decl> = Vec::new();
+    for term in tup.term() {
+        let t: Vec<vl::Decl> = reg_try_from_term(term.clone())?;
+        decls.extend(t);
+    }
+    Ok(decls)
+}
+
+pub fn reg_try_from_expr(expr: ir::Expr) -> Result<Vec<vl::Decl>, Error> {
+    match expr {
+        ir::Expr::Tup(tup) => Ok(reg_try_from_tup(tup)?),
+        ir::Expr::Term(term) => Ok(reg_try_from_term(term)?),
     }
 }
 
 impl TryFrom<ir::InstrWire> for Vec<vl::Decl> {
     type Error = Error;
     fn try_from(instr: ir::InstrWire) -> Result<Self, Self::Error> {
-        Ok(instr.dst().clone().try_into()?)
+        Ok(wire_try_from_expr(instr.dst().clone())?)
+    }
+}
+
+impl TryFrom<ir::InstrComp> for Vec<vl::Decl> {
+    type Error = Error;
+    fn try_from(instr: ir::InstrComp) -> Result<Self, Self::Error> {
+        match instr.op() {
+            ir::OpComp::Reg => Ok(reg_try_from_expr(instr.dst().clone())?),
+            _ => Ok(wire_try_from_expr(instr.dst().clone())?),
+        }
     }
 }
 
@@ -99,7 +128,8 @@ impl TryFrom<ir::Instr> for Vec<vl::Decl> {
     fn try_from(instr: ir::Instr) -> Result<Self, Self::Error> {
         match instr {
             ir::Instr::Wire(instr) => Ok(instr.try_into()?),
-            _ => Err(Error::new_conv_error("not implemented yet")),
+            ir::Instr::Comp(instr) => Ok(instr.try_into()?),
+            _ => Err(Error::new_conv_error("call not implemented yet")),
         }
     }
 }
@@ -109,8 +139,8 @@ impl TryFrom<ir::Sig> for vl::Module {
     fn try_from(sig: ir::Sig) -> Result<Self, Self::Error> {
         let id = sig.id();
         let mut module = vl::Module::new(&id);
-        let input: Vec<vl::Decl> = sig.input().clone().try_into()?;
-        let output: Vec<vl::Decl> = sig.output().clone().try_into()?;
+        let input: Vec<vl::Decl> = wire_try_from_expr(sig.input().clone())?;
+        let output: Vec<vl::Decl> = wire_try_from_expr(sig.output().clone())?;
         module.add_input(constant::CLOCK, 1);
         module.add_input(constant::RESET, 1);
         for decl in input {
@@ -132,12 +162,24 @@ impl TryFrom<ir::Def> for vl::Module {
             decl.extend(d);
         }
         let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
-        let output: Vec<vl::Decl> = def.sig().output().clone().try_into()?;
+        let output: Vec<vl::Decl> = wire_try_from_expr(def.sig().output().clone())?;
         let output_set: HashSet<vl::Decl> = output.into_iter().collect();
         let mut module = vl::Module::try_from(def.sig().clone())?;
         for decl in decl_set.difference(&output_set) {
             module.add_decl(decl.clone());
         }
         Ok(module)
+    }
+}
+
+// convert main only for now
+impl TryFrom<ir::Prog> for vl::Module {
+    type Error = Error;
+    fn try_from(prog: ir::Prog) -> Result<Self, Self::Error> {
+        if let Some(def) = prog.get("main") {
+            Ok(vl::Module::try_from(def.clone())?)
+        } else {
+            Err(Error::new_conv_error("main not found"))
+        }
     }
 }
