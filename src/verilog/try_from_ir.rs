@@ -138,12 +138,12 @@ impl TryFrom<ir::InstrComp> for vl::Stmt {
     type Error = Error;
     fn try_from(instr: ir::InstrComp) -> Result<Self, Self::Error> {
         let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
-        let attr: Vec<i64> = instr.attr().clone().try_into()?;
+        let attr: Vec<i32> = instr.attr().clone().try_into()?;
         match instr.op() {
             ir::OpComp::Reg => {
                 if let Some(d0) = dst.get(0) {
                     let v0:i32 = if let Some(v) = attr.get(0) {
-                        i32::try_from(*v)?
+                        *v
                     } else {
                         0
                     };
