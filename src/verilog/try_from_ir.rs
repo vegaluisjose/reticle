@@ -134,6 +134,44 @@ impl TryFrom<ir::Instr> for Vec<vl::Decl> {
     }
 }
 
+impl TryFrom<ir::InstrComp> for vl::Stmt {
+    type Error = Error;
+    fn try_from(instr: ir::InstrComp) -> Result<Self, Self::Error> {
+        let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
+        match instr.op() {
+            ir::OpComp::Reg => {
+                if let Some(d0) = dst.get(0) {
+                    let reset = vl::Expr::new_ref(constant::RESET);
+                    let event = vl::Sequential::new_posedge(constant::CLOCK);
+                    let mut always = vl::ParallelProcess::new_always();
+                    let dexpr = vl::Expr::new_ref(d0);
+                    let ival = vl::Expr::new_int(0);
+                    let s0 = vl::Sequential::new_nonblk_assign(dexpr, ival);
+                    let mut i0 = vl::SequentialIfElse::new(reset);
+                    i0.add_seq(s0);
+                    always.set_event(event);
+                    always.add_seq(i0.into());
+                    Ok(always.into())
+                } else {
+                    Err(Error::new_conv_error("reg instr must have one dst"))
+                }
+            }
+            _ => Err(Error::new_conv_error("comp op not implemented yet")),
+        }
+    }
+}
+
+impl TryFrom<ir::Instr> for vl::Stmt {
+    type Error = Error;
+    fn try_from(instr: ir::Instr) -> Result<Self, Self::Error> {
+        match instr {
+            ir::Instr::Comp(instr) => Ok(instr.try_into()?),
+            ir::Instr::Wire(_) => Err(Error::new_conv_error("wire instr not implemented yet")),
+            ir::Instr::Call(_) => Err(Error::new_conv_error("call instr not implemented yet")),
+        }
+    }
+}
+
 fn input_try_from_sig(sig: ir::Sig) -> Result<Vec<vl::Port>, Error> {
     let mut port: Vec<vl::Port> = Vec::new();
     port.push(vl::Port::Input(vl::Decl::new_wire(constant::CLOCK, 1)));
@@ -173,6 +211,7 @@ impl TryFrom<ir::Def> for vl::Module {
         }
         let output: Vec<ir::ExprTerm> = def.sig().output().clone().into();
         let output_set: HashSet<ir::ExprTerm> = output.into_iter().collect();
+        let mut stmt: Vec<vl::Stmt> = Vec::new();
         for instr in def.body() {
             let dst: Vec<ir::ExprTerm> = instr.dst().clone().into();
             let decl: Vec<vl::Decl> = instr.clone().try_into()?;
@@ -185,6 +224,10 @@ impl TryFrom<ir::Def> for vl::Module {
                     }
                 }
             }
+            stmt.push(instr.clone().try_into()?);
+        }
+        for s in stmt {
+            module.add_stmt(s);
         }
         Ok(module)
     }
