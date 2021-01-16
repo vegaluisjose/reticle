@@ -145,10 +145,7 @@ impl InstrComp {
         &self.prim
     }
     pub fn is_reg(&self) -> bool {
-        match self.op() {
-            OpComp::Reg => true,
-            _ => false,
-        }
+        matches!(self.op(), OpComp::Reg)
     }
 }
 
