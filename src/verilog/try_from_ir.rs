@@ -138,15 +138,21 @@ impl TryFrom<ir::InstrComp> for vl::Stmt {
     type Error = Error;
     fn try_from(instr: ir::InstrComp) -> Result<Self, Self::Error> {
         let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
+        let attr: Vec<i64> = instr.attr().clone().try_into()?;
         match instr.op() {
             ir::OpComp::Reg => {
                 if let Some(d0) = dst.get(0) {
+                    let v0:i32 = if let Some(v) = attr.get(0) {
+                        i32::try_from(*v)?
+                    } else {
+                        0
+                    };
                     let reset = vl::Expr::new_ref(constant::RESET);
                     let event = vl::Sequential::new_posedge(constant::CLOCK);
                     let mut always = vl::ParallelProcess::new_always();
-                    let dexpr = vl::Expr::new_ref(d0);
-                    let ival = vl::Expr::new_int(0);
-                    let s0 = vl::Sequential::new_nonblk_assign(dexpr, ival);
+                    let dst_expr = vl::Expr::new_ref(d0);
+                    let val_expr = vl::Expr::new_int(v0);
+                    let s0 = vl::Sequential::new_nonblk_assign(dst_expr, val_expr);
                     let mut i0 = vl::SequentialIfElse::new(reset);
                     i0.add_seq(s0);
                     always.set_event(event);
