@@ -126,6 +126,12 @@ impl InstrCall {
     pub fn arg(&self) -> &Expr {
         &self.arg
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        self.dst = dst
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        self.arg = arg
+    }
 }
 
 impl InstrComp {
@@ -147,6 +153,12 @@ impl InstrComp {
     pub fn is_reg(&self) -> bool {
         matches!(self.op(), OpComp::Reg)
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        self.dst = dst
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        self.arg = arg
+    }
 }
 
 impl InstrWire {
@@ -162,6 +174,12 @@ impl InstrWire {
     pub fn arg(&self) -> &Expr {
         &self.arg
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        self.dst = dst
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        self.arg = arg
+    }
 }
 
 impl Instr {
@@ -176,6 +194,27 @@ impl Instr {
             Instr::Comp(instr) => instr.dst(),
             Instr::Wire(instr) => instr.dst(),
             Instr::Call(instr) => instr.dst(),
+        }
+    }
+    pub fn arg(&self) -> &Expr {
+        match self {
+            Instr::Comp(instr) => instr.arg(),
+            Instr::Wire(instr) => instr.arg(),
+            Instr::Call(instr) => instr.arg(),
+        }
+    }
+    pub fn set_dst(&mut self, dst: Expr) {
+        match self {
+            Instr::Comp(instr) => instr.set_dst(dst),
+            Instr::Wire(instr) => instr.set_dst(dst),
+            Instr::Call(instr) => instr.set_dst(dst),
+        }
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        match self {
+            Instr::Comp(instr) => instr.set_arg(arg),
+            Instr::Wire(instr) => instr.set_arg(arg),
+            Instr::Call(instr) => instr.set_arg(arg),
         }
     }
 }

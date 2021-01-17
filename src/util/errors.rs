@@ -1,3 +1,4 @@
+use crate::ir::parser as irparser;
 use crate::xl::parser as xlparser;
 use std::fmt;
 use std::num::TryFromIntError;
@@ -5,7 +6,8 @@ use std::num::TryFromIntError;
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::XLParse(msg) => write!(f, "[Error][Parsing] {}", msg),
+            Error::IRParse(msg) => write!(f, "[Error][IR parsing] {}", msg),
+            Error::XLParse(msg) => write!(f, "[Error][XL parsing] {}", msg),
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
             Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
@@ -15,6 +17,7 @@ impl fmt::Display for Error {
 
 #[derive(Debug)]
 pub enum Error {
+    IRParse(pest_consume::Error<irparser::Rule>),
     XLParse(pest_consume::Error<xlparser::Rule>),
     Conversion(String),
     Type(String),
@@ -27,6 +30,12 @@ impl Error {
     }
     pub fn new_type_error(msg: &str) -> Self {
         Error::Conversion(msg.to_string())
+    }
+}
+
+impl From<pest_consume::Error<irparser::Rule>> for Error {
+    fn from(e: pest_consume::Error<irparser::Rule>) -> Self {
+        Error::IRParse(e)
     }
 }
 

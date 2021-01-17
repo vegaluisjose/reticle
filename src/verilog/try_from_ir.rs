@@ -2,6 +2,7 @@ use crate::ir::ast as ir;
 use crate::util::errors::Error;
 use crate::verilog::ast as vl;
 use crate::verilog::constant;
+use itertools::izip;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use std::convert::TryInto;
@@ -175,6 +176,29 @@ impl TryFrom<ir::InstrComp> for Vec<vl::Stmt> {
                     }
                 } else {
                     Err(Error::new_conv_error("reg instr must have one dst"))
+                }
+            }
+            ir::OpComp::Add => {
+                if let Some(d0) = instr.dst().idx(0) {
+                    if let Some(a0) = instr.arg().idx(0) {
+                        if let Some(a1) = instr.arg().idx(1) {
+                            let d_expr: Vec<vl::Expr> = d0.clone().try_into()?;
+                            let a_expr: Vec<vl::Expr> = a0.clone().try_into()?;
+                            let b_expr: Vec<vl::Expr> = a1.clone().try_into()?;
+                            let mut stmt: Vec<vl::Stmt> = Vec::new();
+                            for (d, a, b) in izip!(d_expr, a_expr, b_expr) {
+                                let add = vl::Expr::new_add(a, b);
+                                stmt.push(vl::Stmt::from(vl::Parallel::Assign(d, add)));
+                            }
+                            Ok(stmt)
+                        } else {
+                            Err(Error::new_conv_error("add instr must have en arg"))
+                        }
+                    } else {
+                        Err(Error::new_conv_error("add instr must have two args"))
+                    }
+                } else {
+                    Err(Error::new_conv_error("add instr must have one dst"))
                 }
             }
             _ => Err(Error::new_conv_error("comp op not implemented yet")),
