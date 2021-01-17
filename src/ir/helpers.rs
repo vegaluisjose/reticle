@@ -214,7 +214,7 @@ impl Prog {
     pub fn get(&self, name: &str) -> Option<&Def> {
         self.def.get(name)
     }
-    pub fn insert(&mut self, name: &str, def: Def) {
-        self.def.insert(name.to_string(), def);
+    pub fn insert(&mut self, name: &str, def: Def) -> Option<Def> {
+        self.def.insert(name.to_string(), def)
     }
 }
