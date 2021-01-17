@@ -7,7 +7,7 @@ impl Ty {
             Ty::Bool => Some(1),
             Ty::UInt(w) => Some(*w),
             Ty::SInt(w) => Some(*w),
-            Ty::Vector(d, _) => d.width(),
+            Ty::Vector(ty, _) => ty.width(),
             _ => None,
         }
     }
@@ -15,6 +15,13 @@ impl Ty {
         match self {
             Ty::Vector(_, l) => Some(*l),
             _ => None,
+        }
+    }
+    pub fn is_signed(&self) -> bool {
+        match self {
+            Ty::SInt(_) => true,
+            Ty::Vector(ty, _) => ty.is_signed(),
+            _ => false,
         }
     }
     pub fn is_vector(&self) -> bool {

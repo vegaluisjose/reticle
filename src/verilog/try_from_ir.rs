@@ -29,6 +29,30 @@ impl TryFrom<ir::ExprTerm> for Vec<vl::Expr> {
     }
 }
 
+fn sign_expr_try_from_term(term: ir::ExprTerm) -> Result<Vec<vl::Expr>, Error> {
+    match term {
+        ir::ExprTerm::Var(id, ty) => {
+            let mut exprs: Vec<vl::Expr> = Vec::new();
+            if let Some(length) = ty.length() {
+                for n in 0..length {
+                    let name = format!("{}_{}", id, n);
+                    if ty.is_signed() {
+                        exprs.push(vl::Expr::new_signed_ref(&name));
+                    } else {
+                        exprs.push(vl::Expr::new_ref(&name));
+                    }
+                }
+            } else if ty.is_signed() {
+                exprs.push(vl::Expr::new_signed_ref(id));
+            } else {
+                exprs.push(vl::Expr::new_ref(id));
+            }
+            Ok(exprs)
+        }
+        _ => Err(Error::new_conv_error("not implemented yet")),
+    }
+}
+
 impl TryFrom<ir::ExprTup> for Vec<vl::Expr> {
     type Error = Error;
     fn try_from(tup: ir::ExprTup) -> Result<Self, Self::Error> {
@@ -199,6 +223,29 @@ impl TryFrom<ir::InstrComp> for Vec<vl::Stmt> {
                     }
                 } else {
                     Err(Error::new_conv_error("add instr must have one dst"))
+                }
+            }
+            ir::OpComp::Mul => {
+                if let Some(d0) = instr.dst().idx(0) {
+                    if let Some(a0) = instr.arg().idx(0) {
+                        if let Some(a1) = instr.arg().idx(1) {
+                            let d_expr: Vec<vl::Expr> = d0.clone().try_into()?;
+                            let a_expr = sign_expr_try_from_term(a0.clone())?;
+                            let b_expr = sign_expr_try_from_term(a1.clone())?;
+                            let mut stmt: Vec<vl::Stmt> = Vec::new();
+                            for (d, a, b) in izip!(d_expr, a_expr, b_expr) {
+                                let add = vl::Expr::new_mul(a, b);
+                                stmt.push(vl::Stmt::from(vl::Parallel::Assign(d, add)));
+                            }
+                            Ok(stmt)
+                        } else {
+                            Err(Error::new_conv_error("mul instr must have en arg"))
+                        }
+                    } else {
+                        Err(Error::new_conv_error("mul instr must have two args"))
+                    }
+                } else {
+                    Err(Error::new_conv_error("mul instr must have one dst"))
                 }
             }
             _ => Err(Error::new_conv_error("comp op not implemented yet")),
