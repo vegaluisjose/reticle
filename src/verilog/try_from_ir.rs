@@ -134,30 +134,45 @@ impl TryFrom<ir::Instr> for Vec<vl::Decl> {
     }
 }
 
-impl TryFrom<ir::InstrComp> for vl::Stmt {
+impl TryFrom<ir::InstrComp> for Vec<vl::Stmt> {
     type Error = Error;
     fn try_from(instr: ir::InstrComp) -> Result<Self, Self::Error> {
-        let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
-        let attr: Vec<i32> = instr.attr().clone().try_into()?;
         match instr.op() {
             ir::OpComp::Reg => {
-                if let Some(d0) = dst.get(0) {
-                    let v0:i32 = if let Some(v) = attr.get(0) {
-                        *v
+                let attr: Vec<i32> = instr.attr().clone().try_into()?;
+                if let Some(d0) = instr.dst().idx(0) {
+                    if let Some(a0) = instr.arg().idx(0) {
+                        if let Some(en) = instr.arg().idx(1) {
+                            let v0: i32 = if let Some(v) = attr.get(0) { *v } else { 0 };
+                            let event = vl::Sequential::new_posedge(constant::CLOCK);
+                            let rst_expr = vl::Expr::new_ref(constant::RESET);
+                            let ena_id: vl::Id = en.clone().try_into()?;
+                            let ena_expr = vl::Expr::new_ref(&ena_id);
+                            let dst: Vec<vl::Expr> = d0.clone().try_into()?;
+                            let arg: Vec<vl::Expr> = a0.clone().try_into()?;
+                            let val_expr = vl::Expr::new_int(v0);
+                            let mut stmt: Vec<vl::Stmt> = Vec::new();
+                            for (d, a) in dst.iter().zip(arg.iter()) {
+                                let mut always = vl::ParallelProcess::new_always();
+                                let s0 =
+                                    vl::Sequential::new_nonblk_assign(d.clone(), val_expr.clone());
+                                let s1 = vl::Sequential::new_nonblk_assign(d.clone(), a.clone());
+                                let mut i0 = vl::SequentialIfElse::new(rst_expr.clone());
+                                let mut i1 = vl::SequentialIfElse::new(ena_expr.clone());
+                                i0.add_seq(s0);
+                                i1.add_seq(s1);
+                                i0.set_else(i1.into());
+                                always.set_event(event.clone());
+                                always.add_seq(i0.into());
+                                stmt.push(vl::Stmt::from(always));
+                            }
+                            Ok(stmt)
+                        } else {
+                            Err(Error::new_conv_error("reg instr must have en arg"))
+                        }
                     } else {
-                        0
-                    };
-                    let reset = vl::Expr::new_ref(constant::RESET);
-                    let event = vl::Sequential::new_posedge(constant::CLOCK);
-                    let mut always = vl::ParallelProcess::new_always();
-                    let dst_expr = vl::Expr::new_ref(d0);
-                    let val_expr = vl::Expr::new_int(v0);
-                    let s0 = vl::Sequential::new_nonblk_assign(dst_expr, val_expr);
-                    let mut i0 = vl::SequentialIfElse::new(reset);
-                    i0.add_seq(s0);
-                    always.set_event(event);
-                    always.add_seq(i0.into());
-                    Ok(always.into())
+                        Err(Error::new_conv_error("reg instr must have two args"))
+                    }
                 } else {
                     Err(Error::new_conv_error("reg instr must have one dst"))
                 }
@@ -167,7 +182,7 @@ impl TryFrom<ir::InstrComp> for vl::Stmt {
     }
 }
 
-impl TryFrom<ir::Instr> for vl::Stmt {
+impl TryFrom<ir::Instr> for Vec<vl::Stmt> {
     type Error = Error;
     fn try_from(instr: ir::Instr) -> Result<Self, Self::Error> {
         match instr {
@@ -230,7 +245,8 @@ impl TryFrom<ir::Def> for vl::Module {
                     }
                 }
             }
-            stmt.push(instr.clone().try_into()?);
+            let s: Vec<vl::Stmt> = instr.clone().try_into()?;
+            stmt.extend(s);
         }
         for s in stmt {
             module.add_stmt(s);
