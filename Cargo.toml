@@ -13,7 +13,7 @@ regex = "1.3.9"
 pest = "2.0"
 pest_derive = "2.0"
 pest_consume = "1.0.5"
-vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "f616bfdfa5268b01086f4549a75cb92101bd0836" }
+vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "9238cf93e66701787370f848995004ac884ae2a7" }
 structopt = { version = "0.3", default-features = false }
 itertools = "0.9.0"
 lazy_static = "1.4.0"
