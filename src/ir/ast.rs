@@ -111,7 +111,7 @@ pub struct Sig {
     pub output: Expr,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash, Default)]
 pub struct Def {
     pub sig: Sig,
     pub body: Vec<Instr>,

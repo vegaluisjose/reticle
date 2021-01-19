@@ -248,6 +248,12 @@ impl Def {
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
+    pub fn set_sig(&mut self, sig: Sig) {
+        self.sig = sig;
+    }
+    pub fn set_body(&mut self, body: Vec<Instr>) {
+        self.body = body;
+    }
     pub fn body_mut(&mut self) -> &mut Vec<Instr> {
         &mut self.body
     }
@@ -259,6 +265,9 @@ impl Prog {
     }
     pub fn get(&self, name: &str) -> Option<&Def> {
         self.def.get(name)
+    }
+    pub fn get_mut(&mut self, name: &str) -> Option<&mut Def> {
+        self.def.get_mut(name)
     }
     pub fn insert(&mut self, name: &str, def: Def) -> Option<Def> {
         self.def.insert(name.to_string(), def)
