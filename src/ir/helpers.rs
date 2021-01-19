@@ -1,5 +1,7 @@
 use crate::ir::ast::*;
 use std::collections::HashMap;
+use rand::thread_rng;
+use rand::seq::SliceRandom;
 
 impl Ty {
     pub fn width(&self) -> Option<u64> {
@@ -256,6 +258,9 @@ impl Def {
     }
     pub fn body_mut(&mut self) -> &mut Vec<Instr> {
         &mut self.body
+    }
+    pub fn shuffle_body(&mut self) {
+        self.body.shuffle(&mut thread_rng());
     }
 }
 
