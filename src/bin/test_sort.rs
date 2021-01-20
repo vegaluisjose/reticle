@@ -8,6 +8,11 @@ fn main() {
             println!("{}", &test);
             test.shuffle_body();
             println!("{}", &test);
+            test.sort_body();
+            println!("{}", &test);
+            // if let Ok(()) = test.sort_body() {
+            //     println!("{}", &test);
+            // }
         }
     }
 }

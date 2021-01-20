@@ -1,5 +1,6 @@
 use crate::ir::ast::*;
-use std::collections::HashMap;
+use crate::util::errors::Error;
+use std::collections::{HashMap, HashSet};
 use rand::thread_rng;
 use rand::seq::SliceRandom;
 
@@ -240,6 +241,26 @@ impl Sig {
     }
 }
 
+fn arg_is_available(env: &HashSet<ExprTerm>, arg: &Expr) -> bool {
+    let mut available = true;
+    match arg {
+        Expr::Tup(tup) => {
+            for e in tup.term() {
+                if !env.contains(e) {
+                    available = false;
+                    break;
+                }
+            }
+        }
+        Expr::Term(term) => {
+            if !env.contains(term) {
+                available = false;
+            }
+        }
+    }
+    available
+}
+
 impl Def {
     pub fn id(&self) -> String {
         self.sig.id()
@@ -261,6 +282,42 @@ impl Def {
     }
     pub fn shuffle_body(&mut self) {
         self.body.shuffle(&mut thread_rng());
+    }
+    pub fn sort_body(&mut self) -> Result<(), Error> {
+        let mut env: HashSet<ExprTerm> = HashSet::new();
+        let inputs: Vec<ExprTerm> = self.sig.input().clone().into();
+        for expr in inputs {
+            env.insert(expr);
+        }
+        let mut p: Vec<Instr> = Vec::new();
+        let mut q: Vec<Instr> = self.body.clone();
+        let mut pass = true;
+        while !q.is_empty() {
+            let mut t: Vec<Instr> = Vec::new();
+            for instr in &q {
+                if arg_is_available(&env, instr.arg()) {
+                    p.push(instr.clone());
+                    let dst: Vec<ExprTerm> = instr.dst().clone().into();
+                    for expr in dst {
+                        env.insert(expr);
+                    }
+                } else {
+                    t.push(instr.clone());
+                }
+            }
+            if q.len() == t.len() {
+                pass = false;
+                break;
+            } else {
+                q = t;
+            }
+        }
+        if pass {
+            self.body = p;
+            Ok(())
+        } else {
+            Err(Error::new_conv_error("Sorting"))
+        }
     }
 }
 
