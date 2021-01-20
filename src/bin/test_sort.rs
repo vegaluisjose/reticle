@@ -8,7 +8,7 @@ fn main() {
             println!("{}", &test);
             test.shuffle_body();
             println!("{}", &test);
-            test.sort_body();
+            test.sort_body().unwrap();
             println!("{}", &test);
         }
     }
