@@ -41,6 +41,18 @@ impl Dfg {
         let ix = self.graph.add_node(DfgNode::new(instr));
         self.ctx.insert(name.as_ref().to_string(), ix);
     }
+    pub fn add_edge<S>(&mut self, from: S, to: S)
+    where
+        S: AsRef<str>,
+    {
+        if let Some(from_ix) = self.ctx.get(from.as_ref()) {
+            if let Some(to_ix) = self.ctx.get(to.as_ref()) {
+                if self.graph.find_edge(*from_ix, *to_ix).is_none() {
+                    self.graph.add_edge(*from_ix, *to_ix, DfgEdge::default());
+                }
+            }
+        }
+    }
 }
 
 fn inp_from_term(term: ExprTerm) -> Instr {
@@ -56,11 +68,26 @@ impl TryFrom<Def> for Dfg {
     type Error = Error;
     fn try_from(def: Def) -> Result<Self, Self::Error> {
         let mut dfg = Dfg::default();
+        let mut def = def;
+        def.sort_body()?;
         let term: Vec<ExprTerm> = def.sig().input().clone().into();
-        for e in term {
-            let instr = inp_from_term(e.clone());
-            if let Some(id) = e.id() {
+        for expr in term {
+            let instr = inp_from_term(expr.clone());
+            if let Some(id) = expr.id() {
                 dfg.add_node(id, instr);
+            }
+        }
+        for instr in def.body().iter() {
+            let arg: Vec<ExprTerm> = instr.arg().clone().into();
+            if let Some(expr) = instr.dst().term() {
+                if let Some(out) = expr.id() {
+                    dfg.add_node(out.clone(), instr.clone());
+                    for a in arg {
+                        if let Some(inp) = a.id() {
+                            dfg.add_edge(inp, out.clone());
+                        }
+                    }
+                }
             }
         }
         Ok(dfg)
