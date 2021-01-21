@@ -68,8 +68,6 @@ impl TryFrom<Def> for Dfg {
     type Error = Error;
     fn try_from(def: Def) -> Result<Self, Self::Error> {
         let mut dfg = Dfg::default();
-        let mut def = def;
-        def.sort_body()?;
         let term: Vec<ExprTerm> = def.sig().input().clone().into();
         // create input nodes
         for expr in term {
