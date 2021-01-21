@@ -104,86 +104,65 @@ impl IRParser {
         }
     }
 
-    fn instr_comp(input: Node) -> ParseResult<InstrComp> {
-        Ok(match_nodes!(
-            input.into_children();
-            [io(dst), op_comp(op), io(arg)] => InstrComp {
-                op,
-                dst,
-                attr: Expr::default(),
-                arg,
-                prim: Prim::Any,
-            },
-            [io(dst), op_comp(op), tup_val(attr), io(arg)] => InstrComp {
-                op,
-                dst,
-                attr: Expr::from(attr),
-                arg,
-                prim: Prim::Any,
-            },
-            [io(dst), op_comp(op), io(arg), prim(prim)] => InstrComp {
-                op,
-                dst,
-                attr: Expr::default(),
-                arg,
-                prim,
-            },
-            [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => InstrComp {
-                op,
-                dst,
-                attr: Expr::from(attr),
-                arg,
-                prim,
-            }
-        ))
-    }
-
-    fn instr_wire(input: Node) -> ParseResult<InstrWire> {
-        Ok(match_nodes!(
-            input.into_children();
-            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
-                op,
-                dst,
-                attr: Expr::from(attr),
-                arg: Expr::default(),
-            },
-            [io(dst), op_wire(op), io(arg)] => InstrWire {
-                op,
-                dst,
-                attr: Expr::default(),
-                arg,
-            },
-            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
-                op,
-                dst,
-                attr: Expr::from(attr),
-                arg,
-            }
-        ))
-    }
-
-    fn instr_call(input: Node) -> ParseResult<InstrCall> {
-        Ok(match_nodes!(
-            input.into_children();
-            [io(dst), op_call(op)] => InstrCall {
-                op,
-                dst,
-                arg: Expr::default(),
-            },
-            [io(dst), op_call(op), io(arg)] => InstrCall {
-                op,
-                dst,
-                arg,
-            },
-        ))
-    }
-
     fn instr(input: Node) -> ParseResult<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [instr_comp(instr)] => Instr::from(instr),
-            [instr_wire(instr)] => Instr::from(instr),
-            [instr_call(instr)] => Instr::from(instr),
+            [io(dst), op_comp(op), io(arg)] => Instr::from(InstrComp {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+                prim: Prim::Any,
+            }),
+            [io(dst), op_comp(op), tup_val(attr), io(arg)] => Instr::from(InstrComp {
+                op,
+                dst,
+                attr: Expr::from(attr),
+                arg,
+                prim: Prim::Any,
+            }),
+            [io(dst), op_comp(op), io(arg), prim(prim)] => Instr::from(InstrComp {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+                prim,
+            }),
+            [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => Instr::from(InstrComp {
+                op,
+                dst,
+                attr: Expr::from(attr),
+                arg,
+                prim,
+            }),
+            [io(dst), op_wire(op), tup_val(attr)] => Instr::from(InstrWire {
+                op,
+                dst,
+                attr: Expr::from(attr),
+                arg: Expr::default(),
+            }),
+            [io(dst), op_wire(op), io(arg)] => Instr::from(InstrWire {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+            }),
+            [io(dst), op_wire(op), tup_val(attr), io(arg)] => Instr::from(InstrWire {
+                op,
+                dst,
+                attr: Expr::from(attr),
+                arg,
+            }),
+            [io(dst), op_call(op)] => Instr::from(InstrCall {
+                op,
+                dst,
+                arg: Expr::default(),
+            }),
+            [io(dst), op_call(op), io(arg)] => Instr::from(InstrCall {
+                op,
+                dst,
+                arg,
+            }),
         ))
     }
 
