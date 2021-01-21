@@ -1,8 +1,10 @@
 use crate::ir::ast::*;
+use crate::util::errors::Error;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::NodeIndex;
 use petgraph::prelude::Graph;
 use std::collections::HashMap;
+use std::convert::TryFrom;
 use std::fmt;
 
 pub type DfgGraph = Graph<DfgNode, DfgEdge>;
@@ -50,8 +52,9 @@ fn inp_from_term(term: ExprTerm) -> Instr {
     })
 }
 
-impl From<Def> for Dfg {
-    fn from(def: Def) -> Self {
+impl TryFrom<Def> for Dfg {
+    type Error = Error;
+    fn try_from(def: Def) -> Result<Self, Self::Error> {
         let mut dfg = Dfg::default();
         let term: Vec<ExprTerm> = def.sig().input().clone().into();
         for e in term {
@@ -60,16 +63,17 @@ impl From<Def> for Dfg {
                 dfg.add_node(id, instr);
             }
         }
-        dfg
+        Ok(dfg)
     }
 }
 
-impl From<Prog> for Dfg {
-    fn from(prog: Prog) -> Self {
+impl TryFrom<Prog> for Dfg {
+    type Error = Error;
+    fn try_from(prog: Prog) -> Result<Self, Self::Error> {
         if let Some(def) = prog.get("main") {
-            Dfg::from(def.clone())
+            Ok(Dfg::try_from(def.clone())?)
         } else {
-            Dfg::default()
+            Err(Error::new_conv_error("dfg, prog must have main"))
         }
     }
 }
