@@ -1,5 +1,6 @@
 pub mod ast;
 pub mod default;
+pub mod dfg;
 pub mod display;
 pub mod from;
 pub mod from_str;

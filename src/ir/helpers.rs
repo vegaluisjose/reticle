@@ -1,8 +1,8 @@
 use crate::ir::ast::*;
 use crate::util::errors::Error;
-use std::collections::{HashMap, HashSet};
-use rand::thread_rng;
 use rand::seq::SliceRandom;
+use rand::thread_rng;
+use std::collections::{HashMap, HashSet};
 
 impl Ty {
     pub fn width(&self) -> Option<u64> {
