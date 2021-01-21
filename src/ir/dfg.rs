@@ -71,17 +71,26 @@ impl TryFrom<Def> for Dfg {
         let mut def = def;
         def.sort_body()?;
         let term: Vec<ExprTerm> = def.sig().input().clone().into();
+        // create input nodes
         for expr in term {
             let instr = inp_from_term(expr.clone());
             if let Some(id) = expr.id() {
                 dfg.add_node(id, instr);
             }
         }
+        // create instr dst nodes
         for instr in def.body().iter() {
-            let arg: Vec<ExprTerm> = instr.arg().clone().into();
             if let Some(expr) = instr.dst().term() {
                 if let Some(out) = expr.id() {
                     dfg.add_node(out.clone(), instr.clone());
+                }
+            }
+        }
+        // create edges
+        for instr in def.body().iter() {
+            if let Some(expr) = instr.dst().term() {
+                if let Some(out) = expr.id() {
+                    let arg: Vec<ExprTerm> = instr.arg().clone().into();
                     for a in arg {
                         if let Some(inp) = a.id() {
                             dfg.add_edge(inp, out.clone());

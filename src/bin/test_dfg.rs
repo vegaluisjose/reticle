@@ -3,9 +3,10 @@ use reticle::ir::parser::IRParser;
 use std::convert::TryFrom;
 
 fn main() {
-    let prog = IRParser::parse_from_file("examples/muladd_reg.ir");
+    let prog = IRParser::parse_from_file("examples/fsm.ir");
     if let Ok(p) = prog {
+        println!("Program:\n{}", &p);
         let dfg = Dfg::try_from(p).unwrap();
-        println!("{}", dfg);
+        println!("Graphviz:\n{}", dfg);
     }
 }

@@ -3,6 +3,7 @@ use crate::util::errors::Error;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::collections::{HashMap, HashSet};
+use std::convert::TryInto;
 
 impl Ty {
     pub fn width(&self) -> Option<u64> {
@@ -241,24 +242,32 @@ impl Sig {
     }
 }
 
-fn arg_is_available(env: &HashSet<ExprTerm>, arg: &Expr) -> bool {
-    let mut available = true;
-    match arg {
-        Expr::Tup(tup) => {
-            for e in tup.term() {
-                if !env.contains(e) {
-                    available = false;
-                    break;
+fn term_is_ready(env: &HashSet<Id>, term: &ExprTerm) -> bool {
+    if let Some(id) = term.id() {
+        env.contains(&id)
+    } else {
+        false
+    }
+}
+
+fn instr_is_ready(env: &HashSet<Id>, instr: &Instr) -> bool {
+    let mut is_ready = true;
+    if !instr.is_reg() {
+        match instr.arg() {
+            Expr::Tup(tup) => {
+                for term in tup.term() {
+                    is_ready = term_is_ready(env, term);
+                    if !is_ready {
+                        break;
+                    }
                 }
             }
-        }
-        Expr::Term(term) => {
-            if !env.contains(term) {
-                available = false;
+            Expr::Term(term) => {
+                is_ready = term_is_ready(env, term);
             }
         }
     }
-    available
+    is_ready
 }
 
 impl Def {
@@ -284,10 +293,10 @@ impl Def {
         self.body.shuffle(&mut thread_rng());
     }
     pub fn sort_body(&mut self) -> Result<(), Error> {
-        let mut env: HashSet<ExprTerm> = HashSet::new();
-        let inputs: Vec<ExprTerm> = self.sig.input().clone().into();
-        for expr in inputs {
-            env.insert(expr);
+        let mut env: HashSet<Id> = HashSet::new();
+        let input: Vec<Id> = self.sig.input().clone().try_into()?;
+        for id in input {
+            env.insert(id);
         }
         let mut p: Vec<Instr> = Vec::new();
         let mut q: Vec<Instr> = self.body.clone();
@@ -295,11 +304,11 @@ impl Def {
         while !q.is_empty() {
             let mut t: Vec<Instr> = Vec::new();
             for instr in &q {
-                if arg_is_available(&env, instr.arg()) {
+                if instr_is_ready(&env, instr) {
                     p.push(instr.clone());
-                    let dst: Vec<ExprTerm> = instr.dst().clone().into();
-                    for expr in dst {
-                        env.insert(expr);
+                    let dst: Vec<Id> = instr.dst().clone().try_into()?;
+                    for id in dst {
+                        env.insert(id);
                     }
                 } else {
                     t.push(instr.clone());
