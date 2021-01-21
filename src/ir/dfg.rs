@@ -53,6 +53,12 @@ impl Dfg {
             }
         }
     }
+    pub fn get_node_index<S>(&mut self, name: S) -> Option<&NodeIndex>
+    where
+        S: AsRef<str>,
+    {
+        self.ctx.get(name)
+    }
 }
 
 fn inp_from_term(term: ExprTerm) -> Instr {
