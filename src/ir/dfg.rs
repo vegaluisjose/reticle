@@ -34,6 +34,15 @@ impl DfgNode {
 }
 
 impl Dfg {
+    pub fn graph(&self) -> &DfgGraph {
+        &self.graph
+    }
+    pub fn get_node_index<S>(&self, name: S) -> Option<&NodeIndex>
+    where
+        S: AsRef<str>,
+    {
+        self.ctx.get(name.as_ref())
+    }
     pub fn add_node<S>(&mut self, name: S, instr: Instr)
     where
         S: AsRef<str>,
@@ -52,12 +61,6 @@ impl Dfg {
                 }
             }
         }
-    }
-    pub fn get_node_index<S>(&mut self, name: S) -> Option<&NodeIndex>
-    where
-        S: AsRef<str>,
-    {
-        self.ctx.get(name.as_ref())
     }
 }
 
