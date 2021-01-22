@@ -57,7 +57,7 @@ impl Dfg {
     where
         S: AsRef<str>,
     {
-        self.ctx.get(name)
+        self.ctx.get(name.as_ref())
     }
 }
 
