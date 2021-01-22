@@ -277,6 +277,12 @@ impl Def {
     pub fn sig(&self) -> &Sig {
         &self.sig
     }
+    pub fn input(&self) -> &Expr {
+        self.sig.input()
+    }
+    pub fn output(&self) -> &Expr {
+        self.sig.output()
+    }
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
