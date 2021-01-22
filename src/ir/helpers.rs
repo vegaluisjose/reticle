@@ -200,6 +200,15 @@ impl Instr {
             _ => false,
         }
     }
+    pub fn is_comp(&self) -> bool {
+        matches!(self, Instr::Comp(_))
+    }
+    pub fn is_wire(&self) -> bool {
+        matches!(self, Instr::Wire(_))
+    }
+    pub fn is_call(&self) -> bool {
+        matches!(self, Instr::Call(_))
+    }
     pub fn dst(&self) -> &Expr {
         match self {
             Instr::Comp(instr) => instr.dst(),
