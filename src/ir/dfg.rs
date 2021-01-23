@@ -37,6 +37,12 @@ impl Dfg {
     pub fn graph(&self) -> &DfgGraph {
         &self.graph
     }
+    pub fn contains<S>(&self, name: S) -> bool
+    where
+        S: AsRef<str>,
+    {
+        self.ctx.contains(name.as_ref())
+    }
     pub fn get_node_index<S>(&self, name: S) -> Option<&NodeIndex>
     where
         S: AsRef<str>,
