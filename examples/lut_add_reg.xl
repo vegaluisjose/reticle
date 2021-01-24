@@ -15,8 +15,8 @@ def main(a:i8, b:i8, en:bool) -> (y:i8) {
     t13:bool = ext[5](b);
     t14:bool = ext[6](b);
     t15:bool = ext[7](b);
-    t16:bool = lut2[tbl=0b0110](t0, t8) @a6lut(1, 1);
-    t17:bool = lut2[tbl=0x6](t1, t9) @b6lut(1, 1);
+    t16:bool = lut2[tbl=6](t0, t8) @a6lut(1, 1);
+    t17:bool = lut2[tbl=6](t1, t9) @b6lut(1, 1);
     t18:bool = lut2[tbl=6](t2, t10) @c6lut(1, 1);
     t19:bool = lut2[tbl=6](t3, t11) @d6lut(1, 1);
     t20:bool = lut2[tbl=6](t4, t12) @e6lut(1, 1);
@@ -34,8 +34,8 @@ def main(a:i8, b:i8, en:bool) -> (y:i8) {
     t32:bool = ext[5](t26);
     t33:bool = ext[6](t26);
     t34:bool = ext[7](t26);
-    t35:bool = fdse(t27, en) @aff(1, 1);
-    t36:bool = fdse(t28, en) @bff(1, 1);
+    t35:bool = fdre(t27, en) @aff(1, 1);
+    t36:bool = fdre(t28, en) @bff(1, 1);
     t37:bool = fdre(t29, en) @cff(1, 1);
     t38:bool = fdre(t30, en) @dff(1, 1);
     t39:bool = fdre(t31, en) @eff(1, 1);
