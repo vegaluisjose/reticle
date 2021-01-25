@@ -1,7 +1,8 @@
 use crate::ir::ast::*;
-// use std::convert::TryFrom;
-// use std::convert::TryInto;
+use crate::util::errors::Error;
 use std::collections::HashMap;
+use std::convert::TryFrom;
+use std::convert::TryInto;
 
 pub fn find_tree_root(def: &Def) -> Vec<Id> {
     let mut count: HashMap<Id, u64> = HashMap::new();
@@ -56,6 +57,72 @@ pub struct Node {
     pub op: NodeOp,
     pub attr: Option<Expr>,
     pub prim: Option<Prim>,
+}
+
+impl From<OpWire> for NodeOp {
+    fn from(input: OpWire) -> Self {
+        NodeOp::Wire(input)
+    }
+}
+
+impl From<OpComp> for NodeOp {
+    fn from(input: OpComp) -> Self {
+        NodeOp::Comp(input)
+    }
+}
+
+impl TryFrom<InstrWire> for Node {
+    type Error = Error;
+    fn try_from(input: InstrWire) -> Result<Self, Self::Error> {
+        let dst: Vec<Id> = input.dst().clone().try_into()?;
+        if let Some(name) = dst.get(0) {
+            let name = name.clone();
+            let op = NodeOp::from(input.op().clone());
+            let attr = Some(input.attr().clone());
+            Ok(Node {
+                name,
+                op,
+                attr,
+                prim: None,
+            })
+        } else {
+            Err(Error::new_conv_error("dst must have at least one term"))
+        }
+    }
+}
+
+impl TryFrom<InstrComp> for Node {
+    type Error = Error;
+    fn try_from(input: InstrComp) -> Result<Self, Self::Error> {
+        let dst: Vec<Id> = input.dst().clone().try_into()?;
+        if let Some(name) = dst.get(0) {
+            let name = name.clone();
+            let op = NodeOp::from(input.op().clone());
+            let attr = Some(input.attr().clone());
+            let prim = Some(input.prim().clone());
+            Ok(Node {
+                name,
+                op,
+                attr,
+                prim,
+            })
+        } else {
+            Err(Error::new_conv_error("dst must have at least one term"))
+        }
+    }
+}
+
+impl TryFrom<Instr> for Node {
+    type Error = Error;
+    fn try_from(input: Instr) -> Result<Self, Self::Error> {
+        match input {
+            Instr::Wire(instr) => Ok(Node::try_from(instr)?),
+            Instr::Comp(instr) => Ok(Node::try_from(instr)?),
+            _ => Err(Error::new_conv_error(
+                "call node conversion is not supported",
+            )),
+        }
+    }
 }
 
 // fn walk(map: &HashMap<Id, Instr>, visited: &HashSet<Id>, node: &Id) -> HashSet<Id> {
