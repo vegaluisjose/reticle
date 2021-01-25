@@ -8,4 +8,5 @@ pub mod helpers;
 pub mod infer;
 pub mod parser;
 pub mod pretty_print;
+pub mod tree;
 pub mod try_from;
