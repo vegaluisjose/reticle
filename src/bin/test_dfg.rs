@@ -8,11 +8,10 @@ fn main() {
     if let Ok(p) = prog {
         if let Some(d) = p.get("main") {
             println!("{}", Dfg::try_from(d.clone()).unwrap());
-            Forest::try_from(d.clone()).unwrap();
-            // let root = find_tree_root(d);
-            // for r in root {
-            //     println!("root --> {}", r);
-            // }
+            let forest = Forest::try_from(d.clone()).unwrap();
+            for tree in forest.tree() {
+                println!("{}", tree);
+            }
         }
     }
 }

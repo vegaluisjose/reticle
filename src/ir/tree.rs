@@ -2,7 +2,7 @@ use crate::ir::ast::*;
 use crate::util::errors::Error;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
-// use std::convert::TryInto;
+use std::fmt;
 
 pub fn find_roots(def: &Def) -> Vec<Id> {
     let mut count: HashMap<Id, u64> = HashMap::new();
@@ -57,21 +57,21 @@ pub struct Node {
     pub id: Id,
     pub ty: Ty,
     pub op: NodeOp,
-    pub attr: Option<Expr>,
-    pub prim: Option<Prim>,
+    pub attr: Expr,
+    pub prim: Prim,
 }
 
 #[derive(Clone, Debug)]
 pub struct Tree {
     pub index: u64,
-    pub nodes: HashMap<u64, Node>,
-    pub edges: HashMap<u64, HashSet<u64>>,
+    pub node: HashMap<u64, Node>,
+    pub edge: HashMap<u64, HashSet<u64>>,
 }
 
 #[derive(Clone, Debug, Default)]
 pub struct Forest {
     pub visited: HashSet<Id>,
-    pub trees: Vec<Tree>,
+    pub tree: Vec<Tree>,
 }
 
 impl Node {
@@ -87,11 +87,11 @@ impl Node {
     pub fn op(&self) -> &NodeOp {
         &self.op
     }
-    pub fn attr(&self) -> Option<&Expr> {
-        self.attr.as_ref()
+    pub fn attr(&self) -> &Expr {
+        &self.attr
     }
-    pub fn prim(&self) -> Option<&Prim> {
-        self.prim.as_ref()
+    pub fn prim(&self) -> &Prim {
+        &self.prim
     }
     pub fn set_index(&mut self, index: u64) {
         self.index = index;
@@ -102,14 +102,23 @@ impl Default for Tree {
     fn default() -> Self {
         Tree {
             index: 0,
-            nodes: HashMap::new(),
-            edges: HashMap::new(),
+            node: HashMap::new(),
+            edge: HashMap::new(),
         }
     }
 }
 
 impl Tree {
-    fn new_index(&mut self) -> u64 {
+    pub fn index(&self) -> u64 {
+        self.index
+    }
+    pub fn node(&self) -> &HashMap<u64, Node> {
+        &self.node
+    }
+    pub fn edge(&self) -> &HashMap<u64, HashSet<u64>> {
+        &self.edge
+    }
+    pub fn new_index(&mut self) -> u64 {
         let curr = self.index;
         self.index += 1;
         curr
@@ -118,8 +127,8 @@ impl Tree {
         let curr = self.new_index();
         let mut node = Node::try_from(instr.clone())?;
         node.set_index(curr);
-        self.nodes.insert(curr, node);
-        self.edges.insert(curr, HashSet::new());
+        self.node.insert(curr, node);
+        self.edge.insert(curr, HashSet::new());
         Ok(curr)
     }
     pub fn add_input(&mut self, id: &str, ty: Ty) -> u64 {
@@ -130,36 +139,19 @@ impl Tree {
             id: id.to_string(),
             ty,
             op,
-            attr: None,
-            prim: None,
+            attr: Expr::default(),
+            prim: Prim::Any,
         };
         node.set_index(curr);
-        self.nodes.insert(curr, node);
+        self.node.insert(curr, node);
         curr
     }
     pub fn add_edge(&mut self, from: u64, to: u64) {
-        if let Some(edges) = self.edges.get_mut(&from) {
+        if let Some(edges) = self.edge.get_mut(&from) {
             if !edges.contains(&to) {
                 edges.insert(to);
             }
         }
-    }
-    pub fn digraph(&self) {
-        println!("digraph {{");
-        for i in 0..self.index {
-            if let Some(node) = self.nodes.get(&i) {
-                let label = format!("{}:{} [{:?}]", node.id(), node.ty(), node.op());
-                println!("{} [ label = \"{}\" ]", i, label);
-            }
-        }
-        for i in 0..self.index {
-            if let Some(edges) = self.edges.get(&i) {
-                for e in edges {
-                    println!("{} -> {} [ ]", i, e);
-                }
-            }
-        }
-        println!("}}");
     }
 }
 
@@ -167,13 +159,63 @@ impl Forest {
     pub fn was_visited(&self, id: &str) -> bool {
         self.visited.contains(id)
     }
+    pub fn tree(&self) -> &Vec<Tree> {
+        &self.tree
+    }
     pub fn add_visited(&mut self, name: &str) {
         if !self.visited.contains(name) {
             self.visited.insert(name.to_string());
         }
     }
     pub fn add_tree(&mut self, tree: Tree) {
-        self.trees.push(tree);
+        self.tree.push(tree);
+    }
+}
+
+impl fmt::Display for NodeOp {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            NodeOp::Wire(wire) => write!(f, "{}", wire),
+            NodeOp::Comp(comp) => write!(f, "{}", comp),
+            NodeOp::Inp => write!(f, "inp"),
+        }
+    }
+}
+
+impl fmt::Display for Node {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "{}-{}-{}-{}",
+            self.ty(),
+            self.op(),
+            self.attr(),
+            self.prim()
+        )
+    }
+}
+
+impl fmt::Display for Tree {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut digraph = String::from("digraph {\n");
+        // declare nodes
+        for i in 0..self.index {
+            if let Some(node) = self.node.get(&i) {
+                let label = format!("{} [ label = \"{}\" ]\n", i, node);
+                digraph.push_str(&label);
+            }
+        }
+        // declare edges
+        for i in 0..self.index {
+            if let Some(edges) = self.edge.get(&i) {
+                for e in edges {
+                    let edge = format!("{} -> {} [ ]\n", i, e);
+                    digraph.push_str(&edge);
+                }
+            }
+        }
+        digraph.push_str("}");
+        write!(f, "{}", digraph)
     }
 }
 
@@ -195,14 +237,14 @@ impl TryFrom<InstrWire> for Node {
         let id = input.dst().get_id(0)?;
         let ty = input.dst().get_ty(0)?;
         let op = NodeOp::from(input.op().clone());
-        let attr = Some(input.attr().clone());
+        let attr = input.attr().clone();
         Ok(Node {
             index: 0,
             id,
             ty: ty.clone(),
             op,
             attr,
-            prim: None,
+            prim: Prim::Any,
         })
     }
 }
@@ -213,8 +255,8 @@ impl TryFrom<InstrComp> for Node {
         let id = input.dst().get_id(0)?;
         let ty = input.dst().get_ty(0)?;
         let op = NodeOp::from(input.op().clone());
-        let attr = Some(input.attr().clone());
-        let prim = Some(input.prim().clone());
+        let attr = input.attr().clone();
+        let prim = input.prim().clone();
         Ok(Node {
             index: 0,
             id,
@@ -286,7 +328,7 @@ impl TryFrom<Def> for Forest {
                     }
                 }
             }
-            tree.digraph();
+            forest.add_tree(tree);
         }
         Ok(forest)
     }
