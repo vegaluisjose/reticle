@@ -214,7 +214,7 @@ impl fmt::Display for Tree {
                 }
             }
         }
-        digraph.push_str("}");
+        digraph.push('}');
         write!(f, "{}", digraph)
     }
 }
