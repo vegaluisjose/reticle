@@ -6,6 +6,6 @@ pub mod from_str;
 pub mod helpers;
 pub mod infer;
 pub mod parser;
+pub mod partition;
 pub mod pretty_print;
-pub mod tree;
 pub mod try_from;
