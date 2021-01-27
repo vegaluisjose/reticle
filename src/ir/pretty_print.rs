@@ -100,7 +100,6 @@ impl PrettyPrint for OpWire {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
             OpWire::Id => RcDoc::text("id"),
-            OpWire::Inp => RcDoc::text("inp"),
             OpWire::Con => RcDoc::text("const"),
             OpWire::Sll => RcDoc::text("sll"),
             OpWire::Srl => RcDoc::text("srl"),

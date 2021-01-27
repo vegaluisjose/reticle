@@ -32,7 +32,7 @@ hint = _{ "@" ~ prim }
 
 op_comp = { "reg" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
 
-op_wire = { "id" | "inp" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
+op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
 
 op_call = { id }
 

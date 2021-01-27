@@ -40,7 +40,6 @@ pub enum Prim {
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum OpWire {
     Id,
-    Inp,
     Con,
     Sll,
     Srl,

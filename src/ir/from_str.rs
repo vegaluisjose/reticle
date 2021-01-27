@@ -132,7 +132,6 @@ impl FromStr for OpWire {
         let err = format!("Error: {} is not valid wire operation", input);
         match input {
             "id" => Ok(OpWire::Id),
-            "inp" => Ok(OpWire::Inp),
             "const" => Ok(OpWire::Con),
             "sll" => Ok(OpWire::Sll),
             "srl" => Ok(OpWire::Srl),
