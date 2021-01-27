@@ -82,6 +82,18 @@ impl ExprTerm {
             _ => false,
         }
     }
+    pub fn get_id(&self) -> Result<Id, Error> {
+        match self {
+            ExprTerm::Var(n, _) => Ok(n.to_string()),
+            _ => Err(Error::new_conv_error("not a term")),
+        }
+    }
+    pub fn get_ty(&self) -> Result<&Ty, Error> {
+        match self {
+            ExprTerm::Var(_, ty) => Ok(ty),
+            _ => Err(Error::new_conv_error("not a term")),
+        }
+    }
 }
 
 impl ExprTup {
@@ -93,6 +105,21 @@ impl ExprTup {
     }
     pub fn is_empty(&self) -> bool {
         self.term.is_empty()
+    }
+    pub fn get_term(&self, index: usize) -> Result<&ExprTerm, Error> {
+        if let Some(term) = self.term.get(index) {
+            Ok(term)
+        } else {
+            Err(Error::new_conv_error("index not found"))
+        }
+    }
+    pub fn get_id(&self, index: usize) -> Result<Id, Error> {
+        let term = self.get_term(index)?;
+        Ok(term.get_id()?)
+    }
+    pub fn get_ty(&self, index: usize) -> Result<&Ty, Error> {
+        let term = self.get_term(index)?;
+        Ok(term.get_ty()?)
     }
     pub fn add_term(&mut self, term: ExprTerm) {
         self.term.push(term);
@@ -123,6 +150,27 @@ impl Expr {
             Expr::Tup(t) => t.idx(val),
             Expr::Term(t) if val == 0 => Some(t),
             _ => None,
+        }
+    }
+    pub fn get_term(&self, index: usize) -> Result<&ExprTerm, Error> {
+        match self {
+            Expr::Tup(t) => Ok(t.get_term(index)?),
+            Expr::Term(t) if index == 0 => Ok(t),
+            _ => Err(Error::new_conv_error("not a term")),
+        }
+    }
+    pub fn get_id(&self, index: usize) -> Result<Id, Error> {
+        match self {
+            Expr::Tup(t) => Ok(t.get_id(index)?),
+            Expr::Term(t) if index == 0 => Ok(t.get_id()?),
+            _ => Err(Error::new_conv_error("not a term")),
+        }
+    }
+    pub fn get_ty(&self, index: usize) -> Result<&Ty, Error> {
+        match self {
+            Expr::Tup(t) => Ok(t.get_ty(index)?),
+            Expr::Term(t) if index == 0 => Ok(t.get_ty()?),
+            _ => Err(Error::new_conv_error("not a term")),
         }
     }
 }
