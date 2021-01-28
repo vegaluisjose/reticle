@@ -11,14 +11,6 @@ impl PrettyPrint for PatInstr {
     }
 }
 
-impl PrettyPrint for ImpInstr {
-    fn to_doc(&self) -> RcDoc<()> {
-        match self {
-            ImpInstr::XL(instr) => instr.to_doc(),
-        }
-    }
-}
-
 impl PrettyPrint for PatSig {
     fn to_doc(&self) -> RcDoc<()> {
         let attr_val = vec![

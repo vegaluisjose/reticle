@@ -17,7 +17,7 @@ pub type InstrWire = ir::InstrWire;
 pub type InstrComp = ir::InstrComp;
 
 // from xl
-pub type InstrXL = xl::Instr;
+pub type ImpInstr = xl::Instr;
 pub type OpBasc = xl::OpBasc;
 pub type OpMach = xl::OpMach;
 
@@ -25,11 +25,6 @@ pub type OpMach = xl::OpMach;
 pub enum PatInstr {
     Wire(InstrWire),
     Comp(InstrComp),
-}
-
-#[derive(Clone, Debug)]
-pub enum ImpInstr {
-    XL(InstrXL),
 }
 
 #[derive(Clone, Debug)]
