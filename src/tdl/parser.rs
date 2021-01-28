@@ -103,6 +103,22 @@ impl TDLParser {
         }
     }
 
+    fn op_mach(input: Node) -> ParseResult<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_basc(input: Node) -> ParseResult<OpBasc> {
+        let op = OpBasc::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
     fn pat_instr(input: Node) -> ParseResult<PatInstr> {
         Ok(match_nodes!(
             input.into_children();

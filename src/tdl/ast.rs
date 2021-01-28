@@ -3,6 +3,7 @@ use crate::ir::ast as ir;
 use crate::xl::ast as xl;
 use std::collections::HashMap;
 
+// from ir
 pub type Id = ir::Id;
 pub type Ty = ir::Ty;
 pub type Prim = ir::Prim;
@@ -14,7 +15,11 @@ pub type OpWire = ir::OpWire;
 pub type OpComp = ir::OpComp;
 pub type InstrWire = ir::InstrWire;
 pub type InstrComp = ir::InstrComp;
+
+// from xl
 pub type InstrXL = xl::Instr;
+pub type OpBasc = xl::OpBasc;
+pub type OpMach = xl::OpMach;
 
 #[derive(Clone, Debug)]
 pub enum PatInstr {

@@ -32,9 +32,15 @@ prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
+op_coord = { "+" }
+
 op_comp = { "reg" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
 
 op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
+
+op_mach = { "lut1" | "lut2" | "lut3" | "lut4" | "lut5" | "lut6" | "dsp" | "carry" | "fdre" | "fdse" }
+
+op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
 
 pat_op = _{ op_comp | op_wire }
 
