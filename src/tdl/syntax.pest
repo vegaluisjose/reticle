@@ -32,22 +32,28 @@ prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
-op_comp = { id }
+op_comp = { "reg" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
 
-op_wire = { id }
+op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
 
-instr_comp = { io ~ "=" ~ op_comp ~ attr? ~ io ~ hint? ~ ";" }
+pat_op = _{ op_comp | op_wire }
 
-instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
+pat_instr = { io ~ "=" ~ pat_op ~ attr? ~ io? ~ hint? ~ ";" }
 
-instr = { instr_comp | instr_wire }
+pat_body = { pat_instr+ }
 
-body = { instr+ }
+pat_sig = { "pat" ~ id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
 
-sig = { "def" ~ id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
+imp_sig = { "imp" ~ id ~ "[" ~ "]" ~ io ~ "->" ~ io }
 
-def = { sig ~ "{" ~ body ~ "}" }
+pat = { pat_sig ~ "{" ~ pat_body ~ "}" }
 
-desc = { def+ }
+imp = { imp_sig ~ "{" ~ "hello" ~ "}" }
 
-file = { SOI ~ desc ~ EOI }
+des = { pat | imp }
+
+body = { des+ }
+
+target = { body }
+
+file = { SOI ~ target ~ EOI }

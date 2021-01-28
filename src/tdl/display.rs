@@ -12,7 +12,10 @@ macro_rules! display {
     };
 }
 
-display!(Instr);
-display!(Sig);
-display!(Def);
-display!(Desc);
+display!(PatInstr);
+display!(PatSig);
+display!(Pat);
+display!(ImpInstr);
+display!(ImpSig);
+display!(Imp);
+display!(Target);

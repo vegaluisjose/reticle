@@ -1,4 +1,4 @@
-def lut_i8_add_ro[lut, 1, 2](a: i8, b: i8, en: bool) -> (y: i8) {
+pat lut_i8_add_ro[lut, 1, 2](a: i8, b: i8, en: bool) -> (y: i8) {
     t0:i8 = add(a, b);
     y:i8 = reg[0](t0, en);
 }

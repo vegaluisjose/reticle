@@ -1,10 +1,12 @@
 use crate::tdl::ast::*;
+use crate::util::errors::Error;
 use crate::util::file::read_to_string;
-use pest_consume::{match_nodes, Error, Parser};
+use pest_consume::Error as PestError;
+use pest_consume::{match_nodes, Parser};
 use std::path::Path;
 use std::str::FromStr;
 
-pub type Result<T> = std::result::Result<T, Error<Rule>>;
+pub type ParseResult<T> = std::result::Result<T, PestError<Rule>>;
 type Node<'i> = pest_consume::Node<'i, Rule, ()>;
 
 const _GRAMMAR: &str = include_str!("syntax.pest");
@@ -15,15 +17,15 @@ pub struct TDLParser;
 
 #[pest_consume::parser]
 impl TDLParser {
-    fn EOI(_input: Node) -> Result<()> {
+    fn EOI(_input: Node) -> ParseResult<()> {
         Ok(())
     }
 
-    fn id(input: Node) -> Result<Id> {
+    fn id(input: Node) -> ParseResult<Id> {
         Ok(input.as_str().to_string())
     }
 
-    fn val(input: Node) -> Result<ExprTerm> {
+    fn val(input: Node) -> ParseResult<ExprTerm> {
         let val = input.as_str().parse::<i64>();
         match val {
             Ok(v) => Ok(ExprTerm::Val(v)),
@@ -31,7 +33,7 @@ impl TDLParser {
         }
     }
 
-    fn cost(input: Node) -> Result<u64> {
+    fn cost(input: Node) -> ParseResult<u64> {
         let val = input.as_str().parse::<u64>();
         match val {
             Ok(v) => Ok(v),
@@ -39,7 +41,7 @@ impl TDLParser {
         }
     }
 
-    fn ty(input: Node) -> Result<Ty> {
+    fn ty(input: Node) -> ParseResult<Ty> {
         let ty = Ty::from_str(input.as_str());
         match ty {
             Ok(t) => Ok(t),
@@ -47,7 +49,7 @@ impl TDLParser {
         }
     }
 
-    fn prim(input: Node) -> Result<Prim> {
+    fn prim(input: Node) -> ParseResult<Prim> {
         let prim = Prim::from_str(input.as_str());
         match prim {
             Ok(p) => Ok(p),
@@ -55,7 +57,7 @@ impl TDLParser {
         }
     }
 
-    fn var(input: Node) -> Result<ExprTerm> {
+    fn var(input: Node) -> ParseResult<ExprTerm> {
         Ok(match_nodes!(
             input.into_children();
             [id(id), ty(ty)] => ExprTerm::Var(id, ty),
@@ -63,21 +65,21 @@ impl TDLParser {
         ))
     }
 
-    fn tup_var(input: Node) -> Result<ExprTup> {
+    fn tup_var(input: Node) -> ParseResult<ExprTup> {
         Ok(match_nodes!(
             input.into_children();
             [var(vars)..] => ExprTup{ term: vars.collect() },
         ))
     }
 
-    fn tup_val(input: Node) -> Result<ExprTup> {
+    fn tup_val(input: Node) -> ParseResult<ExprTup> {
         Ok(match_nodes!(
             input.into_children();
             [val(vals)..] => ExprTup{ term: vals.collect() },
         ))
     }
 
-    fn io(input: Node) -> Result<Expr> {
+    fn io(input: Node) -> ParseResult<Expr> {
         Ok(match_nodes!(
             input.into_children();
             [var(var)] => Expr::from(var),
@@ -85,7 +87,7 @@ impl TDLParser {
         ))
     }
 
-    fn op_comp(input: Node) -> Result<OpComp> {
+    fn op_comp(input: Node) -> ParseResult<OpComp> {
         let op = OpComp::from_str(input.as_str());
         match op {
             Ok(t) => Ok(t),
@@ -93,7 +95,7 @@ impl TDLParser {
         }
     }
 
-    fn op_wire(input: Node) -> Result<OpWire> {
+    fn op_wire(input: Node) -> ParseResult<OpWire> {
         let op = OpWire::from_str(input.as_str());
         match op {
             Ok(t) => Ok(t),
@@ -101,83 +103,69 @@ impl TDLParser {
         }
     }
 
-    fn instr_comp(input: Node) -> Result<InstrComp> {
+    fn pat_instr(input: Node) -> ParseResult<PatInstr> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_comp(op), io(arg)] => InstrComp {
+            [io(dst), op_comp(op), io(arg)] => PatInstr::from(InstrComp {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
                 prim: Prim::Any,
-            },
-            [io(dst), op_comp(op), tup_val(attr), io(arg)] => InstrComp {
+            }),
+            [io(dst), op_comp(op), tup_val(attr), io(arg)] => PatInstr::from(InstrComp {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg,
                 prim: Prim::Any,
-            },
-            [io(dst), op_comp(op), io(arg), prim(prim)] => InstrComp {
+            }),
+            [io(dst), op_comp(op), io(arg), prim(prim)] => PatInstr::from(InstrComp {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
                 prim,
-            },
-            [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => InstrComp {
+            }),
+            [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => PatInstr::from(InstrComp {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg,
                 prim,
-            }
-        ))
-    }
-
-    fn instr_wire(input: Node) -> Result<InstrWire> {
-        Ok(match_nodes!(
-            input.into_children();
-            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
+            }),
+            [io(dst), op_wire(op), tup_val(attr)] => PatInstr::from(InstrWire {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg: Expr::default(),
-            },
-            [io(dst), op_wire(op), io(arg)] => InstrWire {
+            }),
+            [io(dst), op_wire(op), io(arg)] => PatInstr::from(InstrWire {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
-            },
-            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
+            }),
+            [io(dst), op_wire(op), tup_val(attr), io(arg)] => PatInstr::from(InstrWire {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg,
-            }
+            }),
         ))
     }
 
-    fn instr(input: Node) -> Result<Instr> {
+    fn pat_body(input: Node) -> ParseResult<Vec<PatInstr>> {
         Ok(match_nodes!(
             input.into_children();
-            [instr_comp(instr)] => Instr::from(instr),
-            [instr_wire(instr)] => Instr::from(instr),
+            [pat_instr(instr)..] => instr.collect(),
         ))
     }
 
-    fn body(input: Node) -> Result<Vec<Instr>> {
+    fn pat_sig(input: Node) -> ParseResult<PatSig> {
         Ok(match_nodes!(
             input.into_children();
-            [instr(instr)..] => instr.collect(),
-        ))
-    }
-
-    fn sig(input: Node) -> Result<Sig> {
-        Ok(match_nodes!(
-            input.into_children();
-            [id(id), prim(prim), cost(area), cost(lat), io(input), io(output)] => Sig {
+            [id(id), prim(prim), cost(area), cost(lat), io(input), io(output)] => PatSig {
                 id,
                 prim,
                 area,
@@ -188,45 +176,85 @@ impl TDLParser {
         ))
     }
 
-    fn def(input: Node) -> Result<Def> {
+    fn imp_sig(input: Node) -> ParseResult<ImpSig> {
         Ok(match_nodes!(
             input.into_children();
-            [sig(sig), body(body)] => Def {
+            [id(id), io(input), io(output)] => ImpSig {
+                id,
+                x: ExprCoord::Any,
+                y: ExprCoord::Any,
+                input,
+                output,
+            },
+        ))
+    }
+
+    fn pat(input: Node) -> ParseResult<Pat> {
+        Ok(match_nodes!(
+            input.into_children();
+            [pat_sig(sig), pat_body(body)] => Pat {
                 sig,
                 body,
             },
         ))
     }
 
-    fn desc(input: Node) -> Result<Desc> {
+    fn imp(input: Node) -> ParseResult<Imp> {
         Ok(match_nodes!(
             input.into_children();
-            [def(def)..] => {
-                let mut desc = Desc::default();
-                let defs: Vec<Def> = def.collect();
-                for d in defs {
-                    desc.insert(&d.id(), d.clone());
+            [imp_sig(sig)] => Imp {
+                sig,
+                body: Vec::new(),
+            },
+        ))
+    }
+
+    fn des(input: Node) -> ParseResult<Des> {
+        Ok(match_nodes!(
+            input.into_children();
+            [imp(imp)] => Des::from(imp),
+            [pat(pat)] => Des::from(pat),
+        ))
+    }
+
+    fn body(input: Node) -> ParseResult<Vec<Des>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [des(des)..] => des.collect(),
+        ))
+    }
+
+    fn target(input: Node) -> ParseResult<Target> {
+        Ok(match_nodes!(
+            input.into_children();
+            [body(body)] => {
+                let mut target = Target::default();
+                for d in body {
+                    match d {
+                        Des::Imp(imp) => target.add_imp(&imp.id(), imp.clone()),
+                        Des::Pat(pat) => target.add_pat(&pat.id(), pat.clone()),
+                    }
                 }
-                desc
+                target
             }
         ))
     }
 
-    fn file(input: Node) -> Result<Desc> {
+    fn file(input: Node) -> ParseResult<Target> {
         Ok(match_nodes!(
             input.into_children();
-            [desc(desc), _] => desc,
+            [target(target), _] => target,
         ))
     }
 }
 
 impl TDLParser {
-    pub fn parse_from_str(input_str: &str) -> Result<Desc> {
+    pub fn parse_from_str(input_str: &str) -> Result<Target, Error> {
         let inputs = TDLParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
         Ok(TDLParser::file(input)?)
     }
-    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Desc> {
+    pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Target, Error> {
         let content = read_to_string(path);
         TDLParser::parse_from_str(&content)
     }
