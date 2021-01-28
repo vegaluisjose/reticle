@@ -54,6 +54,6 @@ des = { pat | imp }
 
 body = { des+ }
 
-target = { body }
+target = { body? }
 
 file = { SOI ~ target ~ EOI }
