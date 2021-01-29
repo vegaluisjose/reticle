@@ -47,6 +47,12 @@ impl Pat {
     pub fn sig(&self) -> &PatSig {
         &self.sig
     }
+    pub fn input(&self) -> &Expr {
+        self.sig.input()
+    }
+    pub fn output(&self) -> &Expr {
+        self.sig.input()
+    }
     pub fn body(&self) -> &Vec<PatInstr> {
         &self.body
     }
@@ -58,6 +64,12 @@ impl Imp {
     }
     pub fn sig(&self) -> &ImpSig {
         &self.sig
+    }
+    pub fn input(&self) -> &Expr {
+        self.sig.input()
+    }
+    pub fn output(&self) -> &Expr {
+        self.sig.input()
     }
     pub fn body(&self) -> &Vec<ImpInstr> {
         &self.body
