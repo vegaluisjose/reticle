@@ -28,6 +28,24 @@ io = { var | "(" ~ tup_var ~ ")" }
 
 attr = _{ "[" ~ tup_val ~ "]" }
 
+opt_key = { id }
+
+dec_num = { ASCII_DIGIT+ }
+
+bin_num = { ASCII_BIN_DIGIT+ }
+
+hex_num = { ASCII_HEX_DIGIT+ }
+
+opt_num = { "0b" ~ bin_num | "0x" ~ hex_num | dec_num }
+
+opt_op = { id }
+
+opt_val = _{ opt_num | opt_op }
+
+opt_tup = { opt_key ~ "=" ~ opt_val }
+
+opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
+
 prim = { "??" | id }
 
 pat_hint = _{ "@" ~ prim }

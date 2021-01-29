@@ -25,6 +25,10 @@ pub type OpBasc = xl::OpBasc;
 pub type OpMach = xl::OpMach;
 pub type Bel = xl::Bel;
 pub type Loc = xl::Loc;
+pub type Opt = xl::Opt;
+pub type OpDsp = xl::OpDsp;
+pub type OptVal = xl::OptVal;
+pub type OptMap = xl::OptMap;
 
 #[derive(Clone, Debug)]
 pub enum PatInstr {

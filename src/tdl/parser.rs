@@ -123,6 +123,76 @@ impl TDLParser {
         ))
     }
 
+    fn opt_key(input: Node) -> ParseResult<Opt> {
+        let opt = Opt::from_str(input.as_str());
+        match opt {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn dec_num(input: Node) -> ParseResult<OptVal> {
+        let val = input.as_str().parse::<u64>();
+        match val {
+            Ok(v) => Ok(OptVal::UInt(v)),
+            Err(_) => panic!("Error: parsing {} as dec u64", input.as_str()),
+        }
+    }
+
+    fn bin_num(input: Node) -> ParseResult<OptVal> {
+        let val = u64::from_str_radix(input.as_str(), 2);
+        match val {
+            Ok(v) => Ok(OptVal::UInt(v)),
+            Err(_) => panic!("Error: parsing {} as bin u64", input.as_str()),
+        }
+    }
+
+    fn hex_num(input: Node) -> ParseResult<OptVal> {
+        let val = u64::from_str_radix(input.as_str(), 16);
+        match val {
+            Ok(v) => Ok(OptVal::UInt(v)),
+            Err(_) => panic!("Error: parsing {} as hex u64", input.as_str()),
+        }
+    }
+
+    fn opt_num(input: Node) -> ParseResult<OptVal> {
+        Ok(match_nodes!(
+            input.into_children();
+            [dec_num(num)] => num,
+            [hex_num(num)] => num,
+            [bin_num(num)] => num,
+        ))
+    }
+
+    fn opt_op(input: Node) -> ParseResult<OptVal> {
+        let op = OpDsp::from_str(input.as_str());
+        match op {
+            Ok(v) => Ok(OptVal::Op(v)),
+            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+        }
+    }
+
+    fn opt_tup(input: Node) -> ParseResult<(Opt, OptVal)> {
+        Ok(match_nodes!(
+            input.into_children();
+            [opt_key(key), opt_num(val)] => (key, val),
+            [opt_key(key), opt_op(val)] => (key, val)
+        ))
+    }
+
+    fn opt(input: Node) -> ParseResult<OptMap> {
+        Ok(match_nodes!(
+            input.into_children();
+            [opt_tup(tup)..] => {
+                let mut map = OptMap::new();
+                for (key, val) in tup {
+                    map.insert(key, val);
+                }
+                map
+            }
+        ))
+    }
+
     fn io(input: Node) -> ParseResult<Expr> {
         Ok(match_nodes!(
             input.into_children();
