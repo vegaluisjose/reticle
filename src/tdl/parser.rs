@@ -4,6 +4,7 @@ use crate::util::file::read_to_string;
 use pest_consume::Error as PestError;
 use pest_consume::{match_nodes, Parser};
 use std::path::Path;
+use std::rc::Rc;
 use std::str::FromStr;
 
 pub type ParseResult<T> = std::result::Result<T, PestError<Rule>>;
@@ -55,6 +56,49 @@ impl TDLParser {
             Ok(p) => Ok(p),
             Err(m) => panic!("{}", m),
         }
+    }
+
+    fn op_coord(input: Node) -> ParseResult<OpCoord> {
+        let op = OpCoord::from_str(input.as_str());
+        match op {
+            Ok(e) => Ok(e),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn coord(input: Node) -> ParseResult<ExprCoord> {
+        let expr = ExprCoord::from_str(input.as_str());
+        match expr {
+            Ok(e) => Ok(e),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn expr_coord(input: Node) -> ParseResult<ExprCoord> {
+        Ok(match_nodes!(
+            input.into_children();
+            [coord(coord)] => coord,
+            [coord(lhs), op_coord(op), coord(rhs)] => ExprCoord::Bin(op, Rc::new(lhs), Rc::new(rhs)),
+        ))
+    }
+
+    fn bel(input: Node) -> ParseResult<Bel> {
+        let bel = Bel::from_str(input.as_str());
+        match bel {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn loc(input: Node) -> ParseResult<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [bel(bel), expr_coord(x), expr_coord(y)] => Loc {
+                bel,
+                x,
+                y,
+            },
+        ))
     }
 
     fn var(input: Node) -> ParseResult<ExprTerm> {

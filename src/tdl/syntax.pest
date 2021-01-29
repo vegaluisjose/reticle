@@ -30,7 +30,17 @@ attr = _{ "[" ~ tup_val ~ "]" }
 
 prim = { "??" | id }
 
-hint = _{ "@" ~ prim }
+pat_hint = _{ "@" ~ prim }
+
+bel = { id }
+
+coord = { "??" | id | ASCII_DIGIT+ }
+
+expr_coord = { coord ~ (op_coord ~ coord)? }
+
+loc = { bel ~ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
+imp_hint = _{ "@" ~ loc }
 
 op_coord = { "+" }
 
@@ -44,7 +54,7 @@ op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
 
 pat_op = _{ op_comp | op_wire }
 
-pat_instr = { io ~ "=" ~ pat_op ~ attr? ~ io? ~ hint? ~ ";" }
+pat_instr = { io ~ "=" ~ pat_op ~ attr? ~ io? ~ pat_hint? ~ ";" }
 
 pat_body = { pat_instr+ }
 

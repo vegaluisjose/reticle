@@ -10,16 +10,21 @@ pub type Prim = ir::Prim;
 pub type ExprTerm = ir::ExprTerm;
 pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
-pub type ExprCoord = asm::ExprCoord;
 pub type OpWire = ir::OpWire;
 pub type OpComp = ir::OpComp;
 pub type InstrWire = ir::InstrWire;
 pub type InstrComp = ir::InstrComp;
 
+// from asm
+pub type OpCoord = asm::OpCoord;
+pub type ExprCoord = asm::ExprCoord;
+
 // from xl
 pub type ImpInstr = xl::Instr;
 pub type OpBasc = xl::OpBasc;
 pub type OpMach = xl::OpMach;
+pub type Bel = xl::Bel;
+pub type Loc = xl::Loc;
 
 #[derive(Clone, Debug)]
 pub enum PatInstr {
