@@ -203,69 +203,55 @@ impl XLParser {
         ))
     }
 
-    fn instr_mach(input: Node) -> ParseResult<InstrMach> {
+    fn instr(input: Node) -> ParseResult<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_mach(op), io(arg)] => InstrMach {
+            [io(dst), op_mach(op), io(arg)] => Instr::from(InstrMach {
                 op,
                 opt: OptMap::new(),
                 dst,
                 arg,
                 loc: None,
-            },
-            [io(dst), op_mach(op), opt(opt), io(arg)] => InstrMach {
+            }),
+            [io(dst), op_mach(op), opt(opt), io(arg)] => Instr::from(InstrMach {
                 op,
                 opt,
                 dst,
                 arg,
                 loc: None,
-            },
-            [io(dst), op_mach(op), io(arg), loc(loc)] => InstrMach {
+            }),
+            [io(dst), op_mach(op), io(arg), loc(loc)] => Instr::from(InstrMach {
                 op,
                 opt: OptMap::new(),
                 dst,
                 arg,
                 loc: Some(loc),
-            },
-            [io(dst), op_mach(op), opt(opt), io(arg), loc(loc)] => InstrMach {
+            }),
+            [io(dst), op_mach(op), opt(opt), io(arg), loc(loc)] => Instr::from(InstrMach {
                 op,
                 opt,
                 dst,
                 arg,
                 loc: Some(loc),
-            }
-        ))
-    }
-
-    fn instr_basc(input: Node) -> ParseResult<InstrBasc> {
-        Ok(match_nodes!(
-            input.into_children();
-            [io(dst), op_basc(op), tup_val(attr)] => InstrBasc {
+            }),
+            [io(dst), op_basc(op), tup_val(attr)] => Instr::from(InstrBasc {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg: Expr::default(),
-            },
-            [io(dst), op_basc(op), io(arg)] => InstrBasc {
+            }),
+            [io(dst), op_basc(op), io(arg)] => Instr::from(InstrBasc {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
-            },
-            [io(dst), op_basc(op), tup_val(attr), io(arg)] => InstrBasc {
+            }),
+            [io(dst), op_basc(op), tup_val(attr), io(arg)] => Instr::from(InstrBasc {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg,
-            }
-        ))
-    }
-
-    fn instr(input: Node) -> ParseResult<Instr> {
-        Ok(match_nodes!(
-            input.into_children();
-            [instr_mach(instr)] => Instr::from(instr),
-            [instr_basc(instr)] => Instr::from(instr),
+            })
         ))
     }
 

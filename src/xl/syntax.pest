@@ -58,11 +58,11 @@ opt_tup = { opt_key ~ "=" ~ opt_val }
 
 opt = { "[" ~ (opt_tup ~ ("," ~ opt_tup)*)? ~ "]" }
 
-instr_mach = { io ~ "=" ~ op_mach ~ opt? ~ io ~ hint? ~ ";" }
+op = _{ op_mach | op_basc }
 
-instr_basc = { io ~ "=" ~ op_basc ~ attr? ~ io ~ ";" }
+instr_attr = _{ attr | opt }
 
-instr = { instr_mach | instr_basc }
+instr = { io ~ "=" ~ op ~ instr_attr? ~ io ~ hint? ~ ";" }
 
 body = { instr+ }
 
