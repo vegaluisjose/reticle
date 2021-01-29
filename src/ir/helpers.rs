@@ -406,4 +406,10 @@ impl Prog {
     pub fn insert(&mut self, name: &str, def: Def) -> Option<Def> {
         self.def.insert(name.to_string(), def)
     }
+    pub fn sort_def(&mut self) -> Result<(), Error> {
+        for (_, def) in self.def.iter_mut() {
+            def.sort_body()?;
+        }
+        Ok(())
+    }
 }

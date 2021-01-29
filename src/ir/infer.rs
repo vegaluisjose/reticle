@@ -30,8 +30,6 @@ fn build_env(def: &Def) -> Result<HashMap<String, Ty>, Error> {
 fn infer_type_try_from_def(def: Def) -> Result<Def, Error> {
     let env = build_env(&def)?;
     let mut def = def;
-    // sort
-    def.sort_body()?;
     // solve instr arg types with environment
     for instr in def.body_mut() {
         let mut arg = ExprTup::default();

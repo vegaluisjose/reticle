@@ -225,7 +225,8 @@ impl IRParser {
     pub fn parse_from_str(input_str: &str) -> Result<Prog, Error> {
         let inputs = IRParser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        let prog = IRParser::file(input)?;
+        let mut prog = IRParser::file(input)?;
+        prog.sort_def()?;
         Ok(infer_type_try_from_prog(prog)?)
     }
     pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog, Error> {
