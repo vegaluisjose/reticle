@@ -26,6 +26,12 @@ impl ImpSig {
     pub fn id(&self) -> String {
         self.id.to_string()
     }
+    pub fn x(&self) -> &ExprCoord {
+        &self.x
+    }
+    pub fn y(&self) -> &ExprCoord {
+        &self.y
+    }
     pub fn input(&self) -> &Expr {
         &self.input
     }

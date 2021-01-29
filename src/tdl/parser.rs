@@ -239,10 +239,10 @@ impl TDLParser {
     fn imp_sig(input: Node) -> ParseResult<ImpSig> {
         Ok(match_nodes!(
             input.into_children();
-            [id(id), io(input), io(output)] => ImpSig {
+            [id(id), coord(x), coord(y), io(input), io(output)] => ImpSig {
                 id,
-                x: ExprCoord::Any,
-                y: ExprCoord::Any,
+                x,
+                y,
                 input,
                 output,
             },

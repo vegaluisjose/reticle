@@ -60,11 +60,11 @@ pat_body = { pat_instr+ }
 
 pat_sig = { "pat" ~ id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
 
-imp_sig = { "imp" ~ id ~ "[" ~ "]" ~ io ~ "->" ~ io }
+imp_sig = { "imp" ~ id ~ "[" ~ coord ~ "," ~ coord ~ "]" ~ io ~ "->" ~ io }
 
 pat = { pat_sig ~ "{" ~ pat_body ~ "}" }
 
-imp = { imp_sig ~ "{" ~ "hello" ~ "}" }
+imp = { imp_sig ~ "{" ~ "}" }
 
 des = { pat | imp }
 

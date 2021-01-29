@@ -40,7 +40,11 @@ impl PrettyPrint for ImpSig {
         RcDoc::text("imp")
             .append(RcDoc::space())
             .append(RcDoc::as_string(self.id()))
+            .append(RcDoc::text("["))
+            .append(self.x().to_doc())
             .append(RcDoc::space())
+            .append(self.y().to_doc())
+            .append(RcDoc::text("]"))
             .append(self.input().to_doc())
             .append(RcDoc::space())
             .append(RcDoc::text("->"))
@@ -88,7 +92,7 @@ impl PrettyPrint for Target {
         if self.imp().is_empty() {
             pat
         } else {
-            pat.append(RcDoc::space()).append(imp)
+            pat.append(RcDoc::hardline()).append(imp)
         }
     }
 }
