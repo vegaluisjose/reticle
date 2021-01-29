@@ -78,11 +78,19 @@ pat_body = { pat_instr+ }
 
 pat_sig = { "pat" ~ id ~ "[" ~ prim ~ "," ~ cost ~ "," ~ cost ~ "]" ~ io ~ "->" ~ io }
 
-imp_sig = { "imp" ~ id ~ "[" ~ coord ~ "," ~ coord ~ "]" ~ io ~ "->" ~ io }
-
 pat = { pat_sig ~ "{" ~ pat_body ~ "}" }
 
-imp = { imp_sig ~ "{" ~ "}" }
+imp_op = _{ op_mach | op_basc }
+
+imp_attr = _{ opt | attr }
+
+imp_instr = { io ~ "=" ~ imp_op ~ imp_attr? ~ io ~ imp_hint? ~ ";" }
+
+imp_body = { imp_instr+ }
+
+imp_sig = { "imp" ~ id ~ "[" ~ coord ~ "," ~ coord ~ "]" ~ io ~ "->" ~ io }
+
+imp = { imp_sig ~ "{" ~ imp_body ~ "}" }
 
 des = { pat | imp }
 

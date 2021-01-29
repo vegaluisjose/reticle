@@ -306,6 +306,75 @@ impl TDLParser {
         ))
     }
 
+    fn pat(input: Node) -> ParseResult<Pat> {
+        Ok(match_nodes!(
+            input.into_children();
+            [pat_sig(sig), pat_body(body)] => Pat {
+                sig,
+                body,
+            },
+        ))
+    }
+
+    fn imp_instr(input: Node) -> ParseResult<ImpInstr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_mach(op), io(arg)] => ImpInstr::from(InstrMach {
+                op,
+                opt: OptMap::new(),
+                dst,
+                arg,
+                loc: None,
+            }),
+            [io(dst), op_mach(op), opt(opt), io(arg)] => ImpInstr::from(InstrMach {
+                op,
+                opt,
+                dst,
+                arg,
+                loc: None,
+            }),
+            [io(dst), op_mach(op), io(arg), loc(loc)] => ImpInstr::from(InstrMach {
+                op,
+                opt: OptMap::new(),
+                dst,
+                arg,
+                loc: Some(loc),
+            }),
+            [io(dst), op_mach(op), opt(opt), io(arg), loc(loc)] => ImpInstr::from(InstrMach {
+                op,
+                opt,
+                dst,
+                arg,
+                loc: Some(loc),
+            }),
+            [io(dst), op_basc(op), tup_val(attr)] => ImpInstr::from(InstrBasc {
+                op,
+                dst,
+                attr: Expr::from(attr),
+                arg: Expr::default(),
+            }),
+            [io(dst), op_basc(op), io(arg)] => ImpInstr::from(InstrBasc {
+                op,
+                dst,
+                attr: Expr::default(),
+                arg,
+            }),
+            [io(dst), op_basc(op), tup_val(attr), io(arg)] => ImpInstr::from(InstrBasc {
+                op,
+                dst,
+                attr: Expr::from(attr),
+                arg,
+            })
+        ))
+    }
+
+    fn imp_body(input: Node) -> ParseResult<Vec<ImpInstr>> {
+        Ok(match_nodes!(
+            input.into_children();
+            [imp_instr(instr)..] => instr.collect(),
+        ))
+    }
+
     fn imp_sig(input: Node) -> ParseResult<ImpSig> {
         Ok(match_nodes!(
             input.into_children();
@@ -319,22 +388,12 @@ impl TDLParser {
         ))
     }
 
-    fn pat(input: Node) -> ParseResult<Pat> {
-        Ok(match_nodes!(
-            input.into_children();
-            [pat_sig(sig), pat_body(body)] => Pat {
-                sig,
-                body,
-            },
-        ))
-    }
-
     fn imp(input: Node) -> ParseResult<Imp> {
         Ok(match_nodes!(
             input.into_children();
-            [imp_sig(sig)] => Imp {
+            [imp_sig(sig), imp_body(body)] => Imp {
                 sig,
-                body: Vec::new(),
+                body,
             },
         ))
     }

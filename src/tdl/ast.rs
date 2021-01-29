@@ -20,6 +20,8 @@ pub type OpCoord = asm::OpCoord;
 pub type ExprCoord = asm::ExprCoord;
 
 // from xl
+pub type InstrBasc = xl::InstrBasc;
+pub type InstrMach = xl::InstrMach;
 pub type ImpInstr = xl::Instr;
 pub type OpBasc = xl::OpBasc;
 pub type OpMach = xl::OpMach;
