@@ -20,6 +20,18 @@ impl PatInstr {
             PatInstr::Comp(instr) => instr.arg(),
         }
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        match self {
+            PatInstr::Wire(instr) => instr.set_dst(dst),
+            PatInstr::Comp(instr) => instr.set_dst(dst),
+        }
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        match self {
+            PatInstr::Wire(instr) => instr.set_arg(arg),
+            PatInstr::Comp(instr) => instr.set_arg(arg),
+        }
+    }
 }
 
 impl PatSig {
