@@ -27,9 +27,9 @@ fn build_env(def: &Def) -> Result<HashMap<String, Ty>, Error> {
     Ok(env)
 }
 
-fn infer_type_try_from_def(def: Def) -> Result<Def, Error> {
+fn infer_type_try_from_def(def: &Def) -> Result<Def, Error> {
     let env = build_env(&def)?;
-    let mut def = def;
+    let mut def = def.clone();
     // solve instr arg types with environment
     for instr in def.body_mut() {
         let mut arg = ExprTup::default();
@@ -52,7 +52,7 @@ fn infer_type_try_from_def(def: Def) -> Result<Def, Error> {
 pub fn infer_type_try_from_prog(prog: Prog) -> Result<Prog, Error> {
     let mut res = Prog::default();
     for (name, def) in prog.def() {
-        res.insert(name, infer_type_try_from_def(def.clone())?);
+        res.insert(name, infer_type_try_from_def(def)?);
     }
     Ok(res)
 }
