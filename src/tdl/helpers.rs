@@ -89,6 +89,12 @@ impl Pat {
     pub fn body(&self) -> &Vec<PatInstr> {
         &self.body
     }
+    pub fn set_body(&mut self, body: Vec<PatInstr>) {
+        self.body = body;
+    }
+    pub fn set_sig(&mut self, sig: PatSig) {
+        self.sig = sig;
+    }
 }
 
 impl Imp {
@@ -106,6 +112,12 @@ impl Imp {
     }
     pub fn body(&self) -> &Vec<ImpInstr> {
         &self.body
+    }
+    pub fn set_body(&mut self, body: Vec<ImpInstr>) {
+        self.body = body;
+    }
+    pub fn set_sig(&mut self, sig: ImpSig) {
+        self.sig = sig;
     }
 }
 
