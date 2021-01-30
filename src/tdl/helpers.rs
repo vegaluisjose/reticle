@@ -1,6 +1,27 @@
 use crate::tdl::ast::*;
 use std::collections::HashMap;
 
+impl PatInstr {
+    pub fn dst(&self) -> &Expr {
+        match self {
+            PatInstr::Wire(instr) => instr.dst(),
+            PatInstr::Comp(instr) => instr.dst(),
+        }
+    }
+    pub fn attr(&self) -> &Expr {
+        match self {
+            PatInstr::Wire(instr) => instr.attr(),
+            PatInstr::Comp(instr) => instr.attr(),
+        }
+    }
+    pub fn arg(&self) -> &Expr {
+        match self {
+            PatInstr::Wire(instr) => instr.arg(),
+            PatInstr::Comp(instr) => instr.arg(),
+        }
+    }
+}
+
 impl PatSig {
     pub fn id(&self) -> String {
         self.id.to_string()
