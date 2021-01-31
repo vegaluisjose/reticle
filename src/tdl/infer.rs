@@ -2,9 +2,11 @@ use crate::tdl::ast::*;
 use crate::util::errors::Error;
 use std::collections::HashMap;
 
+type Env = HashMap<Id, Ty>;
+
 macro_rules! try_build_env {
     ($inp:tt) => {{
-        let mut env: HashMap<Id, Ty> = HashMap::new();
+        let mut env = Env::new();
         let inputs: Vec<ExprTerm> = $inp.input().clone().into();
         // add inputs to environment
         for e in inputs {
@@ -22,7 +24,7 @@ macro_rules! try_build_env {
             }
         }
         Ok(env)
-    } as Result<HashMap<Id, Ty>, Error>};
+    } as Result<Env, Error>};
 }
 
 macro_rules! try_infer_body {
@@ -46,10 +48,20 @@ macro_rules! try_infer_body {
     } as Result<Vec<$ty>, Error>};
 }
 
+macro_rules! try_infer {
+    ($inp:tt, $ty:tt) => {{
+        let env = try_build_env!($inp)?;
+        let body = try_infer_body!($inp, env, $ty)?;
+        let mut res = $inp.clone();
+        res.set_body(body);
+        Ok(res)
+    }};
+}
+
 pub fn try_infer_pat(pat: &Pat) -> Result<Pat, Error> {
-    let env = try_build_env!(pat)?;
-    let body = try_infer_body!(pat, env, PatInstr)?;
-    let mut pat = pat.clone();
-    pat.set_body(body);
-    Ok(pat)
+    try_infer!(pat, PatInstr)
+}
+
+pub fn try_infer_imp(imp: &Imp) -> Result<Imp, Error> {
+    try_infer!(imp, ImpInstr)
 }
