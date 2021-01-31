@@ -1,4 +1,5 @@
 use crate::ir::ast::*;
+use crate::tdl::ast::PatInstr;
 use std::collections::HashSet;
 
 impl From<ExprTup> for Expr {
@@ -28,6 +29,15 @@ impl From<InstrWire> for Instr {
 impl From<InstrComp> for Instr {
     fn from(instr: InstrComp) -> Self {
         Instr::Comp(instr)
+    }
+}
+
+impl From<PatInstr> for Instr {
+    fn from(instr: PatInstr) -> Self {
+        match instr {
+            PatInstr::Wire(instr) => Instr::Wire(instr),
+            PatInstr::Comp(instr) => Instr::Comp(instr),
+        }
     }
 }
 
