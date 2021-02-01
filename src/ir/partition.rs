@@ -67,7 +67,7 @@ pub struct Node {
 pub struct Tree {
     pub index: u64,
     pub node: HashMap<u64, Node>,
-    pub edge: HashMap<u64, HashSet<u64>>,
+    pub edge: HashMap<u64, Vec<u64>>,
 }
 
 #[derive(Clone, Debug, Default)]
@@ -117,13 +117,13 @@ impl Tree {
     pub fn node_map(&self) -> &HashMap<u64, Node> {
         &self.node
     }
-    pub fn edge_map(&self) -> &HashMap<u64, HashSet<u64>> {
+    pub fn edge_map(&self) -> &HashMap<u64, Vec<u64>> {
         &self.edge
     }
     pub fn node(&self, index: u64) -> Option<&Node> {
         self.node.get(&index)
     }
-    pub fn edge(&self, index: u64) -> Option<&HashSet<u64>> {
+    pub fn edge(&self, index: u64) -> Option<&Vec<u64>> {
         self.edge.get(&index)
     }
     pub fn new_index(&mut self) -> u64 {
@@ -136,7 +136,7 @@ impl Tree {
         let mut node = Node::try_from(instr.clone())?;
         node.set_index(curr);
         self.node.insert(curr, node);
-        self.edge.insert(curr, HashSet::new());
+        self.edge.insert(curr, vec![]);
         Ok(curr)
     }
     pub fn add_input(&mut self, id: &str, ty: Ty) -> u64 {
@@ -157,10 +157,23 @@ impl Tree {
     }
     pub fn add_edge(&mut self, from: u64, to: u64) {
         if let Some(edges) = self.edge.get_mut(&from) {
-            if !edges.contains(&to) {
-                edges.insert(to);
+            edges.push(to);
+        }
+    }
+    pub fn dfg(&self) -> Vec<u64> {
+        let mut res: Vec<u64> = Vec::new();
+        let mut stack: Vec<u64> = Vec::new();
+        // assuming root is always the first node
+        stack.push(0);
+        while let Some(cur) = stack.pop() {
+            res.push(cur.clone());
+            if let Some(edge) = self.edge(cur) {
+                for e in edge {
+                    stack.push(e.clone());
+                }
             }
         }
+        res
     }
 }
 
