@@ -58,6 +58,24 @@ macro_rules! try_infer {
     }};
 }
 
+pub fn try_infer_prim(pat: &Pat) -> Pat {
+    let mut nbody: Vec<PatInstr> = Vec::new();
+    for instr in pat.body() {
+        let ninstr = match instr {
+            PatInstr::Comp(i) if *i.prim() == Prim::Any => {
+                let mut t = i.clone();
+                t.set_prim(pat.prim().clone());
+                PatInstr::from(t)
+            }
+            _ => instr.clone(),
+        };
+        nbody.push(ninstr);
+    }
+    let mut npat = pat.clone();
+    npat.set_body(nbody);
+    npat
+}
+
 pub fn try_infer_pat(pat: &Pat) -> Result<Pat, Error> {
     try_infer!(pat, PatInstr)
 }

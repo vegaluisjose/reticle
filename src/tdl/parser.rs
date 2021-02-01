@@ -1,5 +1,5 @@
 use crate::tdl::ast::*;
-use crate::tdl::infer::{try_infer_imp, try_infer_pat};
+use crate::tdl::infer::{try_infer_imp, try_infer_pat, try_infer_prim};
 use crate::util::errors::Error;
 use crate::util::file::read_to_string;
 use pest_consume::Error as PestError;
@@ -445,7 +445,8 @@ impl TDLParser {
         let mut target = TDLParser::file(input)?;
         let pat = target.pat().clone();
         for (n, p) in pat {
-            target.add_pat(&n, try_infer_pat(&p)?);
+            let typed_pat= try_infer_pat(&p)?;
+            target.add_pat(&n, try_infer_prim(&typed_pat));
         }
         let imp = target.imp().clone();
         for (n, i) in imp {
