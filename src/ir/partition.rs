@@ -166,10 +166,10 @@ impl Tree {
         // assuming root is always the first node
         stack.push(0);
         while let Some(cur) = stack.pop() {
-            res.push(cur.clone());
+            res.push(cur);
             if let Some(edge) = self.edge(cur) {
                 for e in edge {
-                    stack.push(e.clone());
+                    stack.push(*e);
                 }
             }
         }
