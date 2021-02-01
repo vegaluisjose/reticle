@@ -60,6 +60,7 @@ pub struct Node {
     pub op: NodeOp,
     pub attr: Expr,
     pub prim: Prim,
+    pub pat: Option<Tree>,
 }
 
 #[derive(Clone, Debug)]
@@ -142,6 +143,7 @@ impl Tree {
             op,
             attr: Expr::default(),
             prim: Prim::Any,
+            pat: None,
         };
         node.set_index(curr);
         self.node.insert(curr, node);
@@ -246,6 +248,7 @@ impl TryFrom<InstrWire> for Node {
             op,
             attr,
             prim: Prim::Any,
+            pat: None,
         })
     }
 }
@@ -265,6 +268,7 @@ impl TryFrom<InstrComp> for Node {
             op,
             attr,
             prim,
+            pat: None,
         })
     }
 }
