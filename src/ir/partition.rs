@@ -357,7 +357,6 @@ impl TryFrom<Pat> for Tree {
         let mut tree = Tree::default();
         let mut stack: Vec<(Id, u64)> = Vec::new();
         let root = pat.output().get_id(0)?;
-        println!("Debug ---> {}", root);
         if let Some(instr) = imap.get(&root) {
             visited.insert(root.clone());
             let index = tree.add_node(instr)?;
