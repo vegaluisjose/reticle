@@ -114,11 +114,17 @@ impl Tree {
     pub fn index(&self) -> u64 {
         self.index
     }
-    pub fn node(&self) -> &HashMap<u64, Node> {
+    pub fn node_map(&self) -> &HashMap<u64, Node> {
         &self.node
     }
-    pub fn edge(&self) -> &HashMap<u64, HashSet<u64>> {
+    pub fn edge_map(&self) -> &HashMap<u64, HashSet<u64>> {
         &self.edge
+    }
+    pub fn node(&self, index: u64) -> Option<&Node> {
+        self.node.get(&index)
+    }
+    pub fn edge(&self, index: u64) -> Option<&HashSet<u64>> {
+        self.edge.get(&index)
     }
     pub fn new_index(&mut self) -> u64 {
         let curr = self.index;
