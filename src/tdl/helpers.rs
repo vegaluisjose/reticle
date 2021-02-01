@@ -86,6 +86,9 @@ impl Pat {
     pub fn output(&self) -> &Expr {
         self.sig.output()
     }
+    pub fn prim(&self) -> &Prim {
+        self.sig.prim()
+    }
     pub fn body(&self) -> &Vec<PatInstr> {
         &self.body
     }
