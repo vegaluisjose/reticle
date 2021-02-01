@@ -186,10 +186,10 @@ impl InstrCall {
         &self.arg
     }
     pub fn set_dst(&mut self, dst: Expr) {
-        self.dst = dst
+        self.dst = dst;
     }
     pub fn set_arg(&mut self, arg: Expr) {
-        self.arg = arg
+        self.arg = arg;
     }
 }
 
@@ -212,11 +212,14 @@ impl InstrComp {
     pub fn is_reg(&self) -> bool {
         matches!(self.op(), OpComp::Reg)
     }
+    pub fn set_prim(&mut self, prim: Prim) {
+        self.prim = prim;
+    }
     pub fn set_dst(&mut self, dst: Expr) {
-        self.dst = dst
+        self.dst = dst;
     }
     pub fn set_arg(&mut self, arg: Expr) {
-        self.arg = arg
+        self.arg = arg;
     }
 }
 
@@ -234,10 +237,10 @@ impl InstrWire {
         &self.arg
     }
     pub fn set_dst(&mut self, dst: Expr) {
-        self.dst = dst
+        self.dst = dst;
     }
     pub fn set_arg(&mut self, arg: Expr) {
-        self.arg = arg
+        self.arg = arg;
     }
 }
 
