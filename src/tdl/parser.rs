@@ -445,7 +445,7 @@ impl TDLParser {
         let mut target = TDLParser::file(input)?;
         let pat = target.pat().clone();
         for (n, p) in pat {
-            let typed_pat= try_infer_pat(&p)?;
+            let typed_pat = try_infer_pat(&p)?;
             target.add_pat(&n, try_infer_prim(&typed_pat));
         }
         let imp = target.imp().clone();
