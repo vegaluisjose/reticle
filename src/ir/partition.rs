@@ -2,6 +2,7 @@ use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
 use std::collections::{HashMap, HashSet};
+use std::collections::VecDeque;
 use std::convert::TryFrom;
 use std::fmt;
 
@@ -90,22 +91,13 @@ impl Node {
         &self.op
     }
     pub fn is_inp(&self) -> bool {
-        match self.op {
-            NodeOp::Inp => true,
-            _ => false,
-        }
+        matches!(self.op, NodeOp::Inp)
     }
     pub fn is_wire(&self) -> bool {
-        match self.op {
-            NodeOp::Wire(_) => true,
-            _ => false,
-        }
+        matches!(self.op, NodeOp::Wire(_))
     }
     pub fn is_comp(&self) -> bool {
-        match self.op {
-            NodeOp::Comp(_) => true,
-            _ => false,
-        }
+        matches!(self.op, NodeOp::Comp(_))
     }
     pub fn attr(&self) -> &Expr {
         &self.attr
@@ -188,6 +180,20 @@ impl Tree {
             if let Some(edge) = self.edge(cur) {
                 for e in edge {
                     stack.push(*e);
+                }
+            }
+        }
+        res
+    }
+    pub fn bfs(&self, start: u64) -> Vec<u64> {
+        let mut res: Vec<u64> = Vec::new();
+        let mut stack: VecDeque<u64> = VecDeque::new();
+        stack.push_back(start);
+        while let Some(cur) = stack.pop_front() {
+            res.push(cur);
+            if let Some(edge) = self.edge(cur) {
+                for e in edge {
+                    stack.push_back(*e);
                 }
             }
         }
