@@ -89,6 +89,24 @@ impl Node {
     pub fn op(&self) -> &NodeOp {
         &self.op
     }
+    pub fn is_inp(&self) -> bool {
+        match self.op {
+            NodeOp::Inp => true,
+            _ => false,
+        }
+    }
+    pub fn is_wire(&self) -> bool {
+        match self.op {
+            NodeOp::Wire(_) => true,
+            _ => false,
+        }
+    }
+    pub fn is_comp(&self) -> bool {
+        match self.op {
+            NodeOp::Comp(_) => true,
+            _ => false,
+        }
+    }
     pub fn attr(&self) -> &Expr {
         &self.attr
     }
@@ -160,11 +178,11 @@ impl Tree {
             edges.push(to);
         }
     }
-    pub fn dfg(&self) -> Vec<u64> {
+    pub fn dfg(&self, start: u64) -> Vec<u64> {
         let mut res: Vec<u64> = Vec::new();
         let mut stack: Vec<u64> = Vec::new();
         // assuming root is always the first node
-        stack.push(0);
+        stack.push(start);
         while let Some(cur) = stack.pop() {
             res.push(cur);
             if let Some(edge) = self.edge(cur) {
@@ -173,6 +191,26 @@ impl Tree {
                 }
             }
         }
+        res
+    }
+    pub fn cut(&self, start: u64) -> Vec<u64> {
+        let mut res: Vec<u64> = Vec::new();
+        let mut stack: Vec<u64> = Vec::new();
+        // assuming root is always the first node
+        stack.push(start);
+        while let Some(cur) = stack.pop() {
+            if let Some(node) = self.node.get(&cur) {
+                if node.is_comp() {
+                    res.push(cur);
+                }
+            }
+            if let Some(edge) = self.edge(cur) {
+                for e in edge {
+                    stack.push(*e);
+                }
+            }
+        }
+        res.reverse();
         res
     }
 }
