@@ -1,8 +1,8 @@
 use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
-use std::collections::{HashMap, HashSet};
 use std::collections::VecDeque;
+use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use std::fmt;
 
