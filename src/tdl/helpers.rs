@@ -77,6 +77,12 @@ impl Pat {
     pub fn id(&self) -> String {
         self.sig.id()
     }
+    pub fn area(&self) -> u64 {
+        self.sig.area()
+    }
+    pub fn lat(&self) -> u64 {
+        self.sig.lat()
+    }
     pub fn sig(&self) -> &PatSig {
         &self.sig
     }
