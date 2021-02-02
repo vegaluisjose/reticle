@@ -50,7 +50,7 @@ fn main() -> Result<(), Error> {
         let cuts = btree.cut(0);
         for cut in cuts {
             for (pname, ptree) in &pats {
-                println!("pat:{} is_match:{}", pname, is_match(&btree, &ptree, cut));
+                println!("pat:{} is_match:{}\n", pname, is_match(&btree, &ptree, cut));
             }
         }
     }
