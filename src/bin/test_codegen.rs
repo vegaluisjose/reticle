@@ -1,6 +1,6 @@
 use itertools::izip;
+use reticle::codegen::partition::{Forest, Tree};
 use reticle::ir::parser::IRParser;
-use reticle::ir::partition::{Forest, Tree};
 use reticle::tdl::parser::TDLParser;
 use reticle::util::errors::Error;
 use std::convert::TryFrom;

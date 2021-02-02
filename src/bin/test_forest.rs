@@ -1,5 +1,5 @@
 use reticle::ir::parser::IRParser;
-use reticle::ir::partition::Forest;
+use reticle::codegen::partition::Forest;
 use std::convert::TryFrom;
 
 fn main() {

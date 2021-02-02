@@ -1,4 +1,4 @@
-use reticle::ir::partition::Tree;
+use reticle::codegen::partition::Tree;
 use reticle::tdl::parser::TDLParser;
 use std::convert::TryFrom;
 
