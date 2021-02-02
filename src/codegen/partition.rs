@@ -61,7 +61,7 @@ pub struct Node {
     pub op: NodeOp,
     pub attr: Expr,
     pub prim: Prim,
-    pub pat: Option<Tree>,
+    pub cost: u64,
 }
 
 #[derive(Clone, Debug)]
@@ -105,8 +105,14 @@ impl Node {
     pub fn prim(&self) -> &Prim {
         &self.prim
     }
+    pub fn cost(&self) -> u64 {
+        self.cost
+    }
     pub fn set_index(&mut self, index: u64) {
         self.index = index;
+    }
+    pub fn set_cost(&mut self, cost: u64) {
+        self.cost = cost;
     }
 }
 
@@ -149,6 +155,15 @@ impl Tree {
         self.edge.insert(curr, vec![]);
         Ok(curr)
     }
+    pub fn add_node_with_cost(&mut self, instr: &Instr, cost: u64) -> Result<u64, Error> {
+        let curr = self.new_index();
+        let mut node = Node::try_from(instr.clone())?;
+        node.set_index(curr);
+        node.set_cost(cost);
+        self.node.insert(curr, node);
+        self.edge.insert(curr, vec![]);
+        Ok(curr)
+    }
     pub fn add_input(&mut self, id: &str, ty: Ty) -> u64 {
         let op = NodeOp::Inp;
         let curr = self.new_index();
@@ -159,7 +174,7 @@ impl Tree {
             op,
             attr: Expr::default(),
             prim: Prim::Any,
-            pat: None,
+            cost: 0,
         };
         node.set_index(curr);
         self.node.insert(curr, node);
@@ -311,7 +326,7 @@ impl TryFrom<InstrWire> for Node {
             op,
             attr,
             prim: Prim::Any,
-            pat: None,
+            cost: 0,
         })
     }
 }
@@ -331,7 +346,7 @@ impl TryFrom<InstrComp> for Node {
             op,
             attr,
             prim,
-            pat: None,
+            cost: 0,
         })
     }
 }
@@ -426,7 +441,8 @@ impl TryFrom<Pat> for Tree {
         let root = pat.output().get_id(0)?;
         if let Some(instr) = imap.get(&root) {
             visited.insert(root.clone());
-            let index = tree.add_node(instr)?;
+            let cost = pat.lat(); // change cost function for pattern here
+            let index = tree.add_node_with_cost(instr, cost)?;
             stack.push((root.clone(), index));
         }
         while let Some((curr, index)) = stack.pop() {
