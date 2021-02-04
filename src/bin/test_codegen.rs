@@ -24,23 +24,29 @@ fn tree_from_prog(file: &str) -> Result<Vec<Tree>, Error> {
     }
 }
 
-fn is_match(block: &Tree, pat: &Tree, start: u64) -> bool {
-    if let Some(node) = block.node(start) {
-        println!("index: {} node: {}", start, node);
-    }
+fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> bool {
     let bindex = block.bfs(start);
     let pindex = pat.bfs(0);
     let mut is_match = true;
+    let mut bcost: u64 = 0;
+    let pcost = if let Some(pnode) = pat.node(0) {
+        pnode.cost()
+    } else {
+        u64::MAX
+    };
     for (p, b) in izip!(&pindex, &bindex) {
         if let Some(pnode) = pat.node(*p) {
             if let Some(bnode) = block.node(*b) {
                 if pnode.ty() != bnode.ty() {
                     is_match = false;
                 }
+                if !pnode.is_inp() && bcost != u64::MAX {
+                    bcost += bnode.cost();
+                }
             }
         }
     }
-    is_match
+    is_match & (pcost < bcost)
 }
 
 fn main() -> Result<(), Error> {
@@ -50,7 +56,9 @@ fn main() -> Result<(), Error> {
         let cuts = btree.cut(0);
         for cut in cuts {
             for (pname, ptree) in &pats {
-                println!("pat:{} is_match:{}\n", pname, is_match(&btree, &ptree, cut));
+                if is_valid_change(&btree, &ptree, cut) {
+                    println!("[matched] pat:{}", pname);
+                }
             }
         }
     }
