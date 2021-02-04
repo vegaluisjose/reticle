@@ -62,6 +62,7 @@ pub struct Node {
     pub attr: Expr,
     pub prim: Prim,
     pub cost: u64,
+    pub cover: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -108,11 +109,20 @@ impl Node {
     pub fn cost(&self) -> u64 {
         self.cost
     }
+    pub fn is_cover(&self) -> bool {
+        self.cover
+    }
     pub fn set_index(&mut self, index: u64) {
         self.index = index;
     }
     pub fn set_cost(&mut self, cost: u64) {
         self.cost = cost;
+    }
+    pub fn set_cover(&mut self) {
+        self.cover = true;
+    }
+    pub fn clear_cover(&mut self) {
+        self.cover = false;
     }
 }
 
@@ -175,6 +185,7 @@ impl Tree {
             attr: Expr::default(),
             prim: Prim::Any,
             cost: 0,
+            cover: false,
         };
         node.set_index(curr);
         self.node.insert(curr, node);
@@ -188,7 +199,6 @@ impl Tree {
     pub fn dfg(&self, start: u64) -> Vec<u64> {
         let mut res: Vec<u64> = Vec::new();
         let mut stack: Vec<u64> = Vec::new();
-        // assuming root is always the first node
         stack.push(start);
         while let Some(cur) = stack.pop() {
             res.push(cur);
@@ -217,11 +227,10 @@ impl Tree {
     pub fn cut(&self, start: u64) -> Vec<u64> {
         let mut res: Vec<u64> = Vec::new();
         let mut stack: Vec<u64> = Vec::new();
-        // assuming root is always the first node
         stack.push(start);
         while let Some(cur) = stack.pop() {
             if let Some(node) = self.node.get(&cur) {
-                if node.is_comp() {
+                if node.is_comp() && !node.is_cover() {
                     res.push(cur);
                 }
             }
@@ -327,6 +336,7 @@ impl TryFrom<InstrWire> for Node {
             attr,
             prim: Prim::Any,
             cost: 0,
+            cover: false,
         })
     }
 }
@@ -346,7 +356,8 @@ impl TryFrom<InstrComp> for Node {
             op,
             attr,
             prim,
-            cost: 0,
+            cost: u64::MAX,
+            cover: false,
         })
     }
 }
