@@ -1,5 +1,5 @@
 use itertools::izip;
-use reticle::codegen::partition::{Forest, Tree};
+use reticle::compiler::tree::{Forest, Tree};
 use reticle::ir::parser::IRParser;
 use reticle::tdl::parser::TDLParser;
 use reticle::util::errors::Error;

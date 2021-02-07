@@ -1,4 +1,4 @@
-use reticle::codegen::partition::Forest;
+use reticle::compiler::tree::Forest;
 use reticle::ir::parser::IRParser;
 use std::convert::TryFrom;
 

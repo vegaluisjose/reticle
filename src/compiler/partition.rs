@@ -1,3 +1,4 @@
+use crate::compiler::tree::*;
 use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
@@ -44,39 +45,6 @@ pub fn find_roots(def: &Def) -> Vec<Id> {
         }
     }
     root
-}
-
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
-pub enum NodeOp {
-    Wire(OpWire),
-    Comp(OpComp),
-    Inp,
-}
-
-#[derive(Clone, Debug)]
-pub struct Node {
-    pub index: u64,
-    pub id: Id,
-    pub ty: Ty,
-    pub op: NodeOp,
-    pub attr: Expr,
-    pub prim: Prim,
-    pub cost: u64,
-    pub fixed: bool,
-    pub pat: Option<String>,
-}
-
-#[derive(Clone, Debug)]
-pub struct Tree {
-    pub index: u64,
-    pub node: HashMap<u64, Node>,
-    pub edge: HashMap<u64, Vec<u64>>,
-}
-
-#[derive(Clone, Debug, Default)]
-pub struct Forest {
-    pub visited: HashSet<Id>,
-    pub tree: Vec<Tree>,
 }
 
 impl Node {
