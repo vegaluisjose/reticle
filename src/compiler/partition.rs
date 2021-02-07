@@ -297,18 +297,6 @@ impl fmt::Display for Tree {
     }
 }
 
-impl From<OpWire> for NodeOp {
-    fn from(input: OpWire) -> Self {
-        NodeOp::Wire(input)
-    }
-}
-
-impl From<OpComp> for NodeOp {
-    fn from(input: OpComp) -> Self {
-        NodeOp::Comp(input)
-    }
-}
-
 impl TryFrom<InstrWire> for Node {
     type Error = Error;
     fn try_from(input: InstrWire) -> Result<Self, Self::Error> {
