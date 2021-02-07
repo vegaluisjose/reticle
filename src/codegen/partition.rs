@@ -62,7 +62,7 @@ pub struct Node {
     pub attr: Expr,
     pub prim: Prim,
     pub cost: u64,
-    pub cover: bool,
+    pub fixed: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -109,8 +109,8 @@ impl Node {
     pub fn cost(&self) -> u64 {
         self.cost
     }
-    pub fn is_cover(&self) -> bool {
-        self.cover
+    pub fn is_fixed(&self) -> bool {
+        self.fixed
     }
     pub fn set_index(&mut self, index: u64) {
         self.index = index;
@@ -118,11 +118,11 @@ impl Node {
     pub fn set_cost(&mut self, cost: u64) {
         self.cost = cost;
     }
-    pub fn set_cover(&mut self) {
-        self.cover = true;
+    pub fn set_fixed(&mut self) {
+        self.fixed = true;
     }
-    pub fn clear_cover(&mut self) {
-        self.cover = false;
+    pub fn clear_fixed(&mut self) {
+        self.fixed = false;
     }
 }
 
@@ -185,7 +185,7 @@ impl Tree {
             attr: Expr::default(),
             prim: Prim::Any,
             cost: 0,
-            cover: false,
+            fixed: false,
         };
         node.set_index(curr);
         self.node.insert(curr, node);
@@ -230,7 +230,7 @@ impl Tree {
         stack.push(start);
         while let Some(cur) = stack.pop() {
             if let Some(node) = self.node.get(&cur) {
-                if node.is_comp() && !node.is_cover() {
+                if node.is_comp() && !node.is_fixed() {
                     res.push(cur);
                 }
             }
@@ -336,7 +336,7 @@ impl TryFrom<InstrWire> for Node {
             attr,
             prim: Prim::Any,
             cost: 0,
-            cover: false,
+            fixed: false,
         })
     }
 }
@@ -357,7 +357,7 @@ impl TryFrom<InstrComp> for Node {
             attr,
             prim,
             cost: u64::MAX,
-            cover: false,
+            fixed: false,
         })
     }
 }
