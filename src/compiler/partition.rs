@@ -104,16 +104,6 @@ impl Node {
     }
 }
 
-impl Default for Tree {
-    fn default() -> Self {
-        Tree {
-            index: 0,
-            node: HashMap::new(),
-            edge: HashMap::new(),
-        }
-    }
-}
-
 impl Tree {
     pub fn index(&self) -> u64 {
         self.index
