@@ -1,15 +1,16 @@
 use itertools::izip;
 use reticle::compiler::tree::{Forest, Tree};
 use reticle::ir::parser::IRParser;
+use reticle::tdl::ast::Pat;
 use reticle::tdl::parser::TDLParser;
 use reticle::util::errors::Error;
+use std::collections::HashMap;
 use std::convert::TryFrom;
 
-fn tree_from_pats(file: &str) -> Result<Vec<(String, Tree)>, Error> {
-    let mut pattern: Vec<(String, Tree)> = Vec::new();
-    let target = TDLParser::parse_from_file(file)?;
-    for (n, p) in target.pat() {
-        pattern.push((n.clone(), Tree::try_from(p.clone())?));
+fn tree_from_pats(pat_map: &HashMap<String, Pat>) -> Result<HashMap<String, Tree>, Error> {
+    let mut pattern: HashMap<String, Tree> = HashMap::new();
+    for (n, p) in pat_map {
+        pattern.insert(n.clone(), Tree::try_from(p.clone())?);
     }
     Ok(pattern)
 }
@@ -86,8 +87,9 @@ fn tree_codegen(block: &Tree) {
 }
 
 fn main() -> Result<(), Error> {
-    let pats = tree_from_pats("examples/ultrascale.tdl")?;
     let blks = tree_from_prog("examples/fsm.ir")?;
+    let target = TDLParser::parse_from_file("examples/ultrascale.tdl")?;
+    let pats = tree_from_pats(target.pat())?;
     for btree in blks {
         let mut ctree = btree.clone();
         let cuts = btree.cut(0);
