@@ -131,6 +131,9 @@ impl Node {
     pub fn clear_fixed(&mut self) {
         self.fixed = false;
     }
+    pub fn clear_pat(&mut self) {
+        self.pat = None;
+    }
 }
 
 impl Default for Tree {
@@ -182,6 +185,22 @@ impl Tree {
             if let Some(edge) = self.edge(cur) {
                 for e in edge {
                     stack.push_back(*e);
+                }
+            }
+        }
+        res
+    }
+    pub fn bfs_bound(&self, start: u64, len: usize) -> Vec<u64> {
+        let mut res: Vec<u64> = Vec::new();
+        let mut stack: VecDeque<u64> = VecDeque::new();
+        stack.push_back(start);
+        while let Some(cur) = stack.pop_front() {
+            res.push(cur);
+            if let Some(edge) = self.edge(cur) {
+                for e in edge {
+                    if stack.len() < len {
+                        stack.push_back(*e);
+                    }
                 }
             }
         }
