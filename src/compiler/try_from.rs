@@ -1,5 +1,5 @@
-use crate::compiler::helpers::find_roots;
 use crate::compiler::tree::*;
+use crate::compiler::utils::tree_roots_from_def;
 use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
@@ -80,7 +80,7 @@ impl TryFrom<Def> for Forest {
                 forest.add_visited(&id);
             }
         }
-        let roots = find_roots(&def);
+        let roots = tree_roots_from_def(&def);
         for r in roots {
             let mut tree = Tree::default();
             let mut stack: Vec<(Id, u64)> = Vec::new();
