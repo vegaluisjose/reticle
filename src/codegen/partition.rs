@@ -63,6 +63,7 @@ pub struct Node {
     pub prim: Prim,
     pub cost: u64,
     pub fixed: bool,
+    pub pat: Option<String>,
 }
 
 #[derive(Clone, Debug)]
@@ -109,6 +110,9 @@ impl Node {
     pub fn cost(&self) -> u64 {
         self.cost
     }
+    pub fn pat(&self) -> Option<&String> {
+        self.pat.as_ref()
+    }
     pub fn is_fixed(&self) -> bool {
         self.fixed
     }
@@ -120,6 +124,9 @@ impl Node {
     }
     pub fn set_fixed(&mut self) {
         self.fixed = true;
+    }
+    pub fn set_pat(&mut self, name: &str) {
+        self.pat = Some(name.to_string());
     }
     pub fn clear_fixed(&mut self) {
         self.fixed = false;
@@ -186,6 +193,7 @@ impl Tree {
             prim: Prim::Any,
             cost: 0,
             fixed: false,
+            pat: None,
         };
         node.set_index(curr);
         self.node.insert(curr, node);
@@ -337,6 +345,7 @@ impl TryFrom<InstrWire> for Node {
             prim: Prim::Any,
             cost: 0,
             fixed: false,
+            pat: None,
         })
     }
 }
@@ -358,6 +367,7 @@ impl TryFrom<InstrComp> for Node {
             prim,
             cost: u64::MAX,
             fixed: false,
+            pat: None,
         })
     }
 }
