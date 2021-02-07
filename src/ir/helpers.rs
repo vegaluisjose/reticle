@@ -5,6 +5,12 @@ use rand::thread_rng;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryInto;
 
+impl Prim {
+    pub fn is_any(&self) -> bool {
+        matches!(self, Prim::Any)
+    }
+}
+
 impl Ty {
     pub fn width(&self) -> Option<u64> {
         match self {
