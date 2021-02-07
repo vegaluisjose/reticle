@@ -25,8 +25,8 @@ fn tree_from_prog(file: &str) -> Result<Vec<Tree>, Error> {
 }
 
 fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
-    let bindex = block.bfs(start);
     let pindex = pat.bfs(0);
+    let bindex = block.bfs_bound(start, pindex.len());
     let mut is_match = true;
     let mut bcost: u64 = 0;
     if let Some(proot) = pat.node(0) {
@@ -55,24 +55,51 @@ fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
     }
 }
 
+fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_cost: u64) -> Tree {
+    let pindex = pat.bfs(0);
+    let bindex = block.bfs_bound(target, pindex.len());
+    let mut btree = block.clone();
+    for (p, b) in izip!(&pindex, &bindex) {
+        if let Some(pnode) = pat.node(*p) {
+            if !pnode.is_inp() {
+                if let Some(bnode) = btree.node_mut(*b) {
+                    bnode.clear_pat();
+                }
+            }
+        }
+    }
+    if let Some(bnode) = btree.node_mut(target) {
+        bnode.set_pat(pat_name);
+        bnode.set_cost(pat_cost);
+    }
+    btree
+}
+
+fn tree_codegen(block: &Tree) {
+    for index in block.dfg(0) {
+        if let Some(node) = block.node(index) {
+            if let Some(name) = node.pat() {
+                println!("{}", name);
+            }
+        }
+    }
+}
+
 fn main() -> Result<(), Error> {
     let pats = tree_from_pats("examples/ultrascale.tdl")?;
     let blks = tree_from_prog("examples/fsm.ir")?;
     for btree in blks {
+        let mut ctree = btree.clone();
         let cuts = btree.cut(0);
         for cut in cuts {
-            let mut ctree = btree.clone();
             for (pname, ptree) in &pats {
                 let (is_valid, cost) = is_valid_change(&ctree, &ptree, cut);
                 if is_valid {
-                    if let Some(node) = ctree.node_mut(cut) {
-                        println!("found one, cost:{} with name:{}", cost, &pname);
-                        node.set_cost(cost);
-                        node.set_pat(&pname);
-                    }
+                    ctree = tree_update(&ctree, &ptree, cut, &pname, cost);
                 }
             }
         }
+        tree_codegen(&ctree);
     }
     Ok(())
 }
