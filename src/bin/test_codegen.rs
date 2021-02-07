@@ -24,7 +24,7 @@ fn tree_from_prog(file: &str) -> Result<Vec<Tree>, Error> {
     }
 }
 
-fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> bool {
+fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
     let bindex = block.bfs(start);
     let pindex = pat.bfs(0);
     let mut is_match = true;
@@ -36,7 +36,9 @@ fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> bool {
                 if let Some(bnode) = block.node(*b) {
                     if pnode.ty() != bnode.ty()
                         || (!pnode.is_inp() && pnode.op() != bnode.op())
-                        || (!pnode.is_inp() && !bnode.prim().is_any() && pnode.prim() != bnode.prim())
+                        || (!pnode.is_inp()
+                            && !bnode.prim().is_any()
+                            && pnode.prim() != bnode.prim())
                         || (!pnode.is_inp() && pnode.attr() != bnode.attr())
                     {
                         is_match = false;
@@ -47,9 +49,9 @@ fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> bool {
                 }
             }
         }
-        is_match & (pcost < bcost)
+        (is_match & (pcost < bcost), pcost)
     } else {
-        false
+        (false, u64::MAX)
     }
 }
 
@@ -59,9 +61,15 @@ fn main() -> Result<(), Error> {
     for btree in blks {
         let cuts = btree.cut(0);
         for cut in cuts {
+            let mut ctree = btree.clone();
             for (pname, ptree) in &pats {
-                if is_valid_change(&btree, &ptree, cut) {
-                    println!("[matched] pat:{}", pname);
+                let (is_valid, cost) = is_valid_change(&ctree, &ptree, cut);
+                if is_valid {
+                    if let Some(node) = ctree.node_mut(cut) {
+                        println!("found one, cost:{} with name:{}", cost, &pname);
+                        node.set_cost(cost);
+                        node.set_pat(&pname);
+                    }
                 }
             }
         }

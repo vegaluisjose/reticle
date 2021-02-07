@@ -159,51 +159,6 @@ impl Tree {
     pub fn edge(&self, index: u64) -> Option<&Vec<u64>> {
         self.edge.get(&index)
     }
-    pub fn new_index(&mut self) -> u64 {
-        let curr = self.index;
-        self.index += 1;
-        curr
-    }
-    pub fn add_node(&mut self, instr: &Instr) -> Result<u64, Error> {
-        let curr = self.new_index();
-        let mut node = Node::try_from(instr.clone())?;
-        node.set_index(curr);
-        self.node.insert(curr, node);
-        self.edge.insert(curr, vec![]);
-        Ok(curr)
-    }
-    pub fn add_node_with_cost(&mut self, instr: &Instr, cost: u64) -> Result<u64, Error> {
-        let curr = self.new_index();
-        let mut node = Node::try_from(instr.clone())?;
-        node.set_index(curr);
-        node.set_cost(cost);
-        self.node.insert(curr, node);
-        self.edge.insert(curr, vec![]);
-        Ok(curr)
-    }
-    pub fn add_input(&mut self, id: &str, ty: Ty) -> u64 {
-        let op = NodeOp::Inp;
-        let curr = self.new_index();
-        let mut node = Node {
-            index: curr,
-            id: id.to_string(),
-            ty,
-            op,
-            attr: Expr::default(),
-            prim: Prim::Any,
-            cost: 0,
-            fixed: false,
-            pat: None,
-        };
-        node.set_index(curr);
-        self.node.insert(curr, node);
-        curr
-    }
-    pub fn add_edge(&mut self, from: u64, to: u64) {
-        if let Some(edges) = self.edge.get_mut(&from) {
-            edges.push(to);
-        }
-    }
     pub fn dfg(&self, start: u64) -> Vec<u64> {
         let mut res: Vec<u64> = Vec::new();
         let mut stack: Vec<u64> = Vec::new();
@@ -250,6 +205,54 @@ impl Tree {
         }
         res.reverse();
         res
+    }
+    pub fn node_mut(&mut self, index: u64) -> Option<&mut Node> {
+        self.node.get_mut(&index)
+    }
+    pub fn new_index(&mut self) -> u64 {
+        let curr = self.index;
+        self.index += 1;
+        curr
+    }
+    pub fn add_node(&mut self, instr: &Instr) -> Result<u64, Error> {
+        let curr = self.new_index();
+        let mut node = Node::try_from(instr.clone())?;
+        node.set_index(curr);
+        self.node.insert(curr, node);
+        self.edge.insert(curr, vec![]);
+        Ok(curr)
+    }
+    pub fn add_node_with_cost(&mut self, instr: &Instr, cost: u64) -> Result<u64, Error> {
+        let curr = self.new_index();
+        let mut node = Node::try_from(instr.clone())?;
+        node.set_index(curr);
+        node.set_cost(cost);
+        self.node.insert(curr, node);
+        self.edge.insert(curr, vec![]);
+        Ok(curr)
+    }
+    pub fn add_input(&mut self, id: &str, ty: Ty) -> u64 {
+        let op = NodeOp::Inp;
+        let curr = self.new_index();
+        let mut node = Node {
+            index: curr,
+            id: id.to_string(),
+            ty,
+            op,
+            attr: Expr::default(),
+            prim: Prim::Any,
+            cost: 0,
+            fixed: false,
+            pat: None,
+        };
+        node.set_index(curr);
+        self.node.insert(curr, node);
+        curr
+    }
+    pub fn add_edge(&mut self, from: u64, to: u64) {
+        if let Some(edges) = self.edge.get_mut(&from) {
+            edges.push(to);
+        }
     }
 }
 
