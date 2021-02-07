@@ -46,7 +46,7 @@ pub fn find_roots(def: &Def) -> Vec<Id> {
     root
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum NodeOp {
     Wire(OpWire),
     Comp(OpComp),

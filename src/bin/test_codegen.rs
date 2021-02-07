@@ -29,24 +29,28 @@ fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> bool {
     let pindex = pat.bfs(0);
     let mut is_match = true;
     let mut bcost: u64 = 0;
-    let pcost = if let Some(pnode) = pat.node(0) {
-        pnode.cost()
-    } else {
-        u64::MAX
-    };
-    for (p, b) in izip!(&pindex, &bindex) {
-        if let Some(pnode) = pat.node(*p) {
-            if let Some(bnode) = block.node(*b) {
-                if pnode.ty() != bnode.ty() {
-                    is_match = false;
-                }
-                if !pnode.is_inp() && bcost != u64::MAX {
-                    bcost += bnode.cost();
+    if let Some(proot) = pat.node(0) {
+        let pcost = proot.cost();
+        for (p, b) in izip!(&pindex, &bindex) {
+            if let Some(pnode) = pat.node(*p) {
+                if let Some(bnode) = block.node(*b) {
+                    if pnode.ty() != bnode.ty()
+                        || (!pnode.is_inp() && pnode.op() != bnode.op())
+                        || (!pnode.is_inp() && !bnode.prim().is_any() && pnode.prim() != bnode.prim())
+                        || (!pnode.is_inp() && pnode.attr() != bnode.attr())
+                    {
+                        is_match = false;
+                    }
+                    if !pnode.is_inp() && bcost != u64::MAX {
+                        bcost += bnode.cost();
+                    }
                 }
             }
         }
+        is_match & (pcost < bcost)
+    } else {
+        false
     }
-    is_match & (pcost < bcost)
 }
 
 fn main() -> Result<(), Error> {
