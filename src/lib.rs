@@ -1,5 +1,5 @@
 pub mod asm;
-pub mod codegen;
+pub mod compiler;
 pub mod ir;
 pub mod tdl;
 pub mod util;
