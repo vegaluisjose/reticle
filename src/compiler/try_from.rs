@@ -1,4 +1,4 @@
-use crate::compiler::partition::find_roots;
+use crate::compiler::helpers::find_roots;
 use crate::compiler::tree::*;
 use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
