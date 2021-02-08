@@ -11,3 +11,9 @@ impl From<InstrAsm> for Instr {
         Instr::Asm(instr)
     }
 }
+
+impl From<Id> for OpAsm {
+    fn from(op: Id) -> Self {
+        OpAsm::Op(op)
+    }
+}
