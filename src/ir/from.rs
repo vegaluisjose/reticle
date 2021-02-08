@@ -2,6 +2,12 @@ use crate::ir::ast::*;
 use crate::tdl::ast::PatInstr;
 use std::collections::HashSet;
 
+impl From<Vec<ExprTerm>> for ExprTup {
+    fn from(term: Vec<ExprTerm>) -> Self {
+        ExprTup { term }
+    }
+}
+
 impl From<ExprTup> for Expr {
     fn from(tup: ExprTup) -> Self {
         Expr::Tup(tup)

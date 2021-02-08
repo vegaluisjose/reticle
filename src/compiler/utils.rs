@@ -1,15 +1,16 @@
+use crate::asm::ast as asm;
 use crate::compiler::tree::{Forest, Tree};
-use crate::ir::ast::*;
+use crate::ir::ast as ir;
 use crate::ir::parser::IRParser;
-use crate::tdl::ast::Pat;
+use crate::tdl::ast::{Pat, Target};
 use crate::tdl::parser::TDLParser;
 use crate::util::errors::Error;
 use itertools::izip;
 use std::collections::HashMap;
 use std::convert::TryFrom;
 
-pub fn tree_roots_from_def(def: &Def) -> Vec<Id> {
-    let mut count: HashMap<Id, u64> = HashMap::new();
+pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
+    let mut count: HashMap<ir::Id, u64> = HashMap::new();
     // store compute instructions
     for instr in def.body() {
         if instr.is_comp() {
@@ -22,7 +23,7 @@ pub fn tree_roots_from_def(def: &Def) -> Vec<Id> {
     }
     // calculate the number of times compute instructions are used
     for instr in def.body() {
-        let arg: Vec<ExprTerm> = instr.arg().clone().into();
+        let arg: Vec<ir::ExprTerm> = instr.arg().clone().into();
         for e in arg {
             if let Some(id) = e.id() {
                 if let Some(val) = count.get_mut(&id) {
@@ -31,7 +32,7 @@ pub fn tree_roots_from_def(def: &Def) -> Vec<Id> {
             }
         }
     }
-    let mut root: Vec<Id> = Vec::new();
+    let mut root: Vec<ir::Id> = Vec::new();
     // a node is a root if it is used more than once
     for (k, v) in count {
         if v > 1 {
@@ -39,7 +40,7 @@ pub fn tree_roots_from_def(def: &Def) -> Vec<Id> {
         }
     }
     // add outputs as roots
-    let output: Vec<ExprTerm> = def.output().clone().into();
+    let output: Vec<ir::ExprTerm> = def.output().clone().into();
     for e in output {
         if let Some(id) = e.id() {
             root.push(id);
@@ -106,6 +107,7 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
             if !pnode.is_inp() {
                 if let Some(bnode) = btree.node_mut(*b) {
                     bnode.clear_pat();
+                    bnode.set_cost(0);
                 }
             }
         }
@@ -117,14 +119,84 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
     btree
 }
 
-pub fn tree_codegen(block: &Tree) {
-    for index in block.dfg(0) {
-        if let Some(node) = block.node(index) {
-            if let Some(name) = node.pat() {
-                println!("{}", name);
+pub fn input_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, String> {
+    let mut map: HashMap<String, String> = HashMap::new();
+    let pindex = pat.bfs(0);
+    let bindex = block.bfs_bound(target, pindex.len());
+    for (p, b) in izip!(&pindex, &bindex) {
+        if let Some(pnode) = pat.node(*p) {
+            if pnode.is_inp() {
+                if let Some(bnode) = block.node(*b) {
+                    map.insert(pnode.id(), bnode.id());
+                }
             }
         }
     }
+    map
+}
+
+pub fn output_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, String> {
+    let mut map: HashMap<String, String> = HashMap::new();
+    if let Some(pnode) = pat.node(0) {
+        if let Some(bnode) = block.node(target) {
+            map.insert(pnode.id(), bnode.id());
+        }
+    }
+    map
+}
+
+pub fn rename_expr(map: &HashMap<String, String>, input: &asm::Expr) -> Result<asm::Expr, Error> {
+    let iterm: Vec<asm::ExprTerm> = input.clone().into();
+    let mut oterm: Vec<asm::ExprTerm> = Vec::new();
+    for e in iterm {
+        if let Some(id) = map.get(&e.get_id()?) {
+            let ty = e.get_ty()?;
+            oterm.push(asm::ExprTerm::Var(id.clone(), ty.clone()));
+        }
+    }
+    if oterm.len() == 1 {
+        Ok(asm::Expr::from(oterm[0].clone()))
+    } else {
+        let tup: asm::ExprTup = oterm.into();
+        Ok(asm::Expr::from(tup))
+    }
+}
+
+pub fn tree_codegen(
+    block: &Tree,
+    patmap: &HashMap<String, Tree>,
+    target: &Target,
+) -> Result<(), Error> {
+    for index in block.dfg(0) {
+        if let Some(node) = block.node(index) {
+            if let Some(name) = node.pat() {
+                if let Some(tree) = patmap.get(name) {
+                    if let Some(pat) = target.get_pat(&name) {
+                        let imap = input_map(block, tree, index);
+                        let omap = output_map(block, tree, index);
+                        let dst = rename_expr(&omap, pat.output())?;
+                        let arg = rename_expr(&imap, pat.input())?;
+                        let op = asm::OpAsm::from(name.clone());
+                        let loc = asm::Loc {
+                            prim: pat.prim().clone(),
+                            x: asm::ExprCoord::Any,
+                            y: asm::ExprCoord::Any,
+                        };
+                        let asm = asm::InstrAsm {
+                            op,
+                            dst,
+                            arg,
+                            loc,
+                            area: 0,
+                            lat: 0,
+                        };
+                        println!("{}", asm);
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
 }
 
 pub fn test() -> Result<(), Error> {
@@ -142,7 +214,7 @@ pub fn test() -> Result<(), Error> {
                 }
             }
         }
-        tree_codegen(&ctree);
+        tree_codegen(&ctree, &pats, &target)?;
     }
     Ok(())
 }
