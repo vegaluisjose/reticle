@@ -142,8 +142,6 @@ impl AsmParser {
                 dst,
                 arg,
                 loc,
-                area: 0,
-                lat: 0,
             },
         ))
     }

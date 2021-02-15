@@ -187,8 +187,6 @@ pub fn tree_codegen(
                             dst,
                             arg,
                             loc,
-                            area: 0,
-                            lat: 0,
                         };
                         println!("{}", asm);
                     }
