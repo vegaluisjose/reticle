@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 pub type Id = String;
+pub type InstrMap = HashMap<Id, Instr>;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Ty {

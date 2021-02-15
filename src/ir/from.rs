@@ -72,3 +72,17 @@ impl From<Expr> for HashSet<Expr> {
         set
     }
 }
+
+impl From<Def> for InstrMap {
+    fn from(input: Def) -> Self {
+        let mut imap = InstrMap::new();
+        for instr in input.body() {
+            if let Some(term) = instr.dst().term() {
+                if let Some(id) = term.id() {
+                    imap.insert(id, instr.clone());
+                }
+            }
+        }
+        imap
+    }
+}
