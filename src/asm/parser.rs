@@ -134,47 +134,33 @@ impl AsmParser {
         }
     }
 
-    fn instr_asm(input: Node) -> Result<InstrAsm> {
+    fn instr(input: Node) -> Result<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_asm(op), io(arg), loc(loc)] => InstrAsm {
-                op,
-                dst,
-                arg,
-                loc,
-            },
-        ))
-    }
-
-    fn instr_wire(input: Node) -> Result<InstrWire> {
-        Ok(match_nodes!(
-            input.into_children();
-            [io(dst), op_wire(op), tup_val(attr)] => InstrWire {
+            [io(dst), op_wire(op), tup_val(attr)] => Instr::from(InstrWire {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg: Expr::default(),
-            },
-            [io(dst), op_wire(op), io(arg)] => InstrWire {
+            }),
+            [io(dst), op_wire(op), io(arg)] => Instr::from(InstrWire {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
-            },
-            [io(dst), op_wire(op), tup_val(attr), io(arg)] => InstrWire {
+            }),
+            [io(dst), op_wire(op), tup_val(attr), io(arg)] => Instr::from(InstrWire {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg,
-            }
-        ))
-    }
-
-    fn instr(input: Node) -> Result<Instr> {
-        Ok(match_nodes!(
-            input.into_children();
-            [instr_asm(instr)] => Instr::from(instr),
-            [instr_wire(instr)] => Instr::from(instr),
+            }),
+            [io(dst), op_asm(op), io(arg), loc(loc)] => Instr::from(InstrAsm {
+                op,
+                dst,
+                arg,
+                loc,
+            })
         ))
     }
 

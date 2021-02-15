@@ -34,19 +34,17 @@ op_coord = { "+" }
 
 expr_coord = { coord ~ (op_coord ~ coord)? }
 
-hint = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+xy = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
-loc = { "@" ~ prim ~ hint? }
+loc = { "@" ~ prim ~ xy? }
+
+op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
 
 op_asm = { id }
 
-op_wire = { id }
+op = _{ op_wire | op_asm }
 
-instr_asm = { io ~ "=" ~ op_asm ~ io ~ loc ~ ";" }
-
-instr_wire = { io ~ "=" ~ op_wire ~ attr? ~ io? ~ ";" }
-
-instr = { instr_asm | instr_wire }
+instr = { io ~ "=" ~ op ~ attr? ~ io? ~ loc? ~ ";" }
 
 body = { instr+ }
 
