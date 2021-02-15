@@ -83,6 +83,7 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                             && !bnode.prim().is_any()
                             && pnode.prim() != bnode.prim())
                         || (!pnode.is_inp() && pnode.attr() != bnode.attr())
+                        || (!pnode.is_inp() && bnode.is_committed())
                     {
                         is_match = false;
                     }
@@ -90,6 +91,9 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                         bcost += bnode.cost();
                     }
                 }
+            }
+            if !is_match {
+                break;
             }
         }
         (is_match & (pcost < bcost), pcost)
@@ -182,12 +186,7 @@ pub fn tree_codegen(
                             x: asm::ExprCoord::Any,
                             y: asm::ExprCoord::Any,
                         };
-                        let asm = asm::InstrAsm {
-                            op,
-                            dst,
-                            arg,
-                            loc,
-                        };
+                        let asm = asm::InstrAsm { op, dst, arg, loc };
                         println!("{}", asm);
                     }
                 }
