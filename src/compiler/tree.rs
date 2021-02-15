@@ -17,7 +17,8 @@ pub struct Node {
     pub attr: Expr,
     pub prim: Prim,
     pub cost: u64,
-    pub fixed: bool,
+    pub staged: bool,
+    pub committed: bool,
     pub pat: Option<String>,
 }
 

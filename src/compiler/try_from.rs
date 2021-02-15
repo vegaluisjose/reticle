@@ -21,7 +21,8 @@ impl TryFrom<InstrWire> for Node {
             attr,
             prim: Prim::Any,
             cost: 0,
-            fixed: false,
+            staged: false,
+            committed: false,
             pat: None,
         })
     }
@@ -43,7 +44,8 @@ impl TryFrom<InstrComp> for Node {
             attr,
             prim,
             cost: u64::MAX,
-            fixed: false,
+            staged: false,
+            committed: false,
             pat: None,
         })
     }

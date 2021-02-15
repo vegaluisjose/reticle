@@ -39,8 +39,11 @@ impl Node {
     pub fn pat(&self) -> Option<&String> {
         self.pat.as_ref()
     }
-    pub fn is_fixed(&self) -> bool {
-        self.fixed
+    pub fn is_staged(&self) -> bool {
+        self.staged
+    }
+    pub fn is_committed(&self) -> bool {
+        self.committed
     }
     pub fn set_index(&mut self, index: u64) {
         self.index = index;
@@ -48,14 +51,20 @@ impl Node {
     pub fn set_cost(&mut self, cost: u64) {
         self.cost = cost;
     }
-    pub fn set_fixed(&mut self) {
-        self.fixed = true;
+    pub fn set_staged(&mut self) {
+        self.staged = true;
+    }
+    pub fn set_committed(&mut self) {
+        self.committed = true;
     }
     pub fn set_pat(&mut self, name: &str) {
         self.pat = Some(name.to_string());
     }
-    pub fn clear_fixed(&mut self) {
-        self.fixed = false;
+    pub fn clear_staged(&mut self) {
+        self.staged = false;
+    }
+    pub fn clear_committed(&mut self) {
+        self.committed = false;
     }
     pub fn clear_pat(&mut self) {
         self.pat = None;
@@ -128,7 +137,7 @@ impl Tree {
         stack.push(start);
         while let Some(cur) = stack.pop() {
             if let Some(node) = self.node.get(&cur) {
-                if node.is_comp() && !node.is_fixed() {
+                if node.is_comp() && !node.is_committed() {
                     res.push(cur);
                 }
             }
@@ -177,7 +186,8 @@ impl Tree {
             attr: Expr::default(),
             prim: Prim::Any,
             cost: 0,
-            fixed: false,
+            staged: false,
+            committed: false,
             pat: None,
         };
         node.set_index(curr);
