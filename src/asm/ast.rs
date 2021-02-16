@@ -50,7 +50,7 @@ pub enum Instr {
     Asm(InstrAsm),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Default, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,

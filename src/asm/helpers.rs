@@ -34,4 +34,10 @@ impl Prog {
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
+    pub fn set_sig(&mut self, sig: Sig) {
+        self.sig = sig;
+    }
+    pub fn set_body(&mut self, instr: Vec<Instr>) {
+        self.body = instr;
+    }
 }

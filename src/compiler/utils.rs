@@ -225,7 +225,7 @@ pub fn tree_codegen(
                     let wire = asm::InstrWire::try_from(instr.clone())?;
                     body.push(asm::Instr::from(wire));
                 }
-            }
+            } // TODO: add error for uncovered node
         }
     }
     Ok(body)
@@ -243,8 +243,11 @@ pub fn test() -> Result<(), Error> {
         blk.commit();
         body.extend(tree_codegen(&imap, &blk, &lmap, tlut.pat())?);
     }
-    for instr in body {
-        println!("{}", instr);
+    let mut res = asm::Prog::default();
+    if let Some(main) = prog.get("main") {
+        res.set_sig(main.sig().clone());
+        res.set_body(body);
+        println!("{}", res);
     }
     Ok(())
 }
