@@ -197,7 +197,8 @@ pub fn tree_codegen(
     block: &Tree,
     tmap: &HashMap<String, Tree>,
     pmap: &HashMap<String, Pat>,
-) -> Result<(), Error> {
+) -> Result<Vec<asm::Instr>, Error> {
+    let mut body: Vec<asm::Instr> = Vec::new();
     for index in block.dfg(0) {
         if let Some(node) = block.node(index) {
             if node.is_committed() {
@@ -215,18 +216,19 @@ pub fn tree_codegen(
                                 y: asm::ExprCoord::Any,
                             };
                             let asm = asm::InstrAsm { op, dst, arg, loc };
-                            println!("{}", asm);
+                            body.push(asm::Instr::from(asm));
                         }
                     }
                 }
             } else if !node.is_staged() && node.is_wire() {
                 if let Some(instr) = imap.get(&node.id()) {
-                    println!("{}", instr);
+                    let wire = asm::InstrWire::try_from(instr.clone())?;
+                    body.push(asm::Instr::from(wire));
                 }
             }
         }
     }
-    Ok(())
+    Ok(body)
 }
 
 pub fn test() -> Result<(), Error> {
@@ -236,9 +238,13 @@ pub fn test() -> Result<(), Error> {
     let imap = imap_from_prog(&prog)?;
     let blks = tree_from_prog(&prog)?;
     let mut blks = tree_isel(&blks, &lmap)?;
+    let mut body: Vec<asm::Instr> = Vec::new();
     for blk in blks.iter_mut() {
         blk.commit();
-        tree_codegen(&imap, &blk, &lmap, tlut.pat())?;
+        body.extend(tree_codegen(&imap, &blk, &lmap, tlut.pat())?);
+    }
+    for instr in body {
+        println!("{}", instr);
     }
     Ok(())
 }

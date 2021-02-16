@@ -96,3 +96,13 @@ impl TryFrom<Expr> for Vec<Id> {
         }
     }
 }
+
+impl TryFrom<Instr> for InstrWire {
+    type Error = Error;
+    fn try_from(instr: Instr) -> Result<Self, Self::Error> {
+        match instr {
+            Instr::Wire(instr) => Ok(instr),
+            _ => Err(Error::new_conv_error("not a wire instruction")),
+        }
+    }
+}
