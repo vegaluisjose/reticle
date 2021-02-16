@@ -51,10 +51,10 @@ impl Node {
     pub fn set_cost(&mut self, cost: u64) {
         self.cost = cost;
     }
-    pub fn set_staged(&mut self) {
+    pub fn stage(&mut self) {
         self.staged = true;
     }
-    pub fn set_committed(&mut self) {
+    pub fn commit(&mut self) {
         self.committed = true;
     }
     pub fn set_pat(&mut self, name: &str) {
@@ -63,7 +63,7 @@ impl Node {
     pub fn clear_staged(&mut self) {
         self.staged = false;
     }
-    pub fn clear_committed(&mut self) {
+    pub fn clear_commit(&mut self) {
         self.committed = false;
     }
     pub fn clear_pat(&mut self) {
@@ -204,7 +204,7 @@ impl Tree {
         for i in index {
             if let Some(node) = self.node_mut(i) {
                 if !node.is_inp() && node.pat().is_some() && node.is_staged() {
-                    node.set_committed();
+                    node.commit();
                 }
             }
         }

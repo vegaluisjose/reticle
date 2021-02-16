@@ -119,7 +119,7 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
                 if let Some(bnode) = btree.node_mut(*b) {
                     bnode.clear_pat();
                     bnode.set_cost(0);
-                    bnode.set_staged();
+                    bnode.stage();
                 }
             }
         }
