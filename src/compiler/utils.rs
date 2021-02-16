@@ -200,21 +200,23 @@ pub fn tree_codegen(
 ) -> Result<(), Error> {
     for index in block.dfg(0) {
         if let Some(node) = block.node(index) {
-            if let Some(name) = node.pat() {
-                if let Some(tree) = tmap.get(name) {
-                    if let Some(pat) = pmap.get(name) {
-                        let input = input_map(block, tree, index);
-                        let output = output_map(block, tree, index);
-                        let dst = rename_expr(&output, pat.output())?;
-                        let arg = rename_expr(&input, pat.input())?;
-                        let op = asm::OpAsm::from(name.clone());
-                        let loc = asm::Loc {
-                            prim: pat.prim().clone(),
-                            x: asm::ExprCoord::Any,
-                            y: asm::ExprCoord::Any,
-                        };
-                        let asm = asm::InstrAsm { op, dst, arg, loc };
-                        println!("{}", asm);
+            if node.is_committed() {
+                if let Some(name) = node.pat() {
+                    if let Some(tree) = tmap.get(name) {
+                        if let Some(pat) = pmap.get(name) {
+                            let input = input_map(block, tree, index);
+                            let output = output_map(block, tree, index);
+                            let dst = rename_expr(&output, pat.output())?;
+                            let arg = rename_expr(&input, pat.input())?;
+                            let op = asm::OpAsm::from(name.clone());
+                            let loc = asm::Loc {
+                                prim: pat.prim().clone(),
+                                x: asm::ExprCoord::Any,
+                                y: asm::ExprCoord::Any,
+                            };
+                            let asm = asm::InstrAsm { op, dst, arg, loc };
+                            println!("{}", asm);
+                        }
                     }
                 }
             } else if !node.is_staged() && node.is_wire() {
@@ -229,12 +231,13 @@ pub fn tree_codegen(
 
 pub fn test() -> Result<(), Error> {
     let prog = IRParser::parse_from_file("examples/fsm.ir")?;
-    let tlut = TDLParser::parse_from_file("examples/ultrascale.tdl")?;
+    let tlut = TDLParser::parse_from_file("examples/ultrascale_lut.tdl")?;
     let lmap = tree_from_pats(tlut.pat())?;
     let imap = imap_from_prog(&prog)?;
     let blks = tree_from_prog(&prog)?;
-    let blks = tree_isel(&blks, &lmap)?;
-    for blk in blks {
+    let mut blks = tree_isel(&blks, &lmap)?;
+    for blk in blks.iter_mut() {
+        blk.commit();
         tree_codegen(&imap, &blk, &lmap, tlut.pat())?;
     }
     Ok(())

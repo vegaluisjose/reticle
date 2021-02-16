@@ -199,6 +199,16 @@ impl Tree {
             edges.push(to);
         }
     }
+    pub fn commit(&mut self) {
+        let index = self.bfs(0);
+        for i in index {
+            if let Some(node) = self.node_mut(i) {
+                if !node.is_inp() && node.pat().is_some() && node.is_staged() {
+                    node.set_committed();
+                }
+            }
+        }
+    }
 }
 
 impl Forest {
