@@ -1,3 +1,4 @@
+use crate::ir::ast as ir;
 use crate::tdl::ast::*;
 
 impl From<InstrWire> for PatInstr {
@@ -21,5 +22,20 @@ impl From<Imp> for Des {
 impl From<Pat> for Des {
     fn from(pat: Pat) -> Self {
         Des::Pat(pat)
+    }
+}
+
+impl From<Pat> for ir::InstrMap {
+    fn from(input: Pat) -> Self {
+        let mut imap = ir::InstrMap::new();
+        for instr in input.body() {
+            if let Some(term) = instr.dst().term() {
+                if let Some(id) = term.id() {
+                    let ir_instr = ir::Instr::from(instr.clone());
+                    imap.insert(id, ir_instr.clone());
+                }
+            }
+        }
+        imap
     }
 }
