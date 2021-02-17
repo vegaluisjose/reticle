@@ -247,6 +247,7 @@ pub fn test() -> Result<(), Error> {
     if let Some(main) = prog.get("main") {
         res.set_sig(main.sig().clone());
         res.set_body(body);
+        println!("{}", main);
         println!("{}", res);
     }
     Ok(())

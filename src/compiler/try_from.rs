@@ -96,17 +96,20 @@ impl TryFrom<Def> for Forest {
                     let arg: Vec<ExprTerm> = instr.arg().clone().into();
                     for term in arg {
                         let id = term.get_id()?;
-                        if imap.contains_key(&id) && !forest.was_visited(&id) {
-                            if let Some(instr) = imap.get(&id) {
+                        if let Some(instr) = imap.get(&id) {
+                            if imap.contains_key(&id) && !forest.was_visited(&id) {
                                 let to = tree.add_node(instr)?;
                                 tree.add_edge(index, to);
                                 forest.add_visited(&id);
-                                stack.push((id, to));
+                                stack.push((id.clone(), to));
+                            } else if instr.is_wire() {
+                                let to = tree.add_node(instr)?;
+                                tree.add_edge(index, to);
+                            } else {
+                                let ty = term.get_ty()?;
+                                let to = tree.add_input(&id, ty.clone());
+                                tree.add_edge(index, to);
                             }
-                        } else {
-                            let ty = term.get_ty()?;
-                            let to = tree.add_input(&id, ty.clone());
-                            tree.add_edge(index, to);
                         }
                     }
                 }
@@ -150,17 +153,20 @@ impl TryFrom<Pat> for Tree {
                 let arg: Vec<ExprTerm> = instr.arg().clone().into();
                 for term in arg {
                     let id = term.get_id()?;
-                    if imap.contains_key(&id) && !visited.contains(&id) {
-                        if let Some(instr) = imap.get(&id) {
+                    if let Some(instr) = imap.get(&id) {
+                        if imap.contains_key(&id) && !visited.contains(&id) {
                             let to = tree.add_node(instr)?;
                             tree.add_edge(index, to);
                             visited.insert(id.clone());
-                            stack.push((id, to));
+                            stack.push((id.clone(), to));
+                        } else if instr.is_wire() {
+                            let to = tree.add_node(instr)?;
+                            tree.add_edge(index, to);
+                        } else {
+                            let ty = term.get_ty()?;
+                            let to = tree.add_input(&id, ty.clone());
+                            tree.add_edge(index, to);
                         }
-                    } else {
-                        let ty = term.get_ty()?;
-                        let to = tree.add_input(&id, ty.clone());
-                        tree.add_edge(index, to);
                     }
                 }
             }
