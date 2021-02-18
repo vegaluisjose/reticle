@@ -174,7 +174,7 @@ pub fn rename_expr(map: &HashMap<String, String>, input: &asm::Expr) -> Result<a
     }
 }
 
-pub fn tree_isel(blocks: &[Tree], pmap: &HashMap<String, Tree>) -> Result<Vec<Tree>, Error> {
+pub fn tree_select(blocks: &[Tree], pmap: &HashMap<String, Tree>) -> Result<Vec<Tree>, Error> {
     let mut res: Vec<Tree> = Vec::new();
     for btree in blocks {
         let mut ctree = btree.clone();
@@ -187,6 +187,7 @@ pub fn tree_isel(blocks: &[Tree], pmap: &HashMap<String, Tree>) -> Result<Vec<Tr
                 }
             }
         }
+        ctree.commit();
         res.push(ctree);
     }
     Ok(res)
@@ -236,16 +237,25 @@ pub fn tree_codegen(
 }
 
 pub fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
-    let tlut = TDLParser::parse_from_file("examples/target/ultrascale/lut.tdl")?;
-    let lmap = tree_from_pats(tlut.pat())?;
+    let lut = TDLParser::parse_from_file("examples/target/ultrascale/lut.tdl")?;
+    let dsp = TDLParser::parse_from_file("examples/target/ultrascale/dsp.tdl")?;
+    let lmap = tree_from_pats(lut.pat())?;
+    let dmap = tree_from_pats(dsp.pat())?;
     let imap = imap_from_prog(&prog)?;
     let blks = tree_from_prog(&prog)?;
-    let mut blks = tree_isel(&blks, &lmap)?;
+    let blks = tree_select(&blks, &lmap)?;
+    let blks = tree_select(&blks, &dmap)?;
     let mut body: Vec<asm::Instr> = Vec::new();
     let mut iset: HashSet<ir::Id> = HashSet::new();
-    for blk in blks.iter_mut() {
-        blk.commit();
-        body.extend(tree_codegen(&mut iset, &imap, &blk, &lmap, tlut.pat())?);
+    let tree_map: HashMap<String, Tree> = lmap.into_iter().chain(dmap).collect();
+    let pat_map: HashMap<String, Pat> = lut
+        .pat()
+        .clone()
+        .into_iter()
+        .chain(dsp.pat().clone())
+        .collect();
+    for blk in blks {
+        body.extend(tree_codegen(&mut iset, &imap, &blk, &tree_map, &pat_map)?);
     }
     let mut res = asm::Prog::default();
     if let Some(main) = prog.get("main") {
