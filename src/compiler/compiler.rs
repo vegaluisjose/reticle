@@ -1,7 +1,6 @@
 use crate::asm::ast as asm;
 use crate::compiler::tree::Tree;
 use crate::ir::ast as ir;
-use crate::ir::parser::IRParser;
 use crate::tdl::ast::Pat;
 use crate::tdl::parser::TDLParser;
 use crate::util::errors::Error;
@@ -236,8 +235,7 @@ pub fn tree_codegen(
     Ok(body)
 }
 
-pub fn test() -> Result<(), Error> {
-    let prog = IRParser::parse_from_file("examples/ir/fsm.ir")?;
+pub fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
     let tlut = TDLParser::parse_from_file("examples/target/ultrascale/lut.tdl")?;
     let lmap = tree_from_pats(tlut.pat())?;
     let imap = imap_from_prog(&prog)?;
@@ -253,8 +251,8 @@ pub fn test() -> Result<(), Error> {
     if let Some(main) = prog.get("main") {
         res.set_sig(main.sig().clone());
         res.set_body(body);
-        println!("{}", main);
-        println!("{}", res);
+        Ok(res)
+    } else {
+        Err(Error::new_conv_error("Prog must have a main definition"))
     }
-    Ok(())
 }
