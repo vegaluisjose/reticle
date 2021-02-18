@@ -220,7 +220,11 @@ impl PrettyPrint for Prog {
             RcDoc::hardline(),
         );
         if let Some(main) = self.get("main") {
-            preamble.append(RcDoc::hardline()).append(main.to_doc())
+            if self.def().len() == 1 {
+                main.to_doc()
+            } else {
+                preamble.append(RcDoc::hardline()).append(main.to_doc())
+            }
         } else {
             preamble
         }
