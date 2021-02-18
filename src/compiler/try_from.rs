@@ -71,11 +71,9 @@ pub fn build_tree_mut(
     root: &str,
     cost: u64,
 ) -> Result<Tree, Error> {
-    let terms: Vec<ExprTerm> = input.clone().into();
-    for e in terms {
-        if let Some(id) = e.id() {
-            visited.insert(id);
-        }
+    let input_map: TermMap = input.clone().into();
+    for id in input_map.keys() {
+        visited.insert(id.clone());
     }
     let mut tree = Tree::default();
     let mut stack: Vec<(Id, u64)> = Vec::new();
@@ -106,6 +104,10 @@ pub fn build_tree_mut(
                         let to = tree.add_input(&id, ty.clone());
                         tree.add_edge(index, to);
                     }
+                } else if let Some(term) = input_map.get(&id) {
+                    let ty = term.get_ty()?;
+                    let to = tree.add_input(&id, ty.clone());
+                    tree.add_edge(index, to);
                 }
             }
         }
