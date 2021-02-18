@@ -6,7 +6,7 @@ use crate::tdl::ast::Pat;
 use crate::tdl::parser::TDLParser;
 use crate::util::errors::Error;
 use itertools::izip;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use std::convert::TryInto;
 
@@ -194,6 +194,7 @@ pub fn tree_isel(blocks: &[Tree], pmap: &HashMap<String, Tree>) -> Result<Vec<Tr
 }
 
 pub fn tree_codegen(
+    iset: &mut HashSet<ir::Id>,
     imap: &ir::InstrMap,
     block: &Tree,
     tmap: &HashMap<String, Tree>,
@@ -223,8 +224,11 @@ pub fn tree_codegen(
                 }
             } else if !node.is_staged() && node.is_wire() {
                 if let Some(instr) = imap.get(&node.id()) {
-                    let wire = asm::InstrWire::try_from(instr.clone())?;
-                    body.push(asm::Instr::from(wire));
+                    if !iset.contains(&node.id()) {
+                        let wire = asm::InstrWire::try_from(instr.clone())?;
+                        body.push(asm::Instr::from(wire));
+                        iset.insert(node.id());
+                    }
                 }
             } // TODO: add error for uncovered node
         }
@@ -240,9 +244,10 @@ pub fn test() -> Result<(), Error> {
     let blks = tree_from_prog(&prog)?;
     let mut blks = tree_isel(&blks, &lmap)?;
     let mut body: Vec<asm::Instr> = Vec::new();
+    let mut iset: HashSet<ir::Id> = HashSet::new();
     for blk in blks.iter_mut() {
         blk.commit();
-        body.extend(tree_codegen(&imap, &blk, &lmap, tlut.pat())?);
+        body.extend(tree_codegen(&mut iset, &imap, &blk, &lmap, tlut.pat())?);
     }
     let mut res = asm::Prog::default();
     if let Some(main) = prog.get("main") {
