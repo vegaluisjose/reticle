@@ -1,4 +1,4 @@
-use reticle::compiler::utils::test;
+use reticle::compiler::test;
 
 fn main() {
     test().unwrap();
