@@ -237,8 +237,8 @@ pub fn tree_codegen(
 }
 
 pub fn test() -> Result<(), Error> {
-    let prog = IRParser::parse_from_file("examples/fsm.ir")?;
-    let tlut = TDLParser::parse_from_file("examples/ultrascale_lut.tdl")?;
+    let prog = IRParser::parse_from_file("examples/ir/fsm.ir")?;
+    let tlut = TDLParser::parse_from_file("examples/target/ultrascale/lut.tdl")?;
     let lmap = tree_from_pats(tlut.pat())?;
     let imap = imap_from_prog(&prog)?;
     let blks = tree_from_prog(&prog)?;
