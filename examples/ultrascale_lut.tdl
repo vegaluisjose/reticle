@@ -1,13 +1,26 @@
-pat lut_bool_eq_i2_i2[lut, 1, 2](a: i2, b: i2) -> (y: bool) {
+pat lut_eq_i2[lut, 1, 2](a: i2, b: i2) -> (y: bool) {
     y:bool = eq(a, b);
 }
 
-pat lut_i8_add_ro[lut, 1, 2](a: i8, b: i8, en: bool) -> (y: i8) {
+pat lut_and_b[lut, 1, 2](a: bool, b: bool) -> (y: bool) {
+    y:bool = and(a, b);
+}
+
+pat lut_add_reg_i8[lut, 1, 2](a: i8, b: i8, en: bool) -> (y: i8) {
     t0:i8 = add(a, b);
     y:i8 = reg[0](t0, en);
 }
 
-imp lut_i8_add_ro[x, y](a: i8, b: i8, en: bool) -> (y: i8) {
+pat lut_mux_i2[lut, 1, 2](sel: bool, a: i2, b: i2) -> (y: i2) {
+    y:i2 = mux(sel, a, b);
+}
+
+pat lut_mux_reg_i2[lut, 1, 2](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {
+    t0:i2 = mux(sel, a, b);
+    y:i2 = reg[0](t0, en);
+}
+
+imp lut_add_reg_i8[x, y](a: i8, b: i8, en: bool) -> (y: i8) {
     t0:bool = ext[0](a);
     t1:bool = ext[1](a);
     t2:bool = ext[2](a);
