@@ -1,8 +1,10 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
 pub type Id = String;
 pub type InstrMap = HashMap<Id, Instr>;
+pub type TermMap = HashMap<Id, ExprTerm>;
+pub type ExprSet = HashSet<Expr>;
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum Ty {

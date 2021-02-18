@@ -1,6 +1,5 @@
 use crate::ir::ast::*;
 use crate::tdl::ast::PatInstr;
-use std::collections::HashSet;
 
 impl From<Vec<ExprTerm>> for ExprTup {
     fn from(term: Vec<ExprTerm>) -> Self {
@@ -56,9 +55,30 @@ impl From<Expr> for Vec<ExprTerm> {
     }
 }
 
-impl From<Expr> for HashSet<Expr> {
+impl From<Expr> for TermMap {
     fn from(expr: Expr) -> Self {
-        let mut set: HashSet<Expr> = HashSet::new();
+        let mut map = TermMap::new();
+        match expr {
+            Expr::Tup(t) => {
+                for t in t.term() {
+                    if let Some(id) = t.id() {
+                        map.insert(id, t.clone());
+                    }
+                }
+            }
+            Expr::Term(t) => {
+                if let Some(id) = t.id() {
+                    map.insert(id, t);
+                }
+            }
+        }
+        map
+    }
+}
+
+impl From<Expr> for ExprSet {
+    fn from(expr: Expr) -> Self {
+        let mut set = ExprSet::new();
         match expr {
             Expr::Tup(tup) => {
                 for t in tup.term() {
