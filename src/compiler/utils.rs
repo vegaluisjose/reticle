@@ -1,5 +1,5 @@
 use crate::asm::ast as asm;
-use crate::compiler::tree::{Forest, Tree};
+use crate::compiler::tree::Tree;
 use crate::ir::ast as ir;
 use crate::ir::parser::IRParser;
 use crate::tdl::ast::Pat;
@@ -8,6 +8,7 @@ use crate::util::errors::Error;
 use itertools::izip;
 use std::collections::HashMap;
 use std::convert::TryFrom;
+use std::convert::TryInto;
 
 pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
     let mut count: HashMap<ir::Id, u64> = HashMap::new();
@@ -59,8 +60,8 @@ pub fn tree_from_pats(pmap: &HashMap<String, Pat>) -> Result<HashMap<String, Tre
 
 pub fn tree_from_prog(prog: &ir::Prog) -> Result<Vec<Tree>, Error> {
     if let Some(main) = prog.get("main") {
-        let forest = Forest::try_from(main.clone())?;
-        Ok(forest.tree().clone())
+        // let forest = Forest::try_from(main.clone())?;
+        Ok(main.clone().try_into()?)
     } else {
         Err(Error::new_conv_error("converting to tree"))
     }

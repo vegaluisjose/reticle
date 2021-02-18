@@ -3,7 +3,7 @@ use crate::compiler::utils::tree_roots_from_def;
 use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 use std::convert::TryFrom;
 
 impl TryFrom<InstrWire> for Node {
@@ -64,113 +64,82 @@ impl TryFrom<Instr> for Node {
     }
 }
 
-impl TryFrom<Def> for Forest {
-    type Error = Error;
-    fn try_from(def: Def) -> Result<Self, Self::Error> {
-        let mut imap: HashMap<Id, Instr> = HashMap::new();
-        for instr in def.body() {
-            if let Some(term) = instr.dst().term() {
-                if let Some(id) = term.id() {
-                    imap.insert(id, instr.clone());
-                }
-            }
+pub fn build_tree_mut(
+    map: &InstrMap,
+    visited: &mut HashSet<Id>,
+    input: &Expr,
+    root: &str,
+    cost: u64,
+) -> Result<Tree, Error> {
+    let terms: Vec<ExprTerm> = input.clone().into();
+    for e in terms {
+        if let Some(id) = e.id() {
+            visited.insert(id);
         }
-        let mut forest = Forest::default();
-        let input: Vec<ExprTerm> = def.input().clone().into();
-        for e in input {
-            if let Some(id) = e.id() {
-                forest.add_visited(&id);
-            }
-        }
-        let roots = tree_roots_from_def(&def);
-        for r in roots {
-            let mut tree = Tree::default();
-            let mut stack: Vec<(Id, u64)> = Vec::new();
-            if let Some(instr) = imap.get(&r) {
-                forest.add_visited(&r);
-                let index = tree.add_node(instr)?;
-                stack.push((r.clone(), index));
-            }
-            while let Some((curr, index)) = stack.pop() {
-                if let Some(instr) = imap.get(&curr) {
-                    let arg: Vec<ExprTerm> = instr.arg().clone().into();
-                    for term in arg {
-                        let id = term.get_id()?;
-                        if let Some(instr) = imap.get(&id) {
-                            if imap.contains_key(&id) && !forest.was_visited(&id) {
-                                let to = tree.add_node(instr)?;
-                                tree.add_edge(index, to);
-                                forest.add_visited(&id);
-                                stack.push((id.clone(), to));
-                            } else if instr.is_wire() {
-                                let to = tree.add_node(instr)?;
-                                tree.add_edge(index, to);
-                            } else {
-                                let ty = term.get_ty()?;
-                                let to = tree.add_input(&id, ty.clone());
-                                tree.add_edge(index, to);
-                            }
-                        }
+    }
+    let mut tree = Tree::default();
+    let mut stack: Vec<(Id, u64)> = Vec::new();
+    if let Some(instr) = map.get(root) {
+        visited.insert(root.to_string());
+        let index = tree.add_node_with_cost(instr, cost)?;
+        stack.push((root.to_string(), index));
+    }
+    while let Some((curr, index)) = stack.pop() {
+        if let Some(instr) = map.get(&curr) {
+            let arg: Vec<ExprTerm> = instr.arg().clone().into();
+            for term in arg {
+                let id = term.get_id()?;
+                if let Some(instr) = map.get(&id) {
+                    // add node if was not visited
+                    if map.contains_key(&id) && !visited.contains(&id) {
+                        let to = tree.add_node(instr)?;
+                        tree.add_edge(index, to);
+                        visited.insert(id.clone());
+                        stack.push((id.clone(), to));
+                    // if visited and it is wire, then duplicate
+                    } else if instr.is_wire() {
+                        let to = tree.add_node(instr)?;
+                        tree.add_edge(index, to);
+                    // else make it an input
+                    } else {
+                        let ty = term.get_ty()?;
+                        let to = tree.add_input(&id, ty.clone());
+                        tree.add_edge(index, to);
                     }
                 }
             }
-            forest.add_tree(tree);
         }
-        Ok(forest)
+    }
+    Ok(tree)
+}
+
+impl TryFrom<Def> for Vec<Tree> {
+    type Error = Error;
+    fn try_from(def: Def) -> Result<Self, Self::Error> {
+        let map = InstrMap::from(def.clone());
+        let mut res: Vec<Tree> = Vec::new();
+        let roots = tree_roots_from_def(&def);
+        let mut visited: HashSet<Id> = HashSet::new();
+        for r in roots {
+            let tree = build_tree_mut(&map, &mut visited, def.input(), &r, u64::MAX)?;
+            res.push(tree);
+        }
+        Ok(res)
     }
 }
 
 impl TryFrom<Pat> for Tree {
     type Error = Error;
     fn try_from(pat: Pat) -> Result<Self, Self::Error> {
-        let mut imap: HashMap<Id, Instr> = HashMap::new();
-        for tdl_instr in pat.body() {
-            if let Some(term) = tdl_instr.dst().term() {
-                if let Some(id) = term.id() {
-                    let instr = Instr::from(tdl_instr.clone());
-                    imap.insert(id, instr);
-                }
-            }
-        }
+        let map = InstrMap::from(pat.clone());
         let mut visited: HashSet<Id> = HashSet::new();
-        let input: Vec<ExprTerm> = pat.input().clone().into();
-        for e in input {
-            if let Some(id) = e.id() {
-                visited.insert(id);
-            }
-        }
-        let mut tree = Tree::default();
-        let mut stack: Vec<(Id, u64)> = Vec::new();
-        let root = pat.output().get_id(0)?;
-        if let Some(instr) = imap.get(&root) {
-            visited.insert(root.clone());
-            let cost = pat.lat(); // change cost function for pattern here
-            let index = tree.add_node_with_cost(instr, cost)?;
-            stack.push((root.clone(), index));
-        }
-        while let Some((curr, index)) = stack.pop() {
-            if let Some(instr) = imap.get(&curr) {
-                let arg: Vec<ExprTerm> = instr.arg().clone().into();
-                for term in arg {
-                    let id = term.get_id()?;
-                    if let Some(instr) = imap.get(&id) {
-                        if imap.contains_key(&id) && !visited.contains(&id) {
-                            let to = tree.add_node(instr)?;
-                            tree.add_edge(index, to);
-                            visited.insert(id.clone());
-                            stack.push((id.clone(), to));
-                        } else if instr.is_wire() {
-                            let to = tree.add_node(instr)?;
-                            tree.add_edge(index, to);
-                        } else {
-                            let ty = term.get_ty()?;
-                            let to = tree.add_input(&id, ty.clone());
-                            tree.add_edge(index, to);
-                        }
-                    }
-                }
-            }
-        }
+        let tree = build_tree_mut(
+            &map,
+            &mut visited,
+            pat.input(),
+            &pat.output().get_id(0)?,
+            pat.lat(),
+        )?;
         Ok(tree)
     }
 }
