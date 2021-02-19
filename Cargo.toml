@@ -19,10 +19,10 @@ structopt = { version = "0.3", default-features = false }
 itertools = "0.9.0"
 lazy_static = "1.4.0"
 
-# [[bin]]
-# name = "reticle-translate"
-# path = "src/bin/translate.rs"
-#
+[[bin]]
+name = "reticle-translate"
+path = "src/bin/translate.rs"
+
 # [[bin]]
 # name = "reticle-opt"
 # path = "src/bin/opt.rs"
