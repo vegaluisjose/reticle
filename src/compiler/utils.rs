@@ -236,6 +236,7 @@ pub fn tree_codegen(
     Ok(body)
 }
 
+// TODO: add absolute path for target description file
 pub fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
     let lut = TDLParser::parse_from_file("examples/target/ultrascale/lut.tdl")?;
     let dsp = TDLParser::parse_from_file("examples/target/ultrascale/dsp.tdl")?;
