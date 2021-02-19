@@ -1,3 +1,6 @@
+use crate::compiler::select;
+use crate::ir::parser::IRParser;
+use crate::util::errors::Error;
 use crate::util::file::write_to_file;
 use std::fmt;
 use std::path::{Path, PathBuf};
@@ -57,11 +60,11 @@ impl fmt::Display for TranslationTy {
 }
 
 impl FromStr for TranslationTy {
-    type Err = String;
+    type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "ir-to-asm" => Ok(TranslationTy::IrToAsm),
-            _ => Err(format!("Error: {} invalid option", input)),
+            _ => Err(Error::new_opt_error("invalid options")),
         }
     }
 }
@@ -94,10 +97,16 @@ impl TranslateDriver {
     pub fn opts(&self) -> &TranslateOption {
         &self.opts
     }
-    pub fn run(&self) {
+    pub fn run(&self) -> Result<(), Error> {
+        let input = self.opts().input();
         let output = self.opts().output();
         match self.opts().ty() {
-            TranslationTy::IrToAsm => write_output(output, "here"),
+            TranslationTy::IrToAsm => {
+                let prog = IRParser::parse_from_file(input)?;
+                let asm = select(&prog)?;
+                write_output(output, &asm.to_string());
+            }
         }
+        Ok(())
     }
 }

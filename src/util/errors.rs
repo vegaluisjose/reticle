@@ -7,12 +7,14 @@ use std::num::TryFromIntError;
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::IRParse(msg) => write!(f, "[Error][IR parsing] {}", msg),
-            Error::XLParse(msg) => write!(f, "[Error][XL parsing] {}", msg),
-            Error::TDLParse(msg) => write!(f, "[Error][TDL parsing] {}", msg),
+            Error::IRParse(msg) => write!(f, "[Error][IR] {}", msg),
+            Error::XLParse(msg) => write!(f, "[Error][XL] {}", msg),
+            Error::TDLParse(msg) => write!(f, "[Error][TDL] {}", msg),
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
             Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
+            Error::Compiler(msg) => write!(f, "[Error][Compiler] {}", msg),
+            Error::Opt(msg) => write!(f, "[Error][Opt] {}", msg),
         }
     }
 }
@@ -25,10 +27,18 @@ pub enum Error {
     Conversion(String),
     Type(String),
     TryFromInt(TryFromIntError),
+    Compiler(String),
+    Opt(String),
 }
 
 impl Error {
     pub fn new_conv_error(msg: &str) -> Self {
+        Error::Conversion(msg.to_string())
+    }
+    pub fn new_compiler_error(msg: &str) -> Self {
+        Error::Compiler(msg.to_string())
+    }
+    pub fn new_opt_error(msg: &str) -> Self {
         Error::Conversion(msg.to_string())
     }
     pub fn new_type_error(msg: &str) -> Self {
