@@ -62,7 +62,7 @@ pub fn tree_from_prog(prog: &ir::Prog) -> Result<Vec<Tree>, Error> {
         // let forest = Forest::try_from(main.clone())?;
         Ok(main.clone().try_into()?)
     } else {
-        Err(Error::new_conv_error("converting to tree"))
+        Err(Error::new_compiler_error("converting to tree"))
     }
 }
 
@@ -70,7 +70,7 @@ pub fn imap_from_prog(prog: &ir::Prog) -> Result<ir::InstrMap, Error> {
     if let Some(main) = prog.get("main") {
         Ok(ir::InstrMap::from(main.clone()))
     } else {
-        Err(Error::new_conv_error("converting to imap"))
+        Err(Error::new_compiler_error("converting to imap"))
     }
 }
 
@@ -264,6 +264,6 @@ pub fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
         res.set_body(body);
         Ok(res)
     } else {
-        Err(Error::new_conv_error("Prog must have a main definition"))
+        Err(Error::new_compiler_error("Prog must have a main definition"))
     }
 }
