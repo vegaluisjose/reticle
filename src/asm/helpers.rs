@@ -37,6 +37,9 @@ impl InstrAsm {
     pub fn is_dsp(&self) -> bool {
         self.loc.is_dsp()
     }
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
+    }
 }
 
 impl Prog {

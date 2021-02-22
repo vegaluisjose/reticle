@@ -102,22 +102,42 @@ fn place(con: &Constraint) -> Result<HashMap<String, Loc>, Error> {
     Ok(res)
 }
 
-pub fn place_from_prog(prog: &Prog) -> Result<(), Error> {
-    let mut dsp = Constraint::new_dsp();
+fn place_prog(prog: &Prog, con: &Constraint) -> Result<Prog, Error> {
+    let map = place(con)?;
+    let mut prog = prog.clone();
+    for instr in prog.body_mut() {
+        if let Instr::Asm(asm) = instr {
+            let id = asm.dst().get_id(0)?;
+            if let Some(loc) = map.get(&id) {
+                asm.set_loc(loc.clone());
+            }
+        }
+    }
+    Ok(prog)
+}
+
+pub fn place_lut_from_prog(prog: &Prog) -> Result<Prog, Error> {
     let mut lut = Constraint::new_lut();
+    for instr in prog.body() {
+        if let Instr::Asm(asm) = instr {
+            let id = asm.dst().get_id(0)?;
+            if asm.is_lut() {
+                lut.add(&id);
+            }
+        }
+    }
+    Ok(place_prog(prog, &lut)?)
+}
+
+pub fn place_dsp_from_prog(prog: &Prog) -> Result<Prog, Error> {
+    let mut dsp = Constraint::new_dsp();
     for instr in prog.body() {
         if let Instr::Asm(asm) = instr {
             let id = asm.dst().get_id(0)?;
             if asm.is_dsp() {
                 dsp.add(&id);
-            } else {
-                lut.add(&id);
             }
         }
     }
-    let res = place(&lut)?;
-    for (id, loc) in res {
-        println!("{} --> {}", id, loc);
-    }
-    Ok(())
+    Ok(place_prog(prog, &dsp)?)
 }
