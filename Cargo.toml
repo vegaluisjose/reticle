@@ -23,6 +23,6 @@ lazy_static = "1.4.0"
 name = "reticle-translate"
 path = "src/bin/translate.rs"
 
-# [[bin]]
-# name = "reticle-opt"
-# path = "src/bin/opt.rs"
+[[bin]]
+name = "reticle-place"
+path = "src/bin/place.rs"
