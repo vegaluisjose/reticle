@@ -86,8 +86,6 @@ fn place(con: &Constraint) -> Result<HashMap<String, Loc>, Error> {
         .output()
         .expect("failed to execute placement");
     let out = String::from_utf8_lossy(&cmd.stdout).to_string();
-    // println!("input:\n{}", con);
-    // println!("output:\n{}", out)
     for line in out.lines() {
         let values: Vec<&str> = line.split(',').collect();
         let (i, x, y) = parse_from_line(&values)?;
