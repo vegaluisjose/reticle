@@ -52,4 +52,7 @@ impl Prog {
     pub fn set_body(&mut self, instr: Vec<Instr>) {
         self.body = instr;
     }
+    pub fn body_mut(&mut self) -> &mut Vec<Instr> {
+        &mut self.body
+    }
 }
