@@ -4,6 +4,7 @@ use crate::ir::ast as ir;
 use crate::tdl::ast::Pat;
 use crate::tdl::parser::TDLParser;
 use crate::util::errors::Error;
+use crate::util::file::create_abs_path;
 use itertools::izip;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
@@ -236,10 +237,11 @@ pub fn tree_codegen(
     Ok(body)
 }
 
-// TODO: add absolute path for target description file
 pub fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
-    let lut = TDLParser::parse_from_file("examples/target/ultrascale/lut.tdl")?;
-    let dsp = TDLParser::parse_from_file("examples/target/ultrascale/dsp.tdl")?;
+    let lut_tdl = create_abs_path("examples/target/ultrascale/lut.tdl");
+    let dsp_tdl = create_abs_path("examples/target/ultrascale/dsp.tdl");
+    let lut = TDLParser::parse_from_file(lut_tdl)?;
+    let dsp = TDLParser::parse_from_file(dsp_tdl)?;
     let lmap = tree_from_pats(lut.pat())?;
     let dmap = tree_from_pats(dsp.pat())?;
     let imap = imap_from_prog(&prog)?;
