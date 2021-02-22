@@ -10,6 +10,12 @@ impl Loc {
     pub fn y(&self) -> &ExprCoord {
         &self.y
     }
+    pub fn is_lut(&self) -> bool {
+        matches!(self.prim, Prim::Lut)
+    }
+    pub fn is_dsp(&self) -> bool {
+        matches!(self.prim, Prim::Dsp)
+    }
 }
 
 impl InstrAsm {
@@ -24,6 +30,12 @@ impl InstrAsm {
     }
     pub fn loc(&self) -> &Loc {
         &self.loc
+    }
+    pub fn is_lut(&self) -> bool {
+        self.loc.is_lut()
+    }
+    pub fn is_dsp(&self) -> bool {
+        self.loc.is_dsp()
     }
 }
 
