@@ -264,6 +264,8 @@ pub fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
         res.set_body(body);
         Ok(res)
     } else {
-        Err(Error::new_compiler_error("Prog must have a main definition"))
+        Err(Error::new_compiler_error(
+            "Prog must have a main definition",
+        ))
     }
 }
