@@ -1,3 +1,4 @@
+use crate::asm::parser as asmparser;
 use crate::ir::parser as irparser;
 use crate::tdl::parser as tdlparser;
 use crate::xl::parser as xlparser;
@@ -9,6 +10,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::IRParse(msg) => write!(f, "[Error][IR] {}", msg),
+            Error::AsmParse(msg) => write!(f, "[Error][ASM] {}", msg),
             Error::XLParse(msg) => write!(f, "[Error][XL] {}", msg),
             Error::TDLParse(msg) => write!(f, "[Error][TDL] {}", msg),
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
@@ -25,6 +27,7 @@ impl fmt::Display for Error {
 #[derive(Debug)]
 pub enum Error {
     IRParse(pest_consume::Error<irparser::Rule>),
+    AsmParse(pest_consume::Error<asmparser::Rule>),
     XLParse(pest_consume::Error<xlparser::Rule>),
     TDLParse(pest_consume::Error<tdlparser::Rule>),
     Conversion(String),
@@ -57,6 +60,12 @@ impl Error {
 impl From<pest_consume::Error<irparser::Rule>> for Error {
     fn from(e: pest_consume::Error<irparser::Rule>) -> Self {
         Error::IRParse(e)
+    }
+}
+
+impl From<pest_consume::Error<asmparser::Rule>> for Error {
+    fn from(e: pest_consume::Error<asmparser::Rule>) -> Self {
+        Error::AsmParse(e)
     }
 }
 
