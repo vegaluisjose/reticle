@@ -2,6 +2,7 @@ use crate::ir::parser as irparser;
 use crate::tdl::parser as tdlparser;
 use crate::xl::parser as xlparser;
 use std::fmt;
+use std::num::ParseIntError;
 use std::num::TryFromIntError;
 
 impl fmt::Display for Error {
@@ -12,8 +13,10 @@ impl fmt::Display for Error {
             Error::TDLParse(msg) => write!(f, "[Error][TDL] {}", msg),
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
+            Error::ParseInt(msg) => write!(f, "[Error][ParseInt] {}", msg),
             Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
             Error::Compiler(msg) => write!(f, "[Error][Compiler] {}", msg),
+            Error::Placer(msg) => write!(f, "[Error][Placer] {}", msg),
             Error::Opt(msg) => write!(f, "[Error][Opt] {}", msg),
         }
     }
@@ -27,7 +30,9 @@ pub enum Error {
     Conversion(String),
     Type(String),
     TryFromInt(TryFromIntError),
+    ParseInt(ParseIntError),
     Compiler(String),
+    Placer(String),
     Opt(String),
 }
 
@@ -37,6 +42,9 @@ impl Error {
     }
     pub fn new_compiler_error(msg: &str) -> Self {
         Error::Compiler(msg.to_string())
+    }
+    pub fn new_placer_error(msg: &str) -> Self {
+        Error::Placer(msg.to_string())
     }
     pub fn new_opt_error(msg: &str) -> Self {
         Error::Conversion(msg.to_string())
@@ -67,5 +75,11 @@ impl From<pest_consume::Error<tdlparser::Rule>> for Error {
 impl From<TryFromIntError> for Error {
     fn from(e: TryFromIntError) -> Self {
         Error::TryFromInt(e)
+    }
+}
+
+impl From<ParseIntError> for Error {
+    fn from(e: ParseIntError) -> Self {
+        Error::ParseInt(e)
     }
 }
