@@ -100,6 +100,12 @@ impl ExprTerm {
             _ => Err(Error::new_conv_error("not a term")),
         }
     }
+    pub fn get_val(&self) -> Result<i64, Error> {
+        match self {
+            ExprTerm::Val(n) => Ok(n.clone()),
+            _ => Err(Error::new_conv_error("not a value")),
+        }
+    }
 }
 
 impl ExprTup {
@@ -126,6 +132,10 @@ impl ExprTup {
     pub fn get_ty(&self, index: usize) -> Result<&Ty, Error> {
         let term = self.get_term(index)?;
         Ok(term.get_ty()?)
+    }
+    pub fn get_val(&self, index: usize) -> Result<i64, Error> {
+        let term = self.get_term(index)?;
+        Ok(term.get_val()?)
     }
     pub fn add_term(&mut self, term: ExprTerm) {
         self.term.push(term);
