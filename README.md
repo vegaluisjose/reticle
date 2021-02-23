@@ -1,6 +1,6 @@
 # Reticle (WIP)
 
-## Install Xilinx Vivado
+## How to install Xilinx Vivado on Docker
 
 1. Create an account in [Xilinx](https://www.xilinx.com/registration/create-account.html)
 2. Download Vivado web installer e.g., for `2020.1` it would be `Xilinx_Unified_2020.1_0602_1208_Lin64.bin`. The file name is set in both `credential.sh` and `install.sh`
