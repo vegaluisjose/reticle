@@ -1,5 +1,4 @@
 use crate::compiler::tree::*;
-use crate::compiler::tree_roots_from_def;
 use crate::ir::ast::*;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
