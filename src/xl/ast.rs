@@ -149,7 +149,7 @@ pub enum Instr {
     Mach(InstrMach),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Default, Clone, Debug)]
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,
