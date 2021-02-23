@@ -6,4 +6,5 @@ pub mod helpers;
 pub mod infer;
 pub mod parser;
 pub mod pretty_print;
+pub mod translate;
 pub mod try_from;
