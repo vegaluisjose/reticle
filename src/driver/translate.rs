@@ -1,7 +1,12 @@
+use crate::asm::parser::AsmParser;
 use crate::compiler::select;
 use crate::ir::parser::IRParser;
 use crate::util::errors::Error;
 use crate::util::file::write_to_file;
+use crate::verilog::ast as vl;
+use crate::xl::ast as xl;
+use crate::xl::parser::XLParser;
+use std::convert::TryFrom;
 use std::fmt;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -22,9 +27,9 @@ pub struct TranslateOption {
     #[structopt(short = "o", long = "output", parse(from_os_str))]
     pub output: Option<PathBuf>,
 
-    // Translation type
-    #[structopt(long = "type", default_value)]
-    pub ty: TranslationTy,
+    // FromTo
+    #[structopt(long = "fromto", default_value)]
+    pub fromto: FromTo,
 }
 
 impl TranslateOption {
@@ -34,36 +39,42 @@ impl TranslateOption {
     pub fn output(&self) -> Option<&PathBuf> {
         self.output.as_ref()
     }
-    pub fn ty(&self) -> &TranslationTy {
-        &self.ty
+    pub fn fromto(&self) -> &FromTo {
+        &self.fromto
     }
 }
 
 #[derive(Clone, Debug)]
-pub enum TranslationTy {
-    IrToAsm,
+pub enum FromTo {
+    IRToAsm,
+    AsmToXL,
+    XLToVerilog,
 }
 
-impl Default for TranslationTy {
+impl Default for FromTo {
     fn default() -> Self {
-        TranslationTy::IrToAsm
+        FromTo::IRToAsm
     }
 }
 
-impl fmt::Display for TranslationTy {
+impl fmt::Display for FromTo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let backend = match self {
-            TranslationTy::IrToAsm => "ir-to-asm",
+            FromTo::IRToAsm => "ir-to-asm",
+            FromTo::AsmToXL => "asm-to-xl",
+            FromTo::XLToVerilog => "xl-to-verilog",
         };
         write!(f, "{}", backend)
     }
 }
 
-impl FromStr for TranslationTy {
+impl FromStr for FromTo {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "ir-to-asm" => Ok(TranslationTy::IrToAsm),
+            "ir-to-asm" => Ok(FromTo::IRToAsm),
+            "asm-to-xl" => Ok(FromTo::AsmToXL),
+            "xl-to-verilog" => Ok(FromTo::XLToVerilog),
             _ => Err(Error::new_opt_error("invalid options")),
         }
     }
@@ -100,11 +111,21 @@ impl TranslateDriver {
     pub fn run(&self) -> Result<(), Error> {
         let input = self.opts().input();
         let output = self.opts().output();
-        match self.opts().ty() {
-            TranslationTy::IrToAsm => {
+        match self.opts().fromto() {
+            FromTo::IRToAsm => {
                 let prog = IRParser::parse_from_file(input)?;
                 let asm = select(&prog)?;
                 write_output(output, &asm.to_string());
+            }
+            FromTo::AsmToXL => {
+                let prog = AsmParser::parse_from_file(input)?;
+                let xl = xl::Prog::try_from(prog)?;
+                write_output(output, &xl.to_string());
+            }
+            FromTo::XLToVerilog => {
+                let prog = XLParser::parse_from_file(input)?;
+                let vl = vl::Module::try_from(prog)?;
+                write_output(output, &vl.to_string());
             }
         }
         Ok(())
