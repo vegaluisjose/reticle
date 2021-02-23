@@ -122,6 +122,9 @@ impl Prog {
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
+    pub fn set_sig(&mut self, sig: Sig) {
+        self.sig = sig;
+    }
     pub fn body_mut(&mut self) -> &mut Vec<Instr> {
         &mut self.body
     }
