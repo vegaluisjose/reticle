@@ -667,6 +667,10 @@ impl TryFrom<xl::InstrBasc> for vl::Stmt {
                         dst[0].clone(),
                         vl::Expr::new_ref(constant::GND),
                     ))),
+                    xl::OpBasc::Vcc => Ok(vl::Stmt::from(vl::Parallel::Assign(
+                        dst[0].clone(),
+                        vl::Expr::new_ref(constant::VCC),
+                    ))),
                     xl::OpBasc::Cat => {
                         let mut concat = vl::ExprConcat::default();
                         for a in arg {
