@@ -102,7 +102,7 @@ impl ExprTerm {
     }
     pub fn get_val(&self) -> Result<i64, Error> {
         match self {
-            ExprTerm::Val(n) => Ok(n.clone()),
+            ExprTerm::Val(n) => Ok(*n),
             _ => Err(Error::new_conv_error("not a value")),
         }
     }
