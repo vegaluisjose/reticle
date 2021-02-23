@@ -1,10 +1,10 @@
 pub mod ast;
 pub mod display;
+pub mod expander;
 pub mod from;
 pub mod from_str;
 pub mod helpers;
 pub mod infer;
 pub mod parser;
 pub mod pretty_print;
-pub mod translate;
 pub mod try_from;
