@@ -1,6 +1,7 @@
 use crate::asm::ast as asm;
 use crate::ir::ast as ir;
 use crate::xl::ast as xl;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 // from ir
@@ -32,13 +33,13 @@ pub type OpDsp = xl::OpDsp;
 pub type OptVal = xl::OptVal;
 pub type OptMap = xl::OptMap;
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum PatInstr {
     Wire(InstrWire),
     Comp(InstrComp),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct PatSig {
     pub id: Id,
     pub prim: Prim,
@@ -48,7 +49,7 @@ pub struct PatSig {
     pub output: Expr,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct ImpSig {
     pub id: Id,
     pub x: ExprCoord,
@@ -57,25 +58,25 @@ pub struct ImpSig {
     pub output: Expr,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Pat {
     pub sig: PatSig,
     pub body: Vec<PatInstr>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Imp {
     pub sig: ImpSig,
     pub body: Vec<ImpInstr>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum Des {
     Pat(Pat),
     Imp(Imp),
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Default)]
 pub struct Target {
     pub pat: HashMap<Id, Pat>,
     pub imp: HashMap<Id, Imp>,

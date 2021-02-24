@@ -1,5 +1,6 @@
 use crate::asm::ast as asm;
 use crate::ir::ast as ir;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 pub type Id = ir::Id;
@@ -13,7 +14,7 @@ pub type Expr = ir::Expr;
 pub type ExprCoord = asm::ExprCoord;
 pub type Sig = ir::Sig;
 
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Opt {
     RegA,
     RegB,
@@ -24,20 +25,20 @@ pub enum Opt {
     Table,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpDsp {
     Add,
     Mul,
     MulAdd,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OptVal {
     UInt(u64),
     Op(OpDsp),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpBasc {
     Id,
     Gnd,
@@ -46,7 +47,7 @@ pub enum OpBasc {
     Cat,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum OpMach {
     Lut1,
     Lut2,
@@ -60,7 +61,7 @@ pub enum OpMach {
     Carry,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum BelLut {
     A5,
     B5,
@@ -80,7 +81,7 @@ pub enum BelLut {
     H6,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum BelReg {
     A,
     B,
@@ -100,18 +101,18 @@ pub enum BelReg {
     H2,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum BelCarry {
     Carry8,
     Carry4,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum BelDsp {
     Alu,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum Bel {
     Lut(BelLut),
     Reg(BelReg),
@@ -119,14 +120,14 @@ pub enum Bel {
     Dsp(BelDsp),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct Loc {
     pub bel: Bel,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct InstrBasc {
     pub op: OpBasc,
     pub attr: Expr,
@@ -134,7 +135,7 @@ pub struct InstrBasc {
     pub arg: Expr,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub struct InstrMach {
     pub op: OpMach,
     pub opt: OptMap,
@@ -143,13 +144,13 @@ pub struct InstrMach {
     pub loc: Option<Loc>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
 pub enum Instr {
     Basc(InstrBasc),
     Mach(InstrMach),
 }
 
-#[derive(Default, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Default, Clone, Debug)]
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,

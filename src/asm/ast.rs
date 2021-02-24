@@ -1,4 +1,5 @@
 use crate::ir::ast as ir;
+use serde::{Deserialize, Serialize};
 use std::rc::Rc;
 
 pub type Id = ir::Id;
@@ -11,12 +12,12 @@ pub type OpWire = ir::OpWire;
 pub type InstrWire = ir::InstrWire;
 pub type Sig = ir::Sig;
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpCoord {
     Add,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum ExprCoord {
     Any,
     Var(Id),
@@ -24,19 +25,19 @@ pub enum ExprCoord {
     Bin(OpCoord, Rc<ExprCoord>, Rc<ExprCoord>),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct Loc {
     pub prim: Prim,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpAsm {
     Op(Id),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct InstrAsm {
     pub op: OpAsm,
     pub dst: Expr,
@@ -44,13 +45,13 @@ pub struct InstrAsm {
     pub loc: Loc,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Instr {
     Wire(InstrWire),
     Asm(InstrAsm),
 }
 
-#[derive(Default, Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Default, Clone, Debug, Eq, Hash)]
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,

@@ -1,3 +1,4 @@
+use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::rc::Rc;
 
@@ -6,7 +7,7 @@ pub type InstrMap = HashMap<Id, Instr>;
 pub type TermMap = HashMap<Id, ExprTerm>;
 pub type ExprSet = HashSet<Expr>;
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Ty {
     Any,
     Bool,
@@ -15,32 +16,32 @@ pub enum Ty {
     Vector(Rc<Ty>, u64),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum ExprTerm {
     Any,
     Val(i64),
     Var(Id, Ty),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash, Default)]
 pub struct ExprTup {
     pub term: Vec<ExprTerm>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Expr {
     Term(ExprTerm),
     Tup(ExprTup),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Prim {
     Any,
     Lut,
     Dsp,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpWire {
     Id,
     Con,
@@ -51,7 +52,7 @@ pub enum OpWire {
     Cat,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpComp {
     Reg,
     Add,
@@ -70,12 +71,12 @@ pub enum OpComp {
     Le,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct OpCall {
     pub op: Id,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct InstrWire {
     pub op: OpWire,
     pub dst: Expr,
@@ -83,7 +84,7 @@ pub struct InstrWire {
     pub arg: Expr,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct InstrComp {
     pub op: OpComp,
     pub dst: Expr,
@@ -92,34 +93,34 @@ pub struct InstrComp {
     pub prim: Prim,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct InstrCall {
     pub op: OpCall,
     pub dst: Expr,
     pub arg: Expr,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Instr {
     Wire(InstrWire),
     Comp(InstrComp),
     Call(InstrCall),
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct Sig {
     pub id: Id,
     pub input: Expr,
     pub output: Expr,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Hash, Default)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash, Default)]
 pub struct Def {
     pub sig: Sig,
     pub body: Vec<Instr>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Default)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Default)]
 pub struct Prog {
     pub def: HashMap<Id, Def>,
 }
