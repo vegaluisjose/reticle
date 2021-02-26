@@ -1,4 +1,5 @@
 use crate::asm::ast as asm;
+use crate::tdl::ast as tdl;
 use crate::util::errors::Error;
 use crate::xl::ast as xl;
 use std::collections::HashMap;
@@ -10,6 +11,7 @@ pub struct Expander {
     pub sig: xl::Sig,
     pub body: Vec<xl::Instr>,
     pub map: HashMap<String, String>,
+    pub imp: HashMap<String, tdl::Imp>,
 }
 
 impl Default for Expander {
@@ -20,6 +22,7 @@ impl Default for Expander {
             sig: xl::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
+            imp: HashMap::new(),
         }
     }
 }
@@ -33,6 +36,9 @@ impl Expander {
     }
     pub fn get_name(&self, key: &str) -> Option<&String> {
         self.map.get(key)
+    }
+    pub fn get_imp(&self, key: &str) -> Option<&tdl::Imp> {
+        self.imp.get(key)
     }
     pub fn new_name(&mut self) -> String {
         let tmp = self.count;
