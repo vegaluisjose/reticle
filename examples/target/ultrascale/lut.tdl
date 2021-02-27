@@ -20,6 +20,36 @@ pat lut_mux_reg_i2[lut, 1, 2](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {
     y:i2 = reg[0](t0, en);
 }
 
+imp lut_mux_i2[x, y](sel: bool, a: i2, b: i2) -> (y: i2) {
+    t0:bool = ext[0](a);
+    t1:bool = ext[0](b);
+    t2:bool = ext[1](a);
+    t3:bool = ext[1](b);
+    t4:bool = lut3[tbl=0xac](t0, t1, sel) @a6lut(x, y);
+    t5:bool = lut3[tbl=0xac](t2, t3, sel) @b6lut(x, y);
+    y:i2 = cat(t4, t5);
+}
+
+imp lut_mux_reg_i2[x, y](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {
+    t0:bool = ext[0](a);
+    t1:bool = ext[0](b);
+    t2:bool = ext[1](a);
+    t3:bool = ext[1](b);
+    t4:bool = lut3[tbl=0xac](t0, t1, sel) @a6lut(x, y);
+    t5:bool = lut3[tbl=0xac](t2, t3, sel) @b6lut(x, y);
+    t6:bool = fdre(t4, en) @aff(x, y);
+    t7:bool = fdre(t5, en) @bff(x, y);
+    y:i2 = cat(t6, t7);
+}
+
+imp lut_eq_i2[x, y](a: i2, b: i2) -> (y: bool) {
+    t0:bool = ext[0](a);
+    t1:bool = ext[0](b);
+    t2:bool = ext[1](a);
+    t3:bool = ext[1](b);
+    y:bool = lut4[tbl=0x9009](t0, t1, t2, t3) @a6lut(x, y);
+}
+
 imp lut_and_b[x, y](a: bool, b: bool) -> (y: bool) {
     y:bool = lut2[tbl=8](a, b) @a6lut(x, y);
 }
