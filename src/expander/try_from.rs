@@ -21,15 +21,17 @@ fn get_imp() -> Result<HashMap<String, tdl::Imp>, Error> {
 impl TryFrom<asm::Prog> for Expander {
     type Error = Error;
     fn try_from(input: asm::Prog) -> Result<Self, Self::Error> {
-        let mut expander = Expander::default();
-        expander.set_sig(input.sig().clone());
+        let mut expander = Expander::new(input.sig());
         expander.set_imp(get_imp()?);
         for instr in input.body() {
             match instr {
                 asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
                     expander.expand_instr_const(instr)?;
                 }
-                asm::Instr::Asm(instr) => {
+                asm::Instr::Asm(instr)
+                    if instr.op() == &asm::OpAsm::Op("lut_and_b".to_string()) =>
+                {
+                    // TODO: remove this filter here
                     expander.expand_instr_asm(instr)?;
                 }
                 _ => (),

@@ -30,13 +30,30 @@ impl Default for Expander {
 }
 
 impl Expander {
+    pub fn new(sig: &xl::Sig) -> Expander {
+        let mut expander = Expander::default();
+        expander.set_sig(sig.clone());
+        let input: Vec<xl::ExprTerm> = sig.input().clone().into();
+        let output: Vec<xl::ExprTerm> = sig.output().clone().into();
+        for i in input {
+            if let Some(id) = i.id() {
+                expander.add_var(&id);
+            }
+        }
+        for o in output {
+            if let Some(id) = o.id() {
+                expander.add_var(&id);
+            }
+        }
+        expander
+    }
     pub fn sig(&self) -> &xl::Sig {
         &self.sig
     }
     pub fn body(&self) -> &Vec<xl::Instr> {
         &self.body
     }
-    pub fn get_name(&self, key: &str) -> Option<&String> {
+    pub fn get_var(&self, key: &str) -> Option<&String> {
         self.map.get(key)
     }
     pub fn get_imp(&self, key: &str) -> Option<&tdl::Imp> {
@@ -50,30 +67,38 @@ impl Expander {
         self.count += 1;
         format!("{}{}", self.prefix, tmp)
     }
+    pub fn add_var(&mut self, name: &str) {
+        self.map.insert(name.to_string(), name.to_string());
+    }
     pub fn rename_var(&mut self, name: &str) -> String {
         let tmp = self.new_var();
         self.map.insert(name.to_string(), tmp.clone());
         tmp
     }
+    pub fn rename_term(&mut self, term: &asm::ExprTerm) -> Result<asm::ExprTerm, Error> {
+        let id = if let Some(val) = self.get_var(&term.get_id()?) {
+            val.to_string()
+        } else {
+            self.rename_var(&term.get_id()?)
+        };
+        let ty = term.get_ty()?;
+        Ok(asm::ExprTerm::Var(id, ty.clone()))
+    }
     pub fn rename_expr(&mut self, expr: &asm::Expr) -> Result<asm::Expr, Error> {
         if let Some(term) = expr.term() {
-            let id = self.rename_var(&term.get_id()?);
-            let ty = term.get_ty()?;
-            Ok(asm::Expr::from(asm::ExprTerm::Var(id, ty.clone())))
+            Ok(asm::Expr::from(self.rename_term(term)?))
         } else {
             let term: Vec<asm::ExprTerm> = expr.clone().into();
             let mut tup = asm::ExprTup::default();
-            for t in term {
-                let id = self.rename_var(&t.get_id()?);
-                let ty = t.get_ty()?;
-                tup.add_term(asm::ExprTerm::Var(id, ty.clone()));
+            for t in &term {
+                tup.add_term(self.rename_term(t)?);
             }
             Ok(asm::Expr::from(tup))
         }
     }
     pub fn rename_instr_asm(&mut self, instr: &asm::InstrAsm) -> Result<asm::InstrAsm, Error> {
-        let dst = self.rename_expr(instr.dst())?;
         let arg = self.rename_expr(instr.arg())?;
+        let dst = self.rename_expr(instr.dst())?;
         let mut instr = instr.clone();
         instr.set_dst(dst);
         instr.set_arg(arg);
@@ -128,16 +153,66 @@ impl Expander {
     }
     pub fn expand_instr_asm(&mut self, instr: &asm::InstrAsm) -> Result<(), Error> {
         let instr = self.rename_instr_asm(instr)?;
+        if let Some(imp) = self.get_imp(&instr.op().to_string()) {
+            let mut scope = scope_from_expr(&imp.output(), instr.dst());
+            scope.extend(scope_from_expr(&imp.input(), instr.arg()));
+            for i in imp.clone().body() {
+                let mut xl_instr = i.clone();
+                let arg: Vec<xl::ExprTerm> = i.arg().clone().into();
+                let mut tup = xl::ExprTup::default();
+                for a in arg {
+                    if let Some(term) = scope.get(&a) {
+                        tup.add_term(term.clone());
+                    }
+                }
+                xl_instr.set_arg(xl::Expr::from(tup));
+                let dst: Vec<xl::ExprTerm> = i.dst().clone().into();
+                let mut out: Vec<xl::ExprTerm> = Vec::new();
+                for d in dst {
+                    if let Some(term) = scope.get(&d) {
+                        out.push(term.clone());
+                    } else {
+                        let new = self.rename_term(&d)?;
+                        scope.insert(d.clone(), new.clone());
+                        out.push(new);
+                    }
+                }
+                let dst_expr = if i.dst().term().is_some() {
+                    if let Some(term) = out.get(0) {
+                        xl::Expr::from(term.clone())
+                    } else {
+                        xl::Expr::default()
+                    }
+                } else {
+                    let tup = xl::ExprTup { term: out };
+                    xl::Expr::from(tup)
+                };
+                xl_instr.set_dst(dst_expr);
+                self.add_instr(xl_instr);
+            }
+        }
         println!("{}", instr);
         Ok(())
     }
     pub fn add_instr(&mut self, instr: xl::Instr) {
         self.body.push(instr);
     }
-    pub fn set_prefix(&mut self, prefix: &str) {
-        self.prefix = prefix.to_string();
-    }
     pub fn set_sig(&mut self, sig: xl::Sig) {
         self.sig = sig;
     }
+    pub fn set_prefix(&mut self, prefix: &str) {
+        self.prefix = prefix.to_string();
+    }
+}
+
+type Scope = HashMap<xl::ExprTerm, xl::ExprTerm>;
+
+pub fn scope_from_expr(left: &xl::Expr, right: &xl::Expr) -> Scope {
+    let mut scope = Scope::new();
+    let left: Vec<xl::ExprTerm> = left.clone().into();
+    let right: Vec<xl::ExprTerm> = right.clone().into();
+    for (l, r) in left.iter().zip(right.iter()) {
+        scope.insert(l.clone(), r.clone());
+    }
+    scope
 }
