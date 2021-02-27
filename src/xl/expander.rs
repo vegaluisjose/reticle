@@ -44,6 +44,30 @@ impl Expander {
         self.map.insert(name.to_string(), tmp.clone());
         tmp
     }
+    pub fn rename_expr(&mut self, expr: &asm::Expr) -> Result<asm::Expr, Error> {
+        if let Some(term) = expr.term() {
+            let id = self.rename_var(&term.get_id()?);
+            let ty = term.get_ty()?;
+            Ok(asm::Expr::from(asm::ExprTerm::Var(id, ty.clone())))
+        } else {
+            let term: Vec<asm::ExprTerm> = expr.clone().into();
+            let mut tup = asm::ExprTup::default();
+            for t in term {
+                let id = self.rename_var(&t.get_id()?);
+                let ty = t.get_ty()?;
+                tup.add_term(asm::ExprTerm::Var(id, ty.clone()));
+            }
+            Ok(asm::Expr::from(tup))
+        }
+    }
+    pub fn rename_instr_asm(&mut self, instr: &asm::InstrAsm) -> Result<asm::InstrAsm, Error> {
+        let dst = self.rename_expr(instr.dst())?;
+        let arg = self.rename_expr(instr.arg())?;
+        let mut instr = instr.clone();
+        instr.set_dst(dst);
+        instr.set_arg(arg);
+        Ok(instr)
+    }
     pub fn expand_const(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
         let attr_term = instr.attr().get_term(0)?;
         let value = attr_term.get_val()?;
@@ -91,10 +115,6 @@ impl Expander {
         }
         Ok(())
     }
-    // pub fn rename_instr(&mut self, instr: &asm::InstrAsm) -> Result<asm::InstrAsm, Error> {
-    //     let mut instr = instr.clone();
-    //     if
-    // }
     pub fn add_instr(&mut self, instr: xl::Instr) {
         self.body.push(instr);
     }

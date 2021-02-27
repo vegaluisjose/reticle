@@ -40,6 +40,10 @@ impl TryFrom<asm::Prog> for Expander {
                 asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
                     expander.expand_const(instr)?;
                 }
+                asm::Instr::Asm(instr) => {
+                    let new_instr = expander.rename_instr_asm(instr)?;
+                    println!("old:{}\nnew:{}", instr, new_instr);
+                }
                 _ => (),
             }
         }
