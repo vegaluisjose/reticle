@@ -7,7 +7,7 @@ use crate::xl::ast as xl;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
-pub struct Expander {
+pub struct Assembler {
     pub count: u64,
     pub prefix: String,
     pub sig: xl::Sig,
@@ -16,9 +16,9 @@ pub struct Expander {
     pub imp: HashMap<String, tdl::Imp>,
 }
 
-impl Default for Expander {
+impl Default for Assembler {
     fn default() -> Self {
-        Expander {
+        Assembler {
             count: 0,
             prefix: "t".to_string(),
             sig: xl::Sig::default(),
@@ -29,23 +29,23 @@ impl Default for Expander {
     }
 }
 
-impl Expander {
-    pub fn new(sig: &xl::Sig) -> Expander {
-        let mut expander = Expander::default();
-        expander.set_sig(sig.clone());
+impl Assembler {
+    pub fn new(sig: &xl::Sig) -> Assembler {
+        let mut assembler = Assembler::default();
+        assembler.set_sig(sig.clone());
         let input: Vec<xl::ExprTerm> = sig.input().clone().into();
         let output: Vec<xl::ExprTerm> = sig.output().clone().into();
         for i in input {
             if let Some(id) = i.id() {
-                expander.add_var(&id);
+                assembler.add_var(&id);
             }
         }
         for o in output {
             if let Some(id) = o.id() {
-                expander.add_var(&id);
+                assembler.add_var(&id);
             }
         }
-        expander
+        assembler
     }
     pub fn sig(&self) -> &xl::Sig {
         &self.sig

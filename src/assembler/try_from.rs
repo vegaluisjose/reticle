@@ -1,5 +1,5 @@
 use crate::asm::ast as asm;
-use crate::expander::Expander;
+use crate::assembler::Assembler;
 use crate::tdl::ast as tdl;
 use crate::tdl::parser::TDLParser;
 use crate::util::errors::Error;
@@ -18,36 +18,36 @@ fn get_imp() -> Result<HashMap<String, tdl::Imp>, Error> {
     Ok(imp)
 }
 
-impl TryFrom<asm::Prog> for Expander {
+impl TryFrom<asm::Prog> for Assembler {
     type Error = Error;
     fn try_from(input: asm::Prog) -> Result<Self, Self::Error> {
-        let mut expander = Expander::new(input.sig());
-        expander.set_imp(get_imp()?);
+        let mut assembler = Assembler::new(input.sig());
+        assembler.set_imp(get_imp()?);
         for instr in input.body() {
             match instr {
                 asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
-                    expander.expand_instr_const(instr)?;
+                    assembler.expand_instr_const(instr)?;
                 }
                 asm::Instr::Asm(instr)
                     if instr.op() == &asm::OpAsm::Op("lut_and_b".to_string()) =>
                 {
                     // TODO: remove this filter here
-                    expander.expand_instr_asm(instr)?;
+                    assembler.expand_instr_asm(instr)?;
                 }
                 _ => (),
             }
         }
-        Ok(expander)
+        Ok(assembler)
     }
 }
 
 impl TryFrom<asm::Prog> for xl::Prog {
     type Error = Error;
     fn try_from(input: asm::Prog) -> Result<Self, Self::Error> {
-        let expander = Expander::try_from(input)?;
+        let assembler = Assembler::try_from(input)?;
         let mut prog = xl::Prog::default();
-        prog.set_sig(expander.sig().clone());
-        prog.set_body(expander.body().clone());
+        prog.set_sig(assembler.sig().clone());
+        prog.set_body(assembler.body().clone());
         Ok(prog)
     }
 }
