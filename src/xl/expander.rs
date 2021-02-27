@@ -1,5 +1,4 @@
 use crate::asm::ast as asm;
-use crate::tdl::ast as tdl;
 use crate::util::errors::Error;
 use crate::xl::ast as xl;
 use std::collections::HashMap;
@@ -11,7 +10,6 @@ pub struct Expander {
     pub sig: xl::Sig,
     pub body: Vec<xl::Instr>,
     pub map: HashMap<String, String>,
-    pub imp: HashMap<String, tdl::Imp>,
 }
 
 impl Default for Expander {
@@ -22,7 +20,6 @@ impl Default for Expander {
             sig: xl::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
-            imp: HashMap::new(),
         }
     }
 }
@@ -37,16 +34,13 @@ impl Expander {
     pub fn get_name(&self, key: &str) -> Option<&String> {
         self.map.get(key)
     }
-    pub fn get_imp(&self, key: &str) -> Option<&tdl::Imp> {
-        self.imp.get(key)
-    }
-    pub fn new_name(&mut self) -> String {
+    pub fn new_var(&mut self) -> String {
         let tmp = self.count;
         self.count += 1;
         format!("{}{}", self.prefix, tmp)
     }
-    pub fn rename(&mut self, name: &str) -> String {
-        let tmp = self.new_name();
+    pub fn rename_var(&mut self, name: &str) -> String {
+        let tmp = self.new_var();
         self.map.insert(name.to_string(), tmp.clone());
         tmp
     }
@@ -65,9 +59,9 @@ impl Expander {
                     xl::OpBasc::Gnd
                 };
                 let name = if width == 1 {
-                    self.rename(&dst_term.get_id()?)
+                    self.rename_var(&dst_term.get_id()?)
                 } else {
-                    self.new_name()
+                    self.new_var()
                 };
                 let ty = xl::Ty::Bool;
                 let term = xl::ExprTerm::Var(name, ty);
@@ -82,7 +76,7 @@ impl Expander {
                 self.add_instr(xl::Instr::from(instr_basc));
             }
             if width > 1 {
-                let dst_id = self.rename(&dst_term.get_id()?);
+                let dst_id = self.rename_var(&dst_term.get_id()?);
                 let dst_ty = dst_term.get_ty()?;
                 let dst = xl::Expr::from(xl::ExprTerm::Var(dst_id, dst_ty.clone()));
                 let arg = xl::Expr::from(arg_tup);
@@ -97,6 +91,10 @@ impl Expander {
         }
         Ok(())
     }
+    // pub fn rename_instr(&mut self, instr: &asm::InstrAsm) -> Result<asm::InstrAsm, Error> {
+    //     let mut instr = instr.clone();
+    //     if
+    // }
     pub fn add_instr(&mut self, instr: xl::Instr) {
         self.body.push(instr);
     }
