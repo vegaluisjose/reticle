@@ -4,6 +4,7 @@ use crate::tdl::ast as tdl;
 use crate::tdl::parser::TDLParser;
 use crate::util::errors::Error;
 use crate::util::file::create_abs_path;
+use crate::xl::ast as xl;
 use std::collections::HashMap;
 use std::convert::TryFrom;
 
@@ -35,5 +36,16 @@ impl TryFrom<asm::Prog> for Expander {
             }
         }
         Ok(expander)
+    }
+}
+
+impl TryFrom<asm::Prog> for xl::Prog {
+    type Error = Error;
+    fn try_from(input: asm::Prog) -> Result<Self, Self::Error> {
+        let expander = Expander::try_from(input)?;
+        let mut prog = xl::Prog::default();
+        prog.set_sig(expander.sig().clone());
+        prog.set_body(expander.body().clone());
+        Ok(prog)
     }
 }

@@ -1,5 +1,3 @@
-use crate::asm::ast as asm;
-use crate::expander::Expander;
 use crate::util::errors::Error;
 use crate::xl::ast::*;
 use std::convert::TryFrom;
@@ -27,16 +25,5 @@ impl TryFrom<OptVal> for i32 {
             }
             _ => Err(Error::new_conv_error("not a uint value")),
         }
-    }
-}
-
-impl TryFrom<asm::Prog> for Prog {
-    type Error = Error;
-    fn try_from(input: asm::Prog) -> Result<Self, Self::Error> {
-        let expander = Expander::try_from(input)?;
-        let mut prog = Prog::default();
-        prog.set_sig(expander.sig().clone());
-        prog.set_body(expander.body().clone());
-        Ok(prog)
     }
 }
