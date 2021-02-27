@@ -40,6 +40,12 @@ impl InstrAsm {
     pub fn set_loc(&mut self, loc: Loc) {
         self.loc = loc;
     }
+    pub fn set_dst(&mut self, dst: Expr) {
+        self.dst = dst;
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        self.arg = arg;
+    }
 }
 
 impl Prog {
