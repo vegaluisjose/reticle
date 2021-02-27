@@ -102,7 +102,7 @@ fn place(con: &Constraint) -> Result<HashMap<String, Loc>, Error> {
     Ok(res)
 }
 
-fn place_prog(prog: &Prog, con: &Constraint) -> Result<Prog, Error> {
+fn place_prog_with_constraint(prog: &Prog, con: &Constraint) -> Result<Prog, Error> {
     let map = place(con)?;
     let mut prog = prog.clone();
     for instr in prog.body_mut() {
@@ -126,7 +126,7 @@ pub fn place_lut_from_prog(prog: &Prog) -> Result<Prog, Error> {
             }
         }
     }
-    Ok(place_prog(prog, &lut)?)
+    Ok(place_prog_with_constraint(prog, &lut)?)
 }
 
 pub fn place_dsp_from_prog(prog: &Prog) -> Result<Prog, Error> {
@@ -139,5 +139,10 @@ pub fn place_dsp_from_prog(prog: &Prog) -> Result<Prog, Error> {
             }
         }
     }
-    Ok(place_prog(prog, &dsp)?)
+    Ok(place_prog_with_constraint(prog, &dsp)?)
+}
+
+pub fn place_from_prog(prog: &Prog) -> Result<Prog, Error> {
+    let p = place_lut_from_prog(prog)?;
+    Ok(place_dsp_from_prog(&p)?)
 }

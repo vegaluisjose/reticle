@@ -1,5 +1,5 @@
 use crate::asm::parser::AsmParser;
-use crate::placer::{place_dsp_from_prog, place_lut_from_prog};
+use crate::placer::{place_dsp_from_prog, place_from_prog, place_lut_from_prog};
 use crate::util::errors::Error;
 use crate::util::file::write_to_file;
 use std::fmt;
@@ -108,10 +108,7 @@ impl PlaceDriver {
         let input = AsmParser::parse_from_file(input)?;
         let output = self.opts().output();
         let asm = match self.opts().ty() {
-            PlaceTy::All => {
-                let asm = place_lut_from_prog(&input)?;
-                place_dsp_from_prog(&asm)?
-            }
+            PlaceTy::All => place_from_prog(&input)?,
             PlaceTy::Lut => place_lut_from_prog(&input)?,
             PlaceTy::Dsp => place_dsp_from_prog(&input)?,
         };
