@@ -28,12 +28,7 @@ impl TryFrom<asm::Prog> for Assembler {
                 asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
                     assembler.expand_instr_const(instr)?;
                 }
-                asm::Instr::Asm(instr)
-                    if instr.op() == &asm::OpAsm::Op("lut_and_b".to_string()) =>
-                {
-                    // TODO: remove this filter here
-                    assembler.expand_instr_asm(instr)?;
-                }
+                asm::Instr::Asm(instr) => assembler.expand_instr_asm(instr)?,
                 _ => (),
             }
         }

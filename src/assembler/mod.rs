@@ -20,7 +20,7 @@ impl Default for Assembler {
     fn default() -> Self {
         Assembler {
             count: 0,
-            prefix: "t".to_string(),
+            prefix: "n".to_string(),
             sig: xl::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
@@ -172,7 +172,9 @@ impl Assembler {
                     if let Some(term) = scope.get(&d) {
                         out.push(term.clone());
                     } else {
-                        let new = self.rename_term(&d)?;
+                        let id = self.new_var();
+                        let ty = d.get_ty()?;
+                        let new = xl::ExprTerm::Var(id, ty.clone());
                         scope.insert(d.clone(), new.clone());
                         out.push(new);
                     }
