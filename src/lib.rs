@@ -1,6 +1,7 @@
 pub mod asm;
 pub mod compiler;
 pub mod driver;
+pub mod expander;
 pub mod ir;
 pub mod placer;
 pub mod tdl;

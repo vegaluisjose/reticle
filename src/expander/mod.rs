@@ -1,4 +1,7 @@
+pub mod try_from;
+
 use crate::asm::ast as asm;
+use crate::tdl::ast as tdl;
 use crate::util::errors::Error;
 use crate::xl::ast as xl;
 use std::collections::HashMap;
@@ -10,6 +13,7 @@ pub struct Expander {
     pub sig: xl::Sig,
     pub body: Vec<xl::Instr>,
     pub map: HashMap<String, String>,
+    pub imp: HashMap<String, tdl::Imp>,
 }
 
 impl Default for Expander {
@@ -20,6 +24,7 @@ impl Default for Expander {
             sig: xl::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
+            imp: HashMap::new(),
         }
     }
 }
@@ -33,6 +38,12 @@ impl Expander {
     }
     pub fn get_name(&self, key: &str) -> Option<&String> {
         self.map.get(key)
+    }
+    pub fn get_imp(&self, key: &str) -> Option<&tdl::Imp> {
+        self.imp.get(key)
+    }
+    pub fn set_imp(&mut self, imp: HashMap<String, tdl::Imp>) {
+        self.imp = imp;
     }
     pub fn new_var(&mut self) -> String {
         let tmp = self.count;
@@ -68,7 +79,7 @@ impl Expander {
         instr.set_arg(arg);
         Ok(instr)
     }
-    pub fn expand_const(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
+    pub fn expand_instr_const(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
         let attr_term = instr.attr().get_term(0)?;
         let value = attr_term.get_val()?;
         let dst_term = instr.dst().get_term(0)?;
@@ -113,6 +124,11 @@ impl Expander {
                 self.add_instr(xl::Instr::from(cat));
             }
         }
+        Ok(())
+    }
+    pub fn expand_instr_asm(&mut self, instr: &asm::InstrAsm) -> Result<(), Error> {
+        let instr = self.rename_instr_asm(instr)?;
+        println!("{}", instr);
         Ok(())
     }
     pub fn add_instr(&mut self, instr: xl::Instr) {

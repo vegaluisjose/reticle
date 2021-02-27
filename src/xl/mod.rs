@@ -1,6 +1,5 @@
 pub mod ast;
 pub mod display;
-pub mod expander;
 pub mod from;
 pub mod from_str;
 pub mod helpers;
