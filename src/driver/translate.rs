@@ -1,5 +1,5 @@
+use crate::asm::ast as asm;
 use crate::asm::parser::AsmParser;
-use crate::compiler::select;
 use crate::ir::parser::IRParser;
 use crate::util::errors::Error;
 use crate::util::file::write_to_file;
@@ -114,7 +114,7 @@ impl TranslateDriver {
         match self.opts().fromto() {
             FromTo::IRToAsm => {
                 let prog = IRParser::parse_from_file(input)?;
-                let asm = select(&prog)?;
+                let asm = asm::Prog::try_from(prog)?;
                 write_output(output, &asm.to_string());
             }
             FromTo::AsmToXL => {
