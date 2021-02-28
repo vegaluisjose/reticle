@@ -119,7 +119,12 @@ impl Assembler {
                     xl::OpBasc::Gnd
                 };
                 let name = if width == 1 {
-                    self.rename_var(&dst_term.get_id()?)
+                    let old_id = dst_term.get_id()?;
+                    if let Some(id) = self.get_var(&old_id) {
+                        id.to_string()
+                    } else {
+                        self.rename_var(&old_id)
+                    }
                 } else {
                     self.new_var()
                 };
@@ -136,7 +141,12 @@ impl Assembler {
                 self.add_instr(xl::Instr::from(instr_basc));
             }
             if width > 1 {
-                let dst_id = self.rename_var(&dst_term.get_id()?);
+                let old_id = dst_term.get_id()?;
+                let dst_id = if let Some(id) = self.get_var(&old_id) {
+                    id.to_string()
+                } else {
+                    self.rename_var(&old_id)
+                };
                 let dst_ty = dst_term.get_ty()?;
                 let dst = xl::Expr::from(xl::ExprTerm::Var(dst_id, dst_ty.clone()));
                 let arg = xl::Expr::from(arg_tup);
