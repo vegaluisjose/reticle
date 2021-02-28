@@ -6,6 +6,18 @@ use crate::util::errors::Error;
 use crate::xl::ast as xl;
 use std::collections::HashMap;
 
+type Scope = HashMap<xl::ExprTerm, xl::ExprTerm>;
+
+pub fn scope_from_expr(left: &xl::Expr, right: &xl::Expr) -> Scope {
+    let mut scope = Scope::new();
+    let left: Vec<xl::ExprTerm> = left.clone().into();
+    let right: Vec<xl::ExprTerm> = right.clone().into();
+    for (l, r) in left.iter().zip(right.iter()) {
+        scope.insert(l.clone(), r.clone());
+    }
+    scope
+}
+
 #[derive(Clone, Debug)]
 pub struct Assembler {
     pub count: u64,
@@ -233,16 +245,4 @@ impl Assembler {
     pub fn set_prefix(&mut self, prefix: &str) {
         self.prefix = prefix.to_string();
     }
-}
-
-type Scope = HashMap<xl::ExprTerm, xl::ExprTerm>;
-
-pub fn scope_from_expr(left: &xl::Expr, right: &xl::Expr) -> Scope {
-    let mut scope = Scope::new();
-    let left: Vec<xl::ExprTerm> = left.clone().into();
-    let right: Vec<xl::ExprTerm> = right.clone().into();
-    for (l, r) in left.iter().zip(right.iter()) {
-        scope.insert(l.clone(), r.clone());
-    }
-    scope
 }
