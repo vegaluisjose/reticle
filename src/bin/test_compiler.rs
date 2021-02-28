@@ -7,7 +7,7 @@ use reticle::xl::ast as xl;
 use std::convert::TryFrom;
 
 fn main() -> Result<(), Error> {
-    let prog = IRParser::parse_from_file("examples/eval/fsm_3.ir")?;
+    let prog = IRParser::parse_from_file("examples/eval/fsm_9.ir")?;
     let asm = asm::Prog::try_from(prog.clone())?;
     let placed = place_from_prog(&asm)?;
     let xl = xl::Prog::try_from(placed.clone())?;
