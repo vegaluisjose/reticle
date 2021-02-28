@@ -6,6 +6,7 @@ use itertools::izip;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use std::convert::TryInto;
+use std::collections::VecDeque;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum NodeOp {
@@ -107,32 +108,40 @@ pub fn imap_from_prog(prog: &ir::Prog) -> Result<ir::InstrMap, Error> {
 }
 
 pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
-    let pindex = pat.bfs(0);
-    let bindex = block.bfs_bound(start, pindex.len());
+    let mut pstack = pat.bfs(0);
+    pstack.reverse();
+    let mut bstack: VecDeque<u64> = VecDeque::new();
+    bstack.push_back(start);
     let mut is_match = true;
     let mut bcost: u64 = 0;
     if let Some(proot) = pat.node(0) {
         let pcost = proot.cost();
-        for (p, b) in izip!(&pindex, &bindex) {
-            if let Some(pnode) = pat.node(*p) {
-                if let Some(bnode) = block.node(*b) {
-                    if pnode.ty() != bnode.ty()
+        while let Some(bindex) = bstack.pop_front() {
+            if let Some(pindex) = pstack.pop() {
+                if let Some(bnode) = block.node(bindex) {
+                    if let Some(pnode) = pat.node(pindex) {
+                        if pnode.ty() != bnode.ty()
                         || (!pnode.is_inp() && pnode.op() != bnode.op())
                         || (!pnode.is_inp()
                             && !bnode.prim().is_any()
                             && pnode.prim() != bnode.prim())
                         || (!pnode.is_inp() && pnode.attr() != bnode.attr())
                         || (!pnode.is_inp() && bnode.is_committed())
-                    {
-                        is_match = false;
-                    }
-                    if !pnode.is_inp() && bcost != u64::MAX {
-                        bcost += bnode.cost();
+                        {
+                            is_match = false;
+                        }
+                        if !pnode.is_inp() && bcost != u64::MAX {
+                            bcost += bnode.cost();
+                        }
+                        if is_match && !pnode.is_inp() {
+                            if let Some(edge) = block.edge(bindex) {
+                                for e in edge {
+                                    bstack.push_back(*e);
+                                }
+                            }
+                        }
                     }
                 }
-            }
-            if !is_match {
-                break;
             }
         }
         (is_match & (pcost < bcost), pcost)
