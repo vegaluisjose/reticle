@@ -10,6 +10,12 @@ impl Loc {
     pub fn y(&self) -> &ExprCoord {
         &self.y
     }
+    pub fn set_x(&mut self, x: ExprCoord) {
+        self.x = x;
+    }
+    pub fn set_y(&mut self, y: ExprCoord) {
+        self.y = y;
+    }
 }
 
 impl OptVal {
@@ -67,6 +73,9 @@ impl InstrMach {
         } else {
             None
         }
+    }
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = Some(loc);
     }
     pub fn set_dst(&mut self, dst: Expr) {
         self.dst = dst

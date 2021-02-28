@@ -157,15 +157,14 @@ impl Assembler {
             let mut scope = scope_from_expr(&imp.output(), instr.dst());
             scope.extend(scope_from_expr(&imp.input(), instr.arg()));
             for i in imp.clone().body() {
-                let mut xl_instr = i.clone();
                 let arg: Vec<xl::ExprTerm> = i.arg().clone().into();
-                let mut tup = xl::ExprTup::default();
+                let mut arg_tup = xl::ExprTup::default();
                 for a in arg {
                     if let Some(term) = scope.get(&a) {
-                        tup.add_term(term.clone());
+                        arg_tup.add_term(term.clone());
                     }
                 }
-                xl_instr.set_arg(xl::Expr::from(tup));
+                let arg_expr = xl::Expr::from(arg_tup);
                 let dst: Vec<xl::ExprTerm> = i.dst().clone().into();
                 let mut out: Vec<xl::ExprTerm> = Vec::new();
                 for d in dst {
@@ -189,11 +188,30 @@ impl Assembler {
                     let tup = xl::ExprTup { term: out };
                     xl::Expr::from(tup)
                 };
-                xl_instr.set_dst(dst_expr);
-                self.add_instr(xl_instr);
+                match i {
+                    xl::Instr::Mach(mach) => {
+                        if let Some(loc) = mach.loc() {
+                            let mut loc = loc.clone();
+                            let x = instr.loc().x().clone();
+                            let y = instr.loc().y().clone();
+                            loc.set_x(x);
+                            loc.set_y(y);
+                            let mut instr_mach = mach.clone();
+                            instr_mach.set_loc(loc);
+                            instr_mach.set_arg(arg_expr);
+                            instr_mach.set_dst(dst_expr);
+                            self.add_instr(xl::Instr::from(instr_mach));
+                        }
+                    }
+                    _ => {
+                        let mut instr_xl = i.clone();
+                        instr_xl.set_arg(arg_expr);
+                        instr_xl.set_dst(dst_expr);
+                        self.add_instr(instr_xl);
+                    }
+                }
             }
         }
-        println!("{}", instr);
         Ok(())
     }
     pub fn add_instr(&mut self, instr: xl::Instr) {
