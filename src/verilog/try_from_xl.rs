@@ -681,7 +681,10 @@ impl TryFrom<xl::InstrBasc> for vl::Stmt {
                             vl::Expr::from(concat),
                         )))
                     }
-                    _ => Err(Error::new_conv_error("not implemented yet")),
+                    xl::OpBasc::Id => Ok(vl::Stmt::from(vl::Parallel::Assign(
+                        dst[0].clone(),
+                        arg[0].clone(),
+                    ))),
                 }
             } else {
                 Err(Error::new_conv_error("not implemented yet"))
