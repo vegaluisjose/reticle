@@ -157,8 +157,8 @@ fn select(prog: &ir::Prog) -> Result<asm::Prog, Error> {
     let dmap = tree_from_pats(dsp.pat())?;
     let imap = imap_from_prog(&prog)?;
     let blks = tree_from_prog(&prog)?;
-    let blks = tree_select(&blks, &lmap)?;
     let blks = tree_select(&blks, &dmap)?;
+    let blks = tree_select(&blks, &lmap)?;
     let mut body: Vec<asm::Instr> = Vec::new();
     let mut iset: HashSet<ir::Id> = HashSet::new();
     let tree_map: HashMap<String, Tree> = lmap.into_iter().chain(dmap).collect();
