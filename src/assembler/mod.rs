@@ -116,6 +116,18 @@ impl Assembler {
         instr.set_arg(arg);
         Ok(instr)
     }
+    pub fn expand_instr_id(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
+        let arg = self.rename_expr(instr.arg())?;
+        let dst = self.rename_expr(instr.dst())?;
+        let instr = xl::InstrBasc {
+            op: xl::OpBasc::Id,
+            attr: xl::Expr::default(),
+            dst,
+            arg,
+        };
+        self.add_instr(xl::Instr::from(instr));
+        Ok(())
+    }
     pub fn expand_instr_const(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
         let attr_term = instr.attr().get_term(0)?;
         let value = attr_term.get_val()?;

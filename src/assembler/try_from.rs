@@ -28,6 +28,9 @@ impl TryFrom<asm::Prog> for Assembler {
                 asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
                     assembler.expand_instr_const(instr)?;
                 }
+                asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Id => {
+                    assembler.expand_instr_id(instr)?;
+                }
                 asm::Instr::Asm(instr) => assembler.expand_instr_asm(instr)?,
                 _ => (),
             }
