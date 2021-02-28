@@ -210,20 +210,3 @@ impl Tree {
         }
     }
 }
-
-impl Forest {
-    pub fn was_visited(&self, id: &str) -> bool {
-        self.visited.contains(id)
-    }
-    pub fn tree(&self) -> &Vec<Tree> {
-        &self.tree
-    }
-    pub fn add_visited(&mut self, name: &str) {
-        if !self.visited.contains(name) {
-            self.visited.insert(name.to_string());
-        }
-    }
-    pub fn add_tree(&mut self, tree: Tree) {
-        self.tree.push(tree);
-    }
-}

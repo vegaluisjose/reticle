@@ -3,10 +3,10 @@ use crate::ir::ast as ir;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
 use itertools::izip;
+use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use std::convert::TryInto;
-use std::collections::VecDeque;
 
 #[derive(Clone, Debug, Eq, PartialEq, Hash)]
 pub enum NodeOp {
@@ -34,12 +34,6 @@ pub struct Tree {
     pub index: u64,
     pub node: HashMap<u64, Node>,
     pub edge: HashMap<u64, Vec<u64>>,
-}
-
-#[derive(Clone, Debug, Default)]
-pub struct Forest {
-    pub visited: HashSet<ir::Id>,
-    pub tree: Vec<Tree>,
 }
 
 pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
@@ -92,7 +86,6 @@ pub fn tree_from_pats(pmap: &HashMap<String, Pat>) -> Result<HashMap<String, Tre
 
 pub fn tree_from_prog(prog: &ir::Prog) -> Result<Vec<Tree>, Error> {
     if let Some(main) = prog.get("main") {
-        // let forest = Forest::try_from(main.clone())?;
         Ok(main.clone().try_into()?)
     } else {
         Err(Error::new_compiler_error("converting to tree"))
@@ -121,12 +114,12 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                 if let Some(bnode) = block.node(bindex) {
                     if let Some(pnode) = pat.node(pindex) {
                         if pnode.ty() != bnode.ty()
-                        || (!pnode.is_inp() && pnode.op() != bnode.op())
-                        || (!pnode.is_inp()
-                            && !bnode.prim().is_any()
-                            && pnode.prim() != bnode.prim())
-                        || (!pnode.is_inp() && pnode.attr() != bnode.attr())
-                        || (!pnode.is_inp() && bnode.is_committed())
+                            || (!pnode.is_inp() && pnode.op() != bnode.op())
+                            || (!pnode.is_inp()
+                                && !bnode.prim().is_any()
+                                && pnode.prim() != bnode.prim())
+                            || (!pnode.is_inp() && pnode.attr() != bnode.attr())
+                            || (!pnode.is_inp() && bnode.is_committed())
                         {
                             is_match = false;
                         }
