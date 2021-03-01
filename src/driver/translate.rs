@@ -47,6 +47,7 @@ impl TranslateOption {
 #[derive(Clone, Debug)]
 pub enum FromTo {
     IRToAsm,
+    IRToBehav,
     AsmToXL,
     XLToVerilog,
 }
@@ -61,6 +62,7 @@ impl fmt::Display for FromTo {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let backend = match self {
             FromTo::IRToAsm => "ir-to-asm",
+            FromTo::IRToBehav => "ir-to-behav",
             FromTo::AsmToXL => "asm-to-xl",
             FromTo::XLToVerilog => "xl-to-verilog",
         };
@@ -73,6 +75,7 @@ impl FromStr for FromTo {
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
             "ir-to-asm" => Ok(FromTo::IRToAsm),
+            "ir-to-behav" => Ok(FromTo::IRToBehav),
             "asm-to-xl" => Ok(FromTo::AsmToXL),
             "xl-to-verilog" => Ok(FromTo::XLToVerilog),
             _ => Err(Error::new_opt_error("invalid options")),
@@ -116,6 +119,11 @@ impl TranslateDriver {
                 let prog = IRParser::parse_from_file(input)?;
                 let asm = asm::Prog::try_from(prog)?;
                 write_output(output, &asm.to_string());
+            }
+            FromTo::IRToBehav => {
+                let prog = IRParser::parse_from_file(input)?;
+                let vl = vl::Module::try_from(prog)?;
+                write_output(output, &vl.to_string());
             }
             FromTo::AsmToXL => {
                 let prog = AsmParser::parse_from_file(input)?;
