@@ -2,14 +2,14 @@ pat dsp_vadd_i8_4[dsp, 1, 1](a: i8<4>, b: i8<4>) -> (y: i8<4>) {
     y:i8<4> = add(a, b);
 }
 
-pat dsp_vadd_rabp_i8_4[dsp, 1, 1](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
+pat dsp_vadd_i8_4_ra_rb_rp[dsp, 1, 1](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
     t0:i8<4> = reg[0](a, en);
     t1:i8<4> = reg[0](b, en);
     t2:i8<4> = add(t0, t1);
     y:i8<4> = reg[0](t2, en);
 }
 
-pat dsp_muladd_rabmp_i8[dsp, 1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
+pat dsp_muladd_i8_ra_rb_rm_rp[dsp, 1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
     t0:i8 = reg[0](a, en);
     t1:i8 = reg[0](b, en);
     t2:i8 = mul(t0, t1);
@@ -22,10 +22,10 @@ imp dsp_vadd_i8_4[x, y](a: i8<4>, b: i8<4>) -> (y: i8<4>) {
     y: i8<4> = dsp[op=add](a, b, en, en, en) @alu(x,y);
 }
 
-imp dsp_vadd_rabp_i8_4[x, y](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
+imp dsp_vadd_i8_4_ra_rb_rp[x, y](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
     y: i8<4> = dsp[op=add, ra=1, rb=1, rp=1](a, b, en, en, en) @alu(x,y);
 }
 
-imp dsp_muladd_rabmp_i8[x, y](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
+imp dsp_muladd_i8_ra_rb_rm_rp[x, y](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
     y: i8 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en) @alu(x, y);
 }
