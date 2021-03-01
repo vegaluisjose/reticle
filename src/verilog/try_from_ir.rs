@@ -253,12 +253,43 @@ impl TryFrom<ir::InstrComp> for Vec<vl::Stmt> {
     }
 }
 
+impl TryFrom<ir::InstrWire> for Vec<vl::Stmt> {
+    type Error = Error;
+    fn try_from(instr: ir::InstrWire) -> Result<Self, Self::Error> {
+        match instr.op() {
+            // TODO: impl vector constant
+            // TOOD: impl negative constant
+            ir::OpWire::Con => {
+                let dst = instr.dst().get_term(0)?;
+                let ty = dst.get_ty()?;
+                let dst: Vec<vl::Expr> = dst.clone().try_into()?;
+                let mut stmt: Vec<vl::Stmt> = Vec::new();
+                if dst.len() == 1 {
+                    let attr = instr.attr().get_term(0)?;
+                    let val = u32::try_from(attr.get_val()?)?;
+                    if let Some(width) = ty.width() {
+                        let width = u32::try_from(width)?;
+                        let num = vl::Expr::new_ulit_dec(width, &val.to_string());
+                        stmt.push(vl::Stmt::from(vl::Parallel::Assign(dst[0].clone(), num)));
+                        Ok(stmt)
+                    } else {
+                        Err(Error::new_conv_error("type does not have width"))
+                    }
+                } else {
+                    Err(Error::new_conv_error("vector not supported yet"))
+                }
+            }
+            _ => Err(Error::new_conv_error("wire op not implemented yet")),
+        }
+    }
+}
+
 impl TryFrom<ir::Instr> for Vec<vl::Stmt> {
     type Error = Error;
     fn try_from(instr: ir::Instr) -> Result<Self, Self::Error> {
         match instr {
             ir::Instr::Comp(instr) => Ok(instr.try_into()?),
-            ir::Instr::Wire(_) => Err(Error::new_conv_error("wire instr not implemented yet")),
+            ir::Instr::Wire(instr) => Ok(instr.try_into()?),
             ir::Instr::Call(_) => Err(Error::new_conv_error("call instr not implemented yet")),
         }
     }
