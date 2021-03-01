@@ -235,7 +235,10 @@ pub fn tree_codegen(
     pmap: &HashMap<String, Pat>,
 ) -> Result<Vec<asm::Instr>, Error> {
     let mut body: Vec<asm::Instr> = Vec::new();
-    for index in block.dfg(0) {
+    let mut indices = block.bfs(0);
+    // bottom-up code generation
+    indices.reverse();
+    for index in indices {
         if let Some(node) = block.node(index) {
             if node.is_committed() {
                 if let Some(name) = node.pat() {
