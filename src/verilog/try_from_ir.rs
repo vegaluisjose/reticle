@@ -400,7 +400,7 @@ impl TryFrom<ir::Def> for vl::Module {
             let decl: Vec<vl::Decl> = instr.clone().try_into()?;
             for e in dst {
                 for d in &decl {
-                    if instr.is_reg() && output_set.contains(&e) {
+                    if output_set.contains(&e) {
                         module.add_port(vl::Port::Output(d.clone()));
                     } else {
                         module.add_decl(d.clone())
