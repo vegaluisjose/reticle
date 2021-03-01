@@ -1,3 +1,0 @@
-def lut_and_i8_r0(a: i8, b: i8) -> (y: i8) {
-    y: i8 = and(a, b) @lut;
-}

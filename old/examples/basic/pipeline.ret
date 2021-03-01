@@ -1,4 +1,0 @@
-def pipeline(a: i8, en: bool) -> (y: i8) {
-    t0: i8 = reg[0](a, en);
-    y: i8 = reg[0](t0, en);
-}

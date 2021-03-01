@@ -1,3 +1,0 @@
-def not_i8_i8(a: i8) -> (y: i8) {
-    y: i8 = not(a);
-}

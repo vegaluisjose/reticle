@@ -1,3 +1,0 @@
-def lut_or_i8_i8_i8(a: i8, b: i8) -> (y: i8) {
-    y: i8 = or(a, b) @lut;
-}

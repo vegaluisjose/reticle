@@ -1,3 +1,0 @@
-def le(a: i8, b: i8) -> (y: bool) {
-    y: bool = le(a, b);
-}

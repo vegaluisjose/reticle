@@ -1,3 +1,0 @@
-def mux_b_b_b_b(cond: bool, t: bool, f: bool) -> (y: bool) {
-    y: bool = mux(cond, t, f);
-}

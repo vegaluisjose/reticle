@@ -1,3 +1,0 @@
-def gt(a: i8, b: i8) -> (y: bool) {
-    y: bool = gt(a, b);
-}

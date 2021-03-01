@@ -1,5 +1,0 @@
-def add_reg_mul_i8_i8_i8_b_i8(a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
-    t0: i8 = mul(a, b);
-    t1: i8 = reg[0](t0, en);
-    y: i8 = add(t1, c);
-}

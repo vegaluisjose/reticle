@@ -1,4 +1,0 @@
-def lut_not_bool_r1(a: bool, en: bool) -> (y: bool) {
-    t0: bool = not(a) @lut;
-    y: bool = reg[0](t0, en);
-}

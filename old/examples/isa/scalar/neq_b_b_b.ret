@@ -1,3 +1,0 @@
-def neq_b_b_b(a: bool, b: bool) -> (y: bool) {
-    y: bool = neq(a, b);
-}

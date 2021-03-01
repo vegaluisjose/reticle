@@ -1,4 +1,0 @@
-def add_pair(a: i8, b: i8, c: i8, d: i8) -> (f: i8, g: i8) {
-    f: i8 = add(a, b);
-    g: i8 = add(c, d);
-}

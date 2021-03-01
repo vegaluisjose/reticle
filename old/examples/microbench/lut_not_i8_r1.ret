@@ -1,4 +1,0 @@
-def lut_not_i8_r1(a: i8, en: bool) -> (y: i8) {
-    t0: i8 = not(a) @lut;
-    y: i8 = reg[0](t0, en);
-}

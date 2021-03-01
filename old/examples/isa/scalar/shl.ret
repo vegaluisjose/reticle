@@ -1,3 +1,0 @@
-def shl(a: i8) -> (y: i8) {
-    y: i8 = shl[1](a);
-}

@@ -1,3 +1,0 @@
-def lt(a: i8, b: i8) -> (y: bool) {
-    y: bool = lt(a, b);
-}

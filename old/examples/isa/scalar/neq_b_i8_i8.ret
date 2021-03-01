@@ -1,3 +1,0 @@
-def neq_b_i8_i8(a: i8, b: i8) -> (y: bool) {
-    y: bool = neq(a, b);
-}

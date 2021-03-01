@@ -1,3 +1,0 @@
-def xnor_b_b_b(a: bool, b: bool) -> (y: bool) {
-    y: bool = xnor(a, b);
-}

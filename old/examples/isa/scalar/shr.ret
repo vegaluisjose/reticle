@@ -1,3 +1,0 @@
-def shr(a: i8) -> (y: i8) {
-    y: i8 = shr[1](a);
-}

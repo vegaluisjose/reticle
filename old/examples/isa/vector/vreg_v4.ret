@@ -1,3 +1,0 @@
-def vreg_v4(a: i8<4>, en: bool) -> (y: i8<4>) {
-    y: i8<4> = reg[3, 0, 1, 5](a, en);
-}

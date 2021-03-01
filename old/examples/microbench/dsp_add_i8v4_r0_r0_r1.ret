@@ -1,4 +1,0 @@
-def dsp_add_i8v4_r0_r0_r1(a: i8<4>, b: i8<4>, en:bool) -> (y: i8<4>) {
-    t0: i8<4> = add(a, b);
-    y: i8<4> = reg[0](t0, en);
-}

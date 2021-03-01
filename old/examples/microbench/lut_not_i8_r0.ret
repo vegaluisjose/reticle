@@ -1,3 +1,0 @@
-def lut_not_i8_r0(a: i8) -> (y: i8) {
-    y: i8 = not(a) @lut;
-}
