@@ -159,6 +159,7 @@ impl TryFrom<ir::Instr> for Vec<vl::Decl> {
     }
 }
 
+// TODO: refactor this, lot of redundancy
 impl TryFrom<ir::InstrComp> for Vec<vl::Stmt> {
     type Error = Error;
     fn try_from(instr: ir::InstrComp) -> Result<Self, Self::Error> {
@@ -248,6 +249,54 @@ impl TryFrom<ir::InstrComp> for Vec<vl::Stmt> {
                     Err(Error::new_conv_error("mul instr must have one dst"))
                 }
             }
+            ir::OpComp::Eql => {
+                let term_y = instr.dst().get_term(0)?;
+                let term_a = instr.arg().get_term(0)?;
+                let term_b = instr.arg().get_term(1)?;
+                let expr_y: Vec<vl::Expr> = term_y.clone().try_into()?;
+                let expr_a: Vec<vl::Expr> = term_a.clone().try_into()?;
+                let expr_b: Vec<vl::Expr> = term_b.clone().try_into()?;
+                let mut stmt: Vec<vl::Stmt> = Vec::new();
+                for (y, a, b) in izip!(expr_y, expr_a, expr_b) {
+                    let eq = vl::Expr::new_eq(a, b);
+                    stmt.push(vl::Stmt::from(vl::Parallel::Assign(y, eq)));
+                }
+                Ok(stmt)
+            }
+            ir::OpComp::And => {
+                let term_y = instr.dst().get_term(0)?;
+                let term_a = instr.arg().get_term(0)?;
+                let term_b = instr.arg().get_term(1)?;
+                let expr_y: Vec<vl::Expr> = term_y.clone().try_into()?;
+                let expr_a: Vec<vl::Expr> = term_a.clone().try_into()?;
+                let expr_b: Vec<vl::Expr> = term_b.clone().try_into()?;
+                let mut stmt: Vec<vl::Stmt> = Vec::new();
+                for (y, a, b) in izip!(expr_y, expr_a, expr_b) {
+                    let eq = vl::Expr::new_bit_and(a, b);
+                    stmt.push(vl::Stmt::from(vl::Parallel::Assign(y, eq)));
+                }
+                Ok(stmt)
+            }
+            ir::OpComp::Mux => {
+                let term_y = instr.dst().get_term(0)?;
+                let term_s = instr.arg().get_term(0)?;
+                let term_a = instr.arg().get_term(1)?;
+                let term_b = instr.arg().get_term(2)?;
+                let expr_y: Vec<vl::Expr> = term_y.clone().try_into()?;
+                let expr_s: Vec<vl::Expr> = term_s.clone().try_into()?;
+                let expr_a: Vec<vl::Expr> = term_a.clone().try_into()?;
+                let expr_b: Vec<vl::Expr> = term_b.clone().try_into()?;
+                if let Some(s) = expr_s.get(0) {
+                    let mut stmt: Vec<vl::Stmt> = Vec::new();
+                    for (y, a, b) in izip!(expr_y, expr_a, expr_b) {
+                        let eq = vl::Expr::new_mux(s.clone(), a, b);
+                        stmt.push(vl::Stmt::from(vl::Parallel::Assign(y, eq)));
+                    }
+                    Ok(stmt)
+                } else {
+                    Err(Error::new_conv_error("mux sel do not have right type"))
+                }
+            }
             _ => Err(Error::new_conv_error("comp op not implemented yet")),
         }
     }
@@ -278,6 +327,17 @@ impl TryFrom<ir::InstrWire> for Vec<vl::Stmt> {
                 } else {
                     Err(Error::new_conv_error("vector not supported yet"))
                 }
+            }
+            ir::OpWire::Id => {
+                let term_y = instr.dst().get_term(0)?;
+                let term_a = instr.arg().get_term(0)?;
+                let expr_y: Vec<vl::Expr> = term_y.clone().try_into()?;
+                let expr_a: Vec<vl::Expr> = term_a.clone().try_into()?;
+                let mut stmt: Vec<vl::Stmt> = Vec::new();
+                for (y, a) in izip!(expr_y, expr_a) {
+                    stmt.push(vl::Stmt::from(vl::Parallel::Assign(y, a)));
+                }
+                Ok(stmt)
             }
             _ => Err(Error::new_conv_error("wire op not implemented yet")),
         }
