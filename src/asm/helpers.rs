@@ -18,6 +18,14 @@ impl Loc {
     }
 }
 
+impl OpAsm {
+    pub fn name(&self) -> String {
+        match self {
+            OpAsm::Op(n) => n.to_string(),
+        }
+    }
+}
+
 impl InstrAsm {
     pub fn dst(&self) -> &Expr {
         &self.dst
