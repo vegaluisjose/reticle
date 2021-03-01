@@ -48,6 +48,7 @@ impl TranslateOption {
 pub enum FromTo {
     IRToAsm,
     IRToBehav,
+    IRToBehavDsp,
     AsmToXL,
     XLToVerilog,
 }
@@ -63,6 +64,7 @@ impl fmt::Display for FromTo {
         let backend = match self {
             FromTo::IRToAsm => "ir-to-asm",
             FromTo::IRToBehav => "ir-to-behav",
+            FromTo::IRToBehavDsp => "ir-to-behavdsp",
             FromTo::AsmToXL => "asm-to-xl",
             FromTo::XLToVerilog => "xl-to-verilog",
         };
@@ -76,6 +78,7 @@ impl FromStr for FromTo {
         match input {
             "ir-to-asm" => Ok(FromTo::IRToAsm),
             "ir-to-behav" => Ok(FromTo::IRToBehav),
+            "ir-to-behavdsp" => Ok(FromTo::IRToBehavDsp),
             "asm-to-xl" => Ok(FromTo::AsmToXL),
             "xl-to-verilog" => Ok(FromTo::XLToVerilog),
             _ => Err(Error::new_opt_error("invalid options")),
@@ -123,6 +126,14 @@ impl TranslateDriver {
             FromTo::IRToBehav => {
                 let prog = IRParser::parse_from_file(input)?;
                 let vl = vl::Module::try_from(prog)?;
+                write_output(output, &vl.to_string());
+            }
+            FromTo::IRToBehavDsp => {
+                let prog = IRParser::parse_from_file(input)?;
+                let mut vl = vl::Module::try_from(prog)?;
+                let mut attr = vl::Attribute::default();
+                attr.add_stmt("use_dsp", "yes");
+                vl.set_attr(attr);
                 write_output(output, &vl.to_string());
             }
             FromTo::AsmToXL => {
