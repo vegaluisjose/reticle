@@ -2,7 +2,6 @@ use crate::asm::ast as asm;
 use crate::ir::ast as ir;
 use crate::tdl::ast::Pat;
 use crate::util::errors::Error;
-use itertools::izip;
 use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
@@ -144,16 +143,25 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
 }
 
 pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_cost: u64) -> Tree {
-    let pindex = pat.bfs(0);
-    let bindex = block.bfs_bound(target, pindex.len());
     let mut btree = block.clone();
-    for (p, b) in izip!(&pindex, &bindex) {
-        if let Some(pnode) = pat.node(*p) {
-            if !pnode.is_inp() {
-                if let Some(bnode) = btree.node_mut(*b) {
-                    bnode.clear_pat();
-                    bnode.set_cost(0);
-                    bnode.stage();
+    let mut pstack = pat.bfs(0);
+    pstack.reverse();
+    let mut bstack: VecDeque<u64> = VecDeque::new();
+    bstack.push_back(target);
+    while let Some(bindex) = bstack.pop_front() {
+        if let Some(pindex) = pstack.pop() {
+            if let Some(pnode) = pat.node(pindex) {
+                if !pnode.is_inp() {
+                    if let Some(bnode) = btree.node_mut(bindex) {
+                        bnode.clear_pat();
+                        bnode.set_cost(0);
+                        bnode.stage();
+                    }
+                    if let Some(edge) = block.edge(bindex) {
+                        for e in edge {
+                            bstack.push_back(*e);
+                        }
+                    }
                 }
             }
         }
@@ -167,13 +175,21 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
 
 pub fn input_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, String> {
     let mut map: HashMap<String, String> = HashMap::new();
-    let pindex = pat.bfs(0);
-    let bindex = block.bfs_bound(target, pindex.len());
-    for (p, b) in izip!(&pindex, &bindex) {
-        if let Some(pnode) = pat.node(*p) {
-            if pnode.is_inp() {
-                if let Some(bnode) = block.node(*b) {
-                    map.insert(pnode.id(), bnode.id());
+    let mut pstack = pat.bfs(0);
+    pstack.reverse();
+    let mut bstack: VecDeque<u64> = VecDeque::new();
+    bstack.push_back(target);
+    while let Some(bindex) = bstack.pop_front() {
+        if let Some(pindex) = pstack.pop() {
+            if let Some(pnode) = pat.node(pindex) {
+                if pnode.is_inp() {
+                    if let Some(bnode) = block.node(bindex) {
+                        map.insert(pnode.id(), bnode.id());
+                    }
+                } else if let Some(edge) = block.edge(bindex) {
+                    for e in edge {
+                        bstack.push_back(*e);
+                    }
                 }
             }
         }
