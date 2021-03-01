@@ -45,6 +45,9 @@ impl InstrAsm {
     pub fn is_dsp(&self) -> bool {
         self.loc.is_dsp()
     }
+    pub fn set_op(&mut self, op: OpAsm) {
+        self.op = op;
+    }
     pub fn set_loc(&mut self, loc: Loc) {
         self.loc = loc;
     }
