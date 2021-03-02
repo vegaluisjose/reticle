@@ -1,4 +1,4 @@
-def main(a0: i8, b0: i8, a1: i8, b1: i8, c0: i8, en: bool) -> (y: i8) {
+def main(a0: i8, b0: i8, a1: i8, b1: i8, a2: i8, b2: i8, c0: i8, en: bool) -> (y: i8) {
     t0:i8 = reg[0](a0, en);
     t1:i8 = reg[0](b0, en);
     t2:i8 = mul(t0, t1);
@@ -10,5 +10,11 @@ def main(a0: i8, b0: i8, a1: i8, b1: i8, c0: i8, en: bool) -> (y: i8) {
     t8:i8 = mul(t6, t7);
     t9:i8 = reg[0](t8, en);
     t10:i8 = add(t9, t5);
-    y:i8 = reg[0](t10, en);
+    t11:i8 = reg[0](t10, en);
+    t12:i8 = reg[0](a2, en);
+    t13:i8 = reg[0](b2, en);
+    t14:i8 = mul(t12, t13);
+    t15:i8 = reg[0](t14, en);
+    t16:i8 = add(t15, t11);
+    y:i8 = reg[0](t16, en);
 }
