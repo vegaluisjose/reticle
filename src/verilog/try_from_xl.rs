@@ -324,14 +324,13 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                     xl::OpDsp::MulAdd if port == &xl::OptVal::CasPort(xl::CasPortDsp::P) => {
                         instance.connect("P", vl::Expr::new_ref(""));
                         instance.connect("PCOUT", vl::Expr::new_ref(&temp));
-                    },
+                    }
                     _ => {
                         instance.connect("P", vl::Expr::new_ref(&temp));
                         instance.connect("PCOUT", vl::Expr::new_ref(""));
                     }
                 }
             }
-
         } else {
             instance.connect("P", vl::Expr::new_ref(&temp));
             instance.connect("PCOUT", vl::Expr::new_ref(""));
