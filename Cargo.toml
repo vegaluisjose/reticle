@@ -25,5 +25,9 @@ name = "reticle-translate"
 path = "src/bin/translate.rs"
 
 [[bin]]
+name = "reticle-optimize"
+path = "src/bin/optimize.rs"
+
+[[bin]]
 name = "reticle-place"
 path = "src/bin/place.rs"
