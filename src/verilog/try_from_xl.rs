@@ -298,7 +298,6 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.connect("BCIN", create_literal(0, 18));
     instance.connect("CARRYCASCIN", vl::Expr::new_ref(constant::GND));
     instance.connect("MULTSIGNIN", vl::Expr::new_ref(constant::GND));
-    instance.connect("PCIN", create_literal(0, 48));
     instance.connect("CARRYIN", vl::Expr::new_ref(constant::GND));
     instance.connect("CARRYINSEL", create_literal(0, 3));
     instance.connect("D", create_literal(0, 27));
@@ -306,7 +305,6 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     instance.connect("BCOUT", vl::Expr::new_ref(""));
     instance.connect("CARRYCASCOUT", vl::Expr::new_ref(""));
     instance.connect("MULTSIGNOUT", vl::Expr::new_ref(""));
-    instance.connect("PCOUT", vl::Expr::new_ref(""));
     instance.connect("OVERFLOW", vl::Expr::new_ref(""));
     instance.connect("PATTERNBDETECT", vl::Expr::new_ref(""));
     instance.connect("PATTERNDETECT", vl::Expr::new_ref(""));
@@ -320,7 +318,24 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     // output seems op independent so far, this is likely to change
     if let Some(e) = instr.dst().idx(0) {
         let temp = tmp_name_try_from_term(e)?;
-        instance.connect("P", vl::Expr::new_ref(&temp));
+        if let Some(port) = instr.opt_lookup(&xl::Opt::CasOut) {
+            if let Some(op) = instr.opt_op() {
+                match op {
+                    xl::OpDsp::MulAdd if port == &xl::OptVal::CasPort(xl::CasPortDsp::P) => {
+                        instance.connect("P", vl::Expr::new_ref(""));
+                        instance.connect("PCOUT", vl::Expr::new_ref(&temp));
+                    },
+                    _ => {
+                        instance.connect("P", vl::Expr::new_ref(&temp));
+                        instance.connect("PCOUT", vl::Expr::new_ref(""));
+                    }
+                }
+            }
+
+        } else {
+            instance.connect("P", vl::Expr::new_ref(&temp));
+            instance.connect("PCOUT", vl::Expr::new_ref(""));
+        }
         let dst: Vec<vl::Expr> = e.clone().try_into()?;
         let word_width = vec_word_width_try_from_term(e)?;
         if let Some(width) = e.width() {
@@ -377,6 +392,7 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                 );
                 instance.add_param("MREG", vl::Expr::new_int(0));
                 instance.add_param("USE_MULT", vl::Expr::new_str("NONE"));
+                instance.connect("PCIN", create_literal(0, 48));
                 instance.connect("ALUMODE", create_literal(0, 4));
                 instance.connect("INMODE", create_literal(0, 5));
                 instance.connect("OPMODE", create_literal(51, 9));
@@ -481,10 +497,27 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                     );
                 }
                 if let Some(e) = instr.arg().idx(2) {
-                    instance.connect(
-                        "C",
-                        expr_try_from_term(&e, DSP_WIDTH_C as u64, 0, DSP_WIDTH_C - 1)?,
-                    );
+                    if let Some(port) = instr.opt_lookup(&xl::Opt::CasIn) {
+                        if port == &xl::OptVal::CasPort(xl::CasPortDsp::C) {
+                            instance.connect("C", create_literal(0, 48));
+                            instance.connect(
+                                "PCIN",
+                                expr_try_from_term(&e, DSP_WIDTH_C as u64, 0, DSP_WIDTH_C - 1)?,
+                            );
+                        } else {
+                            instance.connect(
+                                "C",
+                                expr_try_from_term(&e, DSP_WIDTH_C as u64, 0, DSP_WIDTH_C - 1)?,
+                            );
+                            instance.connect("PCIN", create_literal(0, 48));
+                        }
+                    } else {
+                        instance.connect(
+                            "C",
+                            expr_try_from_term(&e, DSP_WIDTH_C as u64, 0, DSP_WIDTH_C - 1)?,
+                        );
+                        instance.connect("PCIN", create_literal(0, 48));
+                    }
                 }
                 let i3 = instr.arg().idx(3);
                 let i4 = instr.arg().idx(4);
@@ -566,6 +599,7 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                 );
                 instance.add_param("CREG", vl::Expr::new_int(0));
                 instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
+                instance.connect("PCIN", create_literal(0, 48));
                 instance.connect("ALUMODE", create_literal(0, 4));
                 instance.connect("INMODE", create_literal(0, 5));
                 instance.connect("OPMODE", create_literal(5, 9));
