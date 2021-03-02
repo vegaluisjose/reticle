@@ -29,3 +29,15 @@ imp dsp_vadd_i8_4_ra_rb_rp[x, y](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
 imp dsp_muladd_i8_ra_rb_rm_rp[x, y](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
     y: i8 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en) @alu(x, y);
 }
+
+imp dsp_muladd_i8_ra_rb_rm_rp_cop[x, y](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
+    y: i8 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en) @alu(x, y);
+}
+
+imp dsp_muladd_i8_ra_rb_rm_rp_cic_cop[x, y](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
+    y: i8 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en) @alu(x, y);
+}
+
+imp dsp_muladd_i8_ra_rb_rm_rp_cic[x, y](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
+    y: i8 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en) @alu(x, y);
+}
