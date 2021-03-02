@@ -3,6 +3,7 @@ pub mod assembler;
 pub mod compiler;
 pub mod driver;
 pub mod ir;
+pub mod optimizer;
 pub mod placer;
 pub mod tdl;
 pub mod util;
