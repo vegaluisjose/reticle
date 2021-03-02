@@ -11,6 +11,7 @@ pub struct Constraint {
     pub count: u64,
     pub left: HashMap<String, u64>,
     pub right: HashMap<u64, String>,
+    pub dep: HashMap<u64, u64>,
 }
 
 impl Default for Constraint {
@@ -20,6 +21,7 @@ impl Default for Constraint {
             count: 0,
             left: HashMap::new(),
             right: HashMap::new(),
+            dep: HashMap::new(),
         }
     }
 }
@@ -44,10 +46,15 @@ impl Constraint {
     pub fn set_prim(&mut self, prim: Prim) {
         self.prim = prim;
     }
-    pub fn add(&mut self, name: &str) {
+    pub fn add(&mut self, name: &str) -> u64 {
         self.left.insert(name.to_string(), self.count);
         self.right.insert(self.count, name.to_string());
+        let tmp = self.count;
         self.count += 1;
+        tmp
+    }
+    pub fn add_dep(&mut self, key: u64, val: u64) {
+        self.dep.insert(key, val);
     }
 }
 
@@ -55,7 +62,11 @@ impl fmt::Display for Constraint {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut contents = String::new();
         for index in self.left.values() {
-            let line = format!("{},{}\n", index, self.prim);
+            let line = if let Some(dep) = self.dep.get(index) {
+                format!("{},{},{}\n", index, self.prim, dep)
+            } else {
+                format!("{},{}\n", index, self.prim)
+            };
             contents.push_str(&line);
         }
         write!(f, "{}", contents)
@@ -116,6 +127,7 @@ fn place_prog_with_constraint(prog: &Prog, con: &Constraint) -> Result<Prog, Err
     Ok(prog)
 }
 
+// TODO: add dependencies to LUTs
 pub fn place_lut_from_prog(prog: &Prog) -> Result<Prog, Error> {
     let mut lut = Constraint::new_lut();
     for instr in prog.body() {
@@ -131,11 +143,42 @@ pub fn place_lut_from_prog(prog: &Prog) -> Result<Prog, Error> {
 
 pub fn place_dsp_from_prog(prog: &Prog) -> Result<Prog, Error> {
     let mut dsp = Constraint::new_dsp();
+    let mut map: HashMap<(String, u64), u64> = HashMap::new();
     for instr in prog.body() {
         if let Instr::Asm(asm) = instr {
-            let id = asm.dst().get_id(0)?;
             if asm.is_dsp() {
-                dsp.add(&id);
+                let id = asm.dst().get_id(0)?;
+                let index = dsp.add(&id);
+                match asm.loc().y() {
+                    ExprCoord::Var(x) => {
+                        map.insert((x.to_string(), 0), index);
+                    }
+                    ExprCoord::Bin(_, var, val) => match (var.as_ref(), val.as_ref()) {
+                        (ExprCoord::Var(x), ExprCoord::Val(n)) => {
+                            map.insert((x.to_string(), *n), index);
+                        }
+                        (_, _) => (),
+                    },
+                    _ => (),
+                }
+            }
+        }
+    }
+    for instr in prog.body() {
+        if let Instr::Asm(asm) = instr {
+            if asm.is_dsp() {
+                if let ExprCoord::Bin(_, var, val) = asm.loc().y() {
+                    match (var.as_ref(), val.as_ref()) {
+                        (ExprCoord::Var(x), ExprCoord::Val(n)) => {
+                            if let Some(dst) = map.get(&(x.to_string(), *n)) {
+                                if let Some(src) = map.get(&(x.to_string(), *n - 1)) {
+                                    dsp.add_dep(*dst, *src);
+                                }
+                            }
+                        }
+                        (_, _) => (),
+                    }
+                }
             }
         }
     }
