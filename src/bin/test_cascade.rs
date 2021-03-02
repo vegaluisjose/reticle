@@ -61,7 +61,7 @@ fn find_cascade(pair: &Pair, tail: &str) -> (Vec<String>, Pair) {
     (cascade, pair)
 }
 
-fn find_all_cascade(pair: &Pair) -> Vec<Vec<String>> {
+fn find_all(pair: &Pair) -> Vec<Vec<String>> {
     let mut pair = pair.clone();
     let mut res: Vec<Vec<String>> = Vec::new();
     while !pair.is_empty() {
@@ -73,12 +73,55 @@ fn find_all_cascade(pair: &Pair) -> Vec<Vec<String>> {
     res
 }
 
+fn replace(map: &Map, cascade: &[Vec<String>]) -> Map {
+    let mut res = Map::new();
+    for c in cascade {
+        let mut cur = c.clone();
+        cur.reverse();
+        if let Some(tail) = cur.pop() {
+            if let Some(instr) = map.get(&tail) {
+                let mut instr = instr.clone();
+                let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cop");
+                let op = asm::OpAsm::Op(op);
+                instr.set_op(op);
+                res.insert(tail.clone(), instr);
+            }
+        }
+        while cur.len() > 1 {
+            if let Some(mid) = cur.pop() {
+                if let Some(instr) = map.get(&mid) {
+                    let mut instr = instr.clone();
+                    let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cic_cop");
+                    let op = asm::OpAsm::Op(op);
+                    instr.set_op(op);
+                    res.insert(mid.clone(), instr);
+                }
+            }
+        }
+        if let Some(head) = cur.pop() {
+            if let Some(instr) = map.get(&head) {
+                let mut instr = instr.clone();
+                let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cic");
+                let op = asm::OpAsm::Op(op);
+                instr.set_op(op);
+                res.insert(head.clone(), instr);
+            }
+        }
+    }
+    res
+}
+
 fn main() -> Result<(), Error> {
     let prog = AsmParser::parse_from_file("examples/asm/tdot.asm")?;
-    let (_, pair) = create_map_and_pair(&prog)?;
-    let x = find_all_cascade(&pair);
-    for i in x {
-        println!("{:?}", i);
+    let (map, pair) = create_map_and_pair(&prog)?;
+    let cascade = find_all(&pair);
+    for v in map.values() {
+        println!("{}", v);
+    }
+    let body = replace(&map, &cascade);
+    println!("\n-----after-----\n");
+    for instr in body.values() {
+        println!("{}", instr);
     }
     Ok(())
 }
