@@ -482,7 +482,15 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
                 instance.add_param("USE_MULT", vl::Expr::new_str("MULTIPLY"));
                 instance.connect("ALUMODE", create_literal(0, 4));
                 instance.connect("INMODE", create_literal(0, 5));
-                instance.connect("OPMODE", create_literal(53, 9));
+                if let Some(port) = instr.opt_lookup(&xl::Opt::CasIn) {
+                    if port == &xl::OptVal::CasPort(xl::CasPortDsp::C) {
+                        instance.connect("OPMODE", create_literal(21, 9));
+                    } else {
+                        instance.connect("OPMODE", create_literal(53, 9));
+                    }
+                } else {
+                    instance.connect("OPMODE", create_literal(53, 9));
+                }
                 if let Some(e) = instr.arg().idx(0) {
                     instance.connect(
                         "A",

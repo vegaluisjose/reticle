@@ -50,11 +50,9 @@ hex_num = { ASCII_HEX_DIGIT+ }
 
 opt_num = { "0b" ~ bin_num | "0x" ~ hex_num | dec_num }
 
-opt_op = { "add" | "mul" | "muladd" }
+opt_dsp = { id }
 
-opt_casport = { "p" | "c" }
-
-opt_val = _{ opt_num | opt_op | opt_casport }
+opt_val = _{ opt_num | opt_dsp }
 
 opt_tup = { opt_key ~ "=" ~ opt_val }
 

@@ -165,11 +165,13 @@ impl TDLParser {
         ))
     }
 
-    fn opt_op(input: Node) -> ParseResult<OptVal> {
+    fn opt_dsp(input: Node) -> ParseResult<OptVal> {
         let op = OpDsp::from_str(input.as_str());
-        match op {
-            Ok(v) => Ok(OptVal::Op(v)),
-            Err(_) => panic!("Error: parsing {} as u64", input.as_str()),
+        let cas = CasPortDsp::from_str(input.as_str());
+        match (op, cas) {
+            (Ok(o), Err(_)) => Ok(OptVal::Op(o)),
+            (Err(_), Ok(p)) => Ok(OptVal::CasPort(p)),
+            (_, _) => panic!("Error: parsing {} as op", input.as_str()),
         }
     }
 
@@ -177,7 +179,7 @@ impl TDLParser {
         Ok(match_nodes!(
             input.into_children();
             [opt_key(key), opt_num(val)] => (key, val),
-            [opt_key(key), opt_op(val)] => (key, val)
+            [opt_key(key), opt_dsp(val)] => (key, val),
         ))
     }
 
