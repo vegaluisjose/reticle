@@ -1,6 +1,7 @@
 use crate::asm::ast::*;
 use crate::util::errors::Error;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 type Map = HashMap<String, InstrAsm>;
 type Pair = HashMap<String, String>;
@@ -72,9 +73,28 @@ fn find_cascade_all(pair: &Pair) -> Vec<Vec<String>> {
     res
 }
 
+fn x_coord(x: u64) -> ExprCoord {
+    let var = format!("x{}", x);
+    ExprCoord::Var(var)
+}
+
+fn y_coord(y: u64) -> ExprCoord {
+    let var = format!("y{}", y);
+    ExprCoord::Var(var)
+}
+
+fn y_add_val_coord(y: u64, val: u64) -> ExprCoord {
+    let var = format!("y{}", y);
+    let y = Rc::new(ExprCoord::Var(var));
+    let one = Rc::new(ExprCoord::Val(val));
+    ExprCoord::Bin(OpCoord::Add, y, one)
+}
+
+#[allow(unused_assignments)]
 fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
     let mut res = Map::new();
-    for c in cascade {
+    for (x, c) in cascade.iter().enumerate() {
+        let mut y: u64 = 1;
         let mut cur = c.clone();
         cur.reverse();
         if let Some(tail) = cur.pop() {
@@ -83,6 +103,10 @@ fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
                 let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cop");
                 let op = OpAsm::Op(op);
                 instr.set_op(op);
+                let mut loc = instr.loc().clone();
+                loc.set_x(x_coord(x as u64));
+                loc.set_y(y_coord(x as u64));
+                instr.set_loc(loc);
                 res.insert(tail.clone(), instr);
             }
         }
@@ -93,7 +117,12 @@ fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
                     let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cic_cop");
                     let op = OpAsm::Op(op);
                     instr.set_op(op);
+                    let mut loc = instr.loc().clone();
+                    loc.set_x(x_coord(x as u64));
+                    loc.set_y(y_add_val_coord(x as u64, y));
+                    instr.set_loc(loc);
                     res.insert(mid.clone(), instr);
+                    y += 1;
                 }
             }
         }
@@ -103,7 +132,12 @@ fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
                 let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cic");
                 let op = OpAsm::Op(op);
                 instr.set_op(op);
+                let mut loc = instr.loc().clone();
+                loc.set_x(x_coord(x as u64));
+                loc.set_y(y_add_val_coord(x as u64, y));
+                instr.set_loc(loc);
                 res.insert(head.clone(), instr);
+                y += 1;
             }
         }
     }
