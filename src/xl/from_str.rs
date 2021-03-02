@@ -34,6 +34,18 @@ impl FromStr for OpDsp {
     }
 }
 
+impl FromStr for CasPortDsp {
+    type Err = Error;
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        let err = format!("Error: {} is not valid dsp operation", input);
+        match input {
+            "p" => Ok(CasPortDsp::P),
+            "c" => Ok(CasPortDsp::C),
+            _ => Err(Error::new_conv_error(&err)),
+        }
+    }
+}
+
 impl FromStr for OpBasc {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {

@@ -35,9 +35,16 @@ pub enum OpDsp {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
+pub enum CasPortDsp {
+    P,
+    C,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OptVal {
     UInt(u64),
     Op(OpDsp),
+    CasPort(CasPortDsp),
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]

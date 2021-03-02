@@ -16,6 +16,15 @@ impl PrettyPrint for OpBasc {
     }
 }
 
+impl PrettyPrint for CasPortDsp {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            CasPortDsp::P => RcDoc::text("p"),
+            CasPortDsp::C => RcDoc::text("c"),
+        }
+    }
+}
+
 impl PrettyPrint for OpMach {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
@@ -64,6 +73,7 @@ impl PrettyPrint for OptVal {
         match self {
             OptVal::UInt(n) => RcDoc::as_string(n),
             OptVal::Op(op) => op.to_doc(),
+            OptVal::CasPort(port) => port.to_doc(),
         }
     }
 }
