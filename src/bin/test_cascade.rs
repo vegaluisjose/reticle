@@ -61,7 +61,7 @@ fn find_cascade(pair: &Pair, tail: &str) -> (Vec<String>, Pair) {
     (cascade, pair)
 }
 
-fn find_all(pair: &Pair) -> Vec<Vec<String>> {
+fn find_cascade_all(pair: &Pair) -> Vec<Vec<String>> {
     let mut pair = pair.clone();
     let mut res: Vec<Vec<String>> = Vec::new();
     while !pair.is_empty() {
@@ -73,7 +73,7 @@ fn find_all(pair: &Pair) -> Vec<Vec<String>> {
     res
 }
 
-fn replace(map: &Map, cascade: &[Vec<String>]) -> Map {
+fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
     let mut res = Map::new();
     for c in cascade {
         let mut cur = c.clone();
@@ -111,17 +111,34 @@ fn replace(map: &Map, cascade: &[Vec<String>]) -> Map {
     res
 }
 
-fn main() -> Result<(), Error> {
-    let prog = AsmParser::parse_from_file("examples/asm/tdot.asm")?;
+fn cascade(prog: &asm::Prog) -> Result<asm::Prog, Error> {
     let (map, pair) = create_map_and_pair(&prog)?;
-    let cascade = find_all(&pair);
-    for v in map.values() {
-        println!("{}", v);
+    let cas = find_cascade_all(&pair);
+    let map = replace_map(&map, &cas);
+    let mut body: Vec<asm::Instr> = Vec::new();
+    for instr in prog.body() {
+        match instr {
+            asm::Instr::Asm(instr_asm) => {
+                let term = instr_asm.dst().get_term(0)?;
+                let id = term.get_id()?;
+                if let Some(instr_asm) = map.get(&id) {
+                    body.push(asm::Instr::from(instr_asm.clone()));
+                } else {
+                    body.push(instr.clone());
+                }
+            }
+            _ => body.push(instr.clone()),
+        }
     }
-    let body = replace(&map, &cascade);
-    println!("\n-----after-----\n");
-    for instr in body.values() {
-        println!("{}", instr);
-    }
+    let mut prog = prog.clone();
+    prog.set_body(body);
+    Ok(prog)
+}
+
+fn main() -> Result<(), Error> {
+    let p0 = AsmParser::parse_from_file("examples/asm/tdot.asm")?;
+    let p1 = cascade(&p0)?;
+    println!("input\n{}\n", p0);
+    println!("output\n{}\n", p1);
     Ok(())
 }
