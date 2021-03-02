@@ -182,11 +182,20 @@ impl XLParser {
         }
     }
 
+    fn opt_casport(input: Node) -> ParseResult<OptVal> {
+        let op = CasPortDsp::from_str(input.as_str());
+        match op {
+            Ok(v) => Ok(OptVal::CasPort(v)),
+            Err(_) => panic!("Error: parsing {} as cascade port", input.as_str()),
+        }
+    }
+
     fn opt_tup(input: Node) -> ParseResult<(Opt, OptVal)> {
         Ok(match_nodes!(
             input.into_children();
             [opt_key(key), opt_num(val)] => (key, val),
-            [opt_key(key), opt_op(val)] => (key, val)
+            [opt_key(key), opt_op(val)] => (key, val),
+            [opt_key(key), opt_casport(val)] => (key, val)
         ))
     }
 

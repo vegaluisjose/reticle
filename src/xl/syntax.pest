@@ -52,7 +52,9 @@ opt_num = { "0b" ~ bin_num | "0x" ~ hex_num | dec_num }
 
 opt_op = { "add" | "mul" | "muladd" }
 
-opt_val = _{ opt_num | opt_op }
+opt_casport = { "p" | "c" }
+
+opt_val = _{ opt_num | opt_op | opt_casport }
 
 opt_tup = { opt_key ~ "=" ~ opt_val }
 
