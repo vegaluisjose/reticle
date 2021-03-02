@@ -23,6 +23,8 @@ pub enum Opt {
     RegP,
     Op,
     Table,
+    CasIn,
+    CasOut,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]

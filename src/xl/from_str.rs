@@ -14,6 +14,8 @@ impl FromStr for Opt {
             "rp" => Ok(Opt::RegP),
             "op" => Ok(Opt::Op),
             "tbl" => Ok(Opt::Table),
+            "ci" => Ok(Opt::CasIn),
+            "co" => Ok(Opt::CasOut),
             _ => Err(Error::new_conv_error(&err)),
         }
     }

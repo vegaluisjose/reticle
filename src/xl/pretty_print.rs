@@ -43,6 +43,8 @@ impl PrettyPrint for Opt {
             Opt::RegP => RcDoc::text("rp"),
             Opt::Op => RcDoc::text("op"),
             Opt::Table => RcDoc::text("tbl"),
+            Opt::CasIn => RcDoc::text("ci"),
+            Opt::CasOut => RcDoc::text("co"),
         }
     }
 }
