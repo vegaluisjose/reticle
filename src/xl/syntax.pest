@@ -50,7 +50,7 @@ hex_num = { ASCII_HEX_DIGIT+ }
 
 opt_num = { "0b" ~ bin_num | "0x" ~ hex_num | dec_num }
 
-opt_op = { id }
+opt_op = { "add" | "mul" | "muladd" }
 
 opt_val = _{ opt_num | opt_op }
 
