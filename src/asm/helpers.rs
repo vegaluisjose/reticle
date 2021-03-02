@@ -16,6 +16,12 @@ impl Loc {
     pub fn is_dsp(&self) -> bool {
         matches!(self.prim, Prim::Dsp)
     }
+    pub fn set_x(&mut self, x: ExprCoord) {
+        self.x = x;
+    }
+    pub fn set_y(&mut self, y: ExprCoord) {
+        self.y = y;
+    }
 }
 
 impl OpAsm {
