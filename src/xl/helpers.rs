@@ -12,8 +12,8 @@ impl Loc {
     }
     pub fn is_unplaced(&self) -> bool {
         match (self.x(), self.y()) {
-            (ExprCoord::Any, ExprCoord::Any) => true,
-            (_, _) => false,
+            (ExprCoord::Val(_), ExprCoord::Val(_)) => false,
+            (_, _) => true,
         }
     }
     pub fn set_x(&mut self, x: ExprCoord) {
