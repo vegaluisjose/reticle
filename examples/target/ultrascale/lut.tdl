@@ -15,6 +15,10 @@ pat lut_add_reg_i8[lut, 1, 2](a: i8, b: i8, en: bool) -> (y: i8) {
     y:i8 = reg[0](t0, en);
 }
 
+pat lut_reg_0_i8[lut, 1, 2](a: i8, en: bool) -> (y: i8) {
+    y:i8 = reg[0](a, en);
+}
+
 pat lut_mux_i2[lut, 1, 2](sel: bool, a: i2, b: i2) -> (y: i2) {
     y:i2 = mux(sel, a, b);
 }
@@ -161,4 +165,24 @@ imp lut_add_reg_i8[x, y](a: i8, b: i8, en: bool) -> (y: i8) {
     t41:bool = fdre(t33, en) @gff(x, y);
     t42:bool = fdre(t34, en) @hff(x, y);
     y:i8 = cat(t35, t36, t37, t38, t39, t40, t41, t42);
+}
+
+imp lut_reg_0_i8[x, y](a: i8, en: bool) -> (y: i8) {
+    t0:bool = ext[0](a);
+    t1:bool = ext[1](a);
+    t2:bool = ext[2](a);
+    t3:bool = ext[3](a);
+    t4:bool = ext[4](a);
+    t5:bool = ext[5](a);
+    t6:bool = ext[6](a);
+    t7:bool = ext[7](a);
+    t8:bool = fdre(t0, en) @aff(x, y);
+    t9:bool = fdre(t1, en) @bff(x, y);
+    t10:bool = fdre(t2, en) @cff(x, y);
+    t11:bool = fdre(t3, en) @dff(x, y);
+    t12:bool = fdre(t4, en) @eff(x, y);
+    t13:bool = fdre(t5, en) @fff(x, y);
+    t14:bool = fdre(t6, en) @gff(x, y);
+    t15:bool = fdre(t7, en) @hff(x, y);
+    y:i8 = cat(t8, t9, t10, t11, t12, t13, t14, t15);
 }
