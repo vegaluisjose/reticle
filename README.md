@@ -24,7 +24,7 @@
 4. Compile xl to structural verilog
     * `reticle-translate add.xl -o add.v --fromto xl-to-struct`
 
-### How to run all compilation pipeline at once
+### How to run a compilation pipeline (IR-to-verilog)
 
 1. Compile IR program to structural verilog
     * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-struct`
