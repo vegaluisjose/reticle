@@ -1,6 +1,8 @@
 use crate::asm::ast as asm;
 use crate::asm::parser::AsmParser;
 use crate::ir::parser::IRParser;
+use crate::optimizer::cascader::cascade;
+use crate::placer::place_from_prog;
 use crate::util::errors::Error;
 use crate::util::file::write_to_file;
 use crate::verilog::ast as vl;
@@ -49,8 +51,9 @@ pub enum FromTo {
     IRToAsm,
     IRToBehav,
     IRToBehavDsp,
+    IRToStruct,
     AsmToXL,
-    XLToVerilog,
+    XLToStruct,
 }
 
 impl Default for FromTo {
@@ -65,8 +68,9 @@ impl fmt::Display for FromTo {
             FromTo::IRToAsm => "ir-to-asm",
             FromTo::IRToBehav => "ir-to-behav",
             FromTo::IRToBehavDsp => "ir-to-behavdsp",
+            FromTo::IRToStruct => "ir-to-struct",
             FromTo::AsmToXL => "asm-to-xl",
-            FromTo::XLToVerilog => "xl-to-verilog",
+            FromTo::XLToStruct => "xl-to-struct",
         };
         write!(f, "{}", backend)
     }
@@ -79,8 +83,9 @@ impl FromStr for FromTo {
             "ir-to-asm" => Ok(FromTo::IRToAsm),
             "ir-to-behav" => Ok(FromTo::IRToBehav),
             "ir-to-behavdsp" => Ok(FromTo::IRToBehavDsp),
+            "ir-to-struct" => Ok(FromTo::IRToStruct),
             "asm-to-xl" => Ok(FromTo::AsmToXL),
-            "xl-to-verilog" => Ok(FromTo::XLToVerilog),
+            "xl-to-struct" => Ok(FromTo::XLToStruct),
             _ => Err(Error::new_opt_error("invalid options")),
         }
     }
@@ -136,12 +141,21 @@ impl TranslateDriver {
                 vl.set_attr(attr);
                 write_output(output, &vl.to_string());
             }
+            FromTo::IRToStruct => {
+                let prog = IRParser::parse_from_file(input)?;
+                let asm = asm::Prog::try_from(prog)?;
+                let opt = cascade(&asm)?;
+                let pl = place_from_prog(&opt)?;
+                let xl = xl::Prog::try_from(pl)?;
+                let vl = vl::Module::try_from(xl)?;
+                write_output(output, &vl.to_string());
+            }
             FromTo::AsmToXL => {
                 let prog = AsmParser::parse_from_file(input)?;
                 let xl = xl::Prog::try_from(prog)?;
                 write_output(output, &xl.to_string());
             }
-            FromTo::XLToVerilog => {
+            FromTo::XLToStruct => {
                 let prog = XLParser::parse_from_file(input)?;
                 let vl = vl::Module::try_from(prog)?;
                 write_output(output, &vl.to_string());
