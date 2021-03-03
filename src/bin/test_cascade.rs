@@ -10,13 +10,14 @@ use std::convert::TryFrom;
 fn main() -> Result<(), Error> {
     let prog = IRParser::parse_from_file("examples/ir/tdot.ir")?;
     let asm = asm::Prog::try_from(prog.clone())?;
-    let asm = cascade(&asm)?;
-    let placed = place_from_prog(&asm)?;
+    let cascaded = cascade(&asm)?;
+    let placed = place_from_prog(&cascaded)?;
     let xl = xl::Prog::try_from(placed.clone())?;
     let module = verilog::Module::try_from(xl.clone())?;
     println!("---ir---\n{}", prog);
     println!("---asm---\n{}", asm);
-    println!("---placed---\n{}", placed);
+    println!("---asm-cascaded---\n{}", cascaded);
+    println!("---asm-placed---\n{}", placed);
     println!("---xl---\n{}", xl);
     println!("---verilog---\n{}", module);
     Ok(())
