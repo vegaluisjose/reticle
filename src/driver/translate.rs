@@ -52,6 +52,7 @@ pub enum FromTo {
     IRToBehav,
     IRToBehavDsp,
     IRToStruct,
+    IRToStructPlaced,
     AsmToXL,
     XLToStruct,
 }
@@ -69,6 +70,7 @@ impl fmt::Display for FromTo {
             FromTo::IRToBehav => "ir-to-behav",
             FromTo::IRToBehavDsp => "ir-to-behavdsp",
             FromTo::IRToStruct => "ir-to-struct",
+            FromTo::IRToStructPlaced => "ir-to-struct-placed",
             FromTo::AsmToXL => "asm-to-xl",
             FromTo::XLToStruct => "xl-to-struct",
         };
@@ -84,6 +86,7 @@ impl FromStr for FromTo {
             "ir-to-behav" => Ok(FromTo::IRToBehav),
             "ir-to-behavdsp" => Ok(FromTo::IRToBehavDsp),
             "ir-to-struct" => Ok(FromTo::IRToStruct),
+            "ir-to-struct-placed" => Ok(FromTo::IRToStructPlaced),
             "asm-to-xl" => Ok(FromTo::AsmToXL),
             "xl-to-struct" => Ok(FromTo::XLToStruct),
             _ => Err(Error::new_opt_error("invalid options")),
@@ -142,6 +145,13 @@ impl TranslateDriver {
                 write_output(output, &vl.to_string());
             }
             FromTo::IRToStruct => {
+                let prog = IRParser::parse_from_file(input)?;
+                let asm = asm::Prog::try_from(prog)?;
+                let xl = xl::Prog::try_from(asm)?;
+                let vl = vl::Module::try_from(xl)?;
+                write_output(output, &vl.to_string());
+            }
+            FromTo::IRToStructPlaced => {
                 let prog = IRParser::parse_from_file(input)?;
                 let asm = asm::Prog::try_from(prog)?;
                 let opt = cascade(&asm)?;
