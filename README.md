@@ -28,6 +28,12 @@
 
 1. Compile IR program to structural verilog
     * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-struct`
+2. Compile IR program to structural verilog (with placement)
+    * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-struct-placed`
+3. Compile IR program to behavioral verilog
+    * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-behav`
+4. Compile IR program to behavioral verilog (with dsp annotations)
+    * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-behavdsp`
 
 ## How to install Xilinx Vivado on Docker
 
