@@ -99,8 +99,10 @@ fn lut_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
         let width = lut_width_try_from_op(instr.op())?;
         instance.add_param("INIT", vl::Expr::new_ulit_hex(width, &table));
         if let Some(loc) = instr.loc() {
-            let attr = vl::Attribute::from(loc.clone());
-            instance.set_attr(attr);
+            if !loc.is_unplaced() {
+                let attr = vl::Attribute::from(loc.clone());
+                instance.set_attr(attr);
+            }
         }
         Ok(vl::Stmt::from(instance))
     } else {
@@ -128,8 +130,10 @@ fn reg_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
         instance.connect("Q", vl::Expr::new_ref(&String::try_from(e.clone())?));
     }
     if let Some(loc) = instr.loc() {
-        let attr = vl::Attribute::from(loc.clone());
-        instance.set_attr(attr);
+        if !loc.is_unplaced() {
+            let attr = vl::Attribute::from(loc.clone());
+            instance.set_attr(attr);
+        }
     }
     Ok(vl::Stmt::from(instance))
 }
@@ -235,8 +239,10 @@ fn dsp_try_from_instr(instr: &xl::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut stmt: Vec<vl::Stmt> = Vec::new();
     let mut instance = vl::Instance::new(&id, &prim);
     if let Some(loc) = instr.loc() {
-        let attr = vl::Attribute::from(loc.clone());
-        instance.set_attr(attr);
+        if !loc.is_unplaced() {
+            let attr = vl::Attribute::from(loc.clone());
+            instance.set_attr(attr);
+        }
     }
     // connect clock and reset
     instance.connect("CLK", vl::Expr::new_ref(constant::CLOCK));
@@ -632,8 +638,10 @@ fn carry_try_from_instr(instr: &xl::InstrMach) -> Result<vl::Stmt, Error> {
     }
     instance.add_param_str("CARRY_TYPE", "SINGLE_CY8");
     if let Some(loc) = instr.loc() {
-        let attr = vl::Attribute::from(loc.clone());
-        instance.set_attr(attr);
+        if !loc.is_unplaced() {
+            let attr = vl::Attribute::from(loc.clone());
+            instance.set_attr(attr);
+        }
     }
     Ok(vl::Stmt::from(instance))
 }

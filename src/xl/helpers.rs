@@ -10,6 +10,12 @@ impl Loc {
     pub fn y(&self) -> &ExprCoord {
         &self.y
     }
+    pub fn is_unplaced(&self) -> bool {
+        match (self.x(), self.y()) {
+            (ExprCoord::Any, ExprCoord::Any) => true,
+            (_, _) => false,
+        }
+    }
     pub fn set_x(&mut self, x: ExprCoord) {
         self.x = x;
     }
