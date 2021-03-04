@@ -33,4 +33,4 @@
 3. Compile IR program to behavioral verilog
     * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-behav`
 4. Compile IR program to behavioral verilog (with dsp annotations)
-    * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-behavdsp`
+    * `reticle-translate examples/ir/add.ir -o add.v --fromto ir-to-behav-dsp`
