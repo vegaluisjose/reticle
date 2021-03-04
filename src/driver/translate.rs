@@ -68,7 +68,7 @@ impl fmt::Display for FromTo {
         let backend = match self {
             FromTo::IRToAsm => "ir-to-asm",
             FromTo::IRToBehav => "ir-to-behav",
-            FromTo::IRToBehavDsp => "ir-to-behavdsp",
+            FromTo::IRToBehavDsp => "ir-to-behav-dsp",
             FromTo::IRToStruct => "ir-to-struct",
             FromTo::IRToStructPlaced => "ir-to-struct-placed",
             FromTo::AsmToXL => "asm-to-xl",
@@ -84,7 +84,7 @@ impl FromStr for FromTo {
         match input {
             "ir-to-asm" => Ok(FromTo::IRToAsm),
             "ir-to-behav" => Ok(FromTo::IRToBehav),
-            "ir-to-behavdsp" => Ok(FromTo::IRToBehavDsp),
+            "ir-to-behav-dsp" => Ok(FromTo::IRToBehavDsp),
             "ir-to-struct" => Ok(FromTo::IRToStruct),
             "ir-to-struct-placed" => Ok(FromTo::IRToStructPlaced),
             "asm-to-xl" => Ok(FromTo::AsmToXL),
