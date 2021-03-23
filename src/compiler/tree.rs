@@ -119,10 +119,13 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                                 && pnode.prim() != bnode.prim())
                             || (!pnode.is_inp() && pnode.attr() != bnode.attr())
                             || (!pnode.is_inp() && bnode.is_committed())
+                            || (pnode.is_inp() && !bnode.is_free())
                         {
                             is_match = false;
                         }
-                        if !pnode.is_inp() && bcost != u64::MAX {
+                        if !pnode.is_inp() && bnode.cost() == u64::MAX {
+                            bcost = bnode.cost();
+                        } else if !pnode.is_inp() && bnode.cost() != u64::MAX {
                             bcost += bnode.cost();
                         }
                         if is_match && !pnode.is_inp() {

@@ -45,6 +45,9 @@ impl Node {
     pub fn is_committed(&self) -> bool {
         self.committed
     }
+    pub fn is_free(&self) -> bool {
+        !(self.staged | self.committed)
+    }
     pub fn set_index(&mut self, index: u64) {
         self.index = index;
     }
