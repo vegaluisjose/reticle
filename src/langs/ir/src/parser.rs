@@ -80,7 +80,7 @@ impl IRParser {
         ))
     }
 
-    fn op_comp(input: Node) -> ParseResult<OpPrim> {
+    fn op_prim(input: Node) -> ParseResult<OpPrim> {
         let op = OpPrim::from_str(input.as_str());
         match op {
             Ok(t) => Ok(t),
@@ -107,28 +107,28 @@ impl IRParser {
     fn instr(input: Node) -> ParseResult<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_comp(op), io(arg)] => Instr::from(InstrPrim {
+            [io(dst), op_prim(op), io(arg)] => Instr::from(InstrPrim {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
                 prim: Prim::Any,
             }),
-            [io(dst), op_comp(op), tup_val(attr), io(arg)] => Instr::from(InstrPrim {
+            [io(dst), op_prim(op), tup_val(attr), io(arg)] => Instr::from(InstrPrim {
                 op,
                 dst,
                 attr: Expr::from(attr),
                 arg,
                 prim: Prim::Any,
             }),
-            [io(dst), op_comp(op), io(arg), prim(prim)] => Instr::from(InstrPrim {
+            [io(dst), op_prim(op), io(arg), prim(prim)] => Instr::from(InstrPrim {
                 op,
                 dst,
                 attr: Expr::default(),
                 arg,
                 prim,
             }),
-            [io(dst), op_comp(op), tup_val(attr), io(arg), prim(prim)] => Instr::from(InstrPrim {
+            [io(dst), op_prim(op), tup_val(attr), io(arg), prim(prim)] => Instr::from(InstrPrim {
                 op,
                 dst,
                 attr: Expr::from(attr),

@@ -30,13 +30,13 @@ prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
-op_comp = { "reg" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
+op_prim = { "reg" | "mem" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
 
 op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
 
 op_call = { id }
 
-op = _{ op_comp | op_wire | op_call }
+op = _{ op_prim | op_wire | op_call }
 
 instr = { io ~ "=" ~ op ~ attr? ~ io? ~ hint? ~ ";" }
 
