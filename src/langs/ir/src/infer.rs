@@ -1,5 +1,5 @@
 use crate::ast::*;
-use utils::errors::Error;
+use crate::errors::Error;
 use std::collections::HashMap;
 
 fn build_env(def: &Def) -> Result<HashMap<String, Ty>, Error> {

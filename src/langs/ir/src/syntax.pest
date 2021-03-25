@@ -1,0 +1,51 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+
+COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+sep = _{ "_" | "-"}
+
+id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+bool = @{ ASCII_ALPHA_LOWER+ }
+
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+
+ty = ${ vector | int | bool }
+
+var = { id ~ ":" ~ ty | id }
+
+tup_var = { (var ~ ("," ~ var)*)? }
+
+tup_val = { (val ~ ("," ~ val)*)? }
+
+io = { var | "(" ~ tup_var ~ ")" }
+
+attr = _{ "[" ~ tup_val ~ "]" }
+
+prim = { "??" | id }
+
+hint = _{ "@" ~ prim }
+
+op_comp = { "reg" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
+
+op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
+
+op_call = { id }
+
+op = _{ op_comp | op_wire | op_call }
+
+instr = { io ~ "=" ~ op ~ attr? ~ io? ~ hint? ~ ";" }
+
+body = { instr+ }
+
+sig = { "def" ~ id ~ io? ~ "->" ~ io }
+
+def = { sig ~ "{" ~ body ~ "}" }
+
+prog = { def+ }
+
+file = { SOI ~ prog ~ EOI }
