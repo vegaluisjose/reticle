@@ -1,5 +1,4 @@
 use crate::ir::ast::*;
-use crate::tdl::ast::PatInstr;
 
 impl From<Vec<ExprTerm>> for ExprTup {
     fn from(term: Vec<ExprTerm>) -> Self {
@@ -34,15 +33,6 @@ impl From<InstrWire> for Instr {
 impl From<InstrComp> for Instr {
     fn from(instr: InstrComp) -> Self {
         Instr::Comp(instr)
-    }
-}
-
-impl From<PatInstr> for Instr {
-    fn from(instr: PatInstr) -> Self {
-        match instr {
-            PatInstr::Wire(instr) => Instr::Wire(instr),
-            PatInstr::Comp(instr) => Instr::Comp(instr),
-        }
     }
 }
 

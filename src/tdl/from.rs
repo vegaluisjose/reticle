@@ -25,6 +25,15 @@ impl From<Pat> for Des {
     }
 }
 
+impl From<PatInstr> for ir::Instr {
+    fn from(instr: PatInstr) -> Self {
+        match instr {
+            PatInstr::Wire(instr) => ir::Instr::Wire(instr),
+            PatInstr::Comp(instr) => ir::Instr::Comp(instr),
+        }
+    }
+}
+
 impl From<Pat> for ir::InstrMap {
     fn from(input: Pat) -> Self {
         let mut imap = ir::InstrMap::new();
