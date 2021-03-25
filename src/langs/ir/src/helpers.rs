@@ -1,9 +1,9 @@
 use crate::ast::*;
+use crate::errors::Error;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryInto;
-use utils::errors::Error;
 
 impl Prim {
     pub fn is_any(&self) -> bool {

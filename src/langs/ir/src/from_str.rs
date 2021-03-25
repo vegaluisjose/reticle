@@ -1,8 +1,8 @@
 use crate::ast::*;
+use crate::errors::Error;
 use regex::Regex;
 use std::rc::Rc;
 use std::str::FromStr;
-use utils::errors::Error;
 
 const RE_BOOL: &str = r"^[\s\t]*bool+[\s\t]*$";
 const RE_UINT: &str = r"^[\s\t]*u[[:digit:]]+[\s\t]*$";

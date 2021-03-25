@@ -1,7 +1,7 @@
 use crate::ast::*;
+use crate::errors::Error;
 use std::convert::TryFrom;
 use std::convert::TryInto;
-use utils::errors::Error;
 
 impl TryFrom<ExprTerm> for i64 {
     type Error = Error;
