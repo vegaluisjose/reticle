@@ -4,5 +4,6 @@ pub mod display;
 pub mod from;
 pub mod from_str;
 pub mod helpers;
+pub mod infer;
 pub mod pretty_print;
 pub mod try_from;
