@@ -39,6 +39,9 @@ pub enum Prim {
     Any,
     Lut,
     Dsp,
+    Lram,
+    Bram,
+    Uram,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
@@ -53,8 +56,9 @@ pub enum OpWire {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
-pub enum OpComp {
+pub enum OpPrim {
     Reg,
+    Mem,
     Add,
     Sub,
     Mul,
@@ -85,8 +89,8 @@ pub struct InstrWire {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
-pub struct InstrComp {
-    pub op: OpComp,
+pub struct InstrPrim {
+    pub op: OpPrim,
     pub dst: Expr,
     pub attr: Expr,
     pub arg: Expr,
@@ -103,7 +107,7 @@ pub struct InstrCall {
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Instr {
     Wire(InstrWire),
-    Comp(InstrComp),
+    Prim(InstrPrim),
     Call(InstrCall),
 }
 
