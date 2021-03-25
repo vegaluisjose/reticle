@@ -38,4 +38,5 @@ path = "src/bin/place.rs"
 members = [
   "src/langs/ir",
   "src/langs/asm",
+  "src/utils",
 ]
