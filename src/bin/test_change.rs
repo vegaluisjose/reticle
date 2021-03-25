@@ -1,7 +1,8 @@
-use asm::ast::Id;
+use ir::parser::IRParser;
+use ir::errors::Error;
 
-fn main() {
-    let mut x = Id::new();
-    x.push_str("hello");
-    println!("{}", x);
+fn main() -> Result<(), Error> {
+    let prog = IRParser::parse_from_file("examples/eval/fsm_7.ir")?;
+    println!("{}", prog);
+    Ok(())
 }
