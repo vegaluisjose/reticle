@@ -58,7 +58,7 @@ pub enum OpWire {
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpPrim {
     Reg,
-    Mem,
+    Ram,
     Add,
     Sub,
     Mul,

@@ -107,6 +107,7 @@ impl FromStr for OpPrim {
         let err = format!("Error: {} is not valid compute operation", input);
         match input {
             "reg" => Ok(OpPrim::Reg),
+            "ram" => Ok(OpPrim::Ram),
             "add" => Ok(OpPrim::Add),
             "sub" => Ok(OpPrim::Sub),
             "mul" => Ok(OpPrim::Mul),

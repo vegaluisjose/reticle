@@ -30,7 +30,7 @@ prim = { "??" | id }
 
 hint = _{ "@" ~ prim }
 
-op_prim = { "reg" | "mem" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
+op_prim = { "reg" | "ram" | "add" | "sub" | "mul" | "not" | "and" | "or" | "xor" | "mux" | "eq" | "neq" | "gt" | "lt" | "ge" | "le" }
 
 op_wire = { "id" | "const" | "sll" | "srl" | "sra" | "ext" | "cat" }
 
