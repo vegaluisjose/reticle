@@ -6,6 +6,11 @@ license = "Apache-2.0"
 edition = "2018"
 
 [dependencies]
+pretty = "0.10.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
 serde_json = "1.0"
+pest = "2.0"
+pest_derive = "2.0"
+pest_consume = "1.0.5"
 ir = { path = "../ir" }
+utils = { path = "../../utils" }
