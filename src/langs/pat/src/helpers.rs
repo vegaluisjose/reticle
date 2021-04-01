@@ -1,5 +1,9 @@
 use crate::ast::*;
+use bincode::{deserialize_from, serialize_into};
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::{BufReader, BufWriter};
+use std::path::Path;
 
 impl Instr {
     pub fn is_reg(&self) -> bool {
@@ -80,11 +84,21 @@ impl Pat {
 }
 
 impl Target {
+    pub fn deserialize_from_file<P: AsRef<Path>>(path: P) -> Target {
+        let file = File::open(path).expect("Error: cannot open the bin file");
+        let mut buf = BufReader::new(file);
+        deserialize_from(&mut buf).expect("Error: cannot deserialize")
+    }
     pub fn pat(&self) -> &HashMap<Id, Pat> {
         &self.pat
     }
     pub fn get(&self, name: &str) -> Option<&Pat> {
         self.pat.get(name)
+    }
+    pub fn serialize_to_file<P: AsRef<Path>>(&self, path: P) {
+        let file = File::create(path).expect("Error: cannot create the bin file");
+        let mut buf = BufWriter::new(file);
+        serialize_into(&mut buf, &self).expect("Error: cannot serialize");
     }
     pub fn get_mut(&mut self, name: &str) -> Option<&mut Pat> {
         self.pat.get_mut(name)

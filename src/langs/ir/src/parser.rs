@@ -1,9 +1,9 @@
 use crate::ast::*;
 use crate::errors::Error;
 use crate::infer::infer_type_try_from_prog;
+use pest_consume::match_nodes;
 use pest_consume::Error as PestError;
 use pest_consume::Parser as PestParser;
-use pest_consume::match_nodes;
 use std::path::Path;
 use std::str::FromStr;
 use utils::file::read_to_string;
