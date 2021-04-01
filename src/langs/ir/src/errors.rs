@@ -1,4 +1,4 @@
-use crate::parser as irparser;
+use crate::parser;
 use std::fmt;
 use std::num::ParseIntError;
 use std::num::TryFromIntError;
@@ -11,8 +11,6 @@ impl fmt::Display for Error {
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
             Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
-            Error::Compiler(msg) => write!(f, "[Error][Compiler] {}", msg),
-            Error::Placer(msg) => write!(f, "[Error][Placer] {}", msg),
             Error::Opt(msg) => write!(f, "[Error][Opt] {}", msg),
         }
     }
@@ -20,25 +18,17 @@ impl fmt::Display for Error {
 
 #[derive(Debug)]
 pub enum Error {
-    IRParse(pest_consume::Error<irparser::Rule>),
+    IRParse(pest_consume::Error<parser::Rule>),
     Conversion(String),
     Type(String),
     TryFromInt(TryFromIntError),
     ParseInt(ParseIntError),
-    Compiler(String),
-    Placer(String),
     Opt(String),
 }
 
 impl Error {
     pub fn new_conv_error(msg: &str) -> Self {
         Error::Conversion(msg.to_string())
-    }
-    pub fn new_compiler_error(msg: &str) -> Self {
-        Error::Compiler(msg.to_string())
-    }
-    pub fn new_placer_error(msg: &str) -> Self {
-        Error::Placer(msg.to_string())
     }
     pub fn new_opt_error(msg: &str) -> Self {
         Error::Conversion(msg.to_string())
@@ -48,8 +38,8 @@ impl Error {
     }
 }
 
-impl From<pest_consume::Error<irparser::Rule>> for Error {
-    fn from(e: pest_consume::Error<irparser::Rule>) -> Self {
+impl From<pest_consume::Error<parser::Rule>> for Error {
+    fn from(e: pest_consume::Error<parser::Rule>) -> Self {
         Error::IRParse(e)
     }
 }
