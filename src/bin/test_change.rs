@@ -1,8 +1,8 @@
-use ir::errors::Error;
-use ir::parser::IRParser;
+use pat::errors::Error;
+use pat::parser::Parser;
 
 fn main() -> Result<(), Error> {
-    let prog = IRParser::parse_from_file("examples/eval/fsm_7.ir")?;
-    println!("{}", prog);
+    let target = Parser::parse_from_file("examples/target/patterns/lut.pat")?;
+    println!("{}", target);
     Ok(())
 }
