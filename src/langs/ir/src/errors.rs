@@ -6,7 +6,7 @@ use std::num::TryFromIntError;
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::IRParse(msg) => write!(f, "[Error][IR] {}", msg),
+            Error::Parser(msg) => write!(f, "[Error][Parser] {}", msg),
             Error::ParseInt(msg) => write!(f, "[Error][ParseInt] {}", msg),
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
@@ -18,7 +18,7 @@ impl fmt::Display for Error {
 
 #[derive(Debug)]
 pub enum Error {
-    IRParse(pest_consume::Error<parser::Rule>),
+    Parser(pest_consume::Error<parser::Rule>),
     Conversion(String),
     Type(String),
     TryFromInt(TryFromIntError),
@@ -40,7 +40,7 @@ impl Error {
 
 impl From<pest_consume::Error<parser::Rule>> for Error {
     fn from(e: pest_consume::Error<parser::Rule>) -> Self {
-        Error::IRParse(e)
+        Error::Parser(e)
     }
 }
 

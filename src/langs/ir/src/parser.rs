@@ -15,10 +15,10 @@ const _GRAMMAR: &str = include_str!("syntax.pest");
 
 #[derive(PestParser)]
 #[grammar = "syntax.pest"]
-pub struct IRParser;
+pub struct Parser;
 
 #[pest_consume::parser]
-impl IRParser {
+impl Parser {
     fn EOI(_input: Node) -> ParseResult<()> {
         Ok(())
     }
@@ -222,15 +222,15 @@ impl IRParser {
     }
 }
 
-impl IRParser {
+impl Parser {
     pub fn parse_from_str(input_str: &str) -> Result<Prog, Error> {
-        let inputs = IRParser::parse(Rule::file, input_str)?;
+        let inputs = Parser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        let prog = IRParser::file(input)?;
+        let prog = Parser::file(input)?;
         Ok(infer_type_try_from_prog(prog)?)
     }
     pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog, Error> {
         let content = read_to_string(path);
-        IRParser::parse_from_str(&content)
+        Parser::parse_from_str(&content)
     }
 }
