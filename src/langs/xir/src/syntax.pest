@@ -1,0 +1,55 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+
+COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+sep = _{ "_" | "-"}
+
+id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+
+val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+bool = @{ ASCII_ALPHA_LOWER+ }
+
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+
+ty = ${ vector | int | bool }
+
+var = { id ~ ":" ~ ty | id }
+
+tup_var = { (var ~ ("," ~ var)*)? }
+
+tup_val = { (val ~ ("," ~ val)*)? }
+
+io = { var | "(" ~ tup_var ~ ")" }
+
+attr = _{ "[" ~ tup_val ~ "]" }
+
+bel = { id }
+
+coord = { "??" | id | ASCII_DIGIT+ }
+
+op_coord = { "+" }
+
+expr_coord = { coord ~ (op_coord ~ coord)? }
+
+xy = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
+loc = { "@" ~ bel ~ xy? }
+
+op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
+
+op_mach = { "lut1" | "lut2" | "lut3" | "lut4" | "lut5" | "lut6" | "fdre" | "fdse" | "carry" | "muladd" | "mul" }
+
+op = _{ op_basc | op_mach }
+
+instr = { io ~ "=" ~ op ~ attr? ~ io? ~ loc? ~ ";" }
+
+body = { instr+ }
+
+sig = { "def" ~ id ~ io? ~ "->" ~ io }
+
+prog = { sig ~ "{" ~ body ~ "}" }
+
+file = { SOI ~ prog ~ EOI }

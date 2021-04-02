@@ -1,0 +1,18 @@
+[package]
+name = "xir"
+version = "0.1.0"
+authors = ["Luis Vega <vegaluisjose@gmail.com>"]
+license = "Apache-2.0"
+edition = "2018"
+
+[dependencies]
+bincode = "1.3.1"
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_json = "1.0"
+pest = "2.0"
+pest_derive = "2.0"
+pest_consume = "1.0.5"
+pretty = { path = "../../tools/pretty" }
+io = { path = "../../tools/io" }
+ir = { path = "../ir" }
+asm = { path = "../asm" }
