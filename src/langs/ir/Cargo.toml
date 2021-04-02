@@ -16,4 +16,4 @@ pest = "2.0"
 pest_derive = "2.0"
 pest_consume = "1.0.5"
 pretty = { path = "../../tools/pretty" }
-utils = { path = "../../utils" }
+io = { path = "../../tools/io" }

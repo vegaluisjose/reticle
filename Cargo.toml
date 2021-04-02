@@ -41,6 +41,6 @@ members = [
   "src/langs/ir",
   "src/langs/pat",
   "src/langs/asm",
-  "src/utils",
+  "src/tools/io",
   "src/tools/pretty",
 ]

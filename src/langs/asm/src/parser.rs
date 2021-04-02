@@ -1,12 +1,12 @@
 use crate::ast::*;
 use crate::errors::Error;
+use io::file::read_to_string;
 use pest_consume::match_nodes;
 use pest_consume::Error as PestError;
 use pest_consume::Parser as PestParser;
 use std::path::Path;
 use std::rc::Rc;
 use std::str::FromStr;
-use utils::file::read_to_string;
 
 pub type ParseResult<T> = std::result::Result<T, PestError<Rule>>;
 type Node<'i> = pest_consume::Node<'i, Rule, ()>;
