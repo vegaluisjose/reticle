@@ -1,7 +1,6 @@
 use crate::ast::*;
 use itertools::Itertools;
-use pretty::RcDoc;
-use utils::pretty_print::{block_with_braces, intersperse, PrettyPrint};
+use pretty::{block_with_braces, intersperse, PrettyPrint, RcDoc};
 
 impl PrettyPrint for Instr {
     fn to_doc(&self) -> RcDoc<()> {

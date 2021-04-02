@@ -1,7 +1,6 @@
 use crate::ast::*;
 use itertools::Itertools;
-use pretty::RcDoc;
-use utils::pretty_print::{block_with_braces, intersperse, PrettyHelper, PrettyPrint};
+use pretty::{block_with_braces, intersperse, PrettyHelper, PrettyPrint, RcDoc};
 
 fn term_names(term: &ExprTerm) -> RcDoc<()> {
     match term {

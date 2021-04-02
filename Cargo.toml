@@ -42,4 +42,5 @@ members = [
   "src/langs/pat",
   "src/langs/asm",
   "src/utils",
+  "src/tools/pretty",
 ]

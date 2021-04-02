@@ -1,6 +1,6 @@
 use crate::ast::*;
+use pretty::PrettyPrint;
 use std::fmt;
-use utils::pretty_print::PrettyPrint;
 
 macro_rules! display {
     ($ty:tt) => {

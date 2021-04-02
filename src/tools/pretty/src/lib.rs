@@ -1,4 +1,4 @@
-use pretty::RcDoc;
+pub use pretty::RcDoc;
 
 pub const PRETTY_WIDTH: usize = 100;
 pub const PRETTY_INDENT: isize = 4;
