@@ -1,4 +1,5 @@
 use crate::parser;
+use pest_consume::Error as PestError;
 use std::fmt;
 use std::num::ParseIntError;
 use std::num::TryFromIntError;
@@ -18,7 +19,7 @@ impl fmt::Display for Error {
 
 #[derive(Debug)]
 pub enum Error {
-    Parser(pest_consume::Error<parser::Rule>),
+    Parser(PestError<parser::Rule>),
     Conversion(String),
     Type(String),
     TryFromInt(TryFromIntError),
@@ -38,8 +39,8 @@ impl Error {
     }
 }
 
-impl From<pest_consume::Error<parser::Rule>> for Error {
-    fn from(e: pest_consume::Error<parser::Rule>) -> Self {
+impl From<PestError<parser::Rule>> for Error {
+    fn from(e: PestError<parser::Rule>) -> Self {
         Error::Parser(e)
     }
 }
