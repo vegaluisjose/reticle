@@ -6,7 +6,13 @@ sep = _{ "_" | "-"}
 
 id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
 
-val = @{ ("+" | "-")? ~ ASCII_DIGIT+ }
+val_bin = { ASCII_BIN_DIGIT+ }
+
+val_hex = { ASCII_HEX_DIGIT+ }
+
+val_dec = { ("+" | "-")? ~ ASCII_DIGIT+ }
+
+val = { "0b" ~ val_bin | "0x" ~ val_hex | val_dec }
 
 int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
 

@@ -27,12 +27,37 @@ impl Parser {
         Ok(input.as_str().to_string())
     }
 
-    fn val(input: Node) -> ParseResult<ExprTerm> {
+    fn val_bin(input: Node) -> ParseResult<ExprTerm> {
+        let val = i64::from_str_radix(input.as_str(), 2);
+        match val {
+            Ok(v) => Ok(ExprTerm::Val(v)),
+            Err(_) => panic!("Error: parsing {} as bin u64", input.as_str()),
+        }
+    }
+
+    fn val_hex(input: Node) -> ParseResult<ExprTerm> {
+        let val = i64::from_str_radix(input.as_str(), 16);
+        match val {
+            Ok(v) => Ok(ExprTerm::Val(v)),
+            Err(_) => panic!("Error: parsing {} as hex u64", input.as_str()),
+        }
+    }
+
+    fn val_dec(input: Node) -> ParseResult<ExprTerm> {
         let val = input.as_str().parse::<i64>();
         match val {
             Ok(v) => Ok(ExprTerm::Val(v)),
-            Err(_) => panic!("Error: parsing {} as i64", input.as_str()),
+            Err(_) => panic!("Error: parsing {} as dec u64", input.as_str()),
         }
+    }
+
+    fn val(input: Node) -> ParseResult<ExprTerm> {
+        Ok(match_nodes!(
+            input.into_children();
+            [val_bin(bin)] => bin,
+            [val_hex(hex)] => hex,
+            [val_dec(dec)] => dec,
+        ))
     }
 
     fn ty(input: Node) -> ParseResult<Ty> {
