@@ -21,7 +21,7 @@ pub enum OpBasc {
     Cat,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpMach {
     Lut1,
     Lut2,
@@ -36,7 +36,7 @@ pub enum OpMach {
     MulAdd,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum BelLut {
     A5,
     B5,
@@ -56,7 +56,7 @@ pub enum BelLut {
     H6,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum BelReg {
     A,
     B,
@@ -76,18 +76,18 @@ pub enum BelReg {
     H2,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum BelCarry {
     Carry8,
     Carry4,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum BelDsp {
     Alu,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Bel {
     Lut(BelLut),
     Reg(BelReg),
@@ -95,14 +95,14 @@ pub enum Bel {
     Dsp(BelDsp),
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct Loc {
     pub bel: Bel,
     pub x: ExprCoord,
     pub y: ExprCoord,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct InstrBasc {
     pub op: OpBasc,
     pub attr: Expr,
@@ -110,7 +110,7 @@ pub struct InstrBasc {
     pub arg: Expr,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub struct InstrMach {
     pub op: OpMach,
     pub attr: Expr,
@@ -119,13 +119,13 @@ pub struct InstrMach {
     pub loc: Option<Loc>,
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Instr {
     Basc(InstrBasc),
     Mach(InstrMach),
 }
 
-#[derive(Serialize, Deserialize, PartialEq, Default, Clone, Debug)]
+#[derive(Serialize, Deserialize, PartialEq, Default, Clone, Debug, Eq)]
 pub struct Prog {
     pub sig: Sig,
     pub body: Vec<Instr>,
