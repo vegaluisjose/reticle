@@ -223,6 +223,10 @@ impl Parser {
     fn def(input: Node) -> ParseResult<Def> {
         Ok(match_nodes!(
             input.into_children();
+            [sig(sig)] => Def {
+                sig,
+                body: Vec::new(),
+            },
             [sig(sig), body(body)] => Def {
                 sig,
                 body,
