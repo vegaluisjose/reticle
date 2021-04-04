@@ -44,18 +44,6 @@ impl Instr {
     }
 }
 
-impl Sig {
-    pub fn id(&self) -> String {
-        self.id.to_string()
-    }
-    pub fn input(&self) -> &Expr {
-        &self.input
-    }
-    pub fn output(&self) -> &Expr {
-        &self.output
-    }
-}
-
 impl Pat {
     pub fn id(&self) -> String {
         self.sig.id()

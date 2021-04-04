@@ -12,18 +12,12 @@ pub type OpWire = ir::OpWire;
 pub type OpPrim = ir::OpPrim;
 pub type InstrWire = ir::InstrWire;
 pub type InstrPrim = ir::InstrPrim;
+pub type Sig = ir::Sig;
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Instr {
     Wire(InstrWire),
     Prim(InstrPrim),
-}
-
-#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
-pub struct Sig {
-    pub id: Id,
-    pub input: Expr,
-    pub output: Expr,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash, Default)]

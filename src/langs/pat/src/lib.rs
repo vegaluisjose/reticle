@@ -1,5 +1,4 @@
 pub mod ast;
-pub mod default;
 pub mod display;
 pub mod errors;
 pub mod from;

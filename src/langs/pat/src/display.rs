@@ -13,6 +13,5 @@ macro_rules! display {
 }
 
 display!(Instr);
-display!(Sig);
 display!(Pat);
 display!(Target);

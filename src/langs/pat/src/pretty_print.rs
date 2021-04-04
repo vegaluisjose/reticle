@@ -11,19 +11,6 @@ impl PrettyPrint for Instr {
     }
 }
 
-impl PrettyPrint for Sig {
-    fn to_doc(&self) -> RcDoc<()> {
-        RcDoc::text("pat")
-            .append(RcDoc::space())
-            .append(RcDoc::as_string(self.id()))
-            .append(self.input().to_doc())
-            .append(RcDoc::space())
-            .append(RcDoc::text("->"))
-            .append(RcDoc::space())
-            .append(self.output().to_doc())
-    }
-}
-
 impl PrettyPrint for Pat {
     fn to_doc(&self) -> RcDoc<()> {
         let sig = self.sig().to_doc();
