@@ -202,6 +202,11 @@ impl Parser {
     fn sig(input: Node) -> ParseResult<Sig> {
         Ok(match_nodes!(
             input.into_children();
+            [id(id)] => Sig {
+                id,
+                input: Expr::default(),
+                output: Expr::default(),
+            },
             [id(id), io(output)] => Sig {
                 id,
                 input: Expr::default(),
