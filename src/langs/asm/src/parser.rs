@@ -223,6 +223,10 @@ impl Parser {
     fn prog(input: Node) -> ParseResult<Prog> {
         Ok(match_nodes!(
             input.into_children();
+            [sig(sig)] => Prog {
+                sig,
+                body: Vec::new(),
+            },
             [sig(sig), body(body)] => Prog {
                 sig,
                 body,
