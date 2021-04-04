@@ -10,4 +10,4 @@ set -eo pipefail
 # inside docker
 mkdir -p $PWD/.cargo/registry
 
-source $PWD/docker/install_rust.sh
+docker build -t "reticle-rust" -f $PWD/docker/Dockerfile.rust .
