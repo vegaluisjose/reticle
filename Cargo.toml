@@ -48,3 +48,5 @@ members = [
   "src/tools/io",
   "src/tools/pretty",
 ]
+
+exclude = ["ci", "dev", "docker"]
