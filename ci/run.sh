@@ -2,9 +2,6 @@
 
 set -eo pipefail
 
-# cargo fmt -- --check
-# cargo clippy --all-targets --all-features -- -D warnings
-
 DOCKER_RUST_IMG_NAME="reticle-rust"
 DOCKER_RUST_APP_PATH="/usr/src/myapp"
 DOCKER_RUST_REG_PATH="/usr/local/cargo/registry"
@@ -27,5 +24,5 @@ function docker_rust {
         $1
 }
 
-docker_rust "cargo --version"
-docker_rust "rustc --version"
+docker_rust "cargo fmt -- --check"
+docker_rust "cargo clippy --all-targets --all-features -- -D warnings"
