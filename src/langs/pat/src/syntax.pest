@@ -50,7 +50,7 @@ body = { instr+ }
 
 sig = { "pat" ~ id ~ io? ~ "->" ~ io? }
 
-pat = { sig ~ "{" ~ body ~ "}" }
+pat = { sig ~ "{" ~ body? ~ "}" }
 
 target = { pat+ }
 

@@ -205,6 +205,10 @@ impl Parser {
     fn pat(input: Node) -> ParseResult<Pat> {
         Ok(match_nodes!(
             input.into_children();
+            [sig(sig)] => Pat {
+                sig,
+                body: Vec::new(),
+            },
             [sig(sig), body(body)] => Pat {
                 sig,
                 body,
