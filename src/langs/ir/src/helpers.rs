@@ -316,6 +316,9 @@ impl Sig {
     pub fn output(&self) -> &Expr {
         &self.output
     }
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
 }
 
 fn term_is_ready(env: &HashSet<Id>, term: &ExprTerm) -> bool {
@@ -361,6 +364,9 @@ impl Def {
     }
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
+    }
+    pub fn set_id(&mut self, id: &str) {
+        self.sig.set_id(id);
     }
     pub fn set_sig(&mut self, sig: Sig) {
         self.sig = sig;
