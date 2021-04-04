@@ -48,7 +48,7 @@ instr = { io ~ "=" ~ op ~ attr? ~ io? ~ hint? ~ ";" }
 
 body = { instr+ }
 
-sig = { "pat" ~ id ~ io? ~ "->" ~ io }
+sig = { "pat" ~ id ~ io? ~ "->" ~ io? }
 
 pat = { sig ~ "{" ~ body ~ "}" }
 
