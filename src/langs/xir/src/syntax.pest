@@ -54,7 +54,7 @@ instr = { io ~ "=" ~ op ~ attr? ~ io? ~ loc? ~ ";" }
 
 body = { instr+ }
 
-sig = { "def" ~ id ~ io? ~ "->" ~ io }
+sig = { "def" ~ id ~ io? ~ "->" ~ io? }
 
 prog = { sig ~ "{" ~ body ~ "}" }
 
