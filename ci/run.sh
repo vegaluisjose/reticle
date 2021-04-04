@@ -26,3 +26,4 @@ function docker_rust {
 
 docker_rust "cargo fmt -- --check"
 docker_rust "cargo clippy --all-targets --all-features -- -D warnings"
+docker_rust "cargo test -p ir"
