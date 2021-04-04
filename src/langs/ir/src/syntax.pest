@@ -48,7 +48,7 @@ instr = { io ~ "=" ~ op ~ attr? ~ io? ~ hint? ~ ";" }
 
 body = { instr+ }
 
-sig = { "def" ~ id ~ io? ~ "->" ~ io }
+sig = { "def" ~ id ~ io? ~ "->" ~ io? }
 
 def = { sig ~ "{" ~ body ~ "}" }
 
