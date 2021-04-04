@@ -32,7 +32,7 @@ impl Parser {
         let val = i64::from_str_radix(input.as_str(), 2);
         match val {
             Ok(v) => Ok(ExprTerm::Val(v)),
-            Err(_) => panic!("Error: parsing {} as bin u64", input.as_str()),
+            Err(_) => panic!("Error: parsing {} as bin i64", input.as_str()),
         }
     }
 
@@ -40,7 +40,7 @@ impl Parser {
         let val = i64::from_str_radix(input.as_str(), 16);
         match val {
             Ok(v) => Ok(ExprTerm::Val(v)),
-            Err(_) => panic!("Error: parsing {} as hex u64", input.as_str()),
+            Err(_) => panic!("Error: parsing {} as hex i64", input.as_str()),
         }
     }
 
@@ -48,7 +48,7 @@ impl Parser {
         let val = input.as_str().parse::<i64>();
         match val {
             Ok(v) => Ok(ExprTerm::Val(v)),
-            Err(_) => panic!("Error: parsing {} as dec u64", input.as_str()),
+            Err(_) => panic!("Error: parsing {} as dec i64", input.as_str()),
         }
     }
 
