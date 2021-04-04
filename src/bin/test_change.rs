@@ -1,8 +1,8 @@
-use xir::errors::Error;
-use xir::parser::Parser;
+use xim::errors::Error;
+use xim::parser::Parser;
 
 fn main() -> Result<(), Error> {
-    let prog = Parser::parse_from_file("examples/xir/lut_add.xir")?;
-    println!("{}", prog);
+    let target = Parser::parse_from_file("examples/target/implementations/ultrascale/lut.xim")?;
+    println!("{}", target);
     Ok(())
 }

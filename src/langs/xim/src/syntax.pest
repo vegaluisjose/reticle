@@ -1,0 +1,69 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+
+COMMENT = _{ ("//" ~ (!NEWLINE ~ ANY)* ~ NEWLINE) | "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+sep = _{ "_" | "-"}
+
+id = @{ ASCII_ALPHA+ ~ (sep | ASCII_ALPHA | ASCII_DIGIT)* }
+
+val_bin = { ASCII_BIN_DIGIT+ }
+
+val_hex = { ASCII_HEX_DIGIT+ }
+
+val_dec = { ("+" | "-")? ~ ASCII_DIGIT+ }
+
+cost = { ASCII_DIGIT+ }
+
+val = { "0b" ~ val_bin | "0x" ~ val_hex | val_dec }
+
+int = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ }
+
+bool = @{ ASCII_ALPHA_LOWER+ }
+
+vector = @{ ASCII_ALPHA_LOWER ~ ASCII_DIGIT+ ~ "<" ~ ASCII_DIGIT+ ~ ">" }
+
+ty = ${ vector | int | bool }
+
+var = { id ~ ":" ~ ty | id }
+
+tup_var = { (var ~ ("," ~ var)*)? }
+
+tup_val = { (val ~ ("," ~ val)*)? }
+
+io = { var | "(" ~ tup_var ~ ")" }
+
+attr = _{ "[" ~ tup_val ~ "]" }
+
+bel = { id }
+
+coord = { "??" | id | ASCII_DIGIT+ }
+
+op_coord = { "+" }
+
+expr_coord = { coord ~ (op_coord ~ coord)? }
+
+xy = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
+
+loc = { "@" ~ bel ~ xy? }
+
+op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
+
+op_mach = { "lut1" | "lut2" | "lut3" | "lut4" | "lut5" | "lut6" | "fdre" | "fdse" | "carry" | "muladd" | "mul" }
+
+op = _{ op_basc | op_mach }
+
+instr = { io ~ "=" ~ op ~ attr? ~ io? ~ loc? ~ ";" }
+
+body = { instr+ }
+
+area = _{ cost }
+
+perf = _{ cost }
+
+sig = { "imp" ~ id ~ "[" ~ area ~ "," ~ perf ~ "]" ~ io? ~ "->" ~ io }
+
+imp = { sig ~ "{" ~ body? ~ "}" }
+
+target = { imp+ }
+
+file = { SOI ~ target ~ EOI }

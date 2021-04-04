@@ -4,10 +4,7 @@ use pretty::{block_with_braces, intersperse, PrettyHelper, PrettyPrint, RcDoc};
 
 impl PrettyPrint for Sig {
     fn to_doc(&self) -> RcDoc<()> {
-        let attr_val = vec![
-            RcDoc::as_string(self.area()),
-            RcDoc::as_string(self.perf()),
-        ];
+        let attr_val = vec![RcDoc::as_string(self.area()), RcDoc::as_string(self.perf())];
         let attr = intersperse(
             attr_val.iter().cloned(),
             RcDoc::text(",").append(RcDoc::space()),

@@ -4,9 +4,6 @@ use std::collections::HashMap;
 use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::Path;
-// use crate::errors::Error;
-// use std::collections::{HashMap, HashSet};
-// use std::convert::TryInto;
 
 impl Sig {
     pub fn id(&self) -> String {
