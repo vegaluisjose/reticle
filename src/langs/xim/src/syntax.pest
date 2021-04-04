@@ -60,7 +60,7 @@ area = _{ cost }
 
 perf = _{ cost }
 
-sig = { "imp" ~ id ~ "[" ~ area ~ "," ~ perf ~ "]" ~ io? ~ "->" ~ io }
+sig = { "imp" ~ id ~ "[" ~ area ~ "," ~ perf ~ "]" ~ io? ~ "->" ~ io? }
 
 imp = { sig ~ "{" ~ body? ~ "}" }
 
