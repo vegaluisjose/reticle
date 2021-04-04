@@ -21,7 +21,7 @@ function docker_rust {
     docker run --rm --pid=host \
         --user "$(id -u):$(id -g)" \
         -v "$PWD:$DOCKER_RUST_APP_PATH" \
-        -v "$LOCAL_RUST_REG_PATH:$DOCKER_RUST_REG_PATH"
+        -v "$LOCAL_RUST_REG_PATH:$DOCKER_RUST_REG_PATH" \
         -w "$DOCKER_RUST_APP_PATH" \
         $DOCKER_RUST_IMG_NAME \
         $1
