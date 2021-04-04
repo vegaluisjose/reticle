@@ -78,6 +78,9 @@ impl Prog {
     pub fn body(&self) -> &Vec<Instr> {
         &self.body
     }
+    pub fn set_id(&mut self, id: &str) {
+        self.sig.set_id(id);
+    }
     pub fn set_sig(&mut self, sig: Sig) {
         self.sig = sig;
     }
