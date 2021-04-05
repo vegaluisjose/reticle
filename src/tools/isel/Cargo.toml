@@ -5,6 +5,9 @@ authors = ["Luis Vega <vegaluisjose@gmail.com>"]
 license = "Apache-2.0"
 edition = "2018"
 
+[build-dependencies]
+pat = { path = "../../langs/pat" }
+
 [dependencies]
 ir = { path = "../../langs/ir" }
 asm = { path = "../../langs/asm" }
