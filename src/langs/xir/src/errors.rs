@@ -12,7 +12,6 @@ impl fmt::Display for Error {
             Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
             Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
-            Error::Opt(msg) => write!(f, "[Error][Opt] {}", msg),
         }
     }
 }
@@ -24,14 +23,10 @@ pub enum Error {
     Type(String),
     TryFromInt(TryFromIntError),
     ParseInt(ParseIntError),
-    Opt(String),
 }
 
 impl Error {
     pub fn new_conv_error(msg: &str) -> Self {
-        Error::Conversion(msg.to_string())
-    }
-    pub fn new_opt_error(msg: &str) -> Self {
         Error::Conversion(msg.to_string())
     }
     pub fn new_type_error(msg: &str) -> Self {

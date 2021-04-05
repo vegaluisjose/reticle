@@ -10,7 +10,6 @@ impl fmt::Display for Error {
             Error::ParseInt(msg) => write!(f, "[Error][ParseInt] {}", msg),
             Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
             Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
-            Error::Opt(msg) => write!(f, "[Error][Opt] {}", msg),
         }
     }
 }
@@ -21,7 +20,6 @@ pub enum Error {
     Type(String),
     TryFromInt(TryFromIntError),
     ParseInt(ParseIntError),
-    Opt(String),
 }
 
 impl From<pest_consume::Error<parser::Rule>> for Error {
