@@ -1,6 +1,6 @@
 use crate::ast::*;
 use ir::pretty_print::expr_names;
-use pretty::{block_with_braces, intersperse, PrettyHelper, PrettyPrint, RcDoc};
+use prettyprint::{block_with_braces, intersperse, PrettyHelper, PrettyPrint, RcDoc};
 
 impl PrettyPrint for OpCoord {
     fn to_doc(&self) -> RcDoc<()> {

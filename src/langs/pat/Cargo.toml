@@ -13,6 +13,6 @@ itertools = "0.9.0"
 pest = "2.0"
 pest_derive = "2.0"
 pest_consume = "1.0.5"
-pretty = { path = "../../tools/pretty" }
+prettyprint = { path = "../../tools/prettyprint" }
 io = { path = "../../tools/io" }
 ir = { path = "../ir" }

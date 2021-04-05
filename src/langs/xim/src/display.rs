@@ -1,5 +1,5 @@
 use crate::ast::*;
-use pretty::PrettyPrint;
+use prettyprint::PrettyPrint;
 use std::fmt;
 
 macro_rules! display {

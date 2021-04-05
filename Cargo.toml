@@ -47,7 +47,7 @@ members = [
   "src/langs/xir",
   "src/langs/xim",
   "src/tools/io",
-  "src/tools/pretty",
+  "src/tools/prettyprint",
   "src/tools/isel",
 ]
 
