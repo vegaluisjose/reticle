@@ -2,7 +2,7 @@ use ir::ast::*;
 use ir::parser::Parser;
 
 #[test]
-fn simple_def() {
+fn simple_prog() {
     let res = Parser::parse_from_str("def main () -> () {}").unwrap();
     let mut def = Def::default();
     def.set_id("main");
