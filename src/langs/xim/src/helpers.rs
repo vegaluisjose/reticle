@@ -21,6 +21,15 @@ impl Sig {
     pub fn perf(&self) -> u64 {
         self.perf
     }
+    pub fn set_id(&mut self, id: &str) {
+        self.id = id.to_string();
+    }
+    pub fn set_area(&mut self, area: u64) {
+        self.area = area;
+    }
+    pub fn set_perf(&mut self, perf: u64) {
+        self.perf = perf;
+    }
 }
 
 impl Imp {
