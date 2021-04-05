@@ -1,8 +1,10 @@
-use xim::errors::Error;
-use xim::parser::Parser;
+use ir::parser::Parser;
+use isel::tree::select;
 
-fn main() -> Result<(), Error> {
-    let target = Parser::parse_from_file("examples/target/implementations/ultrascale/lut.xim")?;
-    println!("{}", target);
-    Ok(())
+fn main() {
+    let prog = Parser::parse_from_file("examples/ir/add.ir").unwrap();
+    let asm = select(&prog).unwrap();
+    println!("{}", prog);
+    println!("\n\n\n");
+    println!("{}", asm);
 }

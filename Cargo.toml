@@ -25,6 +25,7 @@ asm = { path = "src/langs/asm" }
 pat = { path = "src/langs/pat"}
 xim = { path = "src/langs/xim"}
 xir = { path = "src/langs/xir"}
+isel = { path = "src/tools/isel" }
 
 [[bin]]
 name = "reticle-translate"
@@ -47,6 +48,7 @@ members = [
   "src/langs/xim",
   "src/tools/io",
   "src/tools/pretty",
+  "src/tools/isel",
 ]
 
 exclude = ["ci", "dev", "docker"]
