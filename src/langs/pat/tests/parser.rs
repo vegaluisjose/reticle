@@ -2,7 +2,7 @@ use pat::ast::*;
 use pat::parser::Parser;
 
 #[test]
-fn simple_prog() {
+fn simple_target() {
     let res = Parser::parse_from_str("pat add_i8_0 () -> () {}").unwrap();
     let mut sig = Sig::default();
     sig.set_id("add_i8_0");
