@@ -12,3 +12,4 @@ xim = { path = "../../langs/xim" }
 [dependencies]
 ir = { path = "../../langs/ir" }
 asm = { path = "../../langs/asm" }
+pat = { path = "../../langs/pat" }
