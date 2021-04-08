@@ -1,5 +1,5 @@
 use ir::parser::Parser;
-use isel::tree::select;
+use isel::select;
 
 fn main() {
     let prog = Parser::parse_from_file("examples/ir/add.ir").unwrap();
