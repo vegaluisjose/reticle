@@ -20,6 +20,8 @@ pub enum Instr {
     Prim(InstrPrim),
 }
 
+pub type InstrMap = HashMap<String, Instr>;
+
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash, Default)]
 pub struct Pat {
     pub sig: Sig,
