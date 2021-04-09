@@ -1,5 +1,4 @@
 use crate::tree::*;
-use ir::ast as ir;
 use std::collections::HashMap;
 
 impl Node {
@@ -71,8 +70,8 @@ impl Node {
     }
 }
 
-pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
-    let mut count: HashMap<ir::Id, u64> = HashMap::new();
+pub fn tree_roots_from_def(def: &Def) -> Vec<Id> {
+    let mut count: HashMap<Id, u64> = HashMap::new();
     // store compute instructions
     for instr in def.body() {
         if instr.is_prim() {
@@ -85,7 +84,7 @@ pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
     }
     // calculate the number of times compute instructions are used
     for instr in def.body() {
-        let arg: Vec<ir::ExprTerm> = instr.arg().clone().into();
+        let arg: Vec<ExprTerm> = instr.arg().clone().into();
         for e in arg {
             if let Some(id) = e.id() {
                 if let Some(val) = count.get_mut(&id) {
@@ -94,7 +93,7 @@ pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
             }
         }
     }
-    let mut root: Vec<ir::Id> = Vec::new();
+    let mut root: Vec<Id> = Vec::new();
     // a node is a root if it is used more than once
     for (k, v) in count {
         if v > 1 {
@@ -102,7 +101,7 @@ pub fn tree_roots_from_def(def: &ir::Def) -> Vec<ir::Id> {
         }
     }
     // add outputs as roots
-    let output: Vec<ir::ExprTerm> = def.output().clone().into();
+    let output: Vec<ExprTerm> = def.output().clone().into();
     for e in output {
         if let Some(id) = e.id() {
             root.push(id);

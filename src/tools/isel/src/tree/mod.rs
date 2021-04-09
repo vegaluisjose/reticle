@@ -1,24 +1,36 @@
+pub mod default;
+pub mod helpers;
+
 // use crate::errors::Error;
 // use asm::ast as asm;
-use ir::ast as ir;
 // use pat::ast as pat;
+use ir::ast as ir;
 use std::collections::HashMap;
+
+pub type Id = ir::Id;
+pub type Ty = ir::Ty;
+pub type Prim = ir::Prim;
+pub type ExprTerm = ir::ExprTerm;
+pub type Expr = ir::Expr;
+pub type OpWire = ir::OpWire;
+pub type OpPrim = ir::OpPrim;
+pub type Def = ir::Def;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum NodeOp {
-    Wire(ir::OpWire),
-    Comp(ir::OpPrim),
+    Wire(OpWire),
+    Prim(OpPrim),
     Inp,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Node {
     pub index: u64,
-    pub id: ir::Id,
-    pub ty: ir::Ty,
+    pub id: Id,
+    pub ty: Ty,
     pub op: NodeOp,
-    pub attr: ir::Expr,
-    pub prim: ir::Prim,
+    pub attr: Expr,
+    pub prim: Prim,
     pub cost: u64,
     pub staged: bool,
     pub committed: bool,
