@@ -1,9 +1,8 @@
 pub mod default;
+pub mod from;
 pub mod helpers;
+pub mod try_from;
 
-// use crate::errors::Error;
-// use asm::ast as asm;
-// use pat::ast as pat;
 use ir::ast as ir;
 use std::collections::HashMap;
 
@@ -15,6 +14,9 @@ pub type Expr = ir::Expr;
 pub type OpWire = ir::OpWire;
 pub type OpPrim = ir::OpPrim;
 pub type Def = ir::Def;
+pub type InstrWire = ir::InstrWire;
+pub type InstrPrim = ir::InstrPrim;
+pub type Instr = ir::Instr;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum NodeOp {
