@@ -380,10 +380,12 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                         {
                             is_match = false;
                         }
-                        if !pnode.is_inp() && bnode.cost() == u64::MAX {
-                            bcost = bnode.cost();
-                        } else if !pnode.is_inp() && bnode.cost() != u64::MAX {
-                            bcost += bnode.cost();
+                        if !pnode.is_inp() {
+                            if bnode.cost() == u64::MAX {
+                                bcost = bnode.cost();
+                            } else if bcost != u64::MAX {
+                                bcost += bnode.cost();
+                            }
                         }
                         if is_match && !pnode.is_inp() {
                             if let Some(edge) = block.edge(bindex) {
