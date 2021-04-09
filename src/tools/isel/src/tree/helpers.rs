@@ -1,5 +1,6 @@
 use crate::errors::Error;
 use crate::tree::*;
+use asm::ast as asm;
 use pat::ast as pat;
 use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
@@ -364,4 +365,197 @@ pub fn treelist_try_from_prog(prog: &Prog) -> Result<Vec<Tree>, Error> {
     } else {
         Err(Error::new_isel_error("prog must have a main"))
     }
+}
+
+pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
+    let mut pstack = pat.bfs(0);
+    pstack.reverse();
+    let mut bstack: VecDeque<u64> = VecDeque::new();
+    bstack.push_back(start);
+    let mut is_match = true;
+    let mut bcost: u64 = 0;
+    if let Some(proot) = pat.node(0) {
+        let pcost = proot.cost();
+        while let Some(bindex) = bstack.pop_front() {
+            if let Some(pindex) = pstack.pop() {
+                if let Some(bnode) = block.node(bindex) {
+                    if let Some(pnode) = pat.node(pindex) {
+                        if pnode.ty() != bnode.ty()
+                            || (!pnode.is_inp() && pnode.op() != bnode.op())
+                            || (!pnode.is_inp()
+                                && !bnode.prim().is_any()
+                                && pnode.prim() != bnode.prim())
+                            || (!pnode.is_inp() && pnode.attr() != bnode.attr())
+                            || (!pnode.is_inp() && bnode.is_committed())
+                            || (pnode.is_inp() && !bnode.is_free())
+                        {
+                            is_match = false;
+                        }
+                        if !pnode.is_inp() && bnode.cost() == u64::MAX {
+                            bcost = bnode.cost();
+                        } else if !pnode.is_inp() && bnode.cost() != u64::MAX {
+                            bcost += bnode.cost();
+                        }
+                        if is_match && !pnode.is_inp() {
+                            if let Some(edge) = block.edge(bindex) {
+                                for e in edge {
+                                    bstack.push_back(*e);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        (is_match & (pcost < bcost), pcost)
+    } else {
+        (false, u64::MAX)
+    }
+}
+
+pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_cost: u64) -> Tree {
+    let mut btree = block.clone();
+    let mut pstack = pat.bfs(0);
+    pstack.reverse();
+    let mut bstack: VecDeque<u64> = VecDeque::new();
+    bstack.push_back(target);
+    while let Some(bindex) = bstack.pop_front() {
+        if let Some(pindex) = pstack.pop() {
+            if let Some(pnode) = pat.node(pindex) {
+                if !pnode.is_inp() {
+                    if let Some(bnode) = btree.node_mut(bindex) {
+                        bnode.clear_pat();
+                        bnode.set_cost(0);
+                        bnode.stage();
+                    }
+                    if let Some(edge) = block.edge(bindex) {
+                        for e in edge {
+                            bstack.push_back(*e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if let Some(bnode) = btree.node_mut(target) {
+        bnode.set_pat(pat_name);
+        bnode.set_cost(pat_cost);
+    }
+    btree
+}
+
+pub fn input_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, String> {
+    let mut map: HashMap<String, String> = HashMap::new();
+    let mut pstack = pat.bfs(0);
+    pstack.reverse();
+    let mut bstack: VecDeque<u64> = VecDeque::new();
+    bstack.push_back(target);
+    while let Some(bindex) = bstack.pop_front() {
+        if let Some(pindex) = pstack.pop() {
+            if let Some(pnode) = pat.node(pindex) {
+                if pnode.is_inp() {
+                    if let Some(bnode) = block.node(bindex) {
+                        map.insert(pnode.id(), bnode.id());
+                    }
+                } else if let Some(edge) = block.edge(bindex) {
+                    for e in edge {
+                        bstack.push_back(*e);
+                    }
+                }
+            }
+        }
+    }
+    map
+}
+
+pub fn output_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, String> {
+    let mut map: HashMap<String, String> = HashMap::new();
+    if let Some(pnode) = pat.node(0) {
+        if let Some(bnode) = block.node(target) {
+            map.insert(pnode.id(), bnode.id());
+        }
+    }
+    map
+}
+
+pub fn tree_select(blocks: &[Tree], pmap: &HashMap<String, Tree>) -> Result<Vec<Tree>, Error> {
+    let mut res: Vec<Tree> = Vec::new();
+    for btree in blocks {
+        let mut ctree = btree.clone();
+        let cuts = btree.cut(0);
+        for cut in cuts {
+            for (pname, ptree) in pmap {
+                let (is_valid, cost) = is_valid_change(&ctree, &ptree, cut);
+                if is_valid {
+                    ctree = tree_update(&ctree, &ptree, cut, &pname, cost);
+                }
+            }
+        }
+        ctree.commit();
+        res.push(ctree);
+    }
+    Ok(res)
+}
+
+pub fn rename_expr(map: &HashMap<String, String>, input: &asm::Expr) -> Result<asm::Expr, Error> {
+    let iterm: Vec<asm::ExprTerm> = input.clone().into();
+    let mut oterm: Vec<asm::ExprTerm> = Vec::new();
+    for e in iterm {
+        if let Some(id) = map.get(&e.get_id()?) {
+            let ty = e.get_ty()?;
+            oterm.push(asm::ExprTerm::Var(id.clone(), ty.clone()));
+        }
+    }
+    if oterm.len() == 1 {
+        Ok(asm::Expr::from(oterm[0].clone()))
+    } else {
+        let tup: asm::ExprTup = oterm.into();
+        Ok(asm::Expr::from(tup))
+    }
+}
+
+pub fn tree_codegen(
+    iset: &mut HashSet<Id>,
+    imap: &InstrMap,
+    block: &Tree,
+    tmap: &TreeMap,
+    pmap: &HashMap<String, pat::Pat>,
+) -> Result<Vec<asm::Instr>, Error> {
+    let mut body: Vec<asm::Instr> = Vec::new();
+    let mut indices = block.bfs(0);
+    // bottom-up code generation
+    indices.reverse();
+    for index in indices {
+        if let Some(node) = block.node(index) {
+            if node.is_committed() {
+                if let Some(name) = node.pat() {
+                    if let Some(tree) = tmap.get(name) {
+                        if let Some(pat) = pmap.get(name) {
+                            let input = input_map(block, tree, index);
+                            let output = output_map(block, tree, index);
+                            let dst = rename_expr(&output, pat.output())?;
+                            let arg = rename_expr(&input, pat.input())?;
+                            let op = asm::OpAsm::from(name.clone());
+                            let loc = asm::Loc {
+                                prim: node.prim().clone(),
+                                x: asm::ExprCoord::Any,
+                                y: asm::ExprCoord::Any,
+                            };
+                            let asm = asm::InstrAsm { op, dst, arg, loc };
+                            body.push(asm::Instr::from(asm));
+                        }
+                    }
+                }
+            } else if !node.is_staged() && node.is_wire() {
+                if let Some(instr) = imap.get(&node.id()) {
+                    if !iset.contains(&node.id()) {
+                        let wire = asm::InstrWire::try_from(instr.clone())?;
+                        body.push(asm::Instr::from(wire));
+                        iset.insert(node.id());
+                    }
+                }
+            } // TODO: add error for uncovered node
+        }
+    }
+    Ok(body)
 }
