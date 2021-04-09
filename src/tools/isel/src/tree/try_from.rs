@@ -1,5 +1,8 @@
 use crate::errors::Error;
+use crate::tree::helpers::tree_try_from_map;
 use crate::tree::*;
+use pat::ast as pat;
+use std::collections::HashSet;
 use std::convert::TryFrom;
 
 impl TryFrom<InstrWire> for Node {
@@ -57,5 +60,15 @@ impl TryFrom<Instr> for Node {
                 "call node conversion is not supported",
             )),
         }
+    }
+}
+
+impl TryFrom<pat::Pat> for Tree {
+    type Error = Error;
+    fn try_from(pat: pat::Pat) -> Result<Self, Self::Error> {
+        let map = InstrMap::from(pat.clone());
+        let mut visited: HashSet<Id> = HashSet::new();
+        let tree = tree_try_from_map(&map, &mut visited, pat.input(), &pat.output().get_id(0)?, 0)?;
+        Ok(tree)
     }
 }

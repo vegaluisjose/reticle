@@ -1,7 +1,7 @@
 use crate::errors::Error;
 use crate::tree::*;
-use std::collections::{HashMap, HashSet};
 use std::collections::VecDeque;
+use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 
 impl Node {
@@ -302,4 +302,17 @@ pub fn tree_try_from_map(
         }
     }
     Ok(tree)
+}
+
+// TODO: move this to try_form trait, once refactoring is completed
+pub fn vec_tree_try_from_def(def: Def) -> Result<Vec<Tree>, Error> {
+    let map = InstrMap::from(def.clone());
+    let mut res: Vec<Tree> = Vec::new();
+    let roots = tree_roots_from_def(&def);
+    let mut visited: HashSet<Id> = HashSet::new();
+    for r in roots {
+        let tree = tree_try_from_map(&map, &mut visited, def.input(), &r, u64::MAX)?;
+        res.push(tree);
+    }
+    Ok(res)
 }
