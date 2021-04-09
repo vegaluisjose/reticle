@@ -19,6 +19,7 @@ pub type InstrPrim = ir::InstrPrim;
 pub type Instr = ir::Instr;
 pub type InstrMap = ir::InstrMap;
 pub type TermMap = ir::TermMap;
+pub type Prog = ir::Prog;
 pub type TreeMap = HashMap<String, Tree>;
 
 #[derive(Clone, Debug, Eq, PartialEq)]

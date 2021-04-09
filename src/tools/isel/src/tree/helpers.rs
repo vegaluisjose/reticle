@@ -308,10 +308,10 @@ pub fn tree_try_from_map(
 }
 
 // TODO: move this to try_form trait, once refactoring is completed
-pub fn vec_tree_try_from_def(def: Def) -> Result<Vec<Tree>, Error> {
+pub fn treelist_try_from_def(def: &Def) -> Result<Vec<Tree>, Error> {
     let map = InstrMap::from(def.clone());
     let mut res: Vec<Tree> = Vec::new();
-    let roots = tree_roots_from_def(&def);
+    let roots = tree_roots_from_def(def);
     let mut visited: HashSet<Id> = HashSet::new();
     for r in roots {
         let tree = tree_try_from_map(&map, &mut visited, def.input(), &r, u64::MAX)?;
@@ -355,5 +355,13 @@ pub fn treemap_try_from_target(prim: &str) -> Result<TreeMap, Error> {
         Ok(tree_map)
     } else {
         Err(Error::new_isel_error("missing a pattern"))
+    }
+}
+
+pub fn treelist_try_from_prog(prog: &Prog) -> Result<Vec<Tree>, Error> {
+    if let Some(main) = prog.get("main") {
+        Ok(treelist_try_from_def(main)?)
+    } else {
+        Err(Error::new_isel_error("prog must have a main"))
     }
 }
