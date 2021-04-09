@@ -17,6 +17,8 @@ pub type Def = ir::Def;
 pub type InstrWire = ir::InstrWire;
 pub type InstrPrim = ir::InstrPrim;
 pub type Instr = ir::Instr;
+pub type InstrMap = ir::InstrMap;
+pub type TermMap = ir::TermMap;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum NodeOp {
