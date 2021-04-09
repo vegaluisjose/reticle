@@ -1,8 +1,11 @@
 use crate::errors::Error;
 use crate::tree::*;
+use pat::ast as pat;
 use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
+use std::path::Path;
+use xim::ast as xim;
 
 impl Node {
     pub fn index(&self) -> u64 {
@@ -315,4 +318,42 @@ pub fn vec_tree_try_from_def(def: Def) -> Result<Vec<Tree>, Error> {
         res.push(tree);
     }
     Ok(res)
+}
+
+pub fn read_target_pat(prim: &str) -> pat::Target {
+    let filename = format!("{}_pat.bin", prim);
+    let path = Path::new(env!("OUT_DIR")).join(filename);
+    pat::Target::deserialize_from_file(path)
+}
+
+pub fn read_target_imp(prim: &str) -> xim::Target {
+    let filename = format!("{}_xim.bin", prim);
+    let path = Path::new(env!("OUT_DIR")).join(filename);
+    xim::Target::deserialize_from_file(path)
+}
+
+pub fn treemap_try_from_target(prim: &str) -> Result<TreeMap, Error> {
+    let tpat = read_target_pat(prim);
+    let timp = read_target_imp(prim);
+    let mut tree_map = TreeMap::new();
+    for (n, p) in tpat.pat() {
+        if let Some(imp) = timp.get(n) {
+            let cost = imp.perf();
+            let instr_map = InstrMap::from(p.clone());
+            let mut visited: HashSet<Id> = HashSet::new();
+            let tree = tree_try_from_map(
+                &instr_map,
+                &mut visited,
+                p.input(),
+                &p.output().get_id(0)?,
+                cost,
+            )?;
+            tree_map.insert(n.to_string(), tree);
+        }
+    }
+    if tpat.pat().len() == timp.imp().len() && tree_map.len() == tpat.pat().len() {
+        Ok(tree_map)
+    } else {
+        Err(Error::new_isel_error("missing a pattern"))
+    }
 }
