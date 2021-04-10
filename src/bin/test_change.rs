@@ -1,5 +1,5 @@
-use ir::parser::Parser as IrParser;
 use asm::parser::Parser as AsmParser;
+use ir::parser::Parser as IrParser;
 use isel::select;
 
 fn main() {
