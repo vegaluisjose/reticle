@@ -1,5 +1,6 @@
 use crate::ast::*;
 use crate::errors::Error;
+use crate::infer::infer_type_try_from_prog;
 use io::file::read_to_string;
 use pest_consume::match_nodes;
 use pest_consume::Error as PestError;
@@ -246,7 +247,8 @@ impl Parser {
     pub fn parse_from_str(input_str: &str) -> Result<Prog, Error> {
         let inputs = Parser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
-        Ok(Parser::file(input)?)
+        let prog = Parser::file(input)?;
+        Ok(infer_type_try_from_prog(prog)?)
     }
     pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Prog, Error> {
         let content = read_to_string(path);

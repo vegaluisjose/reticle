@@ -71,6 +71,33 @@ impl InstrAsm {
     }
 }
 
+impl Instr {
+    pub fn dst(&self) -> &Expr {
+        match self {
+            Instr::Asm(instr) => instr.dst(),
+            Instr::Wire(instr) => instr.dst(),
+        }
+    }
+    pub fn arg(&self) -> &Expr {
+        match self {
+            Instr::Asm(instr) => instr.arg(),
+            Instr::Wire(instr) => instr.arg(),
+        }
+    }
+    pub fn set_dst(&mut self, dst: Expr) {
+        match self {
+            Instr::Asm(instr) => instr.set_dst(dst),
+            Instr::Wire(instr) => instr.set_dst(dst),
+        }
+    }
+    pub fn set_arg(&mut self, arg: Expr) {
+        match self {
+            Instr::Asm(instr) => instr.set_arg(arg),
+            Instr::Wire(instr) => instr.set_arg(arg),
+        }
+    }
+}
+
 impl Prog {
     pub fn sig(&self) -> &Sig {
         &self.sig
