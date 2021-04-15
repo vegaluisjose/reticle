@@ -4,18 +4,6 @@ use std::fmt;
 use std::num::ParseIntError;
 use std::num::TryFromIntError;
 
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Error::Parser(msg) => write!(f, "[Error][Parser] {}", msg),
-            Error::ParseInt(msg) => write!(f, "[Error][ParseInt] {}", msg),
-            Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
-            Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
-            Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
-        }
-    }
-}
-
 #[derive(Debug)]
 pub enum Error {
     Parser(PestError<parser::Rule>),
@@ -49,5 +37,17 @@ impl From<TryFromIntError> for Error {
 impl From<ParseIntError> for Error {
     fn from(e: ParseIntError) -> Self {
         Error::ParseInt(e)
+    }
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::Parser(msg) => write!(f, "[Error][Parser] {}", msg),
+            Error::ParseInt(msg) => write!(f, "[Error][ParseInt] {}", msg),
+            Error::Conversion(msg) => write!(f, "[Error][Conversion] {}", msg),
+            Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
+            Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
+        }
     }
 }
