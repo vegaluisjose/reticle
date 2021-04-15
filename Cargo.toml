@@ -55,6 +55,7 @@ members = [
   "src/tools/prettyprint",
   "src/tools/isel",
   "src/tools/translate",
+  "src/tools/optimizer",
 ]
 
 exclude = ["ci", "dev", "docker"]
