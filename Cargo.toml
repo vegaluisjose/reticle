@@ -26,6 +26,7 @@ pat = { path = "src/langs/pat"}
 xim = { path = "src/langs/xim"}
 xir = { path = "src/langs/xir"}
 isel = { path = "src/tools/isel" }
+translate = { path = "src/tools/translate" }
 
 [[bin]]
 name = "reticle-translate"
@@ -39,6 +40,10 @@ path = "src/bin/optimize.rs"
 name = "reticle-place"
 path = "src/bin/place.rs"
 
+[[bin]]
+name = "rt"
+path = "src/bin/rt.rs"
+
 [workspace]
 members = [
   "src/langs/ir",
@@ -49,6 +54,7 @@ members = [
   "src/tools/io",
   "src/tools/prettyprint",
   "src/tools/isel",
+  "src/tools/translate",
 ]
 
 exclude = ["ci", "dev", "docker"]

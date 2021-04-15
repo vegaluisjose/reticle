@@ -1,0 +1,13 @@
+[package]
+name = "translate"
+version = "0.1.0"
+authors = ["Luis Vega <vegaluisjose@gmail.com>"]
+license = "Apache-2.0"
+edition = "2018"
+
+[dependencies]
+structopt = { version = "0.3", default-features = false }
+ir = { path = "../../langs/ir" }
+asm = { path = "../../langs/asm" }
+isel = { path = "../isel" }
+io = { path = "../io" }
