@@ -41,6 +41,7 @@ pub struct Node {
     pub staged: bool,
     pub committed: bool,
     pub pat: Option<String>,
+    pub pat_prim: Prim,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

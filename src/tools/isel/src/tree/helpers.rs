@@ -35,6 +35,9 @@ impl Node {
     pub fn prim(&self) -> &Prim {
         &self.prim
     }
+    pub fn pat_prim(&self) -> &Prim {
+        &self.pat_prim
+    }
     pub fn cost(&self) -> u64 {
         self.cost
     }
@@ -55,6 +58,9 @@ impl Node {
     }
     pub fn set_cost(&mut self, cost: u64) {
         self.cost = cost;
+    }
+    pub fn set_pat_prim(&mut self, prim: Prim) {
+        self.pat_prim = prim;
     }
     pub fn stage(&mut self) {
         self.staged = true;
@@ -194,6 +200,7 @@ impl Tree {
             staged: false,
             committed: false,
             pat: None,
+            pat_prim: Prim::Any,
         };
         node.set_index(curr);
         self.node.insert(curr, node);
@@ -417,6 +424,9 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
                         bnode.clear_pat();
                         bnode.set_cost(0);
                         bnode.stage();
+                        if bnode.is_prim_op() {
+                            bnode.set_pat_prim(pnode.prim().clone());
+                        }
                     }
                     if let Some(edge) = block.edge(bindex) {
                         for e in edge {
@@ -527,7 +537,7 @@ pub fn tree_codegen(
                             let arg = rename_expr(&input, pat.input())?;
                             let op = asm::OpAsm::from(name.clone());
                             let loc = asm::Loc {
-                                prim: node.prim().clone(),
+                                prim: node.pat_prim().clone(),
                                 x: asm::ExprCoord::Any,
                                 y: asm::ExprCoord::Any,
                             };

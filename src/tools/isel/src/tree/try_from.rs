@@ -20,6 +20,7 @@ impl TryFrom<InstrWire> for Node {
             staged: false,
             committed: false,
             pat: None,
+            pat_prim: Prim::Any,
         })
     }
 }
@@ -43,6 +44,7 @@ impl TryFrom<InstrPrim> for Node {
             staged: false,
             committed: false,
             pat: None,
+            pat_prim: Prim::Any,
         })
     }
 }
