@@ -1,5 +1,4 @@
 imp dmul_i8[1, 1](a: i8, b: i8) -> (y: i8) {}
 imp dmuladd_i8i8[1, 1](a: i8, b: i8, c: i8) -> (y: i8) {}
-imp dmuladdco_i8i8[1, 1](a: i8, b: i8, c: i8) -> (y: i8) {}
-imp dmuladdci_i8i8[1, 1](a: i8, b: i8, c: i8) -> (y: i8) {}
-imp dmuladdcio_i8i8[1, 1](a: i8, b: i8, c: i8) -> (y: i8) {}
+imp daddrega_i8v4[1, 1](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {}
+imp dmuladdrega_i8i8[1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {}
