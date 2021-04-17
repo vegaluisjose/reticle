@@ -27,6 +27,7 @@ xim = { path = "src/langs/xim"}
 xir = { path = "src/langs/xir"}
 isel = { path = "src/tools/isel" }
 translate = { path = "src/tools/translate" }
+optimizer = { path = "src/tools/optimizer" }
 
 [[bin]]
 name = "reticle-translate"
@@ -43,6 +44,10 @@ path = "src/bin/place.rs"
 [[bin]]
 name = "rt"
 path = "src/bin/rt.rs"
+
+[[bin]]
+name = "ro"
+path = "src/bin/ro.rs"
 
 [workspace]
 members = [

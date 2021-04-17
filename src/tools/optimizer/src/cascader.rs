@@ -11,7 +11,7 @@ fn create_map_and_pair(prog: &Prog) -> Result<(Map, Pair), Error> {
     let mut pair = Pair::new();
     for instr in prog.body() {
         match instr {
-            Instr::Asm(instr) if instr.op().name().as_str() == "dsp_muladd_i8_ra_rb_rm_rp" => {
+            Instr::Asm(instr) if instr.op().name().as_str() == "dmuladdrega_i8i8" => {
                 let dst = instr.dst().get_term(0)?;
                 let arg = instr.arg().get_term(2)?;
                 let dst_id = dst.get_id()?;
@@ -100,7 +100,7 @@ fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
         if let Some(tail) = cur.pop() {
             if let Some(instr) = map.get(&tail) {
                 let mut instr = instr.clone();
-                let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cop");
+                let op = String::from("dmuladdregaco_i8i8");
                 let op = OpAsm::Op(op);
                 instr.set_op(op);
                 let mut loc = instr.loc().clone();
@@ -114,7 +114,7 @@ fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
             if let Some(mid) = cur.pop() {
                 if let Some(instr) = map.get(&mid) {
                     let mut instr = instr.clone();
-                    let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cic_cop");
+                    let op = String::from("dmuladdregacio_i8i8");
                     let op = OpAsm::Op(op);
                     instr.set_op(op);
                     let mut loc = instr.loc().clone();
@@ -129,7 +129,7 @@ fn replace_map(map: &Map, cascade: &[Vec<String>]) -> Map {
         if let Some(head) = cur.pop() {
             if let Some(instr) = map.get(&head) {
                 let mut instr = instr.clone();
-                let op = String::from("dsp_muladd_i8_ra_rb_rm_rp_cic");
+                let op = String::from("dmuladdregaci_i8i8");
                 let op = OpAsm::Op(op);
                 instr.set_op(op);
                 let mut loc = instr.loc().clone();
