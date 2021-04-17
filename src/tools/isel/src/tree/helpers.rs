@@ -340,8 +340,7 @@ pub fn treemap_try_from_target_pair(
             tree_map.insert(n.to_string(), tree);
         }
     }
-    if target_pat.pat().len() == target_imp.imp().len() && tree_map.len() == target_pat.pat().len()
-    {
+    if tree_map.len() == target_pat.pat().len() {
         Ok(tree_map)
     } else {
         Err(Error::new_isel_error("missing a pattern"))
