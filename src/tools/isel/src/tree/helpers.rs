@@ -20,13 +20,13 @@ impl Node {
     pub fn op(&self) -> &NodeOp {
         &self.op
     }
-    pub fn is_inp(&self) -> bool {
+    pub fn is_inp_op(&self) -> bool {
         matches!(self.op, NodeOp::Inp)
     }
-    pub fn is_wire(&self) -> bool {
+    pub fn is_wire_op(&self) -> bool {
         matches!(self.op, NodeOp::Wire(_))
     }
-    pub fn is_prim(&self) -> bool {
+    pub fn is_prim_op(&self) -> bool {
         matches!(self.op, NodeOp::Prim(_))
     }
     pub fn attr(&self) -> &Expr {
@@ -142,7 +142,7 @@ impl Tree {
         stack.push(start);
         while let Some(cur) = stack.pop() {
             if let Some(node) = self.node.get(&cur) {
-                if node.is_prim() && !node.is_committed() {
+                if node.is_prim_op() && !node.is_committed() {
                     res.push(cur);
                 }
             }
@@ -208,7 +208,7 @@ impl Tree {
         let index = self.bfs(0);
         for i in index {
             if let Some(node) = self.node_mut(i) {
-                if !node.is_inp() && node.pat().is_some() && node.is_staged() {
+                if !node.is_inp_op() && node.pat().is_some() && node.is_staged() {
                     node.commit();
                 }
             }
@@ -369,24 +369,24 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                 if let Some(bnode) = block.node(bindex) {
                     if let Some(pnode) = pat.node(pindex) {
                         if pnode.ty() != bnode.ty()
-                            || (!pnode.is_inp() && pnode.op() != bnode.op())
-                            || (!pnode.is_inp()
+                            || (!pnode.is_inp_op() && pnode.op() != bnode.op())
+                            || (!pnode.is_inp_op()
                                 && !bnode.prim().is_any()
                                 && pnode.prim() != bnode.prim())
-                            || (!pnode.is_inp() && pnode.attr() != bnode.attr())
-                            || (!pnode.is_inp() && bnode.is_committed())
-                            || (pnode.is_inp() && !bnode.is_free())
+                            || (!pnode.is_inp_op() && pnode.attr() != bnode.attr())
+                            || (!pnode.is_inp_op() && bnode.is_committed())
+                            || (pnode.is_inp_op() && !bnode.is_free())
                         {
                             is_match = false;
                         }
-                        if !pnode.is_inp() {
+                        if !pnode.is_inp_op() {
                             if bnode.cost() == u64::MAX {
                                 bcost = bnode.cost();
                             } else if bcost != u64::MAX {
                                 bcost += bnode.cost();
                             }
                         }
-                        if is_match && !pnode.is_inp() {
+                        if is_match && !pnode.is_inp_op() {
                             if let Some(edge) = block.edge(bindex) {
                                 for e in edge {
                                     bstack.push_back(*e);
@@ -412,7 +412,7 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
     while let Some(bindex) = bstack.pop_front() {
         if let Some(pindex) = pstack.pop() {
             if let Some(pnode) = pat.node(pindex) {
-                if !pnode.is_inp() {
+                if !pnode.is_inp_op() {
                     if let Some(bnode) = btree.node_mut(bindex) {
                         bnode.clear_pat();
                         bnode.set_cost(0);
@@ -443,7 +443,7 @@ pub fn input_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, Strin
     while let Some(bindex) = bstack.pop_front() {
         if let Some(pindex) = pstack.pop() {
             if let Some(pnode) = pat.node(pindex) {
-                if pnode.is_inp() {
+                if pnode.is_inp_op() {
                     if let Some(bnode) = block.node(bindex) {
                         map.insert(pnode.id(), bnode.id());
                     }
@@ -536,7 +536,7 @@ pub fn tree_codegen(
                         }
                     }
                 }
-            } else if !node.is_staged() && node.is_wire() {
+            } else if !node.is_staged() && node.is_wire_op() {
                 if let Some(instr) = imap.get(&node.id()) {
                     if !iset.contains(&node.id()) {
                         let wire = asm::InstrWire::try_from(instr.clone())?;
