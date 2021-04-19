@@ -7,15 +7,6 @@ pub enum Error {
     ISel(String),
 }
 
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Error::IR(msg) => write!(f, "{}", msg),
-            Error::ISel(msg) => write!(f, "{}", msg),
-        }
-    }
-}
-
 impl Error {
     pub fn new_isel_error(msg: &str) -> Self {
         Error::ISel(msg.to_string())
@@ -25,5 +16,14 @@ impl Error {
 impl From<IRError> for Error {
     fn from(e: IRError) -> Self {
         Error::IR(e)
+    }
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::IR(msg) => write!(f, "{}", msg),
+            Error::ISel(msg) => write!(f, "{}", msg),
+        }
     }
 }

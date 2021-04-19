@@ -12,18 +12,6 @@ pub enum Error {
     ISel(ISelError),
 }
 
-impl fmt::Display for Error {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Error::IR(msg) => write!(f, "{}", msg),
-            Error::Asm(msg) => write!(f, "{}", msg),
-            Error::ISel(msg) => write!(f, "{}", msg),
-            Error::Opt(msg) => write!(f, "{}", msg),
-            Error::Driver(msg) => write!(f, "{}", msg),
-        }
-    }
-}
-
 impl Error {
     pub fn new_opt_error(msg: &str) -> Self {
         Error::Opt(msg.to_string())
@@ -48,5 +36,17 @@ impl From<AsmError> for Error {
 impl From<ISelError> for Error {
     fn from(e: ISelError) -> Self {
         Error::ISel(e)
+    }
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Error::IR(msg) => write!(f, "{}", msg),
+            Error::Asm(msg) => write!(f, "{}", msg),
+            Error::ISel(msg) => write!(f, "{}", msg),
+            Error::Opt(msg) => write!(f, "{}", msg),
+            Error::Driver(msg) => write!(f, "{}", msg),
+        }
     }
 }
