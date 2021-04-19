@@ -1,3 +1,10 @@
 imp ladd_i8[1, 1](a: i8, b: i8) -> (y: i8) {}
 imp laddrega_i8[1, 1](a: i8, b: i8, en: bool) -> (y: i8) {}
 imp lrega_i8[1, 1](a: i8, en: bool) -> (y: i8) {}
+imp leq_i2[1, 1](a: i2, b: i2) -> (y: bool) {}
+imp leq_i4[1, 1](a: i4, b: i4) -> (y: bool) {}
+imp land_bool[1, 1](a: bool, b: bool) -> (y: bool) {}
+imp lmux_i2[1, 1](sel: bool, a: i2, b: i2) -> (y: i2) {}
+imp lmux_i4[1, 1](sel: bool, a: i4, b: i4) -> (y: i4) {}
+imp lmuxrega_i2[1, 1](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {}
+imp lmuxrega_i4[1, 1](sel: bool, a: i4, b: i4, en: bool) -> (y: i4) {}
