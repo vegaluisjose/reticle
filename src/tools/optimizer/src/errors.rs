@@ -15,8 +15,8 @@ impl fmt::Display for Error {
         match self {
             Error::IR(msg) => write!(f, "{}", msg),
             Error::Asm(msg) => write!(f, "{}", msg),
-            Error::Driver(msg) => write!(f, "[Error][Driver] {}", msg),
-            Error::Opt(msg) => write!(f, "[Error][Opt] {}", msg),
+            Error::Driver(msg) => write!(f, "{}", msg),
+            Error::Opt(msg) => write!(f, "{}", msg),
         }
     }
 }
