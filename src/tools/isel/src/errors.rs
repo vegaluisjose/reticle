@@ -11,7 +11,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::IR(msg) => write!(f, "{}", msg),
-            Error::ISel(msg) => write!(f, "[Error][ISel] {}", msg),
+            Error::ISel(msg) => write!(f, "{}", msg),
         }
     }
 }
