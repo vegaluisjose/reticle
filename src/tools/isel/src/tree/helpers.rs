@@ -524,9 +524,11 @@ pub fn tree_codegen(
 ) -> Result<Vec<asm::Instr>, Error> {
     let mut body: Vec<asm::Instr> = Vec::new();
     let mut indices = block.bfs(0);
-    // bottom-up code generation
     indices.reverse();
-    for index in indices {
+    let mut next = indices.pop();
+    let mut uncover = String::new();
+    // bottom-up code generation
+    while let Some(index) = next {
         if let Some(node) = block.node(index) {
             if node.is_committed() {
                 if let Some(name) = node.pat() {
@@ -547,6 +549,7 @@ pub fn tree_codegen(
                         }
                     }
                 }
+                next = indices.pop();
             } else if !node.is_staged() && node.is_wire_op() {
                 if let Some(instr) = imap.get(&node.id()) {
                     if !iset.contains(&node.id()) {
@@ -555,8 +558,19 @@ pub fn tree_codegen(
                         iset.insert(node.id());
                     }
                 }
+                next = indices.pop();
+            } else if node.is_prim_op() {
+                next = None;
+                uncover = node.to_string();
+            } else {
+                next = indices.pop();
             }
         }
     }
-    Ok(body)
+    if indices.is_empty() {
+        Ok(body)
+    } else {
+        let msg = format!("missing node: {}", uncover);
+        Err(Error::new_isel_error(&msg))
+    }
 }
