@@ -555,7 +555,7 @@ pub fn tree_codegen(
                         iset.insert(node.id());
                     }
                 }
-            } // TODO: add error for uncovered node
+            }
         }
     }
     Ok(body)
