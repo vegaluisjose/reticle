@@ -367,11 +367,11 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
     pstack.reverse();
     let mut bstack: VecDeque<u64> = VecDeque::new();
     bstack.push_back(start);
-    let mut is_match = true;
+    let mut next = bstack.pop_front();
     let mut bcost: u64 = 0;
     if let Some(proot) = pat.node(0) {
         let pcost = proot.cost();
-        while let Some(bindex) = bstack.pop_front() {
+        while let Some(bindex) = next {
             if let Some(pindex) = pstack.pop() {
                 if let Some(bnode) = block.node(bindex) {
                     if let Some(pnode) = pat.node(pindex) {
@@ -382,29 +382,30 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                                 && pnode.prim() != bnode.prim())
                             || (!pnode.is_inp_op() && pnode.attr() != bnode.attr())
                             || (!pnode.is_inp_op() && bnode.is_committed())
-                            || (pnode.is_inp_op() && !bnode.is_free())
                         {
-                            is_match = false;
-                        }
-                        if !pnode.is_inp_op() {
+                            next = None;
+                        } else if !pnode.is_inp_op() {
                             if bnode.cost() == u64::MAX {
                                 bcost = bnode.cost();
                             } else if bcost != u64::MAX {
                                 bcost += bnode.cost();
                             }
-                        }
-                        if is_match && !pnode.is_inp_op() {
                             if let Some(edge) = block.edge(bindex) {
                                 for e in edge {
                                     bstack.push_back(*e);
                                 }
                             }
+                            next = bstack.pop_front();
+                        } else {
+                            next = bstack.pop_front();
                         }
                     }
                 }
+            } else {
+                next = None;
             }
         }
-        (is_match & (pcost < bcost), pcost)
+        (pstack.is_empty() & (pcost < bcost), pcost)
     } else {
         (false, u64::MAX)
     }
