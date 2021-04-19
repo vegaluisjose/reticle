@@ -32,10 +32,10 @@ impl From<ParseIntError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::Parse(msg) => write!(f, "[Error][Parser] {}", msg),
-            Error::ParseInt(msg) => write!(f, "[Error][ParseInt] {}", msg),
-            Error::Type(msg) => write!(f, "[Error][Type] {}", msg),
-            Error::TryFromInt(msg) => write!(f, "[Error][TryFromInt] {}", msg),
+            Error::Parse(msg) => write!(f, "{}", msg),
+            Error::ParseInt(msg) => write!(f, "{}", msg),
+            Error::Type(msg) => write!(f, "{}", msg),
+            Error::TryFromInt(msg) => write!(f, "{}", msg),
         }
     }
 }
