@@ -48,7 +48,20 @@ loc = { "@" ~ bel ~ xy? }
 
 op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
 
-op_mach = { "lut1" | "lut2" | "lut3" | "lut4" | "lut5" | "lut6" | "fdre" | "fdse" | "carry" | "muladd" | "mul" }
+op_mach = {
+    "lut1" |
+    "lut2" |
+    "lut3" |
+    "lut4" |
+    "lut5" |
+    "lut6" |
+    "fdre" |
+    "fdse" |
+    "carrya" |
+    "vaddrega" |
+    "mul" |
+    "muladd" |
+    "muladdrega" }
 
 op = _{ op_basc | op_mach }
 
