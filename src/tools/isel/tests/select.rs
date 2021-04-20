@@ -17,3 +17,19 @@ fn fsm() {
     let res = select(&prog).unwrap();
     assert_eq!(res, exp);
 }
+
+#[test]
+fn tadd() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/tadd.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/tadd.asm").unwrap();
+    let res = select(&prog).unwrap();
+    assert_eq!(res, exp);
+}
+
+#[test]
+fn tdot() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/tdot.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/tdot.asm").unwrap();
+    let res = select(&prog).unwrap();
+    assert_eq!(res, exp);
+}
