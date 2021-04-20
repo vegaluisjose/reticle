@@ -550,18 +550,22 @@ pub fn tree_codegen(
                     }
                 }
                 next = indices.pop();
-            } else if !node.is_staged() && node.is_wire_op() {
-                if let Some(instr) = imap.get(&node.id()) {
-                    if !iset.contains(&node.id()) {
-                        let wire = asm::InstrWire::try_from(instr.clone())?;
-                        body.push(asm::Instr::from(wire));
-                        iset.insert(node.id());
+            } else if !node.is_staged() {
+                if node.is_wire_op() {
+                    if let Some(instr) = imap.get(&node.id()) {
+                        if !iset.contains(&node.id()) {
+                            let wire = asm::InstrWire::try_from(instr.clone())?;
+                            body.push(asm::Instr::from(wire));
+                            iset.insert(node.id());
+                        }
                     }
+                    next = indices.pop();
+                } else if node.is_inp_op() {
+                    next = indices.pop();
+                } else {
+                    next = None;
+                    uncover = node.to_string();
                 }
-                next = indices.pop();
-            } else if node.is_prim_op() {
-                next = None;
-                uncover = node.to_string();
             } else {
                 next = indices.pop();
             }
