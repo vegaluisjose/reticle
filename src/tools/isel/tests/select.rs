@@ -9,3 +9,11 @@ fn lut_add() {
     let res = select(&prog).unwrap();
     assert_eq!(res, exp);
 }
+
+#[test]
+fn fsm() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/fsm.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm.asm").unwrap();
+    let res = select(&prog).unwrap();
+    assert_eq!(res, exp);
+}
