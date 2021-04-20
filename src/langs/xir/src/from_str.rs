@@ -30,9 +30,11 @@ impl FromStr for OpMach {
             "lut6" => Ok(OpMach::Lut6),
             "fdre" => Ok(OpMach::Fdre),
             "fdse" => Ok(OpMach::Fdse),
-            "carry" => Ok(OpMach::Carry),
-            "muladd" => Ok(OpMach::MulAdd),
+            "carrya" => Ok(OpMach::CarryA),
+            "vaddrega" => Ok(OpMach::VAddRegA),
             "mul" => Ok(OpMach::Mul),
+            "muladd" => Ok(OpMach::MulAdd),
+            "muladdrega" => Ok(OpMach::MulAddRegA),
             _ => Err(Error::new_conv_error(&err)),
         }
     }

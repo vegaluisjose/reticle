@@ -25,9 +25,11 @@ impl PrettyPrint for OpMach {
             OpMach::Lut6 => RcDoc::text("lut6"),
             OpMach::Fdre => RcDoc::text("fdre"),
             OpMach::Fdse => RcDoc::text("fdse"),
-            OpMach::Carry => RcDoc::text("carry"),
-            OpMach::MulAdd => RcDoc::text("muladd"),
+            OpMach::CarryA => RcDoc::text("carrya"),
+            OpMach::VAddRegA => RcDoc::text("vaddrega"),
             OpMach::Mul => RcDoc::text("mul"),
+            OpMach::MulAdd => RcDoc::text("muladd"),
+            OpMach::MulAddRegA => RcDoc::text("muladdrega"),
         }
     }
 }

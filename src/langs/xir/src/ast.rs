@@ -31,9 +31,11 @@ pub enum OpMach {
     Lut6,
     Fdre,
     Fdse,
-    Carry,
+    CarryA,
+    VAddRegA,
     Mul,
     MulAdd,
+    MulAddRegA,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
