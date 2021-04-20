@@ -1,5 +1,6 @@
 use crate::errors::Error;
 use asm::ast::*;
+use itertools::Itertools;
 use std::collections::HashMap;
 use std::rc::Rc;
 
@@ -32,7 +33,13 @@ fn create_map_and_pair(prog: &Prog) -> Result<(Map, Pair), Error> {
 }
 
 fn find_tail(pair: &Pair) -> String {
-    let keys: Vec<String> = pair.keys().cloned().collect();
+    // make it ordered
+    let keys: Vec<String> = pair
+        .iter()
+        .sorted_by_key(|(x, _)| (*x).clone())
+        .map(|(x, _)| x)
+        .cloned()
+        .collect();
     let mut tail = keys[0].clone();
     let mut prev = String::new();
     while tail != prev {
