@@ -4,7 +4,6 @@ version = "0.1.0"
 authors = ["Luis Vega <vegaluisjose@gmail.com>"]
 license = "Apache-2.0"
 edition = "2018"
-
 [dependencies]
 pretty = "0.10.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
@@ -56,6 +55,7 @@ members = [
   "src/langs/asm",
   "src/langs/xir",
   "src/langs/xim",
+  "src/langs/verilog",
   "src/tools/io",
   "src/tools/prettyprint",
   "src/tools/isel",

@@ -1,0 +1,9 @@
+[package]
+name = "verilog"
+version = "0.1.0"
+authors = ["Luis Vega <vegaluisjose@gmail.com>"]
+license = "Apache-2.0"
+edition = "2018"
+
+[dependencies]
+vast = { git = "https://github.com/vegaluisjose/vast.git", rev = "9238cf93e66701787370f848995004ac884ae2a7" }
