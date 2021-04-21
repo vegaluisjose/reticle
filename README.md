@@ -1,4 +1,4 @@
-# Reticle (WIP)
+# Reticle (WIP, highly experimental)
 
 ## Setup, build, and install
 
