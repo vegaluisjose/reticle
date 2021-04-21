@@ -59,12 +59,12 @@ op_mach = {
     "fdse" |
     "carrya" |
     "vaddrega" |
-    "mul" |
-    "muladd" |
-    "muladdrega" |
-    "muladdregaci" |
+    "muladdregacio" |
     "muladdregaco" |
-    "muladdregacio" }
+    "muladdregaci" |
+    "muladdrega" |
+    "muladd" |
+    "mul" }
 
 op = _{ op_basc | op_mach }
 
