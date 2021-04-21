@@ -1,6 +1,6 @@
 use asm::errors::Error as AsmError;
-use xir::errors::Error as XirError;
 use std::fmt;
+use xir::errors::Error as XirError;
 
 #[derive(Debug)]
 pub enum Error {
