@@ -29,17 +29,17 @@ impl Parser {
     }
 
     fn val_bin(input: Node) -> ParseResult<ExprTerm> {
-        let val = i64::from_str_radix(input.as_str(), 2);
+        let val = u64::from_str_radix(input.as_str(), 2);
         match val {
-            Ok(v) => Ok(ExprTerm::Val(v)),
+            Ok(v) => Ok(ExprTerm::Val(v as i64)),
             Err(_) => panic!("Error: parsing {} as bin i64", input.as_str()),
         }
     }
 
     fn val_hex(input: Node) -> ParseResult<ExprTerm> {
-        let val = i64::from_str_radix(input.as_str(), 16);
+        let val = u64::from_str_radix(input.as_str(), 16);
         match val {
-            Ok(v) => Ok(ExprTerm::Val(v)),
+            Ok(v) => Ok(ExprTerm::Val(v as i64)),
             Err(_) => panic!("Error: parsing {} as hex i64", input.as_str()),
         }
     }
