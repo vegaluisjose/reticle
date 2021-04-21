@@ -30,6 +30,9 @@ impl PrettyPrint for OpMach {
             OpMach::Mul => RcDoc::text("mul"),
             OpMach::MulAdd => RcDoc::text("muladd"),
             OpMach::MulAddRegA => RcDoc::text("muladdrega"),
+            OpMach::MulAddRegACi => RcDoc::text("muladdregaci"),
+            OpMach::MulAddRegACo => RcDoc::text("muladdregaco"),
+            OpMach::MulAddRegACio => RcDoc::text("muladdregacio"),
         }
     }
 }

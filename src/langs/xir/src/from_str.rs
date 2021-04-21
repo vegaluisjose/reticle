@@ -35,6 +35,9 @@ impl FromStr for OpMach {
             "mul" => Ok(OpMach::Mul),
             "muladd" => Ok(OpMach::MulAdd),
             "muladdrega" => Ok(OpMach::MulAddRegA),
+            "muladdregaci" => Ok(OpMach::MulAddRegACi),
+            "muladdregaco" => Ok(OpMach::MulAddRegACo),
+            "muladdregacio" => Ok(OpMach::MulAddRegACio),
             _ => Err(Error::new_conv_error(&err)),
         }
     }

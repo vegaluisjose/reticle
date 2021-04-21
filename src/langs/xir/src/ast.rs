@@ -36,6 +36,9 @@ pub enum OpMach {
     Mul,
     MulAdd,
     MulAddRegA,
+    MulAddRegACi,
+    MulAddRegACo,
+    MulAddRegACio,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
