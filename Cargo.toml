@@ -62,6 +62,7 @@ members = [
   "src/tools/translate",
   "src/tools/optimizer",
   "src/tools/bler",
+  "src/tools/bline",
 ]
 
 exclude = ["ci", "dev", "docker"]
