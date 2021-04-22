@@ -4,12 +4,12 @@ use std::fmt;
 #[derive(Debug)]
 pub enum Error {
     IR(IRError),
-    BLine(String),
+    Bline(String),
 }
 
 impl Error {
     pub fn new_bline_error(msg: &str) -> Self {
-        Error::BLine(msg.to_string())
+        Error::Bline(msg.to_string())
     }
 }
 
@@ -23,7 +23,7 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Error::IR(msg) => write!(f, "{}", msg),
-            Error::BLine(msg) => write!(f, "{}", msg),
+            Error::Bline(msg) => write!(f, "{}", msg),
         }
     }
 }
