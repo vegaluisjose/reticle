@@ -274,9 +274,23 @@ pub fn deserialize_target() -> xim::Target {
 }
 
 pub fn assemble(input: asm::Prog) -> Result<xir::Prog, Error> {
-    let _ = deserialize_target();
-    let assembler = Assembler::new(input.sig().clone());
+    let mut assembler = Assembler::new(input.sig().clone());
+    let target = deserialize_target();
+    assembler.set_target(target);
+    for instr in input.body() {
+        match instr {
+            asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
+                assembler.expand_instr_const(instr)?;
+            }
+            asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Id => {
+                assembler.expand_instr_id(instr)?;
+            }
+            asm::Instr::Asm(instr) => assembler.expand_instr_asm(instr)?,
+            _ => (),
+        }
+    }
     let mut prog = xir::Prog::default();
     prog.set_sig(assembler.sig().clone());
+    prog.set_body(assembler.body().clone());
     Ok(prog)
 }
