@@ -8,12 +8,12 @@ pub enum Error {
     IR(IRError),
     Asm(AsmError),
     Xir(XirError),
-    Assembler(String),
+    Bler(String),
 }
 
 impl Error {
-    pub fn new_assembler_error(msg: &str) -> Self {
-        Error::Assembler(msg.to_string())
+    pub fn new_bler_error(msg: &str) -> Self {
+        Error::Bler(msg.to_string())
     }
 }
 
@@ -41,7 +41,7 @@ impl fmt::Display for Error {
             Error::IR(msg) => write!(f, "{}", msg),
             Error::Asm(msg) => write!(f, "{}", msg),
             Error::Xir(msg) => write!(f, "{}", msg),
-            Error::Assembler(msg) => write!(f, "{}", msg),
+            Error::Bler(msg) => write!(f, "{}", msg),
         }
     }
 }
