@@ -94,4 +94,7 @@ impl Target {
     pub fn insert(&mut self, name: &str, pat: Pat) -> Option<Pat> {
         self.pat.insert(name.to_string(), pat)
     }
+    pub fn extend(&mut self, target: Target) {
+        self.pat.extend(target.pat().clone());
+    }
 }
