@@ -5,6 +5,11 @@ authors = ["Luis Vega <vegaluisjose@gmail.com>"]
 license = "Apache-2.0"
 edition = "2018"
 
+[build-dependencies]
+xim = { path = "../../langs/xim" }
+
 [dependencies]
+ir = { path = "../../langs/ir" }
 asm = { path = "../../langs/asm" }
+xim = { path = "../../langs/xim" }
 xir = { path = "../../langs/xir" }
