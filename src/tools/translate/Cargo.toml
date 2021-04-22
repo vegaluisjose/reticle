@@ -12,4 +12,5 @@ asm = { path = "../../langs/asm" }
 xir = { path = "../../langs/xir" }
 isel = { path = "../isel" }
 bler = { path = "../bler" }
+bline = { path = "../bline" }
 io = { path = "../io" }

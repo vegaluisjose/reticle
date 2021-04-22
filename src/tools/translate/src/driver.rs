@@ -1,6 +1,7 @@
 use crate::errors::Error;
 use crate::opt::{Lang, Opt};
 use bler::assemble;
+use bline::behav_try_from_ir_prog;
 use io::file::write_to_file;
 use ir::parser::Parser as IRParser;
 use isel::select;
@@ -50,6 +51,12 @@ impl Driver {
                 let asm_prog = select(&ir_prog)?;
                 let xir_prog = assemble(asm_prog)?;
                 write_output(output, &xir_prog.to_string());
+                Ok(())
+            }
+            (Lang::IR, Lang::Behav) => {
+                let ir_prog = IRParser::parse_from_file(input)?;
+                let behav_prog = behav_try_from_ir_prog(&ir_prog)?;
+                write_output(output, &behav_prog.to_string());
                 Ok(())
             }
             (_, _) => Err(Error::new_driver_error("Unsupported conversion")),

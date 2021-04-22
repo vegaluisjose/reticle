@@ -1,5 +1,6 @@
 use asm::errors::Error as AsmError;
 use bler::errors::Error as BlerError;
+use bline::errors::Error as BlineError;
 use ir::errors::Error as IRError;
 use isel::errors::Error as ISelError;
 use std::fmt;
@@ -14,6 +15,7 @@ pub enum Error {
     Xir(XirError),
     ISel(ISelError),
     Bler(BlerError),
+    Bline(BlineError),
 }
 
 impl Error {
@@ -55,6 +57,12 @@ impl From<BlerError> for Error {
     }
 }
 
+impl From<BlineError> for Error {
+    fn from(e: BlineError) -> Self {
+        Error::Bline(e)
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -63,6 +71,7 @@ impl fmt::Display for Error {
             Error::Xir(msg) => write!(f, "{}", msg),
             Error::ISel(msg) => write!(f, "{}", msg),
             Error::Bler(msg) => write!(f, "{}", msg),
+            Error::Bline(msg) => write!(f, "{}", msg),
             Error::Opt(msg) => write!(f, "{}", msg),
             Error::Driver(msg) => write!(f, "{}", msg),
         }

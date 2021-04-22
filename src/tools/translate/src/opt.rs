@@ -48,6 +48,7 @@ pub enum Lang {
     IR,
     Asm,
     Xir,
+    Behav,
 }
 
 impl fmt::Display for Lang {
@@ -56,6 +57,7 @@ impl fmt::Display for Lang {
             Lang::IR => "ir",
             Lang::Asm => "asm",
             Lang::Xir => "xir",
+            Lang::Behav => "behav",
         };
         write!(f, "{}", backend)
     }
@@ -68,6 +70,7 @@ impl FromStr for Lang {
             "ir" => Ok(Lang::IR),
             "asm" => Ok(Lang::Asm),
             "xir" => Ok(Lang::Xir),
+            "behav" => Ok(Lang::Behav),
             _ => Err(Error::new_opt_error("Unsupported language")),
         }
     }
