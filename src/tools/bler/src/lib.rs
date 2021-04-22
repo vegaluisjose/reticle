@@ -33,7 +33,7 @@ impl Default for Assembler {
     fn default() -> Self {
         Assembler {
             count: 0,
-            prefix: "n".to_string(),
+            prefix: "t".to_string(),
             sig: xir::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
