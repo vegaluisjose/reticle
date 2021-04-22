@@ -47,6 +47,7 @@ impl Opt {
 pub enum Lang {
     IR,
     Asm,
+    Xir,
 }
 
 impl fmt::Display for Lang {
@@ -54,6 +55,7 @@ impl fmt::Display for Lang {
         let backend = match self {
             Lang::IR => "ir",
             Lang::Asm => "asm",
+            Lang::Xir => "xir",
         };
         write!(f, "{}", backend)
     }
@@ -65,6 +67,7 @@ impl FromStr for Lang {
         match input {
             "ir" => Ok(Lang::IR),
             "asm" => Ok(Lang::Asm),
+            "xir" => Ok(Lang::Xir),
             _ => Err(Error::new_opt_error("Unsupported language")),
         }
     }

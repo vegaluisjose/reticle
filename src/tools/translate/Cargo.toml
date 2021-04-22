@@ -9,5 +9,7 @@ edition = "2018"
 structopt = { version = "0.3", default-features = false }
 ir = { path = "../../langs/ir" }
 asm = { path = "../../langs/asm" }
+xir = { path = "../../langs/xir" }
 isel = { path = "../isel" }
+assembler = { path = "../assembler" }
 io = { path = "../io" }
