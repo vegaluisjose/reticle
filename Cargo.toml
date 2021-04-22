@@ -61,7 +61,7 @@ members = [
   "src/tools/isel",
   "src/tools/translate",
   "src/tools/optimizer",
-  "src/tools/assembler",
+  "src/tools/bler",
 ]
 
 exclude = ["ci", "dev", "docker"]

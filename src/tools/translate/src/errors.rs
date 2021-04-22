@@ -1,5 +1,5 @@
 use asm::errors::Error as AsmError;
-use assembler::errors::Error as BlerError;
+use bler::errors::Error as BlerError;
 use ir::errors::Error as IRError;
 use isel::errors::Error as ISelError;
 use std::fmt;

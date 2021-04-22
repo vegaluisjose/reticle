@@ -259,7 +259,7 @@ impl Assembler {
     }
 }
 
-pub fn xir_from_asm(input: asm::Prog) -> Result<xir::Prog, Error> {
+pub fn assemble(input: asm::Prog) -> Result<xir::Prog, Error> {
     let assembler = Assembler::new(input.sig().clone());
     let mut prog = xir::Prog::default();
     prog.set_sig(assembler.sig().clone());

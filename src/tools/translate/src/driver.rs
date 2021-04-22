@@ -1,6 +1,6 @@
 use crate::errors::Error;
 use crate::opt::{Lang, Opt};
-use assembler::xir_from_asm;
+use bler::assemble;
 use io::file::write_to_file;
 use ir::parser::Parser as IRParser;
 use isel::select;
@@ -48,7 +48,7 @@ impl Driver {
             (Lang::IR, Lang::Xir) => {
                 let ir_prog = IRParser::parse_from_file(input)?;
                 let asm_prog = select(&ir_prog)?;
-                let xir_prog = xir_from_asm(asm_prog)?;
+                let xir_prog = assemble(asm_prog)?;
                 write_output(output, &xir_prog.to_string());
                 Ok(())
             }

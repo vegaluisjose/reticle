@@ -11,5 +11,5 @@ ir = { path = "../../langs/ir" }
 asm = { path = "../../langs/asm" }
 xir = { path = "../../langs/xir" }
 isel = { path = "../isel" }
-assembler = { path = "../assembler" }
+bler = { path = "../bler" }
 io = { path = "../io" }
