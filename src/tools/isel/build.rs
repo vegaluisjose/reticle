@@ -4,7 +4,7 @@ use std::path::Path;
 fn build_pattern(prim: &str) {
     use pat::parser::Parser;
     let out_dir = env::var("OUT_DIR").unwrap();
-    let pat_path = format!("../../../examples/target/patterns/{}.pat", prim);
+    let pat_path = format!("../../../examples/pat/{}.pat", prim);
     let bin_name = format!("{}_pat.bin", prim);
     let pat = Parser::parse_from_file(pat_path).unwrap();
     let bin_path = Path::new(&out_dir).join(bin_name);
@@ -25,8 +25,8 @@ fn build_implementation(prim: &str) {
 }
 
 fn main() {
-    println!("cargo:rerun-if-changed=../../../examples/target/patterns/lut.pat");
-    println!("cargo:rerun-if-changed=../../../examples/target/patterns/dsp.pat");
+    println!("cargo:rerun-if-changed=../../../examples/pat/lut.pat");
+    println!("cargo:rerun-if-changed=../../../examples/pat/dsp.pat");
     println!("cargo:rerun-if-changed=../../../examples/xim/lut.xim");
     println!("cargo:rerun-if-changed=../../../examples/xim/dsp.xim");
     build_pattern("lut");
