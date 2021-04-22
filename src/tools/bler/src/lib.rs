@@ -3,6 +3,7 @@ pub mod errors;
 use crate::errors::Error;
 use asm::ast as asm;
 use std::collections::HashMap;
+use std::path::Path;
 use xim::ast as xim;
 use xir::ast as xir;
 
@@ -259,7 +260,21 @@ impl Assembler {
     }
 }
 
+pub fn deserialize_target_from_file(prim: &str) -> xim::Target {
+    let filename = format!("{}_xim.bin", prim);
+    let path = Path::new(env!("OUT_DIR")).join(filename);
+    xim::Target::deserialize_from_file(path)
+}
+
+pub fn deserialize_target() -> xim::Target {
+    let mut lut = deserialize_target_from_file("lut");
+    let dsp = deserialize_target_from_file("dsp");
+    lut.extend(dsp);
+    lut
+}
+
 pub fn assemble(input: asm::Prog) -> Result<xir::Prog, Error> {
+    let _ = deserialize_target();
     let assembler = Assembler::new(input.sig().clone());
     let mut prog = xir::Prog::default();
     prog.set_sig(assembler.sig().clone());
