@@ -15,7 +15,7 @@ fn build_implementation(prim: &str) {
     use xim::parser::Parser;
     let out_dir = env::var("OUT_DIR").unwrap();
     let imp_path = format!(
-        "../../../examples/target/implementations/ultrascale/{}.xim",
+        "../../../examples/xim/{}.xim",
         prim
     );
     let bin_name = format!("{}_xim.bin", prim);
@@ -27,8 +27,8 @@ fn build_implementation(prim: &str) {
 fn main() {
     println!("cargo:rerun-if-changed=../../../examples/target/patterns/lut.pat");
     println!("cargo:rerun-if-changed=../../../examples/target/patterns/dsp.pat");
-    println!("cargo:rerun-if-changed=../../../examples/target/implementations/ultrascale/lut.xim");
-    println!("cargo:rerun-if-changed=../../../examples/target/implementations/ultrascale/dsp.xim");
+    println!("cargo:rerun-if-changed=../../../examples/xim/lut.xim");
+    println!("cargo:rerun-if-changed=../../../examples/xim/dsp.xim");
     build_pattern("lut");
     build_pattern("dsp");
     build_implementation("lut");
