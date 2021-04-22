@@ -7,3 +7,4 @@ edition = "2018"
 
 [dependencies]
 ir = { path = "../../langs/ir" }
+verilog = { path = "../../langs/verilog" }
