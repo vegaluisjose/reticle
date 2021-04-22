@@ -4,10 +4,7 @@ use std::path::Path;
 fn build_implementation(prim: &str) {
     use xim::parser::Parser;
     let out_dir = env::var("OUT_DIR").unwrap();
-    let imp_path = format!(
-        "../../../examples/xim/{}.xim",
-        prim
-    );
+    let imp_path = format!("../../../examples/xim/{}.xim", prim);
     let bin_name = format!("{}_xim.bin", prim);
     let imp = Parser::parse_from_file(imp_path).unwrap();
     let bin_path = Path::new(&out_dir).join(bin_name);
