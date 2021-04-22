@@ -4,7 +4,7 @@ use bler::assemble;
 use bline::behav_try_from_ir_prog;
 use io::file::write_to_file;
 use ir::parser::Parser as IRParser;
-use isel::select;
+use isel::try_select_from_ir_prog;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -42,13 +42,13 @@ impl Driver {
         match (self.opts().from(), self.opts().to()) {
             (Lang::IR, Lang::Asm) => {
                 let ir_prog = IRParser::parse_from_file(input)?;
-                let asm_prog = select(&ir_prog)?;
+                let asm_prog = try_select_from_ir_prog(&ir_prog)?;
                 write_output(output, &asm_prog.to_string());
                 Ok(())
             }
             (Lang::IR, Lang::Xir) => {
                 let ir_prog = IRParser::parse_from_file(input)?;
-                let asm_prog = select(&ir_prog)?;
+                let asm_prog = try_select_from_ir_prog(&ir_prog)?;
                 let xir_prog = assemble(asm_prog)?;
                 write_output(output, &xir_prog.to_string());
                 Ok(())
