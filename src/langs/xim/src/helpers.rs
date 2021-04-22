@@ -88,4 +88,7 @@ impl Target {
     pub fn insert(&mut self, name: &str, imp: Imp) -> Option<Imp> {
         self.imp.insert(name.to_string(), imp)
     }
+    pub fn extend(&mut self, target: Target) {
+        self.imp.extend(target.imp().clone());
+    }
 }
