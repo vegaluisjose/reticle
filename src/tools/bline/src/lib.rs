@@ -8,8 +8,8 @@ use std::convert::TryFrom;
 use std::convert::TryInto;
 use verilog::ast as vl;
 
-pub const CLOCK: &str = "clock";
-pub const RESET: &str = "reset";
+const CLOCK: &str = "clock";
+const RESET: &str = "reset";
 
 fn vec_expr_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Expr>, Error> {
     match term {
