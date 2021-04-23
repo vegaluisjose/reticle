@@ -5,22 +5,22 @@ imp dmuladd_i8i8[1, 1](a: i8, b: i8, c: i8) -> (y: i8) {
   y:i8 = muladd(a, b, c) @alu(??, ??);
 }
 
-imp daddrega_i8v4[1, 1](a: i8<4>, b: i8<4>, en: bool) -> (y: i8<4>) {
-  y:i8 = vaddrega(a, b, en) @alu(??, ??);
+imp daddrega_i8v4[1, 1](a: i8<4>, b: i8<4>, ena: bool, enb: bool, enp: bool) -> (y: i8<4>) {
+  y:i8 = vaddrega(a, b, ena, enb, enp) @alu(??, ??);
 }
 
-imp dmuladdrega_i8i8[1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
-  y:i8 = muladdrega(a, b, c, en) @alu(??, ??);
+imp dmuladdrega_i8i8[1, 1](a: i8, b: i8, c: i8, ena: bool, enb: bool, enm: bool, enp: bool) -> (y: i8) {
+  y:i8 = muladdrega(a, b, c, ena, enb, enm, enp) @alu(??, ??);
 }
 
-imp dmuladdregaci_i8i8[1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
-  y:i8 = muladdregaci(a, b, c, en) @alu(??, ??);
+imp dmuladdregaci_i8i8[1, 1](a: i8, b: i8, c: i8, ena: bool, enb: bool, enm: bool, enp: bool) -> (y: i8) {
+  y:i8 = muladdregaci(a, b, c, ena, enb, enm, enp) @alu(??, ??);
 }
 
-imp dmuladdregaco_i8i8[1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
-  y:i8 = muladdregaco(a, b, c, en) @alu(??, ??);
+imp dmuladdregaco_i8i8[1, 1](a: i8, b: i8, c: i8, ena: bool, enb: bool, enm: bool, enp: bool) -> (y: i8) {
+  y:i8 = muladdregaco(a, b, c, ena, enb, enm, enp) @alu(??, ??);
 }
 
-imp dmuladdregacio_i8i8[1, 1](a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
-  y:i8 = muladdregacio(a, b, c, en) @alu(??, ??);
+imp dmuladdregacio_i8i8[1, 1](a: i8, b: i8, c: i8, ena: bool, enb: bool, enm: bool, enp: bool) -> (y: i8) {
+  y:i8 = muladdregacio(a, b, c, ena, enb, enm, enp) @alu(??, ??);
 }
