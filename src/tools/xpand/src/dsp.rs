@@ -50,10 +50,8 @@ pub enum XorSimd {
     Two,
 }
 
-#[derive(Clone, Debug)]
-pub struct Dsp {
-    pub name: String,
-    pub prim: String,
+#[derive(Clone, Debug, Default)]
+pub struct Attr {
     pub a_input: Input,
     pub b_input: Input,
     pub a_multsel: AMultSel,
@@ -64,6 +62,13 @@ pub struct Dsp {
     pub use_simd: UseSimd,
     pub use_widexor: UseWideXor,
     pub xorsimd: XorSimd,
+}
+
+#[derive(Clone, Debug)]
+pub struct Dsp {
+    pub name: String,
+    pub prim: String,
+    pub attr: Attr,
 }
 
 impl Default for Input {
@@ -119,16 +124,7 @@ impl Default for Dsp {
         Dsp {
             name: String::new(),
             prim: "DSP48E2".to_string(),
-            a_input: Input::default(),
-            b_input: Input::default(),
-            a_multsel: AMultSel::default(),
-            b_multsel: BMultSel::default(),
-            preaddinsel: PreAddInSel::default(),
-            rnd: 0,
-            use_mult: UseMult::default(),
-            use_simd: UseSimd::default(),
-            use_widexor: UseWideXor::default(),
-            xorsimd: XorSimd::default(),
+            attr: Attr::default(),
         }
     }
 }
@@ -210,19 +206,19 @@ impl XorSimd {
 impl Dsp {
     pub fn to_instance(self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
-        inst.connect("A_INPUT", self.a_input.to_expr());
-        inst.connect("B_INPUT", self.b_input.to_expr());
-        inst.connect("AMULTSEL", self.a_multsel.to_expr());
-        inst.connect("BMULTSEL", self.b_multsel.to_expr());
-        inst.connect("PREADDINSEL", self.preaddinsel.to_expr());
+        inst.connect("A_INPUT", self.attr.a_input.to_expr());
+        inst.connect("B_INPUT", self.attr.b_input.to_expr());
+        inst.connect("AMULTSEL", self.attr.a_multsel.to_expr());
+        inst.connect("BMULTSEL", self.attr.b_multsel.to_expr());
+        inst.connect("PREADDINSEL", self.attr.preaddinsel.to_expr());
         inst.connect(
             "RND",
-            vl::Expr::new_ulit_hex(48, &format!("{:x}", self.rnd)),
+            vl::Expr::new_ulit_hex(48, &format!("{:x}", self.attr.rnd)),
         );
-        inst.connect("USE_MULT", self.use_mult.to_expr());
-        inst.connect("USE_SIMD", self.use_simd.to_expr());
-        inst.connect("USE_WIDEXOR", self.use_widexor.to_expr());
-        inst.connect("XORSIMD", self.xorsimd.to_expr());
+        inst.connect("USE_MULT", self.attr.use_mult.to_expr());
+        inst.connect("USE_SIMD", self.attr.use_simd.to_expr());
+        inst.connect("USE_WIDEXOR", self.attr.use_widexor.to_expr());
+        inst.connect("XORSIMD", self.attr.xorsimd.to_expr());
         inst
     }
     pub fn set_name(&mut self, name: &str) {
