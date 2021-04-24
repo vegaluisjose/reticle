@@ -34,7 +34,7 @@ pub fn instrmap_from_prog(prog: &ir::Prog) -> Result<ir::InstrMap, Error> {
 }
 
 // TODO: impl try_from after refactoring done
-pub fn try_select_from_ir_prog(prog: &ir::Prog) -> Result<asm::Prog, Error> {
+pub fn try_from_ir_prog(prog: &ir::Prog) -> Result<asm::Prog, Error> {
     if let Some(main) = prog.get("main") {
         let lpat = deserialize_pat_from_file("lut");
         let dpat = deserialize_pat_from_file("dsp");
