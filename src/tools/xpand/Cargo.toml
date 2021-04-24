@@ -11,3 +11,4 @@ ir = { path = "../../langs/ir" }
 xir = { path = "../../langs/xir" }
 verilog = { path = "../../langs/verilog" }
 io = { path = "../io" }
+bline = { path = "../bline" }

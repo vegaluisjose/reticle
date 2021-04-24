@@ -1,3 +1,4 @@
+use bline::errors::Error as BlineError;
 use ir::errors::Error as IRError;
 use std::fmt;
 use std::num::TryFromIntError;
@@ -7,6 +8,7 @@ use xir::errors::Error as XirError;
 pub enum Error {
     IR(IRError),
     Xir(XirError),
+    Bline(BlineError),
     Xpand(String),
     TryFromInt(TryFromIntError),
 }
@@ -29,6 +31,12 @@ impl From<XirError> for Error {
     }
 }
 
+impl From<BlineError> for Error {
+    fn from(e: BlineError) -> Self {
+        Error::Bline(e)
+    }
+}
+
 impl From<TryFromIntError> for Error {
     fn from(e: TryFromIntError) -> Self {
         Error::TryFromInt(e)
@@ -41,6 +49,7 @@ impl fmt::Display for Error {
             Error::IR(msg) => write!(f, "{}", msg),
             Error::Xir(msg) => write!(f, "{}", msg),
             Error::Xpand(msg) => write!(f, "{}", msg),
+            Error::Bline(msg) => write!(f, "{}", msg),
             Error::TryFromInt(msg) => write!(f, "{}", msg),
         }
     }
