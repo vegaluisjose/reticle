@@ -11,7 +11,7 @@ use verilog::ast as vl;
 const CLOCK: &str = "clock";
 const RESET: &str = "reset";
 
-fn vec_expr_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Expr>, Error> {
+pub fn vec_expr_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Expr>, Error> {
     match term {
         ir::ExprTerm::Any => Ok(vec![vl::Expr::new_ref("")]),
         ir::ExprTerm::Var(id, ty) => {
@@ -30,8 +30,7 @@ fn vec_expr_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Expr>, Error> {
     }
 }
 
-#[allow(dead_code)]
-fn vec_expr_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Expr>, Error> {
+pub fn vec_expr_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Expr>, Error> {
     let mut exprs: Vec<vl::Expr> = Vec::new();
     for t in tup.term() {
         exprs.extend(vec_expr_try_from_term(t)?);
@@ -39,8 +38,7 @@ fn vec_expr_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Expr>, Error> {
     Ok(exprs)
 }
 
-#[allow(dead_code)]
-fn vec_expr_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Expr>, Error> {
+pub fn vec_expr_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Expr>, Error> {
     match expr {
         ir::Expr::Tup(tup) => Ok(vec_expr_try_from_tup(tup)?),
         ir::Expr::Term(term) => Ok(vec_expr_try_from_term(term)?),
@@ -71,7 +69,7 @@ fn sign_expr_try_from_term(term: ir::ExprTerm) -> Result<Vec<vl::Expr>, Error> {
     }
 }
 
-fn wire_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
+pub fn wire_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
     let mut decls: Vec<vl::Decl> = Vec::new();
     if let Some(width) = term.width() {
         let exprs: Vec<vl::Expr> = vec_expr_try_from_term(term)?;
@@ -83,7 +81,7 @@ fn wire_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
     Ok(decls)
 }
 
-fn wire_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
+pub fn wire_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
     let mut decls: Vec<vl::Decl> = Vec::new();
     for term in tup.term() {
         let t: Vec<vl::Decl> = wire_try_from_term(term)?;
@@ -92,14 +90,14 @@ fn wire_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
     Ok(decls)
 }
 
-fn wire_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Decl>, Error> {
+pub fn wire_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Decl>, Error> {
     match expr {
         ir::Expr::Tup(tup) => Ok(wire_try_from_tup(tup)?),
         ir::Expr::Term(term) => Ok(wire_try_from_term(term)?),
     }
 }
 
-fn reg_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
+pub fn reg_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
     let mut decls: Vec<vl::Decl> = Vec::new();
     if let Some(width) = term.width() {
         let exprs: Vec<vl::Expr> = vec_expr_try_from_term(term)?;
@@ -111,7 +109,7 @@ fn reg_try_from_term(term: &ir::ExprTerm) -> Result<Vec<vl::Decl>, Error> {
     Ok(decls)
 }
 
-fn reg_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
+pub fn reg_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
     let mut decls: Vec<vl::Decl> = Vec::new();
     for term in tup.term() {
         let t: Vec<vl::Decl> = reg_try_from_term(term)?;
@@ -120,14 +118,14 @@ fn reg_try_from_tup(tup: &ir::ExprTup) -> Result<Vec<vl::Decl>, Error> {
     Ok(decls)
 }
 
-fn reg_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Decl>, Error> {
+pub fn reg_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Decl>, Error> {
     match expr {
         ir::Expr::Tup(tup) => Ok(reg_try_from_tup(tup)?),
         ir::Expr::Term(term) => Ok(reg_try_from_term(term)?),
     }
 }
 
-fn input_try_from_sig(sig: &ir::Sig) -> Result<Vec<vl::Port>, Error> {
+pub fn input_try_from_sig(sig: &ir::Sig) -> Result<Vec<vl::Port>, Error> {
     let mut port: Vec<vl::Port> = Vec::new();
     port.push(vl::Port::Input(vl::Decl::new_wire(CLOCK, 1)));
     port.push(vl::Port::Input(vl::Decl::new_wire(RESET, 1)));
@@ -138,18 +136,18 @@ fn input_try_from_sig(sig: &ir::Sig) -> Result<Vec<vl::Port>, Error> {
     Ok(port)
 }
 
-fn vec_decl_try_from_instr_wire(instr: &ir::InstrWire) -> Result<Vec<vl::Decl>, Error> {
+pub fn vec_decl_try_from_instr_wire(instr: &ir::InstrWire) -> Result<Vec<vl::Decl>, Error> {
     Ok(wire_try_from_expr(instr.dst())?)
 }
 
-fn vec_decl_try_from_instr_prim(instr: &ir::InstrPrim) -> Result<Vec<vl::Decl>, Error> {
+pub fn vec_decl_try_from_instr_prim(instr: &ir::InstrPrim) -> Result<Vec<vl::Decl>, Error> {
     match instr.op() {
         ir::OpPrim::Reg => Ok(reg_try_from_expr(instr.dst())?),
         _ => Ok(wire_try_from_expr(instr.dst())?),
     }
 }
 
-fn vec_decl_try_from_instr(instr: &ir::Instr) -> Result<Vec<vl::Decl>, Error> {
+pub fn vec_decl_try_from_instr(instr: &ir::Instr) -> Result<Vec<vl::Decl>, Error> {
     match instr {
         ir::Instr::Wire(instr) => Ok(vec_decl_try_from_instr_wire(instr)?),
         ir::Instr::Prim(instr) => Ok(vec_decl_try_from_instr_prim(instr)?),
