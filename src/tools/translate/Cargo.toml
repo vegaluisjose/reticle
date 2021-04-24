@@ -13,4 +13,5 @@ xir = { path = "../../langs/xir" }
 isel = { path = "../isel" }
 bler = { path = "../bler" }
 bline = { path = "../bline" }
+xpand = { path = "../xpand" }
 io = { path = "../io" }

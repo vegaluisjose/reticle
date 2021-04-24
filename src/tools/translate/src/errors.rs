@@ -5,6 +5,7 @@ use ir::errors::Error as IRError;
 use isel::errors::Error as ISelError;
 use std::fmt;
 use xir::errors::Error as XirError;
+use xpand::errors::Error as XpandError;
 
 #[derive(Debug)]
 pub enum Error {
@@ -16,6 +17,7 @@ pub enum Error {
     ISel(ISelError),
     Bler(BlerError),
     Bline(BlineError),
+    Xpand(XpandError),
 }
 
 impl Error {
@@ -63,6 +65,12 @@ impl From<BlineError> for Error {
     }
 }
 
+impl From<XpandError> for Error {
+    fn from(e: XpandError) -> Self {
+        Error::Xpand(e)
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -74,6 +82,7 @@ impl fmt::Display for Error {
             Error::Bline(msg) => write!(f, "{}", msg),
             Error::Opt(msg) => write!(f, "{}", msg),
             Error::Driver(msg) => write!(f, "{}", msg),
+            Error::Xpand(msg) => write!(f, "{}", msg),
         }
     }
 }
