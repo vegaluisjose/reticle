@@ -39,12 +39,6 @@ pub enum UseSimd {
 }
 
 #[derive(Clone, Debug)]
-pub enum UseWideXor {
-    False,
-    True,
-}
-
-#[derive(Clone, Debug)]
 pub enum XorSimd {
     One,
     Two,
@@ -93,7 +87,7 @@ pub struct Attr {
     pub rnd: u64,
     pub use_mult: UseMult,
     pub use_simd: UseSimd,
-    pub use_widexor: UseWideXor,
+    pub use_widexor: bool,
     pub xorsimd: XorSimd,
     pub autoreset_patdet: AutoResetPatDet,
     pub autoreset_priority: AutoResetPriority,
@@ -154,12 +148,6 @@ impl Default for UseSimd {
     }
 }
 
-impl Default for UseWideXor {
-    fn default() -> Self {
-        UseWideXor::False
-    }
-}
-
 impl Default for XorSimd {
     fn default() -> Self {
         XorSimd::Two
@@ -207,7 +195,7 @@ impl Default for Attr {
             rnd: 0,
             use_mult: UseMult::default(),
             use_simd: UseSimd::default(),
-            use_widexor: UseWideXor::default(),
+            use_widexor: false,
             xorsimd: XorSimd::default(),
             autoreset_patdet: AutoResetPatDet::default(),
             autoreset_priority: AutoResetPriority::default(),
@@ -293,15 +281,6 @@ impl UseSimd {
     }
 }
 
-impl UseWideXor {
-    pub fn to_expr(&self) -> vl::Expr {
-        match self {
-            UseWideXor::False => vl::Expr::new_str("FALSE"),
-            UseWideXor::True => vl::Expr::new_str("TRUE"),
-        }
-    }
-}
-
 impl XorSimd {
     pub fn to_expr(&self) -> vl::Expr {
         match self {
@@ -373,7 +352,10 @@ impl Dsp {
         );
         inst.add_param("USE_MULT", self.attr.use_mult.to_expr());
         inst.add_param("USE_SIMD", self.attr.use_simd.to_expr());
-        inst.add_param("USE_WIDEXOR", self.attr.use_widexor.to_expr());
+        inst.add_param(
+            "USE_WIDEXOR",
+            vl::Expr::new_str(&format!("{}", self.attr.use_widexor).to_uppercase()),
+        );
         inst.add_param("XORSIMD", self.attr.xorsimd.to_expr());
         inst.add_param("AUTORESET_PATDET", self.attr.autoreset_patdet.to_expr());
         inst.add_param("AUTORESET_PRIORITY", self.attr.autoreset_priority.to_expr());
