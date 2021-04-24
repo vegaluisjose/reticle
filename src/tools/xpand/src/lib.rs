@@ -1,3 +1,4 @@
+pub mod dsp;
 pub mod errors;
 
 pub const CLOCK: &str = "clock";

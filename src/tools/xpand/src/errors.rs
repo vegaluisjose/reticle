@@ -1,7 +1,7 @@
-use xir::errors::Error as XirError;
 use ir::errors::Error as IRError;
 use std::fmt;
 use std::num::TryFromIntError;
+use xir::errors::Error as XirError;
 
 #[derive(Debug)]
 pub enum Error {
