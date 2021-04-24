@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use verilog::ast as vl;
 
 #[derive(Clone, Debug)]
@@ -140,11 +141,25 @@ pub struct Attr {
     pub preg: NumReg,
 }
 
+pub type PortMap = HashMap<String, vl::Expr>;
+
+#[derive(Clone, Debug)]
+pub struct Input {
+    pub map: PortMap,
+}
+
+#[derive(Clone, Debug)]
+pub struct Output {
+    pub map: PortMap,
+}
+
 #[derive(Clone, Debug)]
 pub struct Dsp {
     pub name: String,
     pub prim: String,
     pub attr: Attr,
+    pub input: Input,
+    pub output: Output,
 }
 
 impl Default for InputTy {
@@ -284,12 +299,78 @@ impl Default for Attr {
     }
 }
 
+impl Default for Input {
+    fn default() -> Self {
+        let mut map = PortMap::new();
+        map.insert("ACIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("BCIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("CARRYCASCIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("MULTSIGNIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("PCIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("ALUMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("CARRYINSEL".to_string(), vl::Expr::new_ref(""));
+        map.insert("CLK".to_string(), vl::Expr::new_ref(""));
+        map.insert("INMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("OPMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("A".to_string(), vl::Expr::new_ref(""));
+        map.insert("B".to_string(), vl::Expr::new_ref(""));
+        map.insert("C".to_string(), vl::Expr::new_ref(""));
+        map.insert("CARRYIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("D".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEA1".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEA2".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEAD".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEALUMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEB1".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEB2".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEC".to_string(), vl::Expr::new_ref(""));
+        map.insert("CECARRYIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("CECTRL".to_string(), vl::Expr::new_ref(""));
+        map.insert("CED".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEINMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEM".to_string(), vl::Expr::new_ref(""));
+        map.insert("CEP".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTA".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTALLCARRYIN".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTALUMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTB".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTC".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTCTRL".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTD".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTINMODE".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTM".to_string(), vl::Expr::new_ref(""));
+        map.insert("RSTP".to_string(), vl::Expr::new_ref(""));
+        Input { map }
+    }
+}
+
+impl Default for Output {
+    fn default() -> Self {
+        let mut map = PortMap::new();
+        map.insert("ACOUT".to_string(), vl::Expr::new_ref(""));
+        map.insert("BCOUT".to_string(), vl::Expr::new_ref(""));
+        map.insert("CARRYCASCOUT".to_string(), vl::Expr::new_ref(""));
+        map.insert("MULTSIGNOUT".to_string(), vl::Expr::new_ref(""));
+        map.insert("PCOUT".to_string(), vl::Expr::new_ref(""));
+        map.insert("OVERFLOW".to_string(), vl::Expr::new_ref(""));
+        map.insert("PATTERNBDETECT".to_string(), vl::Expr::new_ref(""));
+        map.insert("PATTERNDETECT".to_string(), vl::Expr::new_ref(""));
+        map.insert("UNDERFLOW".to_string(), vl::Expr::new_ref(""));
+        map.insert("CARRYOUT".to_string(), vl::Expr::new_ref(""));
+        map.insert("P".to_string(), vl::Expr::new_ref(""));
+        map.insert("XOROUT".to_string(), vl::Expr::new_ref(""));
+        Output { map }
+    }
+}
+
 impl Default for Dsp {
     fn default() -> Self {
         Dsp {
             name: String::new(),
             prim: "DSP48E2".to_string(),
             attr: Attr::default(),
+            input: Input::default(),
+            output: Output::default(),
         }
     }
 }
@@ -541,6 +622,12 @@ impl Dsp {
         inst.add_param("MREG", self.attr.mreg.to_expr());
         inst.add_param("OPMODEREG", self.attr.opmodereg.to_expr());
         inst.add_param("PREG", self.attr.preg.to_expr());
+        for (k, v) in self.input.map.iter() {
+            inst.connect(&k, v.clone());
+        }
+        for (k, v) in self.output.map.iter() {
+            inst.connect(&k, v.clone());
+        }
         inst
     }
     pub fn set_name(&mut self, name: &str) {
