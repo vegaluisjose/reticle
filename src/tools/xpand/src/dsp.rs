@@ -103,6 +103,14 @@ pub struct Attr {
     pub is_opmode_inverted: u64,
     pub is_rstallcarryin_inverted: bool,
     pub is_rstalumode_inverted: bool,
+    pub is_rsta_inverted: bool,
+    pub is_rstb_inverted: bool,
+    pub is_rstctrl_inverted: bool,
+    pub is_rstc_inverted: bool,
+    pub is_rstd_inverted: bool,
+    pub is_rstinmode_inverted: bool,
+    pub is_rstm_inverted: bool,
+    pub is_rstp_inverted: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -211,6 +219,14 @@ impl Default for Attr {
             is_opmode_inverted: 0,
             is_rstallcarryin_inverted: false,
             is_rstalumode_inverted: false,
+            is_rsta_inverted: false,
+            is_rstb_inverted: false,
+            is_rstctrl_inverted: false,
+            is_rstc_inverted: false,
+            is_rstd_inverted: false,
+            is_rstinmode_inverted: false,
+            is_rstm_inverted: false,
+            is_rstp_inverted: false,
         }
     }
 }
@@ -404,14 +420,41 @@ impl Dsp {
                 &format!("{}", u64::from(self.attr.is_rstalumode_inverted)),
             ),
         );
-        //instance.add_param("IS_RSTA_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTB_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTCTRL_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTC_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTD_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTINMODE_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTM_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
-        //instance.add_param("IS_RSTP_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        inst.add_param(
+            "IS_RSTA_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rsta_inverted))),
+        );
+        inst.add_param(
+            "IS_RSTB_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstb_inverted))),
+        );
+        inst.add_param(
+            "IS_RSTCTRL_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstctrl_inverted))),
+        );
+        inst.add_param(
+            "IS_RSTC_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstc_inverted))),
+        );
+        inst.add_param(
+            "IS_RSTD_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstd_inverted))),
+        );
+        inst.add_param(
+            "IS_RSTINMODE_INVERTED",
+            vl::Expr::new_ulit_bin(
+                1,
+                &format!("{}", u64::from(self.attr.is_rstinmode_inverted)),
+            ),
+        );
+        inst.add_param(
+            "IS_RSTM_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstm_inverted))),
+        );
+        inst.add_param(
+            "IS_RSTP_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstp_inverted))),
+        );
         inst
     }
     pub fn set_name(&mut self, name: &str) {
