@@ -34,6 +34,18 @@ fn tmp_name_try_from_term(term: &xir::ExprTerm) -> Result<xir::Id, Error> {
     Ok(format!("_{}", dst))
 }
 
+fn gen_gnd_prim() -> vl::Stmt {
+    let mut instance = vl::Instance::new("GND", "GND");
+    instance.connect_ref("G", GND);
+    vl::Stmt::from(instance)
+}
+
+fn gen_vcc_prim() -> vl::Stmt {
+    let mut instance = vl::Instance::new("VCC", "VCC");
+    instance.connect_ref("P", VCC);
+    vl::Stmt::from(instance)
+}
+
 pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     let id = prog.sig().id();
     let mut module = vl::Module::new(&id);
@@ -61,5 +73,7 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     for d in decl_set.difference(&output_set) {
         module.add_decl(d.clone());
     }
+    module.add_stmt(gen_gnd_prim());
+    module.add_stmt(gen_vcc_prim());
     Ok(module)
 }
