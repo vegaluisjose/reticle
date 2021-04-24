@@ -1,7 +1,7 @@
 use verilog::ast as vl;
 
 #[derive(Clone, Debug)]
-pub enum Input {
+pub enum InputTy {
     Direct,
     Cascade,
 }
@@ -50,10 +50,23 @@ pub enum XorSimd {
     Two,
 }
 
+#[derive(Clone, Debug)]
+pub enum AutoResetPatDet {
+    NoReset,
+    ResetMatch,
+    ResetNotMatch,
+}
+
+#[derive(Clone, Debug)]
+pub enum AutoResetPriority {
+    Reset,
+    Cep,
+}
+
 #[derive(Clone, Debug, Default)]
 pub struct Attr {
-    pub a_input: Input,
-    pub b_input: Input,
+    pub a_input: InputTy,
+    pub b_input: InputTy,
     pub a_multsel: AMultSel,
     pub b_multsel: BMultSel,
     pub preaddinsel: PreAddInSel,
@@ -62,6 +75,8 @@ pub struct Attr {
     pub use_simd: UseSimd,
     pub use_widexor: UseWideXor,
     pub xorsimd: XorSimd,
+    pub autoreset_patdet: AutoResetPatDet,
+    pub autoreset_priority: AutoResetPriority,
 }
 
 #[derive(Clone, Debug)]
@@ -71,9 +86,9 @@ pub struct Dsp {
     pub attr: Attr,
 }
 
-impl Default for Input {
+impl Default for InputTy {
     fn default() -> Self {
-        Input::Direct
+        InputTy::Direct
     }
 }
 
@@ -119,6 +134,18 @@ impl Default for XorSimd {
     }
 }
 
+impl Default for AutoResetPatDet {
+    fn default() -> Self {
+        AutoResetPatDet::NoReset
+    }
+}
+
+impl Default for AutoResetPriority {
+    fn default() -> Self {
+        AutoResetPriority::Reset
+    }
+}
+
 impl Default for Dsp {
     fn default() -> Self {
         Dsp {
@@ -129,11 +156,11 @@ impl Default for Dsp {
     }
 }
 
-impl Input {
+impl InputTy {
     pub fn to_expr(self) -> vl::Expr {
         match self {
-            Input::Direct => vl::Expr::new_str("DIRECT"),
-            Input::Cascade => vl::Expr::new_str("CASCADE"),
+            InputTy::Direct => vl::Expr::new_str("DIRECT"),
+            InputTy::Cascade => vl::Expr::new_str("CASCADE"),
         }
     }
 }
@@ -203,6 +230,25 @@ impl XorSimd {
     }
 }
 
+impl AutoResetPatDet {
+    pub fn to_expr(self) -> vl::Expr {
+        match self {
+            AutoResetPatDet::NoReset => vl::Expr::new_str("NO_RESET"),
+            AutoResetPatDet::ResetMatch => vl::Expr::new_str("RESET_MATCH"),
+            AutoResetPatDet::ResetNotMatch => vl::Expr::new_str("RESET_NOT_MATCH"),
+        }
+    }
+}
+
+impl AutoResetPriority {
+    pub fn to_expr(self) -> vl::Expr {
+        match self {
+            AutoResetPriority::Reset => vl::Expr::new_str("RESET"),
+            AutoResetPriority::Cep => vl::Expr::new_str("CEP"),
+        }
+    }
+}
+
 impl Dsp {
     pub fn to_instance(self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
@@ -219,6 +265,8 @@ impl Dsp {
         inst.connect("USE_SIMD", self.attr.use_simd.to_expr());
         inst.connect("USE_WIDEXOR", self.attr.use_widexor.to_expr());
         inst.connect("XORSIMD", self.attr.xorsimd.to_expr());
+        inst.connect("AUTORESET_PATDET", self.attr.autoreset_patdet.to_expr());
+        inst.connect("AUTORESET_PRIORITY", self.attr.autoreset_priority.to_expr());
         inst
     }
     pub fn set_name(&mut self, name: &str) {
