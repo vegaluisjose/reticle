@@ -1,6 +1,6 @@
 use crate::errors::Error;
 use crate::opt::{Lang, Opt};
-use bler::try_assemble_from_asm_prog;
+use bler::try_from_asm_prog as asm_to_xir;
 use bline::behav_try_from_ir_prog;
 use io::file::write_to_file;
 use ir::parser::Parser as IRParser;
@@ -50,7 +50,7 @@ impl Driver {
             (Lang::IR, Lang::Xir) => {
                 let ir_prog = IRParser::parse_from_file(input)?;
                 let asm_prog = try_select_from_ir_prog(&ir_prog)?;
-                let xir_prog = try_assemble_from_asm_prog(asm_prog)?;
+                let xir_prog = asm_to_xir(&asm_prog)?;
                 write_output(output, &xir_prog.to_string());
                 Ok(())
             }
@@ -63,7 +63,7 @@ impl Driver {
             (Lang::IR, Lang::Struct) => {
                 let ir_prog = IRParser::parse_from_file(input)?;
                 let asm_prog = try_select_from_ir_prog(&ir_prog)?;
-                let xir_prog = try_assemble_from_asm_prog(asm_prog)?;
+                let xir_prog = asm_to_xir(&asm_prog)?;
                 let struct_prog = xir_to_struct(&xir_prog)?;
                 write_output(output, &struct_prog.to_string());
                 Ok(())

@@ -273,7 +273,7 @@ pub fn deserialize_target() -> xim::Target {
     lut
 }
 
-pub fn try_assemble_from_asm_prog(input: asm::Prog) -> Result<xir::Prog, Error> {
+pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
     let mut assembler = Assembler::new(input.sig().clone());
     let target = deserialize_target();
     assembler.set_target(target);
