@@ -78,6 +78,19 @@ pub enum UsePatternDetect {
 }
 
 #[derive(Clone, Debug)]
+pub enum NumReg {
+    Zero,
+    One,
+}
+
+#[derive(Clone, Debug)]
+pub enum NumRegAB {
+    Zero,
+    One,
+    Two,
+}
+
+#[derive(Clone, Debug)]
 pub struct Attr {
     pub a_input: InputTy,
     pub b_input: InputTy,
@@ -111,6 +124,20 @@ pub struct Attr {
     pub is_rstinmode_inverted: bool,
     pub is_rstm_inverted: bool,
     pub is_rstp_inverted: bool,
+    pub acascreg: NumRegAB,
+    pub adreg: NumReg,
+    pub alumodereg: NumReg,
+    pub areg: NumRegAB,
+    pub bcascreg: NumRegAB,
+    pub breg: NumRegAB,
+    pub carryinreg: NumReg,
+    pub carryinselreg: NumReg,
+    pub creg: NumReg,
+    pub dreg: NumReg,
+    pub inmodereg: NumReg,
+    pub mreg: NumReg,
+    pub opmodereg: NumReg,
+    pub preg: NumReg,
 }
 
 #[derive(Clone, Debug)]
@@ -192,6 +219,18 @@ impl Default for UsePatternDetect {
     }
 }
 
+impl Default for NumReg {
+    fn default() -> Self {
+        NumReg::Zero
+    }
+}
+
+impl Default for NumRegAB {
+    fn default() -> Self {
+        NumRegAB::Zero
+    }
+}
+
 impl Default for Attr {
     fn default() -> Self {
         Attr {
@@ -227,6 +266,20 @@ impl Default for Attr {
             is_rstinmode_inverted: false,
             is_rstm_inverted: false,
             is_rstp_inverted: false,
+            acascreg: NumRegAB::Zero,
+            adreg: NumReg::Zero,
+            alumodereg: NumReg::Zero,
+            areg: NumRegAB::Zero,
+            bcascreg: NumRegAB::Zero,
+            breg: NumRegAB::Zero,
+            carryinreg: NumReg::Zero,
+            carryinselreg: NumReg::Zero,
+            creg: NumReg::Zero,
+            dreg: NumReg::Zero,
+            inmodereg: NumReg::Zero,
+            mreg: NumReg::Zero,
+            opmodereg: NumReg::Zero,
+            preg: NumReg::Zero,
         }
     }
 }
@@ -354,6 +407,25 @@ impl UsePatternDetect {
     }
 }
 
+impl NumReg {
+    pub fn to_expr(&self) -> vl::Expr {
+        match self {
+            NumReg::Zero => vl::Expr::new_int(0),
+            NumReg::One => vl::Expr::new_int(1),
+        }
+    }
+}
+
+impl NumRegAB {
+    pub fn to_expr(&self) -> vl::Expr {
+        match self {
+            NumRegAB::Zero => vl::Expr::new_int(0),
+            NumRegAB::One => vl::Expr::new_int(1),
+            NumRegAB::Two => vl::Expr::new_int(2),
+        }
+    }
+}
+
 impl Dsp {
     pub fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
@@ -455,6 +527,20 @@ impl Dsp {
             "IS_RSTP_INVERTED",
             vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstp_inverted))),
         );
+        inst.add_param("ACASCREG", self.attr.acascreg.to_expr());
+        inst.add_param("ADREG", self.attr.adreg.to_expr());
+        inst.add_param("ALUMODEREG", self.attr.alumodereg.to_expr());
+        inst.add_param("AREG", self.attr.areg.to_expr());
+        inst.add_param("BCASCREG", self.attr.bcascreg.to_expr());
+        inst.add_param("BREG", self.attr.breg.to_expr());
+        inst.add_param("CARRYINREG", self.attr.carryinreg.to_expr());
+        inst.add_param("CARRYINSELREG", self.attr.carryinselreg.to_expr());
+        inst.add_param("CREG", self.attr.creg.to_expr());
+        inst.add_param("DREG", self.attr.dreg.to_expr());
+        inst.add_param("INMODEREG", self.attr.inmodereg.to_expr());
+        inst.add_param("MREG", self.attr.mreg.to_expr());
+        inst.add_param("OPMODEREG", self.attr.opmodereg.to_expr());
+        inst.add_param("PREG", self.attr.preg.to_expr());
         inst
     }
     pub fn set_name(&mut self, name: &str) {
