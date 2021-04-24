@@ -1,5 +1,20 @@
 use crate::ast::*;
 
+impl OpMach {
+    pub fn is_dsp(&self) -> bool {
+        match self {
+            OpMach::VAddRegA
+            | OpMach::Mul
+            | OpMach::MulAdd
+            | OpMach::MulAddRegA
+            | OpMach::MulAddRegACi
+            | OpMach::MulAddRegACo
+            | OpMach::MulAddRegACio => true,
+            _ => false,
+        }
+    }
+}
+
 impl Loc {
     pub fn bel(&self) -> &Bel {
         &self.bel
