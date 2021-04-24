@@ -373,7 +373,7 @@ pub fn behav_try_from_ir_def(def: &ir::Def) -> Result<vl::Module, Error> {
     Ok(module)
 }
 
-pub fn behav_try_from_ir_prog(prog: &ir::Prog) -> Result<vl::Module, Error> {
+pub fn try_from_ir_prog(prog: &ir::Prog) -> Result<vl::Module, Error> {
     if let Some(def) = prog.get("main") {
         Ok(behav_try_from_ir_def(def)?)
     } else {

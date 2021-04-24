@@ -1,7 +1,7 @@
 use crate::errors::Error;
 use crate::opt::{Lang, Opt};
 use bler::try_from_asm_prog as asm_to_xir;
-use bline::behav_try_from_ir_prog;
+use bline::try_from_ir_prog as ir_to_behav;
 use io::file::write_to_file;
 use ir::parser::Parser as IRParser;
 use isel::try_select_from_ir_prog;
@@ -56,7 +56,7 @@ impl Driver {
             }
             (Lang::IR, Lang::Behav) => {
                 let ir_prog = IRParser::parse_from_file(input)?;
-                let behav_prog = behav_try_from_ir_prog(&ir_prog)?;
+                let behav_prog = ir_to_behav(&ir_prog)?;
                 write_output(output, &behav_prog.to_string());
                 Ok(())
             }
