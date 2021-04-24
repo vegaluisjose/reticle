@@ -127,7 +127,7 @@ fn reg_try_from_expr(expr: &ir::Expr) -> Result<Vec<vl::Decl>, Error> {
     }
 }
 
-fn input_try_from_sig(sig: ir::Sig) -> Result<Vec<vl::Port>, Error> {
+fn input_try_from_sig(sig: &ir::Sig) -> Result<Vec<vl::Port>, Error> {
     let mut port: Vec<vl::Port> = Vec::new();
     port.push(vl::Port::Input(vl::Decl::new_wire(CLOCK, 1)));
     port.push(vl::Port::Input(vl::Decl::new_wire(RESET, 1)));
@@ -345,7 +345,7 @@ fn vec_stmt_try_from_instr(instr: &ir::Instr) -> Result<Vec<vl::Stmt>, Error> {
 pub fn behav_try_from_ir_def(def: &ir::Def) -> Result<vl::Module, Error> {
     let id = def.sig().id();
     let mut module = vl::Module::new(&id);
-    let input = input_try_from_sig(def.sig().clone())?;
+    let input = input_try_from_sig(def.sig())?;
     for i in input {
         module.add_port(i.clone());
     }
