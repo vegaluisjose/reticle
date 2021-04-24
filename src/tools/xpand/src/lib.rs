@@ -68,7 +68,7 @@ fn input_try_from_sig(sig: &xir::Sig) -> Result<Vec<vl::Port>, Error> {
     Ok(port)
 }
 
-pub fn struct_try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
+pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     let id = prog.sig().id();
     let mut module = vl::Module::new(&id);
     let input = input_try_from_sig(prog.sig())?;

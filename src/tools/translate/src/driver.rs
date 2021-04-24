@@ -7,7 +7,7 @@ use ir::parser::Parser as IRParser;
 use isel::try_select_from_ir_prog;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use xpand::struct_try_from_xir_prog;
+use xpand::try_from_xir_prog as xir_to_struct;
 
 #[derive(Clone, Debug)]
 pub struct Driver {
@@ -64,8 +64,8 @@ impl Driver {
                 let ir_prog = IRParser::parse_from_file(input)?;
                 let asm_prog = try_select_from_ir_prog(&ir_prog)?;
                 let xir_prog = try_assemble_from_asm_prog(asm_prog)?;
-                let st_prog = struct_try_from_xir_prog(&xir_prog)?;
-                write_output(output, &st_prog.to_string());
+                let struct_prog = xir_to_struct(&xir_prog)?;
+                write_output(output, &struct_prog.to_string());
                 Ok(())
             }
             (_, _) => Err(Error::new_driver_error("Unsupported conversion")),
