@@ -102,6 +102,13 @@ pub struct Attr {
     pub sel_mask: SelMask,
     pub sel_pattern: SelPattern,
     pub use_pattern_detect: UsePatternDetect,
+    pub is_alumode_inverted: u64,
+    pub is_carryin_inverted: bool,
+    pub is_clk_inverted: bool,
+    pub is_inmode_inverted: u64,
+    pub is_opmode_inverted: u64,
+    pub is_rstallcarryin_inverted: bool,
+    pub is_rstalumode_inverted: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -209,6 +216,13 @@ impl Default for Attr {
             sel_mask: SelMask::default(),
             sel_pattern: SelPattern::default(),
             use_pattern_detect: UsePatternDetect::default(),
+            is_alumode_inverted: 0,
+            is_carryin_inverted: false,
+            is_clk_inverted: false,
+            is_inmode_inverted: 0,
+            is_opmode_inverted: 0,
+            is_rstallcarryin_inverted: false,
+            is_rstalumode_inverted: false,
         }
     }
 }
@@ -348,32 +362,74 @@ impl UsePatternDetect {
 impl Dsp {
     pub fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
-        inst.connect("A_INPUT", self.attr.a_input.to_expr());
-        inst.connect("B_INPUT", self.attr.b_input.to_expr());
-        inst.connect("AMULTSEL", self.attr.a_multsel.to_expr());
-        inst.connect("BMULTSEL", self.attr.b_multsel.to_expr());
-        inst.connect("PREADDINSEL", self.attr.preaddinsel.to_expr());
-        inst.connect(
+        inst.add_param("A_INPUT", self.attr.a_input.to_expr());
+        inst.add_param("B_INPUT", self.attr.b_input.to_expr());
+        inst.add_param("AMULTSEL", self.attr.a_multsel.to_expr());
+        inst.add_param("BMULTSEL", self.attr.b_multsel.to_expr());
+        inst.add_param("PREADDINSEL", self.attr.preaddinsel.to_expr());
+        inst.add_param(
             "RND",
             vl::Expr::new_ulit_hex(48, &format!("{:x}", self.attr.rnd)),
         );
-        inst.connect("USE_MULT", self.attr.use_mult.to_expr());
-        inst.connect("USE_SIMD", self.attr.use_simd.to_expr());
-        inst.connect("USE_WIDEXOR", self.attr.use_widexor.to_expr());
-        inst.connect("XORSIMD", self.attr.xorsimd.to_expr());
-        inst.connect("AUTORESET_PATDET", self.attr.autoreset_patdet.to_expr());
-        inst.connect("AUTORESET_PRIORITY", self.attr.autoreset_priority.to_expr());
-        inst.connect(
+        inst.add_param("USE_MULT", self.attr.use_mult.to_expr());
+        inst.add_param("USE_SIMD", self.attr.use_simd.to_expr());
+        inst.add_param("USE_WIDEXOR", self.attr.use_widexor.to_expr());
+        inst.add_param("XORSIMD", self.attr.xorsimd.to_expr());
+        inst.add_param("AUTORESET_PATDET", self.attr.autoreset_patdet.to_expr());
+        inst.add_param("AUTORESET_PRIORITY", self.attr.autoreset_priority.to_expr());
+        inst.add_param(
             "MASK",
             vl::Expr::new_ulit_hex(48, &format!("{:x}", self.attr.mask)),
         );
-        inst.connect(
+        inst.add_param(
             "PATTERN",
             vl::Expr::new_ulit_hex(48, &format!("{:x}", self.attr.pattern)),
         );
-        inst.connect("SEL_MASK", self.attr.sel_mask.to_expr());
-        inst.connect("SEL_PATTERN", self.attr.sel_pattern.to_expr());
-        inst.connect("USE_PATTERN_DETECT", self.attr.use_pattern_detect.to_expr());
+        inst.add_param("SEL_MASK", self.attr.sel_mask.to_expr());
+        inst.add_param("SEL_PATTERN", self.attr.sel_pattern.to_expr());
+        inst.add_param("USE_PATTERN_DETECT", self.attr.use_pattern_detect.to_expr());
+        inst.add_param(
+            "IS_ALUMODE_INVERTED",
+            vl::Expr::new_ulit_hex(4, &format!("{:x}", self.attr.is_alumode_inverted)),
+        );
+        inst.add_param(
+            "IS_CARRYIN_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_carryin_inverted))),
+        );
+        inst.add_param(
+            "IS_CLK_INVERTED",
+            vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_clk_inverted))),
+        );
+        inst.add_param(
+            "IS_INMODE_INVERTED",
+            vl::Expr::new_ulit_hex(5, &format!("{:x}", self.attr.is_inmode_inverted)),
+        );
+        inst.add_param(
+            "IS_OPMODE_INVERTED",
+            vl::Expr::new_ulit_hex(9, &format!("{:x}", self.attr.is_opmode_inverted)),
+        );
+        inst.add_param(
+            "IS_RSTALLCARRYIN_INVERTED",
+            vl::Expr::new_ulit_bin(
+                1,
+                &format!("{}", u64::from(self.attr.is_rstallcarryin_inverted)),
+            ),
+        );
+        inst.add_param(
+            "IS_RSTALUMODE_INVERTED",
+            vl::Expr::new_ulit_bin(
+                1,
+                &format!("{}", u64::from(self.attr.is_rstalumode_inverted)),
+            ),
+        );
+        //instance.add_param("IS_RSTA_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTB_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTCTRL_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTC_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTD_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTINMODE_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTM_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
+        //instance.add_param("IS_RSTP_INVERTED", vl::Expr::new_ulit_bin(1, "0"));
         inst
     }
     pub fn set_name(&mut self, name: &str) {
