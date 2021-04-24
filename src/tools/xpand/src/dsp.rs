@@ -63,7 +63,27 @@ pub enum AutoResetPriority {
     Cep,
 }
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
+pub enum SelMask {
+    C,
+    Mask,
+    RoundModeOne,
+    RoundModeTwo,
+}
+
+#[derive(Clone, Debug)]
+pub enum SelPattern {
+    C,
+    Pattern,
+}
+
+#[derive(Clone, Debug)]
+pub enum UsePatternDetect {
+    NoPatDet,
+    PatDet,
+}
+
+#[derive(Clone, Debug)]
 pub struct Attr {
     pub a_input: InputTy,
     pub b_input: InputTy,
@@ -77,6 +97,11 @@ pub struct Attr {
     pub xorsimd: XorSimd,
     pub autoreset_patdet: AutoResetPatDet,
     pub autoreset_priority: AutoResetPriority,
+    pub mask: u64,
+    pub pattern: u64,
+    pub sel_mask: SelMask,
+    pub sel_pattern: SelPattern,
+    pub use_pattern_detect: UsePatternDetect,
 }
 
 #[derive(Clone, Debug)]
@@ -146,6 +171,48 @@ impl Default for AutoResetPriority {
     }
 }
 
+impl Default for SelMask {
+    fn default() -> Self {
+        SelMask::Mask
+    }
+}
+
+impl Default for SelPattern {
+    fn default() -> Self {
+        SelPattern::Pattern
+    }
+}
+
+impl Default for UsePatternDetect {
+    fn default() -> Self {
+        UsePatternDetect::NoPatDet
+    }
+}
+
+impl Default for Attr {
+    fn default() -> Self {
+        Attr {
+            a_input: InputTy::default(),
+            b_input: InputTy::default(),
+            a_multsel: AMultSel::default(),
+            b_multsel: BMultSel::default(),
+            preaddinsel: PreAddInSel::default(),
+            rnd: 0,
+            use_mult: UseMult::default(),
+            use_simd: UseSimd::default(),
+            use_widexor: UseWideXor::default(),
+            xorsimd: XorSimd::default(),
+            autoreset_patdet: AutoResetPatDet::default(),
+            autoreset_priority: AutoResetPriority::default(),
+            mask: u64::from_str_radix("3fffffffffff", 16).unwrap(),
+            pattern: 0,
+            sel_mask: SelMask::default(),
+            sel_pattern: SelPattern::default(),
+            use_pattern_detect: UsePatternDetect::default(),
+        }
+    }
+}
+
 impl Default for Dsp {
     fn default() -> Self {
         Dsp {
@@ -157,7 +224,7 @@ impl Default for Dsp {
 }
 
 impl InputTy {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             InputTy::Direct => vl::Expr::new_str("DIRECT"),
             InputTy::Cascade => vl::Expr::new_str("CASCADE"),
@@ -166,7 +233,7 @@ impl InputTy {
 }
 
 impl AMultSel {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             AMultSel::A => vl::Expr::new_str("A"),
             AMultSel::AD => vl::Expr::new_str("AD"),
@@ -175,7 +242,7 @@ impl AMultSel {
 }
 
 impl BMultSel {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             BMultSel::B => vl::Expr::new_str("B"),
             BMultSel::AD => vl::Expr::new_str("AD"),
@@ -184,7 +251,7 @@ impl BMultSel {
 }
 
 impl PreAddInSel {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             PreAddInSel::A => vl::Expr::new_str("A"),
             PreAddInSel::B => vl::Expr::new_str("B"),
@@ -193,7 +260,7 @@ impl PreAddInSel {
 }
 
 impl UseMult {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             UseMult::Multiply => vl::Expr::new_str("MULTIPLY"),
             UseMult::Dynamic => vl::Expr::new_str("DYNAMIC"),
@@ -203,7 +270,7 @@ impl UseMult {
 }
 
 impl UseSimd {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             UseSimd::One => vl::Expr::new_str("ONE48"),
             UseSimd::Two => vl::Expr::new_str("TWO24"),
@@ -213,7 +280,7 @@ impl UseSimd {
 }
 
 impl UseWideXor {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             UseWideXor::False => vl::Expr::new_str("FALSE"),
             UseWideXor::True => vl::Expr::new_str("TRUE"),
@@ -222,7 +289,7 @@ impl UseWideXor {
 }
 
 impl XorSimd {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             XorSimd::One => vl::Expr::new_str("XOR12"),
             XorSimd::Two => vl::Expr::new_str("XOR24_48_96"),
@@ -231,7 +298,7 @@ impl XorSimd {
 }
 
 impl AutoResetPatDet {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             AutoResetPatDet::NoReset => vl::Expr::new_str("NO_RESET"),
             AutoResetPatDet::ResetMatch => vl::Expr::new_str("RESET_MATCH"),
@@ -241,7 +308,7 @@ impl AutoResetPatDet {
 }
 
 impl AutoResetPriority {
-    pub fn to_expr(self) -> vl::Expr {
+    pub fn to_expr(&self) -> vl::Expr {
         match self {
             AutoResetPriority::Reset => vl::Expr::new_str("RESET"),
             AutoResetPriority::Cep => vl::Expr::new_str("CEP"),
@@ -249,8 +316,37 @@ impl AutoResetPriority {
     }
 }
 
+impl SelMask {
+    pub fn to_expr(&self) -> vl::Expr {
+        match self {
+            SelMask::C => vl::Expr::new_str("C"),
+            SelMask::Mask => vl::Expr::new_str("MASK"),
+            SelMask::RoundModeOne => vl::Expr::new_str("ROUNDING_MODE1"),
+            SelMask::RoundModeTwo => vl::Expr::new_str("ROUNDING_MODE2"),
+        }
+    }
+}
+
+impl SelPattern {
+    pub fn to_expr(&self) -> vl::Expr {
+        match self {
+            SelPattern::C => vl::Expr::new_str("C"),
+            SelPattern::Pattern => vl::Expr::new_str("PATTERN"),
+        }
+    }
+}
+
+impl UsePatternDetect {
+    pub fn to_expr(&self) -> vl::Expr {
+        match self {
+            UsePatternDetect::NoPatDet => vl::Expr::new_str("NO_PATDET"),
+            UsePatternDetect::PatDet => vl::Expr::new_str("PATDET"),
+        }
+    }
+}
+
 impl Dsp {
-    pub fn to_instance(self) -> vl::Instance {
+    pub fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         inst.connect("A_INPUT", self.attr.a_input.to_expr());
         inst.connect("B_INPUT", self.attr.b_input.to_expr());
@@ -267,6 +363,17 @@ impl Dsp {
         inst.connect("XORSIMD", self.attr.xorsimd.to_expr());
         inst.connect("AUTORESET_PATDET", self.attr.autoreset_patdet.to_expr());
         inst.connect("AUTORESET_PRIORITY", self.attr.autoreset_priority.to_expr());
+        inst.connect(
+            "MASK",
+            vl::Expr::new_ulit_hex(48, &format!("{:x}", self.attr.mask)),
+        );
+        inst.connect(
+            "PATTERN",
+            vl::Expr::new_ulit_hex(48, &format!("{:x}", self.attr.pattern)),
+        );
+        inst.connect("SEL_MASK", self.attr.sel_mask.to_expr());
+        inst.connect("SEL_PATTERN", self.attr.sel_pattern.to_expr());
+        inst.connect("USE_PATTERN_DETECT", self.attr.use_pattern_detect.to_expr());
         inst
     }
     pub fn set_name(&mut self, name: &str) {
