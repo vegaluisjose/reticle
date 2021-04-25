@@ -1,3 +1,0 @@
-def main(a: i8<4>, b: i8<4>) -> (y: i8<4>) {
-    y: i8<4> = dsp[op=add](a, b);
-}

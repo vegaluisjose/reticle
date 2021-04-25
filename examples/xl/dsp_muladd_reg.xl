@@ -1,3 +1,0 @@
-def main(a: i8, b: i8, c: i8, en: bool) -> (y: i8) {
-    y: i8 = dsp[op=muladd, ra=1, rb=1, rm=1, rp=1](a, b, c, en, en, en, en);
-}
