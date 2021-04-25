@@ -11,9 +11,7 @@
 4. Optional, install locally (binaries are normally located in `~/.cargo/bin`)
     * `cargo install --bin rt --bin ro --path .`
 
-## Verify installation
-
-## How to compile
+## How to use reticle compiler
 
 1. Compile IR program to assembly (asm)
     * `rt --from ir --to asm examples/ir/add.ir`
