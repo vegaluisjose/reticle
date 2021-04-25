@@ -3,9 +3,9 @@ use ir::parser::Parser as IrParser;
 use isel::try_from_ir_prog;
 
 #[test]
-fn lut_add() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/lut_add.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/lut_add.asm").unwrap();
+fn add() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/add.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/add.asm").unwrap();
     let res = try_from_ir_prog(&prog).unwrap();
     assert_eq!(res, exp);
 }
