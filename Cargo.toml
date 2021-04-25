@@ -4,6 +4,7 @@ version = "0.1.0"
 authors = ["Luis Vega <vegaluisjose@gmail.com>"]
 license = "Apache-2.0"
 edition = "2018"
+
 [dependencies]
 pretty = "0.10.0"
 serde = { version = "1.0", features = ["derive", "rc"] }
@@ -27,18 +28,6 @@ xir = { path = "src/langs/xir"}
 isel = { path = "src/tools/isel" }
 translate = { path = "src/tools/translate" }
 optimizer = { path = "src/tools/optimizer" }
-
-[[bin]]
-name = "reticle-translate"
-path = "src/bin/translate.rs"
-
-[[bin]]
-name = "reticle-optimize"
-path = "src/bin/optimize.rs"
-
-[[bin]]
-name = "reticle-place"
-path = "src/bin/place.rs"
 
 [[bin]]
 name = "rt"
