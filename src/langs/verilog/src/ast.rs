@@ -1,3 +1,3 @@
-use vast::v05::ast as verilog;
+use vast::v05::ast as vl;
 
-pub use verilog::*;
+pub use vl::*;
