@@ -146,16 +146,19 @@ pub struct Attr {
     pub preg: NumReg,
 }
 
-pub type PortMap = HashMap<String, vl::Expr>;
+pub type ConnectionMap = HashMap<String, vl::Expr>;
+pub type WidthMap = HashMap<String, u32>;
 
 #[derive(Clone, Debug)]
 pub struct Input {
-    pub map: PortMap,
+    pub width: WidthMap,
+    pub connection: ConnectionMap,
 }
 
 #[derive(Clone, Debug)]
 pub struct Output {
-    pub map: PortMap,
+    pub width: WidthMap,
+    pub connection: ConnectionMap,
 }
 
 #[derive(Clone, Debug)]
@@ -306,65 +309,73 @@ impl Default for Attr {
 
 impl Default for Input {
     fn default() -> Self {
-        let mut map = PortMap::new();
-        map.insert("ACIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("BCIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("CARRYCASCIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("MULTSIGNIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("PCIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("ALUMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("CARRYINSEL".to_string(), vl::Expr::new_ref(""));
-        map.insert("CLK".to_string(), vl::Expr::new_ref(""));
-        map.insert("INMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("OPMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("A".to_string(), vl::Expr::new_ref(""));
-        map.insert("B".to_string(), vl::Expr::new_ref(""));
-        map.insert("C".to_string(), vl::Expr::new_ref(""));
-        map.insert("CARRYIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("D".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEA1".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEA2".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEAD".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEALUMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEB1".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEB2".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEC".to_string(), vl::Expr::new_ref(""));
-        map.insert("CECARRYIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("CECTRL".to_string(), vl::Expr::new_ref(""));
-        map.insert("CED".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEINMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEM".to_string(), vl::Expr::new_ref(""));
-        map.insert("CEP".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTA".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTALLCARRYIN".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTALUMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTB".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTC".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTCTRL".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTD".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTINMODE".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTM".to_string(), vl::Expr::new_ref(""));
-        map.insert("RSTP".to_string(), vl::Expr::new_ref(""));
-        Input { map }
+        let mut width = WidthMap::new();
+        width.insert("ACIN".to_string(), 30);
+        width.insert("BCIN".to_string(), 18);
+        width.insert("CARRYCASCIN".to_string(), 1);
+        width.insert("MULTSIGNIN".to_string(), 1);
+        width.insert("PCIN".to_string(), 48);
+        width.insert("ALUMODE".to_string(), 4);
+        width.insert("CARRYINSEL".to_string(), 3);
+        width.insert("CLK".to_string(), 1);
+        width.insert("INMODE".to_string(), 5);
+        width.insert("OPMODE".to_string(), 9);
+        width.insert("A".to_string(), 30);
+        width.insert("B".to_string(), 18);
+        width.insert("C".to_string(), 48);
+        width.insert("CARRYIN".to_string(), 1);
+        width.insert("D".to_string(), 27);
+        width.insert("CEA1".to_string(), 1);
+        width.insert("CEA2".to_string(), 1);
+        width.insert("CEAD".to_string(), 1);
+        width.insert("CEALUMODE".to_string(), 1);
+        width.insert("CEB1".to_string(), 1);
+        width.insert("CEB2".to_string(), 1);
+        width.insert("CEC".to_string(), 1);
+        width.insert("CECARRYIN".to_string(), 1);
+        width.insert("CECTRL".to_string(), 1);
+        width.insert("CED".to_string(), 1);
+        width.insert("CEINMODE".to_string(), 1);
+        width.insert("CEM".to_string(), 1);
+        width.insert("CEP".to_string(), 1);
+        width.insert("RSTA".to_string(), 1);
+        width.insert("RSTALLCARRYIN".to_string(), 1);
+        width.insert("RSTALUMODE".to_string(), 1);
+        width.insert("RSTB".to_string(), 1);
+        width.insert("RSTC".to_string(), 1);
+        width.insert("RSTCTRL".to_string(), 1);
+        width.insert("RSTD".to_string(), 1);
+        width.insert("RSTINMODE".to_string(), 1);
+        width.insert("RSTM".to_string(), 1);
+        width.insert("RSTP".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
     }
 }
 
 impl Default for Output {
     fn default() -> Self {
-        let mut map = PortMap::new();
-        map.insert("ACOUT".to_string(), vl::Expr::new_ref(""));
-        map.insert("BCOUT".to_string(), vl::Expr::new_ref(""));
-        map.insert("CARRYCASCOUT".to_string(), vl::Expr::new_ref(""));
-        map.insert("MULTSIGNOUT".to_string(), vl::Expr::new_ref(""));
-        map.insert("PCOUT".to_string(), vl::Expr::new_ref(""));
-        map.insert("OVERFLOW".to_string(), vl::Expr::new_ref(""));
-        map.insert("PATTERNBDETECT".to_string(), vl::Expr::new_ref(""));
-        map.insert("PATTERNDETECT".to_string(), vl::Expr::new_ref(""));
-        map.insert("UNDERFLOW".to_string(), vl::Expr::new_ref(""));
-        map.insert("CARRYOUT".to_string(), vl::Expr::new_ref(""));
-        map.insert("P".to_string(), vl::Expr::new_ref(""));
-        map.insert("XOROUT".to_string(), vl::Expr::new_ref(""));
-        Output { map }
+        let mut width = WidthMap::new();
+        width.insert("ACOUT".to_string(), 30);
+        width.insert("BCOUT".to_string(), 18);
+        width.insert("CARRYCASCOUT".to_string(), 1);
+        width.insert("MULTSIGNOUT".to_string(), 1);
+        width.insert("PCOUT".to_string(), 48);
+        width.insert("OVERFLOW".to_string(), 1);
+        width.insert("PATTERNBDETECT".to_string(), 1);
+        width.insert("PATTERNDETECT".to_string(), 1);
+        width.insert("UNDERFLOW".to_string(), 1);
+        width.insert("CARRYOUT".to_string(), 4);
+        width.insert("P".to_string(), 48);
+        width.insert("XOROUT".to_string(), 8);
+        let mut connection = ConnectionMap::new();
+        for k in width.keys() {
+            connection.insert(k.clone(), vl::Expr::new_ref(""));
+        }
+        Output { width, connection }
     }
 }
 
@@ -627,10 +638,10 @@ impl Dsp {
         inst.add_param("MREG", self.attr.mreg.to_expr());
         inst.add_param("OPMODEREG", self.attr.opmodereg.to_expr());
         inst.add_param("PREG", self.attr.preg.to_expr());
-        for (k, v) in self.input.map.iter() {
+        for (k, v) in self.input.connection.iter() {
             inst.connect(&k, v.clone());
         }
-        for (k, v) in self.output.map.iter() {
+        for (k, v) in self.output.connection.iter() {
             inst.connect(&k, v.clone());
         }
         inst
