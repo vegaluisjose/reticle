@@ -1,5 +1,13 @@
-use crate::{Bel, BelCarry, BelDsp, BelLut, BelReg, Loc};
 use verilog::ast as vl;
+use xir::ast as xir;
+
+pub type BelCarry = xir::BelCarry;
+pub type BelDsp = xir::BelDsp;
+pub type BelLut = xir::BelLut;
+pub type BelReg = xir::BelReg;
+pub type Bel = xir::Bel;
+pub type ExprCoord = xir::ExprCoord;
+pub type Loc = xir::Loc;
 
 fn string_from_bel_reg(bel: &BelReg) -> String {
     match bel {

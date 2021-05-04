@@ -1,22 +1,16 @@
 pub mod dsp;
 pub mod errors;
 pub mod loc;
+pub mod lut;
+pub mod port;
 
-use crate::dsp::Output;
 use crate::errors::Error;
+use crate::port::Output;
 use bline::{input_try_from_sig, wire_try_from_expr};
 use std::collections::HashSet;
 use std::convert::TryInto;
 use verilog::ast as vl;
 use xir::ast as xir;
-
-pub type BelCarry = xir::BelCarry;
-pub type BelDsp = xir::BelDsp;
-pub type BelLut = xir::BelLut;
-pub type BelReg = xir::BelReg;
-pub type Bel = xir::Bel;
-pub type ExprCoord = xir::ExprCoord;
-pub type Loc = xir::Loc;
 
 pub const CLOCK: &str = "clock";
 pub const RESET: &str = "reset";
@@ -63,7 +57,7 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
         module.add_port(i.clone());
     }
     let mut decl: Vec<vl::Decl> = Vec::new();
-    let dsp_outputs = Output::default();
+    let dsp_outputs = Output::dsp();
     for i in prog.body() {
         let d: Vec<vl::Decl> = vec_decl_try_from_instr(i)?;
         decl.extend(d);
