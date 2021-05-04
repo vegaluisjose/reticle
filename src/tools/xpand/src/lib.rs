@@ -1,7 +1,7 @@
 pub mod dsp;
 pub mod errors;
 
-use crate::dsp::DSP_P_WIDTH;
+use crate::dsp::Output;
 use crate::errors::Error;
 use bline::{input_try_from_sig, wire_try_from_expr};
 use std::collections::HashSet;
@@ -54,6 +54,7 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
         module.add_port(i.clone());
     }
     let mut decl: Vec<vl::Decl> = Vec::new();
+    let dsp_outputs = Output::default();
     for i in prog.body() {
         let d: Vec<vl::Decl> = vec_decl_try_from_instr(i)?;
         decl.extend(d);
@@ -61,7 +62,9 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
             if instr.op().is_dsp() {
                 let term = instr.dst().get_term(0)?;
                 let name = tmp_name_try_from_term(term)?;
-                decl.push(vl::Decl::new_wire(&name, DSP_P_WIDTH));
+                if let Some(width) = dsp_outputs.get_width("P") {
+                    decl.push(vl::Decl::new_wire(&name, u64::from(*width)));
+                }
             }
         }
     }

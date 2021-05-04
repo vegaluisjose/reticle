@@ -1,11 +1,6 @@
 use std::collections::HashMap;
 use verilog::ast as vl;
 
-pub const DSP_A_WIDTH: u64 = 30;
-pub const DSP_B_WIDTH: u64 = 18;
-pub const DSP_C_WIDTH: u64 = 48;
-pub const DSP_P_WIDTH: u64 = 48;
-
 #[derive(Clone, Debug)]
 pub enum InputTy {
     Direct,
@@ -388,6 +383,12 @@ impl Default for Dsp {
             input: Input::default(),
             output: Output::default(),
         }
+    }
+}
+
+impl Output {
+    pub fn get_width(&self, port: &str) -> Option<&u32> {
+        self.width.get(port)
     }
 }
 
