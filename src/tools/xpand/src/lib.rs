@@ -1,6 +1,8 @@
 pub mod carry;
 pub mod dsp;
 pub mod errors;
+pub mod fdre;
+pub mod fdse;
 pub mod loc;
 pub mod lut;
 pub mod port;

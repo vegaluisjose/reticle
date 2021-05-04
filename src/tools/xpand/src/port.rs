@@ -98,6 +98,30 @@ impl Input {
         }
         Input { width, connection }
     }
+    pub fn fdre() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("C".to_string(), 1);
+        width.insert("CE".to_string(), 1);
+        width.insert("D".to_string(), 1);
+        width.insert("R".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
+    pub fn fdse() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("C".to_string(), 1);
+        width.insert("CE".to_string(), 1);
+        width.insert("D".to_string(), 1);
+        width.insert("S".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
     pub fn dsp() -> Self {
         let mut width = WidthMap::new();
         width.insert("ACIN".to_string(), 30);
@@ -183,6 +207,24 @@ impl Output {
         let mut width = WidthMap::new();
         width.insert("O".to_string(), 8);
         width.insert("CO".to_string(), 8);
+        let mut connection = ConnectionMap::new();
+        for k in width.keys() {
+            connection.insert(k.clone(), vl::Expr::new_ref(""));
+        }
+        Output { width, connection }
+    }
+    pub fn fdre() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("Q".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for k in width.keys() {
+            connection.insert(k.clone(), vl::Expr::new_ref(""));
+        }
+        Output { width, connection }
+    }
+    pub fn fdse() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("Q".to_string(), 1);
         let mut connection = ConnectionMap::new();
         for k in width.keys() {
             connection.insert(k.clone(), vl::Expr::new_ref(""));
