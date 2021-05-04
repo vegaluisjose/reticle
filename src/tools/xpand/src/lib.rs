@@ -3,12 +3,16 @@ pub mod dsp;
 pub mod errors;
 pub mod fdre;
 pub mod fdse;
+pub mod gnd;
 pub mod loc;
 pub mod lut;
 pub mod port;
+pub mod vcc;
 
 use crate::errors::Error;
+use crate::gnd::Gnd;
 use crate::port::Output;
+use crate::vcc::Vcc;
 use bline::{input_try_from_sig, wire_try_from_expr};
 use std::collections::HashSet;
 use std::convert::TryInto;
@@ -17,8 +21,6 @@ use xir::ast as xir;
 
 pub const CLOCK: &str = "clock";
 pub const RESET: &str = "reset";
-pub const VCC: &str = "vcc";
-pub const GND: &str = "gnd";
 
 fn vec_decl_try_from_instr_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Decl>, Error> {
     Ok(wire_try_from_expr(instr.dst())?)
@@ -38,18 +40,6 @@ fn vec_decl_try_from_instr(instr: &xir::Instr) -> Result<Vec<vl::Decl>, Error> {
 fn tmp_name_try_from_term(term: &xir::ExprTerm) -> Result<xir::Id, Error> {
     let dst: xir::Id = term.clone().try_into()?;
     Ok(format!("_{}", dst))
-}
-
-fn gen_gnd_prim() -> vl::Stmt {
-    let mut instance = vl::Instance::new("GND", "GND");
-    instance.connect_ref("G", GND);
-    vl::Stmt::from(instance)
-}
-
-fn gen_vcc_prim() -> vl::Stmt {
-    let mut instance = vl::Instance::new("VCC", "VCC");
-    instance.connect_ref("P", VCC);
-    vl::Stmt::from(instance)
 }
 
 pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
@@ -77,12 +67,14 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
     let output: Vec<vl::Decl> = wire_try_from_expr(prog.sig().output())?;
     let output_set: HashSet<vl::Decl> = output.into_iter().collect();
-    module.add_decl(vl::Decl::new_wire(GND, 1));
-    module.add_decl(vl::Decl::new_wire(VCC, 1));
+    let gnd = Gnd::default();
+    let vcc = Vcc::default();
+    module.add_decl(vl::Decl::new_wire(&gnd.name(), 1));
+    module.add_decl(vl::Decl::new_wire(&vcc.name(), 1));
     for d in decl_set.difference(&output_set) {
         module.add_decl(d.clone());
     }
-    module.add_stmt(gen_gnd_prim());
-    module.add_stmt(gen_vcc_prim());
+    module.add_stmt(gnd.to_stmt());
+    module.add_stmt(vcc.to_stmt());
     Ok(module)
 }

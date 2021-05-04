@@ -50,7 +50,6 @@ impl Default for Fdre {
     }
 }
 
-
 impl Fdre {
     pub fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
