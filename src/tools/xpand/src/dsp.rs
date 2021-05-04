@@ -1,3 +1,4 @@
+use crate::loc::attr_from_loc;
 use crate::{Bel, BelDsp, ExprCoord, Loc};
 use std::collections::HashMap;
 use verilog::ast as vl;
@@ -652,6 +653,10 @@ impl Dsp {
         }
         for (k, v) in self.output.connection.iter() {
             inst.connect(&k, v.clone());
+        }
+        if self.loc.is_placed() {
+            let attr = attr_from_loc(&self.loc);
+            inst.set_attr(attr);
         }
         inst
     }

@@ -1,5 +1,6 @@
 pub mod dsp;
 pub mod errors;
+pub mod loc;
 
 use crate::dsp::Output;
 use crate::errors::Error;
