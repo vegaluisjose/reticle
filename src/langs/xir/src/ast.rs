@@ -31,7 +31,7 @@ pub enum OpMach {
     Lut6,
     Fdre,
     Fdse,
-    CarryA,
+    CarryAdd,
     VAddRegA,
     Mul,
     MulAdd,

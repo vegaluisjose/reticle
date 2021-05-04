@@ -57,7 +57,7 @@ op_mach = {
     "lut6" |
     "fdre" |
     "fdse" |
-    "carrya" |
+    "carryadd" |
     "vaddrega" |
     "muladdregacio" |
     "muladdregaco" |

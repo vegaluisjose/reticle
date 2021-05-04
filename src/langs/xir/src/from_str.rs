@@ -30,7 +30,7 @@ impl FromStr for OpMach {
             "lut6" => Ok(OpMach::Lut6),
             "fdre" => Ok(OpMach::Fdre),
             "fdse" => Ok(OpMach::Fdse),
-            "carrya" => Ok(OpMach::CarryA),
+            "carryadd" => Ok(OpMach::CarryAdd),
             "vaddrega" => Ok(OpMach::VAddRegA),
             "mul" => Ok(OpMach::Mul),
             "muladd" => Ok(OpMach::MulAdd),

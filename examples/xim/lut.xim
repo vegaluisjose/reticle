@@ -24,7 +24,7 @@ imp ladd_i8[1, 1](a: i8, b: i8) -> (y: i8) {
     t22:bool = lut2[6](t6, t14) @g6lut(??, ??);
     t23:bool = lut2[6](t7, t15) @h6lut(??, ??);
     t24:i8 = cat(t16,t17,t18,t19,t20,t21,t22,t23);
-    y:i8 = carrya(a, t24) @carry8(??, ??);
+    y:i8 = carryadd(a, t24) @carry8(??, ??);
 }
 
 imp laddrega_i8[1, 1](a: i8, b: i8, en: bool) -> (y: i8) {
@@ -53,7 +53,7 @@ imp laddrega_i8[1, 1](a: i8, b: i8, en: bool) -> (y: i8) {
     t22:bool = lut2[6](t6, t14) @g6lut(??, ??);
     t23:bool = lut2[6](t7, t15) @h6lut(??, ??);
     t24:i8 = cat(t16,t17,t18,t19,t20,t21,t22,t23);
-    t25:i8 = carrya(a, t24) @carry8(??, ??);
+    t25:i8 = carryadd(a, t24) @carry8(??, ??);
     t26:bool = ext[0](t25);
     t27:bool = ext[1](t25);
     t28:bool = ext[2](t25);
