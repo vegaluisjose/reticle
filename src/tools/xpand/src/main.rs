@@ -1,7 +1,7 @@
-use xpand::lut::Lut3;
+use xpand::carry::Carry;
 
 pub fn main() {
-    let mut lut = Lut3::default();
-    lut.set_name("i0");
-    println!("{}", lut.to_instance());
+    let mut carry = Carry::default();
+    carry.set_name("i0");
+    println!("{}", carry.to_instance());
 }

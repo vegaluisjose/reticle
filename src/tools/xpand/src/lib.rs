@@ -1,3 +1,4 @@
+pub mod carry;
 pub mod dsp;
 pub mod errors;
 pub mod loc;
