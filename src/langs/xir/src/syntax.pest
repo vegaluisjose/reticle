@@ -56,7 +56,11 @@ op_mach = {
     "fdre" |
     "fdse" |
     "carryadd" |
+    "carrysub" |
     "vaddrega" |
+    "vadd" |
+    "vsub" |
+    "vmul" |
     "muladdregacio" |
     "muladdregaco" |
     "muladdregaci" |

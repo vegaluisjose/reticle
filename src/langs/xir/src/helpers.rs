@@ -4,7 +4,10 @@ impl OpMach {
     pub fn is_dsp(&self) -> bool {
         matches!(
             self,
-            OpMach::VAddRegA
+            OpMach::VecAddRegA
+                | OpMach::VecAdd
+                | OpMach::VecSub
+                | OpMach::VecMul
                 | OpMach::Mul
                 | OpMach::MulAdd
                 | OpMach::MulAddRegA
