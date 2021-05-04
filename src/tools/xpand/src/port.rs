@@ -27,6 +27,56 @@ impl Input {
         }
         Input { width, connection }
     }
+    pub fn lut3() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("I0".to_string(), 1);
+        width.insert("I1".to_string(), 1);
+        width.insert("I2".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
+    pub fn lut4() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("I0".to_string(), 1);
+        width.insert("I1".to_string(), 1);
+        width.insert("I2".to_string(), 1);
+        width.insert("I3".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
+    pub fn lut5() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("I0".to_string(), 1);
+        width.insert("I1".to_string(), 1);
+        width.insert("I2".to_string(), 1);
+        width.insert("I3".to_string(), 1);
+        width.insert("I4".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
+    pub fn lut6() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("I0".to_string(), 1);
+        width.insert("I1".to_string(), 1);
+        width.insert("I2".to_string(), 1);
+        width.insert("I3".to_string(), 1);
+        width.insert("I4".to_string(), 1);
+        width.insert("I5".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
     pub fn dsp() -> Self {
         let mut width = WidthMap::new();
         width.insert("ACIN".to_string(), 30);
