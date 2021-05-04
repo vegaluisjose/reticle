@@ -17,6 +17,15 @@ pub struct Output {
 }
 
 impl Input {
+    pub fn lut1() -> Self {
+        let mut width = WidthMap::new();
+        width.insert("I0".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Input { width, connection }
+    }
     pub fn lut2() -> Self {
         let mut width = WidthMap::new();
         width.insert("I0".to_string(), 1);
