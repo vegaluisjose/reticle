@@ -1,3 +1,4 @@
+use crate::{Bel, BelDsp, ExprCoord, Loc};
 use std::collections::HashMap;
 use verilog::ast as vl;
 
@@ -160,6 +161,7 @@ pub struct Output {
 pub struct Dsp {
     pub name: String,
     pub prim: String,
+    pub loc: Loc,
     pub attr: Attr,
     pub input: Input,
     pub output: Output,
@@ -376,9 +378,15 @@ impl Default for Output {
 
 impl Default for Dsp {
     fn default() -> Self {
+        let loc = Loc {
+            bel: Bel::Dsp(BelDsp::Alu),
+            x: ExprCoord::default(),
+            y: ExprCoord::default(),
+        };
         Dsp {
             name: String::new(),
             prim: "DSP48E2".to_string(),
+            loc,
             attr: Attr::default(),
             input: Input::default(),
             output: Output::default(),
