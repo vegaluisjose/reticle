@@ -69,8 +69,8 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     let output_set: HashSet<vl::Decl> = output.into_iter().collect();
     let gnd = Gnd::default();
     let vcc = Vcc::default();
-    module.add_decl(vl::Decl::new_wire(&gnd.name(), 1));
-    module.add_decl(vl::Decl::new_wire(&vcc.name(), 1));
+    module.add_decl(gnd.to_decl());
+    module.add_decl(vcc.to_decl());
     for d in decl_set.difference(&output_set) {
         module.add_decl(d.clone());
     }

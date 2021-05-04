@@ -5,24 +5,26 @@ use verilog::ast as vl;
 pub struct Gnd {
     pub name: String,
     pub prim: String,
+    pub wire: String,
     pub output: Output,
 }
 
 impl Default for Gnd {
     fn default() -> Self {
-        let gnd = "gnd";
-        let name = format!("_{}", gnd);
+        let wire = "gnd";
+        let name = format!("_{}", wire);
         Gnd {
             name,
             prim: "GND".to_string(),
-            output: Output::gnd(gnd),
+            wire: wire.to_string(),
+            output: Output::gnd(wire),
         }
     }
 }
 
 impl Gnd {
-    pub fn name(&self) -> String {
-        self.name.to_string()
+    pub fn to_decl(&self) -> vl::Decl {
+        vl::Decl::new_wire(&self.wire, 1)
     }
     pub fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);

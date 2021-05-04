@@ -5,24 +5,26 @@ use verilog::ast as vl;
 pub struct Vcc {
     pub name: String,
     pub prim: String,
+    pub wire: String,
     pub output: Output,
 }
 
 impl Default for Vcc {
     fn default() -> Self {
-        let vcc = "vcc";
-        let name = format!("_{}", vcc);
+        let wire = "vcc";
+        let name = format!("_{}", wire);
         Vcc {
             name,
             prim: "VCC".to_string(),
-            output: Output::vcc(vcc),
+            wire: wire.to_string(),
+            output: Output::vcc(wire),
         }
     }
 }
 
 impl Vcc {
-    pub fn name(&self) -> String {
-        self.name.to_string()
+    pub fn to_decl(&self) -> vl::Decl {
+        vl::Decl::new_wire(&self.wire, 1)
     }
     pub fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
