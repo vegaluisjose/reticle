@@ -13,7 +13,7 @@ use crate::errors::Error;
 use crate::gnd::Gnd;
 use crate::port::Output;
 use crate::vcc::Vcc;
-use bline::{input_try_from_sig, wire_try_from_expr};
+use bline::{input_try_from_sig, vec_expr_try_from_expr, wire_try_from_expr};
 use std::collections::HashSet;
 use std::convert::TryInto;
 use verilog::ast as vl;
@@ -40,6 +40,11 @@ fn vec_decl_try_from_instr(instr: &xir::Instr) -> Result<Vec<vl::Decl>, Error> {
 fn tmp_name_try_from_term(term: &xir::ExprTerm) -> Result<xir::Id, Error> {
     let dst: xir::Id = term.clone().try_into()?;
     Ok(format!("_{}", dst))
+}
+
+fn inst_name_try_from_instr(instr: &xir::InstrMach) -> Result<vl::Id, Error> {
+    let dst: Vec<vl::Id> = instr.dst().clone().try_into()?;
+    Ok(format!("__{}", dst[0]))
 }
 
 fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {

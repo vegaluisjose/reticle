@@ -2,6 +2,7 @@ use crate::errors::Error;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
 use crate::port::{Input, Output};
+use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
 use xir::ast as xir;
 
@@ -145,6 +146,24 @@ macro_rules! lut_impl {
             pub fn set_name(&mut self, name: &str) {
                 self.name = name.to_string();
             }
+            pub fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+                if let Some(p) = self.input.connection.get_mut(port) {
+                    *p = expr;
+                    Ok(())
+                } else {
+                    let err = format!("input {} do not exist", port);
+                    Err(Error::new_xpand_error(&err))
+                }
+            }
+            pub fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+                if let Some(p) = self.output.connection.get_mut(port) {
+                    *p = expr;
+                    Ok(())
+                } else {
+                    let err = format!("output {} do not exist", port);
+                    Err(Error::new_xpand_error(&err))
+                }
+            }
             pub fn set_init(&mut self, init: u64) {
                 self.attr.init = init;
             }
@@ -166,7 +185,21 @@ lut_impl!(Lut4);
 lut_impl!(Lut5);
 lut_impl!(Lut6);
 
-pub fn lut2_from_mach(_: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
-    let lut = Lut2::default();
+pub fn lut2_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut lut = Lut2::default();
+    let name = inst_name_try_from_instr(instr)?;
+    let init = instr.attr().get_val(0)?;
+    lut.set_init(init as u64);
+    lut.set_name(&name);
+    let input = ["I0", "I1"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        lut.set_input(i, e)?;
+    }
+    let output = ["O"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        lut.set_output(o, e)?;
+    }
     Ok(vec![lut.to_stmt()])
 }
