@@ -188,9 +188,9 @@ lut_impl!(Lut6);
 pub fn lut2_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut lut = Lut2::default();
     let name = inst_name_try_from_instr(instr)?;
+    lut.set_name(&name);
     let init = instr.attr().get_val(0)?;
     lut.set_init(init as u64);
-    lut.set_name(&name);
     let input = ["I0", "I1"];
     let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
     for (i, e) in input.iter().zip(arg) {
