@@ -1,6 +1,7 @@
 pub mod carry;
 pub mod dsp;
 pub mod errors;
+pub mod ext;
 pub mod fdre;
 pub mod fdse;
 pub mod gnd;
@@ -47,6 +48,7 @@ fn inst_name_try_from_instr(instr: &xir::InstrMach) -> Result<vl::Id, Error> {
     Ok(format!("__{}", dst[0]))
 }
 
+// TODO: default case must be error
 fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
         xir::OpMach::Lut2 => lut::lut2_from_mach(instr),
@@ -56,10 +58,18 @@ fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     }
 }
 
+// TODO: default case must be error
+fn stmt_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
+    match instr.op() {
+        xir::OpBasc::Ext => ext::ext_from_basc(instr),
+        _ => Ok(vec![]),
+    }
+}
+
 fn stmt_from_instr(instr: &xir::Instr) -> Result<Vec<vl::Stmt>, Error> {
     match instr {
-        xir::Instr::Basc(_) => Ok(vec![]),
-        xir::Instr::Mach(instr) => Ok(stmt_from_mach(instr)?),
+        xir::Instr::Basc(basc) => Ok(stmt_from_basc(basc)?),
+        xir::Instr::Mach(mach) => Ok(stmt_from_mach(mach)?),
     }
 }
 
