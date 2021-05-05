@@ -55,7 +55,7 @@ fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
         xir::OpMach::Lut2 => lut::lut2_from_mach(instr),
         xir::OpMach::Fdre => fdre::fdre_from_mach(instr),
         xir::OpMach::CarryAdd => carry::carry_from_mach(instr),
-        _ => Ok(vec![]),
+        _ => Err(Error::new_xpand_error("unsupported machine instruction")),
     }
 }
 
@@ -64,7 +64,7 @@ fn stmt_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
         xir::OpBasc::Ext => ext::ext_from_basc(instr),
         xir::OpBasc::Cat => cat::cat_from_basc(instr),
-        _ => Ok(vec![]),
+        _ => Err(Error::new_xpand_error("unsupported basic instruction")),
     }
 }
 
@@ -100,6 +100,9 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     let decl_set: HashSet<vl::Decl> = decl.into_iter().collect();
     let output: Vec<vl::Decl> = wire_try_from_expr(prog.sig().output())?;
     let output_set: HashSet<vl::Decl> = output.into_iter().collect();
+    for o in output_set.iter() {
+        module.add_port(vl::Port::Output(o.clone()));
+    }
     let gnd = Gnd::default();
     let vcc = Vcc::default();
     module.add_decl(gnd.to_decl());
