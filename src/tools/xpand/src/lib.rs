@@ -50,6 +50,7 @@ fn inst_name_try_from_instr(instr: &xir::InstrMach) -> Result<vl::Id, Error> {
 fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
         xir::OpMach::Lut2 => lut::lut2_from_mach(instr),
+        xir::OpMach::Fdre => fdre::fdre_from_mach(instr),
         _ => Ok(vec![]),
     }
 }

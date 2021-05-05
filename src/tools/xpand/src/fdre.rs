@@ -1,7 +1,10 @@
+use crate::errors::Error;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
 use crate::port::{Input, Output};
+use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
+use xir::ast as xir;
 
 #[derive(Clone, Debug)]
 pub struct Attr {
@@ -73,7 +76,45 @@ impl Fdre {
         }
         inst
     }
+    pub fn to_stmt(&self) -> vl::Stmt {
+        vl::Stmt::from(self.to_instance())
+    }
     pub fn set_name(&mut self, name: &str) {
         self.name = name.to_string();
     }
+    pub fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+        if let Some(p) = self.input.connection.get_mut(port) {
+            *p = expr;
+            Ok(())
+        } else {
+            let err = format!("input {} do not exist", port);
+            Err(Error::new_xpand_error(&err))
+        }
+    }
+    pub fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+        if let Some(p) = self.output.connection.get_mut(port) {
+            *p = expr;
+            Ok(())
+        } else {
+            let err = format!("output {} do not exist", port);
+            Err(Error::new_xpand_error(&err))
+        }
+    }
+}
+
+pub fn fdre_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut fdre = Fdre::default();
+    let name = inst_name_try_from_instr(instr)?;
+    fdre.set_name(&name);
+    let input = ["D", "CE"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        fdre.set_input(i, e)?;
+    }
+    let output = ["Q"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        fdre.set_output(o, e)?;
+    }
+    Ok(vec![fdre.to_stmt()])
 }
