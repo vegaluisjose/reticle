@@ -1,4 +1,5 @@
 pub mod carry;
+pub mod cat;
 pub mod dsp;
 pub mod errors;
 pub mod ext;
@@ -62,6 +63,7 @@ fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
 fn stmt_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
         xir::OpBasc::Ext => ext::ext_from_basc(instr),
+        xir::OpBasc::Cat => cat::cat_from_basc(instr),
         _ => Ok(vec![]),
     }
 }
