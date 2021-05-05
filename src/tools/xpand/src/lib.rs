@@ -42,6 +42,20 @@ fn tmp_name_try_from_term(term: &xir::ExprTerm) -> Result<xir::Id, Error> {
     Ok(format!("_{}", dst))
 }
 
+fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    match instr.op() {
+        xir::OpMach::Lut2 => lut::lut2_from_mach(instr),
+        _ => Ok(vec![]),
+    }
+}
+
+fn stmt_from_instr(instr: &xir::Instr) -> Result<Vec<vl::Stmt>, Error> {
+    match instr {
+        xir::Instr::Basc(_) => Ok(vec![]),
+        xir::Instr::Mach(instr) => Ok(stmt_from_mach(instr)?),
+    }
+}
+
 pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     let id = prog.sig().id();
     let mut module = vl::Module::new(&id);
@@ -76,5 +90,11 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     }
     module.add_stmt(gnd.to_stmt());
     module.add_stmt(vcc.to_stmt());
+    for i in prog.body() {
+        let stmt: Vec<vl::Stmt> = stmt_from_instr(i)?;
+        for s in stmt {
+            module.add_stmt(s);
+        }
+    }
     Ok(module)
 }

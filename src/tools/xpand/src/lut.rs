@@ -1,7 +1,9 @@
+use crate::errors::Error;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
 use crate::port::{Input, Output};
 use verilog::ast as vl;
+use xir::ast as xir;
 
 #[derive(Clone, Debug)]
 pub struct Attr {
@@ -137,6 +139,9 @@ macro_rules! lut_impl {
                 }
                 inst
             }
+            pub fn to_stmt(&self) -> vl::Stmt {
+                vl::Stmt::from(self.to_instance())
+            }
             pub fn set_name(&mut self, name: &str) {
                 self.name = name.to_string();
             }
@@ -160,3 +165,8 @@ lut_impl!(Lut3);
 lut_impl!(Lut4);
 lut_impl!(Lut5);
 lut_impl!(Lut6);
+
+pub fn lut2_from_mach(_: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let lut = Lut2::default();
+    Ok(vec![lut.to_stmt()])
+}
