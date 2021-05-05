@@ -189,6 +189,13 @@ impl Expr {
             _ => Err(Error::new_conv_error("not a term")),
         }
     }
+    pub fn get_val(&self, index: usize) -> Result<i64, Error> {
+        match self {
+            Expr::Tup(t) => Ok(t.get_val(index)?),
+            Expr::Term(t) if index == 0 => Ok(t.get_val()?),
+            _ => Err(Error::new_conv_error("not a term")),
+        }
+    }
 }
 
 impl InstrCall {
