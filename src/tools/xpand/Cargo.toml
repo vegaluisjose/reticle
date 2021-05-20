@@ -1,7 +1,7 @@
 [package]
 name = "xpand"
 version = "0.1.0"
-authors = ["Luis Vega <vegaluisjose@gmail.com>"]
+authors = ["The Reticle developers"]
 license = "Apache-2.0"
 edition = "2018"
 
