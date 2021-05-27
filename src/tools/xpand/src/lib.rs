@@ -2,6 +2,7 @@ pub mod carry;
 pub mod cat;
 pub mod dsp;
 pub mod errors;
+pub mod expr;
 pub mod ext;
 pub mod fdre;
 pub mod fdse;

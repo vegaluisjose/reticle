@@ -1,3 +1,4 @@
+use crate::expr::ToExpr;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
 use crate::port::{Input, Output};
@@ -308,8 +309,8 @@ impl Default for Dsp {
     }
 }
 
-impl InputTy {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for InputTy {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             InputTy::Direct => vl::Expr::new_str("DIRECT"),
             InputTy::Cascade => vl::Expr::new_str("CASCADE"),
@@ -317,8 +318,8 @@ impl InputTy {
     }
 }
 
-impl AMultSel {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for AMultSel {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             AMultSel::A => vl::Expr::new_str("A"),
             AMultSel::AD => vl::Expr::new_str("AD"),
@@ -326,8 +327,8 @@ impl AMultSel {
     }
 }
 
-impl BMultSel {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for BMultSel {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             BMultSel::B => vl::Expr::new_str("B"),
             BMultSel::AD => vl::Expr::new_str("AD"),
@@ -335,8 +336,8 @@ impl BMultSel {
     }
 }
 
-impl PreAddInSel {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for PreAddInSel {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             PreAddInSel::A => vl::Expr::new_str("A"),
             PreAddInSel::B => vl::Expr::new_str("B"),
@@ -344,8 +345,8 @@ impl PreAddInSel {
     }
 }
 
-impl UseMult {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for UseMult {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             UseMult::Multiply => vl::Expr::new_str("MULTIPLY"),
             UseMult::Dynamic => vl::Expr::new_str("DYNAMIC"),
@@ -354,8 +355,8 @@ impl UseMult {
     }
 }
 
-impl UseSimd {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for UseSimd {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             UseSimd::One => vl::Expr::new_str("ONE48"),
             UseSimd::Two => vl::Expr::new_str("TWO24"),
@@ -364,8 +365,8 @@ impl UseSimd {
     }
 }
 
-impl XorSimd {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for XorSimd {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             XorSimd::One => vl::Expr::new_str("XOR12"),
             XorSimd::Two => vl::Expr::new_str("XOR24_48_96"),
@@ -373,8 +374,8 @@ impl XorSimd {
     }
 }
 
-impl AutoResetPatDet {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for AutoResetPatDet {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             AutoResetPatDet::NoReset => vl::Expr::new_str("NO_RESET"),
             AutoResetPatDet::ResetMatch => vl::Expr::new_str("RESET_MATCH"),
@@ -383,8 +384,8 @@ impl AutoResetPatDet {
     }
 }
 
-impl AutoResetPriority {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for AutoResetPriority {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             AutoResetPriority::Reset => vl::Expr::new_str("RESET"),
             AutoResetPriority::Cep => vl::Expr::new_str("CEP"),
@@ -392,8 +393,8 @@ impl AutoResetPriority {
     }
 }
 
-impl SelMask {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for SelMask {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             SelMask::C => vl::Expr::new_str("C"),
             SelMask::Mask => vl::Expr::new_str("MASK"),
@@ -403,8 +404,8 @@ impl SelMask {
     }
 }
 
-impl SelPattern {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for SelPattern {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             SelPattern::C => vl::Expr::new_str("C"),
             SelPattern::Pattern => vl::Expr::new_str("PATTERN"),
@@ -412,8 +413,8 @@ impl SelPattern {
     }
 }
 
-impl UsePatternDetect {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for UsePatternDetect {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             UsePatternDetect::NoPatDet => vl::Expr::new_str("NO_PATDET"),
             UsePatternDetect::PatDet => vl::Expr::new_str("PATDET"),
@@ -421,8 +422,8 @@ impl UsePatternDetect {
     }
 }
 
-impl NumReg {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for NumReg {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             NumReg::Zero => vl::Expr::new_int(0),
             NumReg::One => vl::Expr::new_int(1),
@@ -430,8 +431,8 @@ impl NumReg {
     }
 }
 
-impl NumRegAB {
-    pub fn to_expr(&self) -> vl::Expr {
+impl ToExpr for NumRegAB {
+    fn to_expr(&self) -> vl::Expr {
         match self {
             NumRegAB::Zero => vl::Expr::new_int(0),
             NumRegAB::One => vl::Expr::new_int(1),
