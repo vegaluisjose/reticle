@@ -128,6 +128,9 @@ macro_rules! lut_impl {
             pub fn set_init(&mut self, init: u64) {
                 self.attr.init = init;
             }
+            pub fn set_loc(&mut self, loc: Loc) {
+                self.loc = loc;
+            }
         }
     };
 }
@@ -204,6 +207,9 @@ pub fn lut2_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut lut = Lut2::default();
     let name = inst_name_try_from_instr(instr)?;
     lut.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        lut.set_loc(loc.clone());
+    }
     let init = instr.attr().get_val(0)?;
     lut.set_init(init as u64);
     let input = ["I0", "I1"];

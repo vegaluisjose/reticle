@@ -54,6 +54,12 @@ impl Default for Carry {
     }
 }
 
+impl Carry {
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
+    }
+}
+
 impl ToInstance for Carry {
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
@@ -103,6 +109,9 @@ pub fn carry_from_carryadd(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Erro
     let mut carry = Carry::default();
     let name = inst_name_try_from_instr(instr)?;
     carry.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        carry.set_loc(loc.clone());
+    }
     let input = ["DI", "S"];
     let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
     for (i, e) in input.iter().zip(arg) {

@@ -54,6 +54,12 @@ impl Default for Fdre {
     }
 }
 
+impl Fdre {
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
+    }
+}
+
 impl ToInstance for Fdre {
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
@@ -107,6 +113,9 @@ pub fn fdre_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut fdre = Fdre::default();
     let name = inst_name_try_from_instr(instr)?;
     fdre.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        fdre.set_loc(loc.clone());
+    }
     let input = ["D", "CE"];
     let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
     for (i, e) in input.iter().zip(arg) {

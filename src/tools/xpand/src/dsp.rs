@@ -156,6 +156,12 @@ pub struct Dsp {
     pub output: Output,
 }
 
+impl Dsp {
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
+    }
+}
+
 impl Default for InputTy {
     fn default() -> Self {
         InputTy::Direct

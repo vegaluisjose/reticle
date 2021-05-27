@@ -3,7 +3,9 @@ use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
 use crate::port::{Input, Output};
+use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
+use xir::ast as xir;
 
 #[derive(Clone, Debug)]
 pub struct Attr {
@@ -46,9 +48,15 @@ impl Default for Fdse {
             prim: "FDSE".to_string(),
             loc,
             attr: Attr::default(),
-            input: Input::fdre(),
-            output: Output::fdre(),
+            input: Input::fdse(),
+            output: Output::fdse(),
         }
+    }
+}
+
+impl Fdse {
+    pub fn set_loc(&mut self, loc: Loc) {
+        self.loc = loc;
     }
 }
 
@@ -99,4 +107,24 @@ impl ToInstance for Fdse {
             Err(Error::new_xpand_error(&err))
         }
     }
+}
+
+pub fn fdre_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut fdse = Fdse::default();
+    let name = inst_name_try_from_instr(instr)?;
+    fdse.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        fdse.set_loc(loc.clone());
+    }
+    let input = ["D", "CE"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        fdse.set_input(i, e)?;
+    }
+    let output = ["Q"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        fdse.set_output(o, e)?;
+    }
+    Ok(vec![fdse.to_stmt()])
 }
