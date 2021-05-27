@@ -1,0 +1,17 @@
+def main(i0:bool, i1:bool, i2:bool) -> (y:i4) {
+    t0: i4 = const[0];
+    t1: i4 = const[1];
+    t2: i4 = const[2];
+    t3: bool = const[1];
+    t4: bool = eq(t13, t0);
+    t5: bool = eq(t13, t1);
+    t6: bool = eq(t13, t2);
+    t7: bool = and(t4, i0);
+    t8: bool = and(t5, i1);
+    t9: bool = and(t6, i2);
+    t10: i4 = mux(t7, t1, t13);
+    t11: i4 = mux(t8, t2, t10);
+    t12: i4 = mux(t9, t0, t11);
+    t13: i4 = reg[0](t12, t3);
+    y: i4 = id(t13);
+}

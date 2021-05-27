@@ -11,9 +11,9 @@ fn add() {
 }
 
 #[test]
-fn fsm() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/fsm.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm.asm").unwrap();
+fn fsm_3() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_3.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_3.asm").unwrap();
     let res = try_from_ir_prog(&prog).unwrap();
     assert_eq!(res, exp);
 }
