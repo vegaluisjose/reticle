@@ -2,7 +2,9 @@ use crate::decl::ToDecl;
 use crate::errors::Error;
 use crate::instance::ToInstance;
 use crate::port::Output;
+use crate::vec_expr_try_from_expr;
 use verilog::ast as vl;
+use xir::ast as xir;
 
 #[derive(Clone, Debug)]
 pub struct Vcc {
@@ -22,6 +24,12 @@ impl Default for Vcc {
             wire: wire.to_string(),
             output: Output::vcc(wire),
         }
+    }
+}
+
+impl Vcc {
+    pub fn wire(&self) -> String {
+        self.wire.to_string()
     }
 }
 
@@ -57,4 +65,12 @@ impl ToInstance for Vcc {
             Err(Error::new_xpand_error(&err))
         }
     }
+}
+
+pub fn vcc_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
+    let vcc = Vcc::default();
+    let wire = vcc.wire();
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    let assign = vl::Parallel::Assign(dst[0].clone(), vl::Expr::new_ref(&wire));
+    Ok(vec![vl::Stmt::from(assign)])
 }

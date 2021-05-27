@@ -8,6 +8,7 @@ pub mod ext;
 pub mod fdre;
 pub mod fdse;
 pub mod gnd;
+pub mod id;
 pub mod instance;
 pub mod loc;
 pub mod lut;
@@ -54,22 +55,26 @@ fn inst_name_try_from_instr(instr: &xir::InstrMach) -> Result<vl::Id, Error> {
     Ok(format!("__{}", dst[0]))
 }
 
-// TODO: default case must be error
 fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
         xir::OpMach::Lut2 => lut::lut2_from_mach(instr),
+        xir::OpMach::Lut3 => lut::lut3_from_mach(instr),
+        xir::OpMach::Lut4 => lut::lut4_from_mach(instr),
+        xir::OpMach::Lut5 => lut::lut5_from_mach(instr),
+        xir::OpMach::Lut6 => lut::lut6_from_mach(instr),
         xir::OpMach::Fdre => fdre::fdre_from_mach(instr),
         xir::OpMach::CarryAdd => carry::carry_from_mach(instr),
         _ => Err(Error::new_xpand_error("unsupported machine instruction")),
     }
 }
 
-// TODO: default case must be error
 fn stmt_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
         xir::OpBasc::Ext => ext::ext_from_basc(instr),
         xir::OpBasc::Cat => cat::cat_from_basc(instr),
-        _ => Err(Error::new_xpand_error("unsupported basic instruction")),
+        xir::OpBasc::Gnd => gnd::gnd_from_basc(instr),
+        xir::OpBasc::Vcc => vcc::vcc_from_basc(instr),
+        xir::OpBasc::Id => id::id_from_basc(instr),
     }
 }
 

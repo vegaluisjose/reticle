@@ -224,3 +224,91 @@ pub fn lut2_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     }
     Ok(vec![lut.to_stmt()])
 }
+
+pub fn lut3_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut lut = Lut3::default();
+    let name = inst_name_try_from_instr(instr)?;
+    lut.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        lut.set_loc(loc.clone());
+    }
+    let init = instr.attr().get_val(0)?;
+    lut.set_init(init as u64);
+    let input = ["I0", "I1", "I2"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        lut.set_input(i, e)?;
+    }
+    let output = ["O"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        lut.set_output(o, e)?;
+    }
+    Ok(vec![lut.to_stmt()])
+}
+
+pub fn lut4_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut lut = Lut4::default();
+    let name = inst_name_try_from_instr(instr)?;
+    lut.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        lut.set_loc(loc.clone());
+    }
+    let init = instr.attr().get_val(0)?;
+    lut.set_init(init as u64);
+    let input = ["I0", "I1", "I2", "I3"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        lut.set_input(i, e)?;
+    }
+    let output = ["O"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        lut.set_output(o, e)?;
+    }
+    Ok(vec![lut.to_stmt()])
+}
+
+pub fn lut5_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut lut = Lut5::default();
+    let name = inst_name_try_from_instr(instr)?;
+    lut.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        lut.set_loc(loc.clone());
+    }
+    let init = instr.attr().get_val(0)?;
+    lut.set_init(init as u64);
+    let input = ["I0", "I1", "I2", "I3", "I4"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        lut.set_input(i, e)?;
+    }
+    let output = ["O"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        lut.set_output(o, e)?;
+    }
+    Ok(vec![lut.to_stmt()])
+}
+
+pub fn lut6_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut lut = Lut6::default();
+    let name = inst_name_try_from_instr(instr)?;
+    lut.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        lut.set_loc(loc.clone());
+    }
+    let init = instr.attr().get_val(0)?;
+    lut.set_init(init as u64);
+    let input = ["I0", "I1", "I2", "I3", "I4", "I5"];
+    let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    for (i, e) in input.iter().zip(arg) {
+        lut.set_input(i, e)?;
+    }
+    let output = ["O"];
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    for (o, e) in output.iter().zip(dst) {
+        lut.set_output(o, e)?;
+    }
+    Ok(vec![lut.to_stmt()])
+}
