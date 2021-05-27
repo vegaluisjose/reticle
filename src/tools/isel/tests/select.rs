@@ -19,6 +19,30 @@ fn fsm_3() {
 }
 
 #[test]
+fn fsm_5() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_5.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_5.asm").unwrap();
+    let res = try_from_ir_prog(&prog).unwrap();
+    assert_eq!(res, exp);
+}
+
+#[test]
+fn fsm_7() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_7.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_7.asm").unwrap();
+    let res = try_from_ir_prog(&prog).unwrap();
+    assert_eq!(res, exp);
+}
+
+#[test]
+fn fsm_9() {
+    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_9.ir").unwrap();
+    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_9.asm").unwrap();
+    let res = try_from_ir_prog(&prog).unwrap();
+    assert_eq!(res, exp);
+}
+
+#[test]
 fn tadd() {
     let prog = IrParser::parse_from_file("../../../examples/ir/tadd.ir").unwrap();
     let exp = AsmParser::parse_from_file("../../../examples/asm/tadd.asm").unwrap();
