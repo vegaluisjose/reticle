@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
 use crate::port::{Input, Output};
@@ -53,8 +54,8 @@ impl Default for Fdre {
     }
 }
 
-impl Fdre {
-    pub fn to_instance(&self) -> vl::Instance {
+impl ToInstance for Fdre {
+    fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         let init = format!("{}", u32::from(self.attr.init));
         let is_c_inv = format!("{}", u32::from(self.attr.is_c_inverted));
@@ -76,13 +77,13 @@ impl Fdre {
         }
         inst
     }
-    pub fn to_stmt(&self) -> vl::Stmt {
+    fn to_stmt(&self) -> vl::Stmt {
         vl::Stmt::from(self.to_instance())
     }
-    pub fn set_name(&mut self, name: &str) {
+    fn set_name(&mut self, name: &str) {
         self.name = name.to_string();
     }
-    pub fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+    fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
         if let Some(p) = self.input.connection.get_mut(port) {
             *p = expr;
             Ok(())
@@ -91,7 +92,7 @@ impl Fdre {
             Err(Error::new_xpand_error(&err))
         }
     }
-    pub fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+    fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
         if let Some(p) = self.output.connection.get_mut(port) {
             *p = expr;
             Ok(())

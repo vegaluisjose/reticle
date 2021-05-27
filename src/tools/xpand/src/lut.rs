@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
 use crate::port::{Input, Output};
@@ -124,7 +125,17 @@ macro_rules! lut_default {
 macro_rules! lut_impl {
     ($ty:tt) => {
         impl $ty {
-            pub fn to_instance(&self) -> vl::Instance {
+            pub fn set_init(&mut self, init: u64) {
+                self.attr.init = init;
+            }
+        }
+    };
+}
+
+macro_rules! lut_instance_impl {
+    ($ty:tt) => {
+        impl ToInstance for $ty {
+            fn to_instance(&self) -> vl::Instance {
                 let mut inst = vl::Instance::new(&self.name, &self.prim);
                 let init = format!("{:X}", self.attr.init);
                 inst.add_param("INIT", vl::Expr::new_ulit_hex(self.attr.width, &init));
@@ -140,13 +151,13 @@ macro_rules! lut_impl {
                 }
                 inst
             }
-            pub fn to_stmt(&self) -> vl::Stmt {
+            fn to_stmt(&self) -> vl::Stmt {
                 vl::Stmt::from(self.to_instance())
             }
-            pub fn set_name(&mut self, name: &str) {
+            fn set_name(&mut self, name: &str) {
                 self.name = name.to_string();
             }
-            pub fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+            fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
                 if let Some(p) = self.input.connection.get_mut(port) {
                     *p = expr;
                     Ok(())
@@ -155,7 +166,7 @@ macro_rules! lut_impl {
                     Err(Error::new_xpand_error(&err))
                 }
             }
-            pub fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+            fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
                 if let Some(p) = self.output.connection.get_mut(port) {
                     *p = expr;
                     Ok(())
@@ -163,9 +174,6 @@ macro_rules! lut_impl {
                     let err = format!("output {} do not exist", port);
                     Err(Error::new_xpand_error(&err))
                 }
-            }
-            pub fn set_init(&mut self, init: u64) {
-                self.attr.init = init;
             }
         }
     };
@@ -184,6 +192,13 @@ lut_impl!(Lut3);
 lut_impl!(Lut4);
 lut_impl!(Lut5);
 lut_impl!(Lut6);
+
+lut_instance_impl!(Lut1);
+lut_instance_impl!(Lut2);
+lut_instance_impl!(Lut3);
+lut_instance_impl!(Lut4);
+lut_instance_impl!(Lut5);
+lut_instance_impl!(Lut6);
 
 pub fn lut2_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut lut = Lut2::default();

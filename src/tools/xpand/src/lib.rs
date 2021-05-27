@@ -1,5 +1,6 @@
 pub mod carry;
 pub mod cat;
+pub mod decl;
 pub mod dsp;
 pub mod errors;
 pub mod expr;
@@ -7,13 +8,16 @@ pub mod ext;
 pub mod fdre;
 pub mod fdse;
 pub mod gnd;
+pub mod instance;
 pub mod loc;
 pub mod lut;
 pub mod port;
 pub mod vcc;
 
+use crate::decl::ToDecl;
 use crate::errors::Error;
 use crate::gnd::Gnd;
+use crate::instance::ToInstance;
 use crate::port::Output;
 use crate::vcc::Vcc;
 use bline::{input_try_from_sig, vec_expr_try_from_expr, wire_try_from_expr};

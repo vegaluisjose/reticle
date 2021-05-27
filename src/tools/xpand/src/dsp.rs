@@ -1,4 +1,6 @@
+use crate::errors::Error;
 use crate::expr::ToExpr;
+use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
 use crate::port::{Input, Output};
@@ -441,8 +443,8 @@ impl ToExpr for NumRegAB {
     }
 }
 
-impl Dsp {
-    pub fn to_instance(&self) -> vl::Instance {
+impl ToInstance for Dsp {
+    fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         inst.add_param("A_INPUT", self.attr.a_input.to_expr());
         inst.add_param("B_INPUT", self.attr.b_input.to_expr());
@@ -568,7 +570,28 @@ impl Dsp {
         }
         inst
     }
-    pub fn set_name(&mut self, name: &str) {
+    fn to_stmt(&self) -> vl::Stmt {
+        vl::Stmt::from(self.to_instance())
+    }
+    fn set_name(&mut self, name: &str) {
         self.name = name.to_string();
+    }
+    fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+        if let Some(p) = self.input.connection.get_mut(port) {
+            *p = expr;
+            Ok(())
+        } else {
+            let err = format!("input {} do not exist", port);
+            Err(Error::new_xpand_error(&err))
+        }
+    }
+    fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+        if let Some(p) = self.output.connection.get_mut(port) {
+            *p = expr;
+            Ok(())
+        } else {
+            let err = format!("output {} do not exist", port);
+            Err(Error::new_xpand_error(&err))
+        }
     }
 }

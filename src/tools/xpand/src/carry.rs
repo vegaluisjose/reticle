@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelCarry, ExprCoord, Loc};
 use crate::port::{Input, Output};
@@ -53,8 +54,8 @@ impl Default for Carry {
     }
 }
 
-impl Carry {
-    pub fn to_instance(&self) -> vl::Instance {
+impl ToInstance for Carry {
+    fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         match self.attr.ty {
             CarryType::Single => inst.add_param("CARRY_TYPE", vl::Expr::new_str("SINGLE_CY8")),
@@ -72,13 +73,13 @@ impl Carry {
         }
         inst
     }
-    pub fn to_stmt(&self) -> vl::Stmt {
+    fn to_stmt(&self) -> vl::Stmt {
         vl::Stmt::from(self.to_instance())
     }
-    pub fn set_name(&mut self, name: &str) {
+    fn set_name(&mut self, name: &str) {
         self.name = name.to_string();
     }
-    pub fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+    fn set_input(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
         if let Some(p) = self.input.connection.get_mut(port) {
             *p = expr;
             Ok(())
@@ -87,7 +88,7 @@ impl Carry {
             Err(Error::new_xpand_error(&err))
         }
     }
-    pub fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
+    fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
         if let Some(p) = self.output.connection.get_mut(port) {
             *p = expr;
             Ok(())
