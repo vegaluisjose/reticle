@@ -1,7 +1,7 @@
 use asm::parser::Parser as AsmParser;
 use bler::try_from_asm_prog;
-use xir::parser::Parser as XirParser;
 use std::path::Path;
+use xir::parser::Parser as XirParser;
 
 fn test(name: &str) {
     let mut i = Path::new("../../../examples/asm").join(name);

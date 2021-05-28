@@ -1,59 +1,52 @@
 use asm::parser::Parser as AsmParser;
-use ir::parser::Parser as IrParser;
+use ir::parser::Parser as IRParser;
+use isel::errors::Error;
 use isel::try_from_ir_prog;
+use std::path::Path;
 
-#[test]
-fn add() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/add.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/add.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn test(name: &str) -> Result<(), Error> {
+    let mut i = Path::new("../../../examples/ir").join(name);
+    let mut o = Path::new("../../../examples/asm").join(name);
+    i.set_extension("ir");
+    o.set_extension("asm");
+    let p = IRParser::parse_from_file(i)?;
+    let e = AsmParser::parse_from_file(o)?;
+    let r = try_from_ir_prog(&p)?;
+    assert_eq!(r, e);
+    Ok(())
 }
 
 #[test]
-fn fsm_3() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_3.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_3.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn add() -> Result<(), Error> {
+    test("add")
 }
 
 #[test]
-fn fsm_5() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_5.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_5.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn fsm_3() -> Result<(), Error> {
+    test("fsm_3")
 }
 
 #[test]
-fn fsm_7() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_7.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_7.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn fsm_5() -> Result<(), Error> {
+    test("fsm_5")
 }
 
 #[test]
-fn fsm_9() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/fsm_9.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/fsm_9.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn fsm_7() -> Result<(), Error> {
+    test("fsm_7")
 }
 
 #[test]
-fn tadd() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/tadd.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/tadd.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn fsm_9() -> Result<(), Error> {
+    test("fsm_9")
 }
 
 #[test]
-fn tdot() {
-    let prog = IrParser::parse_from_file("../../../examples/ir/tdot.ir").unwrap();
-    let exp = AsmParser::parse_from_file("../../../examples/asm/tdot.asm").unwrap();
-    let res = try_from_ir_prog(&prog).unwrap();
-    assert_eq!(res, exp);
+fn tadd() -> Result<(), Error> {
+    test("tadd")
+}
+
+#[test]
+fn tdot() -> Result<(), Error> {
+    test("tdot")
 }
