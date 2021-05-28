@@ -10,9 +10,9 @@ fn test(name: &str) -> Result<(), Error> {
     i.set_extension("asm");
     o.set_extension("xir");
     let p = AsmParser::parse_from_file(i)?;
-    let exp = XirParser::parse_from_file(o)?;
-    let res = try_from_asm_prog(&p)?;
-    assert_eq!(res, exp);
+    let e = XirParser::parse_from_file(o)?;
+    let r = try_from_asm_prog(&p)?;
+    assert_eq!(r, e);
     Ok(())
 }
 
