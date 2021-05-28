@@ -1,6 +1,6 @@
 use asm::parser::Parser as AsmParser;
-use bler::try_from_asm_prog;
 use bler::errors::Error;
+use bler::try_from_asm_prog;
 use std::path::Path;
 use xir::parser::Parser as XirParser;
 
