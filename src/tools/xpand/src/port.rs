@@ -1,4 +1,3 @@
-use crate::{CLOCK, RESET};
 use std::collections::HashMap;
 use verilog::ast as vl;
 
@@ -28,24 +27,6 @@ pub trait DefaultPort {
     fn input() -> Port;
     // implement default outputs for a primitive
     fn output() -> Port;
-}
-
-fn register_input(clk: &str, rst: &str, data: Vec<&str>) -> Input {
-    let mut width = WidthMap::new();
-    width.insert(clk.to_string(), 1);
-    width.insert(rst.to_string(), 1);
-    for p in &data {
-        width.insert(p.to_string(), 1);
-    }
-    let mut connection = ConnectionMap::new();
-    for p in &data {
-        if let Some(w) = width.get(*p) {
-            connection.insert(p.to_string(), vl::Expr::new_ulit_hex(*w, "0"));
-        }
-    }
-    connection.insert(clk.to_string(), vl::Expr::new_ref(CLOCK));
-    connection.insert(rst.to_string(), vl::Expr::new_ref(RESET));
-    Input { width, connection }
 }
 
 impl Input {
@@ -129,14 +110,6 @@ impl Input {
             connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
         }
         Input { width, connection }
-    }
-    pub fn fdre() -> Self {
-        let data = vec!["CE", "D"];
-        register_input("C", "R", data)
-    }
-    pub fn fdse() -> Self {
-        let data = vec!["CE", "D"];
-        register_input("C", "S", data)
     }
     pub fn dsp() -> Self {
         let mut width = WidthMap::new();
@@ -241,24 +214,6 @@ impl Output {
         let mut width = WidthMap::new();
         width.insert("O".to_string(), 8);
         width.insert("CO".to_string(), 8);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(""));
-        }
-        Output { width, connection }
-    }
-    pub fn fdre() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("Q".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(""));
-        }
-        Output { width, connection }
-    }
-    pub fn fdse() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("Q".to_string(), 1);
         let mut connection = ConnectionMap::new();
         for k in width.keys() {
             connection.insert(k.clone(), vl::Expr::new_ref(""));

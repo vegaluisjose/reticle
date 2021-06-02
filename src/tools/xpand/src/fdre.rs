@@ -2,8 +2,9 @@ use crate::errors::Error;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
-use crate::port::{Input, Output};
+use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
+use crate::{CLOCK, RESET};
 use verilog::ast as vl;
 use xir::ast as xir;
 
@@ -21,8 +22,8 @@ pub struct Fdre {
     pub prim: String,
     pub attr: Attr,
     pub loc: Loc,
-    pub input: Input,
-    pub output: Output,
+    pub input: Port,
+    pub output: Port,
 }
 
 impl Default for Attr {
@@ -33,6 +34,29 @@ impl Default for Attr {
             is_d_inverted: false,
             is_r_inverted: false,
         }
+    }
+}
+
+impl DefaultPort for Fdre {
+    fn input() -> Port {
+        let mut width = WidthMap::new();
+        width.insert("C".to_string(), 1);
+        width.insert("R".to_string(), 1);
+        width.insert("CE".to_string(), 1);
+        width.insert("D".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        connection.insert("C".to_string(), vl::Expr::new_ref(CLOCK));
+        connection.insert("R".to_string(), vl::Expr::new_ref(RESET));
+        connection.insert("CE".to_string(), vl::Expr::new_ulit_hex(1, "0"));
+        connection.insert("D".to_string(), vl::Expr::new_ulit_hex(1, "0"));
+        Port { width, connection }
+    }
+    fn output() -> Port {
+        let mut width = WidthMap::new();
+        width.insert("Q".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        connection.insert("Q".to_string(), vl::Expr::new_ref(""));
+        Port { width, connection }
     }
 }
 
@@ -48,8 +72,8 @@ impl Default for Fdre {
             prim: "FDRE".to_string(),
             loc,
             attr: Attr::default(),
-            input: Input::fdre(),
-            output: Output::fdre(),
+            input: Fdre::input(),
+            output: Fdre::output(),
         }
     }
 }
