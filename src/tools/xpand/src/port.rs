@@ -6,6 +6,12 @@ pub type ConnectionMap = HashMap<String, vl::Expr>;
 pub type WidthMap = HashMap<String, u32>;
 
 #[derive(Clone, Debug)]
+pub struct Port {
+    pub width: WidthMap,
+    pub connection: ConnectionMap,
+}
+
+#[derive(Clone, Debug)]
 pub struct Input {
     pub width: WidthMap,
     pub connection: ConnectionMap,
@@ -15,6 +21,13 @@ pub struct Input {
 pub struct Output {
     pub width: WidthMap,
     pub connection: ConnectionMap,
+}
+
+pub trait DefaultPort {
+    // implement default inputs for a primitive
+    fn input() -> Port;
+    // implement default outputs for a primitive
+    fn output() -> Port;
 }
 
 fn register_input(clk: &str, rst: &str, data: Vec<&str>) -> Input {
