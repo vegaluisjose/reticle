@@ -23,9 +23,9 @@ pub struct Output {
 }
 
 pub trait DefaultPort {
-    // implement default inputs for a primitive
+    // implement default inputs
     fn input() -> Port;
-    // implement default outputs for a primitive
+    // implement default outputs
     fn output() -> Port;
 }
 
