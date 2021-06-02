@@ -29,6 +29,12 @@ pub trait DefaultPort {
     fn output() -> Port;
 }
 
+impl Port {
+    pub fn get_width(&self, port: &str) -> Option<&u32> {
+        self.width.get(port)
+    }
+}
+
 impl Input {
     pub fn lut1() -> Self {
         let mut width = WidthMap::new();
