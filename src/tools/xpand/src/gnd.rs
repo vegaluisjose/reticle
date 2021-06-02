@@ -1,41 +1,49 @@
 use crate::decl::ToDecl;
 use crate::errors::Error;
 use crate::instance::ToInstance;
-use crate::port::Output;
+use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::vec_expr_try_from_expr;
 use verilog::ast as vl;
 use xir::ast as xir;
+
+pub const GND: &str = "gnd";
 
 #[derive(Clone, Debug)]
 pub struct Gnd {
     pub name: String,
     pub prim: String,
-    pub wire: String,
-    pub output: Output,
+    pub output: Port,
+}
+
+impl DefaultPort for Gnd {
+    fn input() -> Port {
+        Port::default()
+    }
+    fn output() -> Port {
+        let mut width = WidthMap::new();
+        width.insert("G".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for k in width.keys() {
+            connection.insert(k.clone(), vl::Expr::new_ref(GND));
+        }
+        Port { width, connection }
+    }
 }
 
 impl Default for Gnd {
     fn default() -> Self {
-        let wire = "gnd";
-        let name = format!("_{}", wire);
+        let name = format!("_{}", GND);
         Gnd {
             name,
             prim: "GND".to_string(),
-            wire: wire.to_string(),
-            output: Output::gnd(wire),
+            output: Gnd::output(),
         }
-    }
-}
-
-impl Gnd {
-    pub fn wire(&self) -> String {
-        self.wire.to_string()
     }
 }
 
 impl ToDecl for Gnd {
     fn to_decl(&self) -> vl::Decl {
-        vl::Decl::new_wire(&self.wire, 1)
+        vl::Decl::new_wire(GND, 1)
     }
 }
 
@@ -68,9 +76,7 @@ impl ToInstance for Gnd {
 }
 
 pub fn gnd_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
-    let gnd = Gnd::default();
-    let wire = gnd.wire();
     let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
-    let assign = vl::Parallel::Assign(dst[0].clone(), vl::Expr::new_ref(&wire));
+    let assign = vl::Parallel::Assign(dst[0].clone(), vl::Expr::new_ref(GND));
     Ok(vec![vl::Stmt::from(assign)])
 }
