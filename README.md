@@ -2,13 +2,18 @@
 
 ## Setup, build, and install
 
-1. Install [rust](https://www.rust-lang.org/tools/install)
+1. Install [rustup](https://www.rust-lang.org/tools/install)
     * `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
-2. Run unit tests
+2. Install `1.50.0` version
+    ```bash
+       rustup toolchain install 1.50.0
+       rustup override set 1.50.0
+    ```
+3. Run unit tests
     * `cargo test --all`
-3. Build, binaries are located in `target/release`
+4. Build, binaries are located in `target/release`
     * `cargo build --release`
-4. Optional, install locally (binaries are normally located in `~/.cargo/bin`)
+5. Optional, install locally (binaries are normally located in `~/.cargo/bin`)
     * `cargo install --bin rt --bin ro --path .`
 
 ## How to use reticle compiler
