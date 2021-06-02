@@ -294,7 +294,7 @@ impl Parser {
         let inputs = Parser::parse(Rule::file, input_str)?;
         let input = inputs.single()?;
         let target = Parser::file(input)?;
-        Ok(infer_type_try_from_target(target)?)
+        Ok(infer_type_try_from_target(&target))
     }
     pub fn parse_from_file<P: AsRef<Path>>(path: P) -> Result<Target, Error> {
         let content = read_to_string(path);

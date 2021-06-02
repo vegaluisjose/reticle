@@ -1,8 +1,7 @@
 use crate::ast::*;
-use crate::errors::Error;
 use std::collections::HashMap;
 
-fn build_env(imp: &Imp) -> Result<HashMap<String, Ty>, Error> {
+fn build_env(imp: &Imp) -> HashMap<String, Ty> {
     let mut env: HashMap<String, Ty> = HashMap::new();
     let inp: Vec<ExprTerm> = imp.sig().input().clone().into();
     // add imp inputs to environment
@@ -24,11 +23,11 @@ fn build_env(imp: &Imp) -> Result<HashMap<String, Ty>, Error> {
             }
         }
     }
-    Ok(env)
+    env
 }
 
-fn infer_type_try_from_imp(imp: &Imp) -> Result<Imp, Error> {
-    let env = build_env(&imp)?;
+fn infer_type_try_from_imp(imp: &Imp) -> Imp {
+    let env = build_env(imp);
     let mut imp = imp.clone();
     // solve instr arg types with environment
     for instr in imp.body_mut() {
@@ -46,13 +45,13 @@ fn infer_type_try_from_imp(imp: &Imp) -> Result<Imp, Error> {
         let e = Expr::from(arg);
         instr.set_arg(e);
     }
-    Ok(imp)
+    imp
 }
 
-pub fn infer_type_try_from_target(target: Target) -> Result<Target, Error> {
+pub fn infer_type_try_from_target(target: &Target) -> Target {
     let mut res = Target::default();
     for (name, imp) in target.imp() {
-        res.insert(name, infer_type_try_from_imp(imp)?);
+        res.insert(name, infer_type_try_from_imp(imp));
     }
-    Ok(res)
+    res
 }
