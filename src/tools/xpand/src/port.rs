@@ -169,24 +169,6 @@ impl Input {
 }
 
 impl Output {
-    pub fn gnd(name: &str) -> Self {
-        let mut width = WidthMap::new();
-        width.insert("G".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(name));
-        }
-        Output { width, connection }
-    }
-    pub fn vcc(name: &str) -> Self {
-        let mut width = WidthMap::new();
-        width.insert("P".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(name));
-        }
-        Output { width, connection }
-    }
     pub fn dsp() -> Self {
         let mut width = WidthMap::new();
         width.insert("ACOUT".to_string(), 30);
