@@ -24,9 +24,9 @@ pub struct Output {
 
 pub trait DefaultPort {
     // implement default inputs
-    fn input() -> Port;
+    fn default_input_port() -> Port;
     // implement default outputs
-    fn output() -> Port;
+    fn default_output_port() -> Port;
 }
 
 impl Port {

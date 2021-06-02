@@ -16,10 +16,10 @@ pub struct Vcc {
 }
 
 impl DefaultPort for Vcc {
-    fn input() -> Port {
+    fn default_input_port() -> Port {
         Port::default()
     }
-    fn output() -> Port {
+    fn default_output_port() -> Port {
         let mut width = WidthMap::new();
         width.insert("G".to_string(), 1);
         let mut connection = ConnectionMap::new();
@@ -36,7 +36,7 @@ impl Default for Vcc {
         Vcc {
             name,
             prim: "VCC".to_string(),
-            output: Vcc::output(),
+            output: Vcc::default_output_port(),
         }
     }
 }

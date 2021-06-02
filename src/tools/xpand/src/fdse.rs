@@ -38,7 +38,7 @@ impl Default for Attr {
 }
 
 impl DefaultPort for Fdse {
-    fn input() -> Port {
+    fn default_input_port() -> Port {
         let mut width = WidthMap::new();
         width.insert("C".to_string(), 1);
         width.insert("S".to_string(), 1);
@@ -51,7 +51,7 @@ impl DefaultPort for Fdse {
         connection.insert("D".to_string(), vl::Expr::new_ulit_hex(1, "0"));
         Port { width, connection }
     }
-    fn output() -> Port {
+    fn default_output_port() -> Port {
         let mut width = WidthMap::new();
         width.insert("Q".to_string(), 1);
         let mut connection = ConnectionMap::new();
@@ -72,8 +72,8 @@ impl Default for Fdse {
             prim: "FDSE".to_string(),
             loc,
             attr: Attr::default(),
-            input: Fdse::input(),
-            output: Fdse::output(),
+            input: Fdse::default_input_port(),
+            output: Fdse::default_output_port(),
         }
     }
 }

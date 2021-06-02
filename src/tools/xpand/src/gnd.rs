@@ -16,10 +16,10 @@ pub struct Gnd {
 }
 
 impl DefaultPort for Gnd {
-    fn input() -> Port {
+    fn default_input_port() -> Port {
         Port::default()
     }
-    fn output() -> Port {
+    fn default_output_port() -> Port {
         let mut width = WidthMap::new();
         width.insert("G".to_string(), 1);
         let mut connection = ConnectionMap::new();
@@ -36,7 +36,7 @@ impl Default for Gnd {
         Gnd {
             name,
             prim: "GND".to_string(),
-            output: Gnd::output(),
+            output: Gnd::default_output_port(),
         }
     }
 }
