@@ -6,36 +6,29 @@ use crate::vec_expr_try_from_expr;
 use verilog::ast as vl;
 use xir::ast as xir;
 
+pub const VCC: &str = "vcc";
+
 #[derive(Clone, Debug)]
 pub struct Vcc {
     pub name: String,
     pub prim: String,
-    pub wire: String,
     pub output: Output,
 }
 
 impl Default for Vcc {
     fn default() -> Self {
-        let wire = "vcc";
-        let name = format!("_{}", wire);
+        let name = format!("_{}", VCC);
         Vcc {
             name,
             prim: "VCC".to_string(),
-            wire: wire.to_string(),
-            output: Output::vcc(wire),
+            output: Output::vcc(VCC),
         }
-    }
-}
-
-impl Vcc {
-    pub fn wire(&self) -> String {
-        self.wire.to_string()
     }
 }
 
 impl ToDecl for Vcc {
     fn to_decl(&self) -> vl::Decl {
-        vl::Decl::new_wire(&self.wire, 1)
+        vl::Decl::new_wire(VCC, 1)
     }
 }
 
@@ -68,9 +61,7 @@ impl ToInstance for Vcc {
 }
 
 pub fn vcc_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
-    let vcc = Vcc::default();
-    let wire = vcc.wire();
     let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
-    let assign = vl::Parallel::Assign(dst[0].clone(), vl::Expr::new_ref(&wire));
+    let assign = vl::Parallel::Assign(dst[0].clone(), vl::Expr::new_ref(VCC));
     Ok(vec![vl::Stmt::from(assign)])
 }
