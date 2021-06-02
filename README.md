@@ -6,7 +6,7 @@
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
-2. Install `1.50.0` version
+2. Install `1.50.0` rust version
 ```bash
 rustup toolchain install 1.50.0
 rustup override set 1.50.0
@@ -28,17 +28,17 @@ cargo install --bin rt --bin ro --path .
 
 1. Compile IR program to assembly (asm)
 ```bash
-rt --from ir --to asm examples/ir/add.ir
+./target/release/rt --from ir --to asm examples/ir/add.ir
 ```
 2. Compile IR program to machine IR (xir)
 ```bash
-rt --from ir --to xir examples/ir/add.ir
+./target/release/rt --from ir --to xir examples/ir/add.ir
 ```
 3. Compile IR program to structural Verilog (struct)
 ```bash
-rt --from ir --to struct examples/ir/add.ir
+./target/release/rt --from ir --to struct examples/ir/add.ir
 ```
 4. Compile IR program to behavioral Verilog (behav)
 ```bash
-rt --from ir --to behav examples/ir/add.ir
+./target/release/rt --from ir --to behav examples/ir/add.ir
 ```
