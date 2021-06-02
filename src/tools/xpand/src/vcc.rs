@@ -21,7 +21,7 @@ impl DefaultPort for Vcc {
     }
     fn default_output_port() -> Port {
         let mut width = WidthMap::new();
-        width.insert("G".to_string(), 1);
+        width.insert("P".to_string(), 1);
         let mut connection = ConnectionMap::new();
         for k in width.keys() {
             connection.insert(k.clone(), vl::Expr::new_ref(VCC));
