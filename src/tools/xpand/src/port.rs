@@ -4,7 +4,7 @@ use verilog::ast as vl;
 pub type ConnectionMap = HashMap<String, vl::Expr>;
 pub type WidthMap = HashMap<String, u32>;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Port {
     pub width: WidthMap,
     pub connection: ConnectionMap,
