@@ -33,6 +33,12 @@ impl Port {
     pub fn get_width(&self, port: &str) -> Option<&u32> {
         self.width.get(port)
     }
+    pub fn width(&self) -> &WidthMap {
+        &self.width
+    }
+    pub fn connection(&self) -> &ConnectionMap {
+        &self.connection
+    }
 }
 
 impl Input {
