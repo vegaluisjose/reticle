@@ -1,7 +1,7 @@
 use crate::decl::ToDecl;
 use crate::errors::Error;
 use crate::instance::ToInstance;
-use crate::port::Output;
+use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::vec_expr_try_from_expr;
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -12,7 +12,22 @@ pub const VCC: &str = "vcc";
 pub struct Vcc {
     pub name: String,
     pub prim: String,
-    pub output: Output,
+    pub output: Port,
+}
+
+impl DefaultPort for Vcc {
+    fn input() -> Port {
+        Port::default()
+    }
+    fn output() -> Port {
+        let mut width = WidthMap::new();
+        width.insert("G".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for k in width.keys() {
+            connection.insert(k.clone(), vl::Expr::new_ref(VCC));
+        }
+        Port { width, connection }
+    }
 }
 
 impl Default for Vcc {
@@ -21,7 +36,7 @@ impl Default for Vcc {
         Vcc {
             name,
             prim: "VCC".to_string(),
-            output: Output::vcc(VCC),
+            output: Vcc::output(),
         }
     }
 }
