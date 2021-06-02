@@ -1,4 +1,4 @@
-imp ladd_i8[1, 1](a: i8, b: i8) -> (y: i8) {
+imp ladd_i8[1, 2](a: i8, b: i8) -> (y: i8) {
     t0:bool = ext[0](a);
     t1:bool = ext[1](a);
     t2:bool = ext[2](a);
@@ -27,7 +27,7 @@ imp ladd_i8[1, 1](a: i8, b: i8) -> (y: i8) {
     y:i8 = carryadd(a, t24) @carry8(??, ??);
 }
 
-imp laddrega_i8[1, 1](a: i8, b: i8, en: bool) -> (y: i8) {
+imp laddrega_i8[1, 2](a: i8, b: i8, en: bool) -> (y: i8) {
     t0:bool = ext[0](a);
     t1:bool = ext[1](a);
     t2:bool = ext[2](a);
@@ -73,7 +73,7 @@ imp laddrega_i8[1, 1](a: i8, b: i8, en: bool) -> (y: i8) {
     y:i8 = cat(t34, t35, t36, t37, t38, t39, t40, t41);
 }
 
-imp lrega_i8[1, 1](a: i8, en: bool) -> (y: i8) {
+imp lrega_i8[1, 2](a: i8, en: bool) -> (y: i8) {
     t0:bool = ext[0](a);
     t1:bool = ext[1](a);
     t2:bool = ext[2](a);
@@ -93,7 +93,7 @@ imp lrega_i8[1, 1](a: i8, en: bool) -> (y: i8) {
     y:i8 = cat(t8, t9, t10, t11, t12, t13, t14, t15);
 }
 
-imp leq_i2[1, 1](a: i2, b: i2) -> (y: bool) {
+imp leq_i2[1, 2](a: i2, b: i2) -> (y: bool) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);
     t2:bool = ext[1](a);
@@ -101,7 +101,7 @@ imp leq_i2[1, 1](a: i2, b: i2) -> (y: bool) {
     y:bool = lut4[0x9009](t0, t1, t2, t3) @a6lut(??, ??);
 }
 
-imp leq_i4[1, 1](a: i4, b: i4) -> (y: bool) {
+imp leq_i4[1, 2](a: i4, b: i4) -> (y: bool) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);
     t2:bool = ext[1](a);
@@ -114,11 +114,11 @@ imp leq_i4[1, 1](a: i4, b: i4) -> (y: bool) {
     y:bool = lut3[0x90](t6, t7, t8) @b6lut(??, ??);
 }
 
-imp land_bool[1, 1](a: bool, b: bool) -> (y: bool) {
+imp land_bool[1, 2](a: bool, b: bool) -> (y: bool) {
     y:bool = lut2[8](a, b) @a6lut(x, y);
 }
 
-imp lmux_i2[1, 1](sel: bool, a: i2, b: i2) -> (y: i2) {
+imp lmux_i2[1, 2](sel: bool, a: i2, b: i2) -> (y: i2) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);
     t2:bool = ext[1](a);
@@ -128,7 +128,7 @@ imp lmux_i2[1, 1](sel: bool, a: i2, b: i2) -> (y: i2) {
     y:i2 = cat(t4, t5);
 }
 
-imp lmux_i4[1, 1](sel: bool, a: i4, b: i4) -> (y: i4) {
+imp lmux_i4[1, 2](sel: bool, a: i4, b: i4) -> (y: i4) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);
     t2:bool = ext[1](a);
@@ -144,7 +144,7 @@ imp lmux_i4[1, 1](sel: bool, a: i4, b: i4) -> (y: i4) {
     y:i4 = cat(t8, t9, t10, t11);
 }
 
-imp lmuxrega_i2[1, 1](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {
+imp lmuxrega_i2[1, 2](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);
     t2:bool = ext[1](a);
@@ -156,7 +156,7 @@ imp lmuxrega_i2[1, 1](sel: bool, a: i2, b: i2, en: bool) -> (y: i2) {
     y:i2 = cat(t6, t7);
 }
 
-imp lmuxrega_i4[1, 1](sel: bool, a: i4, b: i4, en: bool) -> (y: i4) {
+imp lmuxrega_i4[1, 2](sel: bool, a: i4, b: i4, en: bool) -> (y: i4) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);
     t2:bool = ext[1](a);

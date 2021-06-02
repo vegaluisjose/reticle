@@ -3,7 +3,7 @@ pub mod tree;
 
 use crate::errors::Error;
 use crate::tree::helpers::{
-    tree_codegen, tree_select, treelist_try_from_prog, treemap_try_from_target_pair,
+    tree_codegen, tree_commit, tree_select, treelist_try_from_prog, treemap_try_from_target_pair,
 };
 use crate::tree::TreeMap;
 use asm::ast as asm;
@@ -46,6 +46,7 @@ pub fn try_from_ir_prog(prog: &ir::Prog) -> Result<asm::Prog, Error> {
         let blks = treelist_try_from_prog(prog)?;
         let blks = tree_select(&blks, &dmap)?;
         let blks = tree_select(&blks, &lmap)?;
+        let blks = tree_commit(&blks)?;
         let mut body: Vec<asm::Instr> = Vec::new();
         let mut iset: HashSet<ir::Id> = HashSet::new();
         let tree_map: TreeMap = lmap.into_iter().chain(dmap).collect();

@@ -492,6 +492,15 @@ pub fn tree_select(blocks: &[Tree], pmap: &HashMap<String, Tree>) -> Result<Vec<
                 }
             }
         }
+        res.push(ctree);
+    }
+    Ok(res)
+}
+
+pub fn tree_commit(blocks: &[Tree]) -> Result<Vec<Tree>, Error> {
+    let mut res: Vec<Tree> = Vec::new();
+    for btree in blocks {
+        let mut ctree = btree.clone();
         ctree.commit();
         res.push(ctree);
     }
