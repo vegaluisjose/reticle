@@ -105,7 +105,7 @@ impl ToInstance for Carry {
     }
 }
 
-pub fn carry_from_carryadd(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+pub fn carryadd_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut carry = Carry::default();
     let name = inst_name_try_from_instr(instr)?;
     carry.set_name(&name);
@@ -128,11 +128,4 @@ pub fn carry_from_carryadd(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Erro
         carry.set_output(o, e)?;
     }
     Ok(vec![carry.to_stmt()])
-}
-
-pub fn carry_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
-    match instr.op() {
-        xir::OpMach::CarryAdd => Ok(carry_from_carryadd(instr)?),
-        _ => Err(Error::new_xpand_error("unsupported carry instruction")),
-    }
 }
