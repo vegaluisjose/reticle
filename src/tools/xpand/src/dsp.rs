@@ -1,10 +1,12 @@
 use crate::errors::Error;
 use crate::expr::ToExpr;
+use crate::inst_name_try_from_instr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
 use crate::port::{Input, Output};
 use verilog::ast as vl;
+use xir::ast as xir;
 
 #[derive(Clone, Debug)]
 pub enum InputTy {
@@ -600,4 +602,29 @@ impl ToInstance for Dsp {
             Err(Error::new_xpand_error(&err))
         }
     }
+}
+
+pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut dsp = Dsp::default();
+    let name = inst_name_try_from_instr(instr)?;
+    dsp.set_name(&name);
+    if let Some(loc) = instr.loc() {
+        dsp.set_loc(loc.clone());
+    }
+    // let input = ["DI", "S"];
+    // let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
+    // for (i, e) in input.iter().zip(arg) {
+    //     carry.set_input(i, e)?;
+    // }
+    // let input = ["CI", "CI_TOP"];
+    // for i in &input {
+    //     let zero = vl::Expr::new_ulit_bin(1, "0");
+    //     carry.set_input(i, zero.clone())?;
+    // }
+    // let output = ["O"];
+    // let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    // for (o, e) in output.iter().zip(dst) {
+    //     carry.set_output(o, e)?;
+    // }
+    Ok(vec![dsp.to_stmt()])
 }
