@@ -14,7 +14,7 @@ impl<T: std::cmp::PartialEq> Param<T> {
     }
     pub fn set_param<U: Clone>(&mut self, name: &str, value: U) -> Result<(), Error>
     where
-        U: Into<T>
+        U: Into<T>,
     {
         if let Some(cur) = self.map.get_mut(name) {
             let val: T = value.into();
