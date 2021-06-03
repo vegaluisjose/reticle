@@ -111,18 +111,6 @@ impl Input {
         }
         Input { width, connection }
     }
-    pub fn carry() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("DI".to_string(), 8);
-        width.insert("S".to_string(), 8);
-        width.insert("CI".to_string(), 1);
-        width.insert("CI_TOP".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
     pub fn dsp() -> Self {
         let mut width = WidthMap::new();
         width.insert("ACIN".to_string(), 30);
@@ -198,16 +186,6 @@ impl Output {
     pub fn lut() -> Self {
         let mut width = WidthMap::new();
         width.insert("O".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(""));
-        }
-        Output { width, connection }
-    }
-    pub fn carry() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("O".to_string(), 8);
-        width.insert("CO".to_string(), 8);
         let mut connection = ConnectionMap::new();
         for k in width.keys() {
             connection.insert(k.clone(), vl::Expr::new_ref(""));

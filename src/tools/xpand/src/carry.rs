@@ -2,7 +2,7 @@ use crate::errors::Error;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelCarry, ExprCoord, Loc};
-use crate::port::{Input, Output};
+use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -24,8 +24,8 @@ pub struct Carry {
     pub prim: String,
     pub attr: Attr,
     pub loc: Loc,
-    pub input: Input,
-    pub output: Output,
+    pub input: Port,
+    pub output: Port,
 }
 
 impl Default for Attr {
@@ -33,6 +33,31 @@ impl Default for Attr {
         Attr {
             ty: CarryType::Single,
         }
+    }
+}
+
+impl DefaultPort for Carry {
+    fn default_input_port() -> Port {
+        let mut width = WidthMap::new();
+        width.insert("DI".to_string(), 8);
+        width.insert("S".to_string(), 8);
+        width.insert("CI".to_string(), 1);
+        width.insert("CI_TOP".to_string(), 1);
+        let mut connection = ConnectionMap::new();
+        for (k, v) in width.iter() {
+            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+        }
+        Port { width, connection }
+    }
+    fn default_output_port() -> Port {
+        let mut width = WidthMap::new();
+        width.insert("O".to_string(), 8);
+        width.insert("CO".to_string(), 8);
+        let mut connection = ConnectionMap::new();
+        for k in width.keys() {
+            connection.insert(k.clone(), vl::Expr::new_ref(""));
+        }
+        Port { width, connection }
     }
 }
 
@@ -48,8 +73,8 @@ impl Default for Carry {
             prim: "CARRY8".to_string(),
             loc,
             attr: Attr::default(),
-            input: Input::carry(),
-            output: Output::carry(),
+            input: Carry::default_input_port(),
+            output: Carry::default_output_port(),
         }
     }
 }
