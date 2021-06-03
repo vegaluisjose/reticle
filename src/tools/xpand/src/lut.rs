@@ -2,7 +2,7 @@ use crate::errors::Error;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
-use crate::port::{Input, Output};
+use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -48,8 +48,35 @@ macro_rules! lut {
             pub prim: String,
             pub loc: Loc,
             pub attr: Attr,
-            pub input: Input,
-            pub output: Output,
+            pub input: Port,
+            pub output: Port,
+        }
+    };
+}
+
+macro_rules! lut_impl_default_port {
+    ($ty:tt, $input:expr) => {
+        impl DefaultPort for $ty {
+            fn default_input_port() -> Port {
+                let mut width = WidthMap::new();
+                for i in $input.iter() {
+                    width.insert(i.to_string(), 1);
+                }
+                let mut connection = ConnectionMap::new();
+                for (k, v) in width.iter() {
+                    connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+                }
+                Port { width, connection }
+            }
+            fn default_output_port() -> Port {
+                let mut width = WidthMap::new();
+                width.insert("O".to_string(), 1);
+                let mut connection = ConnectionMap::new();
+                for k in width.keys() {
+                    connection.insert(k.clone(), vl::Expr::new_ref(""));
+                }
+                Port { width, connection }
+            }
         }
     };
 }
@@ -68,8 +95,8 @@ macro_rules! lut_impl_default {
                     prim: $prim.to_string(),
                     loc,
                     attr: Attr::$default(),
-                    input: Input::$default(),
-                    output: Output::lut(),
+                    input: $ty::default_input_port(),
+                    output: $ty::default_output_port(),
                 }
             }
         }
@@ -168,19 +195,26 @@ lut!(Lut4);
 lut!(Lut5);
 lut!(Lut6);
 
-lut_impl_default!(Lut1, "LUT1", lut1);
-lut_impl_default!(Lut2, "LUT2", lut2);
-lut_impl_default!(Lut3, "LUT3", lut3);
-lut_impl_default!(Lut4, "LUT4", lut4);
-lut_impl_default!(Lut5, "LUT5", lut5);
-lut_impl_default!(Lut6, "LUT6", lut6);
-
 lut_impl!(Lut1);
 lut_impl!(Lut2);
 lut_impl!(Lut3);
 lut_impl!(Lut4);
 lut_impl!(Lut5);
 lut_impl!(Lut6);
+
+lut_impl_default_port!(Lut1, ["I0"]);
+lut_impl_default_port!(Lut2, ["I0", "I1"]);
+lut_impl_default_port!(Lut3, ["I0", "I1", "I2"]);
+lut_impl_default_port!(Lut4, ["I0", "I1", "I2", "I3"]);
+lut_impl_default_port!(Lut5, ["I0", "I1", "I2", "I3", "I4"]);
+lut_impl_default_port!(Lut6, ["I0", "I1", "I2", "I3", "I4", "I5"]);
+
+lut_impl_default!(Lut1, "LUT1", lut1);
+lut_impl_default!(Lut2, "LUT2", lut2);
+lut_impl_default!(Lut3, "LUT3", lut3);
+lut_impl_default!(Lut4, "LUT4", lut4);
+lut_impl_default!(Lut5, "LUT5", lut5);
+lut_impl_default!(Lut6, "LUT6", lut6);
 
 lut_impl_instance!(Lut1);
 lut_impl_instance!(Lut2);

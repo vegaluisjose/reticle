@@ -42,75 +42,6 @@ impl Port {
 }
 
 impl Input {
-    pub fn lut1() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("I0".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
-    pub fn lut2() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("I0".to_string(), 1);
-        width.insert("I1".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
-    pub fn lut3() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("I0".to_string(), 1);
-        width.insert("I1".to_string(), 1);
-        width.insert("I2".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
-    pub fn lut4() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("I0".to_string(), 1);
-        width.insert("I1".to_string(), 1);
-        width.insert("I2".to_string(), 1);
-        width.insert("I3".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
-    pub fn lut5() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("I0".to_string(), 1);
-        width.insert("I1".to_string(), 1);
-        width.insert("I2".to_string(), 1);
-        width.insert("I3".to_string(), 1);
-        width.insert("I4".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
-    pub fn lut6() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("I0".to_string(), 1);
-        width.insert("I1".to_string(), 1);
-        width.insert("I2".to_string(), 1);
-        width.insert("I3".to_string(), 1);
-        width.insert("I4".to_string(), 1);
-        width.insert("I5".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
-        }
-        Input { width, connection }
-    }
     pub fn dsp() -> Self {
         let mut width = WidthMap::new();
         width.insert("ACIN".to_string(), 30);
@@ -177,15 +108,6 @@ impl Output {
         width.insert("CARRYOUT".to_string(), 4);
         width.insert("P".to_string(), 48);
         width.insert("XOROUT".to_string(), 8);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(""));
-        }
-        Output { width, connection }
-    }
-    pub fn lut() -> Self {
-        let mut width = WidthMap::new();
-        width.insert("O".to_string(), 1);
         let mut connection = ConnectionMap::new();
         for k in width.keys() {
             connection.insert(k.clone(), vl::Expr::new_ref(""));
