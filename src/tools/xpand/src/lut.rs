@@ -54,7 +54,7 @@ macro_rules! lut {
     }
 }
 
-macro_rules! lut_default {
+macro_rules! lut_impl_default {
     ($ty:tt, $prim:tt, $default:tt) => {
         impl Default for $ty {
             fn default() -> Self {
@@ -89,7 +89,7 @@ macro_rules! lut_impl {
     };
 }
 
-macro_rules! lut_instance_impl {
+macro_rules! lut_impl_instance {
     ($ty:tt) => {
         impl ToInstance for $ty {
             fn to_instance(&self) -> vl::Instance {
@@ -136,7 +136,7 @@ macro_rules! lut_instance_impl {
     };
 }
 
-macro_rules! lut_from_mach {
+macro_rules! fn_lut_from_mach {
     ($fn:ident, $input:expr) => {
         pub fn $fn(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
             let mut lut = Lut2::default();
@@ -168,12 +168,12 @@ lut!(Lut4);
 lut!(Lut5);
 lut!(Lut6);
 
-lut_default!(Lut1, "LUT1", lut1);
-lut_default!(Lut2, "LUT2", lut2);
-lut_default!(Lut3, "LUT3", lut3);
-lut_default!(Lut4, "LUT4", lut4);
-lut_default!(Lut5, "LUT5", lut5);
-lut_default!(Lut6, "LUT6", lut6);
+lut_impl_default!(Lut1, "LUT1", lut1);
+lut_impl_default!(Lut2, "LUT2", lut2);
+lut_impl_default!(Lut3, "LUT3", lut3);
+lut_impl_default!(Lut4, "LUT4", lut4);
+lut_impl_default!(Lut5, "LUT5", lut5);
+lut_impl_default!(Lut6, "LUT6", lut6);
 
 lut_impl!(Lut1);
 lut_impl!(Lut2);
@@ -182,16 +182,16 @@ lut_impl!(Lut4);
 lut_impl!(Lut5);
 lut_impl!(Lut6);
 
-lut_instance_impl!(Lut1);
-lut_instance_impl!(Lut2);
-lut_instance_impl!(Lut3);
-lut_instance_impl!(Lut4);
-lut_instance_impl!(Lut5);
-lut_instance_impl!(Lut6);
+lut_impl_instance!(Lut1);
+lut_impl_instance!(Lut2);
+lut_impl_instance!(Lut3);
+lut_impl_instance!(Lut4);
+lut_impl_instance!(Lut5);
+lut_impl_instance!(Lut6);
 
-lut_from_mach!(lut1_from_mach, ["I0"]);
-lut_from_mach!(lut2_from_mach, ["I0", "I1"]);
-lut_from_mach!(lut3_from_mach, ["I0", "I1", "I2"]);
-lut_from_mach!(lut4_from_mach, ["I0", "I1", "I2", "I3"]);
-lut_from_mach!(lut5_from_mach, ["I0", "I1", "I2", "I3", "I4"]);
-lut_from_mach!(lut6_from_mach, ["I0", "I1", "I2", "I3", "I4", "I5"]);
+fn_lut_from_mach!(lut1_from_mach, ["I0"]);
+fn_lut_from_mach!(lut2_from_mach, ["I0", "I1"]);
+fn_lut_from_mach!(lut3_from_mach, ["I0", "I1", "I2"]);
+fn_lut_from_mach!(lut4_from_mach, ["I0", "I1", "I2", "I3"]);
+fn_lut_from_mach!(lut5_from_mach, ["I0", "I1", "I2", "I3", "I4"]);
+fn_lut_from_mach!(lut6_from_mach, ["I0", "I1", "I2", "I3", "I4", "I5"]);
