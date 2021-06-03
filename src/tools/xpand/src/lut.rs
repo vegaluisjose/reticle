@@ -13,66 +13,6 @@ pub struct Attr {
     pub width: u32,
 }
 
-#[derive(Clone, Debug)]
-pub struct Lut1 {
-    pub name: String,
-    pub prim: String,
-    pub loc: Loc,
-    pub attr: Attr,
-    pub input: Input,
-    pub output: Output,
-}
-
-#[derive(Clone, Debug)]
-pub struct Lut2 {
-    pub name: String,
-    pub prim: String,
-    pub loc: Loc,
-    pub attr: Attr,
-    pub input: Input,
-    pub output: Output,
-}
-
-#[derive(Clone, Debug)]
-pub struct Lut3 {
-    pub name: String,
-    pub prim: String,
-    pub loc: Loc,
-    pub attr: Attr,
-    pub input: Input,
-    pub output: Output,
-}
-
-#[derive(Clone, Debug)]
-pub struct Lut4 {
-    pub name: String,
-    pub prim: String,
-    pub loc: Loc,
-    pub attr: Attr,
-    pub input: Input,
-    pub output: Output,
-}
-
-#[derive(Clone, Debug)]
-pub struct Lut5 {
-    pub name: String,
-    pub prim: String,
-    pub loc: Loc,
-    pub attr: Attr,
-    pub input: Input,
-    pub output: Output,
-}
-
-#[derive(Clone, Debug)]
-pub struct Lut6 {
-    pub name: String,
-    pub prim: String,
-    pub loc: Loc,
-    pub attr: Attr,
-    pub input: Input,
-    pub output: Output,
-}
-
 impl Default for Attr {
     fn default() -> Self {
         Attr { init: 0, width: 0 }
@@ -97,6 +37,20 @@ impl Attr {
     }
     pub fn lut6() -> Self {
         Attr { init: 0, width: 64 }
+    }
+}
+
+macro_rules! lut {
+    ($ty:tt) => {
+        #[derive(Clone, Debug)]
+        pub struct $ty {
+            pub name: String,
+            pub prim: String,
+            pub loc: Loc,
+            pub attr: Attr,
+            pub input: Input,
+            pub output: Output,
+        }
     }
 }
 
@@ -206,6 +160,13 @@ macro_rules! lut_from_mach {
         }
     };
 }
+
+lut!(Lut1);
+lut!(Lut2);
+lut!(Lut3);
+lut!(Lut4);
+lut!(Lut5);
+lut!(Lut6);
 
 lut_default!(Lut1, "LUT1", lut1);
 lut_default!(Lut2, "LUT2", lut2);
