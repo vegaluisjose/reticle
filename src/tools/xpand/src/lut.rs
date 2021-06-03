@@ -51,7 +51,7 @@ macro_rules! lut {
             pub input: Input,
             pub output: Output,
         }
-    }
+    };
 }
 
 macro_rules! lut_impl_default {
@@ -137,9 +137,9 @@ macro_rules! lut_impl_instance {
 }
 
 macro_rules! fn_lut_from_mach {
-    ($fn:ident, $input:expr) => {
+    ($fn:ident, $ty:tt, $input:expr) => {
         pub fn $fn(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
-            let mut lut = Lut2::default();
+            let mut lut = $ty::default();
             let name = inst_name_try_from_instr(instr)?;
             lut.set_name(&name);
             if let Some(loc) = instr.loc() {
@@ -189,9 +189,9 @@ lut_impl_instance!(Lut4);
 lut_impl_instance!(Lut5);
 lut_impl_instance!(Lut6);
 
-fn_lut_from_mach!(lut1_from_mach, ["I0"]);
-fn_lut_from_mach!(lut2_from_mach, ["I0", "I1"]);
-fn_lut_from_mach!(lut3_from_mach, ["I0", "I1", "I2"]);
-fn_lut_from_mach!(lut4_from_mach, ["I0", "I1", "I2", "I3"]);
-fn_lut_from_mach!(lut5_from_mach, ["I0", "I1", "I2", "I3", "I4"]);
-fn_lut_from_mach!(lut6_from_mach, ["I0", "I1", "I2", "I3", "I4", "I5"]);
+fn_lut_from_mach!(lut1_from_mach, Lut1, ["I0"]);
+fn_lut_from_mach!(lut2_from_mach, Lut2, ["I0", "I1"]);
+fn_lut_from_mach!(lut3_from_mach, Lut3, ["I0", "I1", "I2"]);
+fn_lut_from_mach!(lut4_from_mach, Lut4, ["I0", "I1", "I2", "I3"]);
+fn_lut_from_mach!(lut5_from_mach, Lut5, ["I0", "I1", "I2", "I3", "I4"]);
+fn_lut_from_mach!(lut6_from_mach, Lut6, ["I0", "I1", "I2", "I3", "I4", "I5"]);
