@@ -19,7 +19,7 @@ use crate::decl::ToDecl;
 use crate::errors::Error;
 use crate::gnd::Gnd;
 use crate::instance::ToInstance;
-use crate::port::Output;
+use crate::port::DefaultPort;
 use crate::vcc::Vcc;
 use bline::{input_try_from_sig, vec_expr_try_from_expr, wire_try_from_expr};
 use std::collections::HashSet;
@@ -94,7 +94,7 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
         module.add_port(i.clone());
     }
     let mut decl: Vec<vl::Decl> = Vec::new();
-    let dsp_outputs = Output::dsp();
+    let dsp_outputs = dsp::Dsp::default_output_port();
     for i in prog.body() {
         let d: Vec<vl::Decl> = vec_decl_try_from_instr(i)?;
         decl.extend(d);
