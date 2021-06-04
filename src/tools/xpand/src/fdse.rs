@@ -2,6 +2,7 @@ use crate::errors::Error;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
+use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use crate::{CLOCK, RESET};
@@ -9,32 +10,50 @@ use verilog::ast as vl;
 use xir::ast as xir;
 
 #[derive(Clone, Debug)]
-pub struct Attr {
-    pub init: bool,
-    pub is_c_inverted: bool,
-    pub is_d_inverted: bool,
-    pub is_s_inverted: bool,
+pub enum ParamValue {
+    Bool(bool),
+}
+
+// always true because there is only one value type
+impl PartialEq for ParamValue {
+    fn eq(&self, _: &Self) -> bool {
+        true
+    }
+}
+
+impl From<bool> for ParamValue {
+    fn from(input: bool) -> Self {
+        ParamValue::Bool(input)
+    }
+}
+
+impl From<ParamValue> for bool {
+    fn from(input: ParamValue) -> Self {
+        match input {
+            ParamValue::Bool(n) => n,
+        }
+    }
+}
+
+impl Default for Param<ParamValue> {
+    fn default() -> Self {
+        let mut map = ParamMap::new();
+        map.insert("INIT".to_string(), ParamValue::from(false));
+        map.insert("IS_C_INVERTED".to_string(), ParamValue::from(false));
+        map.insert("IS_D_INVERTED".to_string(), ParamValue::from(false));
+        map.insert("IS_S_INVERTED".to_string(), ParamValue::from(false));
+        Param { map }
+    }
 }
 
 #[derive(Clone, Debug)]
 pub struct Fdse {
     pub name: String,
     pub prim: String,
-    pub attr: Attr,
+    pub param: Param<ParamValue>,
     pub loc: Loc,
     pub input: Port,
     pub output: Port,
-}
-
-impl Default for Attr {
-    fn default() -> Self {
-        Attr {
-            init: false,
-            is_c_inverted: false,
-            is_d_inverted: false,
-            is_s_inverted: false,
-        }
-    }
 }
 
 impl DefaultPort for Fdse {
@@ -71,7 +90,7 @@ impl Default for Fdse {
             name: String::new(),
             prim: "FDSE".to_string(),
             loc,
-            attr: Attr::default(),
+            param: Param::<ParamValue>::default(),
             input: Fdse::default_input_port(),
             output: Fdse::default_output_port(),
         }
@@ -87,14 +106,11 @@ impl Fdse {
 impl ToInstance for Fdse {
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
-        let init = format!("{}", u32::from(self.attr.init));
-        let is_c_inv = format!("{}", u32::from(self.attr.is_c_inverted));
-        let is_d_inv = format!("{}", u32::from(self.attr.is_d_inverted));
-        let is_s_inv = format!("{}", u32::from(self.attr.is_s_inverted));
-        inst.add_param("INIT", vl::Expr::new_ulit_bin(1, &init));
-        inst.add_param("IS_C_INVERTED", vl::Expr::new_ulit_bin(1, &is_c_inv));
-        inst.add_param("IS_D_INVERTED", vl::Expr::new_ulit_bin(1, &is_d_inv));
-        inst.add_param("IS_S_INVERTED", vl::Expr::new_ulit_bin(1, &is_s_inv));
+        for (k, v) in self.param.param() {
+            let val: bool = v.clone().into();
+            let fmt = format!("{}", u32::from(val));
+            inst.add_param(k, vl::Expr::new_ulit_bin(1, &fmt));
+        }
         for (k, v) in self.input.connection.iter() {
             inst.connect(&k, v.clone());
         }
