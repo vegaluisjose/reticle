@@ -1,4 +1,5 @@
 use crate::errors::Error;
+use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
@@ -24,6 +25,17 @@ impl PartialEq for ParamValue {
 impl From<bool> for ParamValue {
     fn from(input: bool) -> Self {
         ParamValue::Bool(input)
+    }
+}
+
+impl ToExpr for ParamValue {
+    fn to_expr(&self) -> vl::Expr {
+        match self {
+            ParamValue::Bool(b) => {
+                let dec = format!("{}", u32::from(*b));
+                vl::Expr::new_ulit_bin(1, &dec)
+            }
+        }
     }
 }
 
@@ -107,9 +119,8 @@ impl ToInstance for Fdre {
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         for (k, v) in self.param.param() {
-            let val: bool = v.clone().into();
-            let fmt = format!("{}", u32::from(val));
-            inst.add_param(k, vl::Expr::new_ulit_bin(1, &fmt));
+            let expr: vl::Expr = v.clone().to_expr();
+            inst.add_param(k, expr);
         }
         for (k, v) in self.input.connection.iter() {
             inst.connect(&k, v.clone());
