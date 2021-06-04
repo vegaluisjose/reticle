@@ -1,55 +1,74 @@
 use crate::errors::Error;
+use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
+use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
 use xir::ast as xir;
 
-#[derive(Clone, Debug)]
-pub struct Attr {
-    pub init: u64,
-    pub width: u32,
-}
-
-impl Default for Attr {
-    fn default() -> Self {
-        Attr { init: 0, width: 0 }
-    }
-}
-
-impl Attr {
-    pub fn lut1() -> Self {
-        Attr { init: 0, width: 2 }
-    }
-    pub fn lut2() -> Self {
-        Attr { init: 0, width: 4 }
-    }
-    pub fn lut3() -> Self {
-        Attr { init: 0, width: 8 }
-    }
-    pub fn lut4() -> Self {
-        Attr { init: 0, width: 16 }
-    }
-    pub fn lut5() -> Self {
-        Attr { init: 0, width: 32 }
-    }
-    pub fn lut6() -> Self {
-        Attr { init: 0, width: 64 }
-    }
-}
-
 macro_rules! lut {
-    ($ty:tt) => {
+    ($ty:tt, $val:tt, $width:expr) => {
+        #[derive(Clone, Debug)]
+        pub enum $val {
+            Init(u64),
+        }
+
         #[derive(Clone, Debug)]
         pub struct $ty {
             pub name: String,
             pub prim: String,
             pub loc: Loc,
-            pub attr: Attr,
+            pub param: Param<$val>,
             pub input: Port,
             pub output: Port,
+        }
+
+        // always true because there is only one value type
+        impl PartialEq for $val {
+            fn eq(&self, _: &Self) -> bool {
+                true
+            }
+        }
+
+        impl ToExpr for $val {
+            fn to_expr(&self) -> vl::Expr {
+                match self {
+                    $val::Init(v) => {
+                        let s = format!("{:X}", *v);
+                        vl::Expr::new_ulit_hex($width, &s)
+                    }
+                }
+            }
+        }
+
+        impl From<u64> for $val {
+            fn from(input: u64) -> Self {
+                $val::Init(input)
+            }
+        }
+
+        impl Default for Param<$val> {
+            fn default() -> Self {
+                let mut map = ParamMap::new();
+                map.insert("INIT".to_string(), $val::from(0));
+                Param { map }
+            }
+        }
+
+        impl $ty {
+            pub fn set_loc(&mut self, loc: Loc) {
+                self.loc = loc;
+            }
+            pub fn set_param<P>(&mut self, name: &str, value: P) -> Result<(), Error>
+            where
+                P: Into<$val>,
+            {
+                self.param.set_param(name, value.into())?;
+                Ok(())
+            }
         }
     };
 }
@@ -82,7 +101,7 @@ macro_rules! lut_impl_default_port {
 }
 
 macro_rules! lut_impl_default {
-    ($ty:tt, $prim:tt, $default:tt) => {
+    ($ty:tt, $prim:tt, $val:tt) => {
         impl Default for $ty {
             fn default() -> Self {
                 let loc = Loc {
@@ -94,23 +113,10 @@ macro_rules! lut_impl_default {
                     name: String::new(),
                     prim: $prim.to_string(),
                     loc,
-                    attr: Attr::$default(),
+                    param: Param::<$val>::default(),
                     input: $ty::default_input_port(),
                     output: $ty::default_output_port(),
                 }
-            }
-        }
-    };
-}
-
-macro_rules! lut_impl {
-    ($ty:tt) => {
-        impl $ty {
-            pub fn set_init(&mut self, init: u64) {
-                self.attr.init = init;
-            }
-            pub fn set_loc(&mut self, loc: Loc) {
-                self.loc = loc;
             }
         }
     };
@@ -121,8 +127,10 @@ macro_rules! lut_impl_instance {
         impl ToInstance for $ty {
             fn to_instance(&self) -> vl::Instance {
                 let mut inst = vl::Instance::new(&self.name, &self.prim);
-                let init = format!("{:X}", self.attr.init);
-                inst.add_param("INIT", vl::Expr::new_ulit_hex(self.attr.width, &init));
+                for (k, v) in self.param.param() {
+                    let expr: vl::Expr = v.clone().to_expr();
+                    inst.add_param(k, expr);
+                }
                 for (k, v) in self.input.connection.iter() {
                     inst.connect(&k, v.clone());
                 }
@@ -173,7 +181,7 @@ macro_rules! fn_lut_from_mach {
                 lut.set_loc(loc.clone());
             }
             let init = instr.attr().get_val(0)?;
-            lut.set_init(init as u64);
+            lut.set_param("INIT", init as u64)?;
             let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
             for (i, e) in $input.iter().zip(arg) {
                 lut.set_input(i, e)?;
@@ -188,19 +196,12 @@ macro_rules! fn_lut_from_mach {
     };
 }
 
-lut!(Lut1);
-lut!(Lut2);
-lut!(Lut3);
-lut!(Lut4);
-lut!(Lut5);
-lut!(Lut6);
-
-lut_impl!(Lut1);
-lut_impl!(Lut2);
-lut_impl!(Lut3);
-lut_impl!(Lut4);
-lut_impl!(Lut5);
-lut_impl!(Lut6);
+lut!(Lut1, Lut1ParamVal, 1);
+lut!(Lut2, Lut2ParamVal, 4);
+lut!(Lut3, Lut3ParamVal, 8);
+lut!(Lut4, Lut4ParamVal, 16);
+lut!(Lut5, Lut5ParamVal, 32);
+lut!(Lut6, Lut6ParamVal, 64);
 
 lut_impl_default_port!(Lut1, ["I0"]);
 lut_impl_default_port!(Lut2, ["I0", "I1"]);
@@ -209,12 +210,12 @@ lut_impl_default_port!(Lut4, ["I0", "I1", "I2", "I3"]);
 lut_impl_default_port!(Lut5, ["I0", "I1", "I2", "I3", "I4"]);
 lut_impl_default_port!(Lut6, ["I0", "I1", "I2", "I3", "I4", "I5"]);
 
-lut_impl_default!(Lut1, "LUT1", lut1);
-lut_impl_default!(Lut2, "LUT2", lut2);
-lut_impl_default!(Lut3, "LUT3", lut3);
-lut_impl_default!(Lut4, "LUT4", lut4);
-lut_impl_default!(Lut5, "LUT5", lut5);
-lut_impl_default!(Lut6, "LUT6", lut6);
+lut_impl_default!(Lut1, "LUT1", Lut1ParamVal);
+lut_impl_default!(Lut2, "LUT2", Lut2ParamVal);
+lut_impl_default!(Lut3, "LUT3", Lut3ParamVal);
+lut_impl_default!(Lut4, "LUT4", Lut4ParamVal);
+lut_impl_default!(Lut5, "LUT5", Lut5ParamVal);
+lut_impl_default!(Lut6, "LUT6", Lut6ParamVal);
 
 lut_impl_instance!(Lut1);
 lut_impl_instance!(Lut2);
