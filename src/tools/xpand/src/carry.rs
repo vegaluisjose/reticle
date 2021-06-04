@@ -50,14 +50,6 @@ impl From<CarryType> for ParamValue {
     }
 }
 
-impl From<ParamValue> for CarryType {
-    fn from(input: ParamValue) -> Self {
-        match input {
-            ParamValue::CarryType(n) => n,
-        }
-    }
-}
-
 impl Default for Param<ParamValue> {
     fn default() -> Self {
         let mut map = ParamMap::new();
