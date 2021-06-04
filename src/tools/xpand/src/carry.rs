@@ -1,7 +1,9 @@
 use crate::errors::Error;
+use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelCarry, ExprCoord, Loc};
+use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
@@ -14,26 +16,67 @@ pub enum CarryType {
 }
 
 #[derive(Clone, Debug)]
-pub struct Attr {
-    pub ty: CarryType,
+pub enum ParamValue {
+    CarryType(CarryType),
+}
+
+// always true because there is only one value type
+impl PartialEq for ParamValue {
+    fn eq(&self, _: &Self) -> bool {
+        true
+    }
+}
+
+impl ToExpr for CarryType {
+    fn to_expr(&self) -> vl::Expr {
+        match self {
+            CarryType::Single => vl::Expr::new_str("SINGLE_CY8"),
+            CarryType::Dual => vl::Expr::new_str("DUAL_CY4"),
+        }
+    }
+}
+
+impl ToExpr for ParamValue {
+    fn to_expr(&self) -> vl::Expr {
+        match self {
+            ParamValue::CarryType(c) => c.to_expr(),
+        }
+    }
+}
+
+impl From<CarryType> for ParamValue {
+    fn from(input: CarryType) -> Self {
+        ParamValue::CarryType(input)
+    }
+}
+
+impl From<ParamValue> for CarryType {
+    fn from(input: ParamValue) -> Self {
+        match input {
+            ParamValue::CarryType(n) => n,
+        }
+    }
+}
+
+impl Default for Param<ParamValue> {
+    fn default() -> Self {
+        let mut map = ParamMap::new();
+        map.insert(
+            "CARRY_TYPE".to_string(),
+            ParamValue::from(CarryType::Single),
+        );
+        Param { map }
+    }
 }
 
 #[derive(Clone, Debug)]
 pub struct Carry {
     pub name: String,
     pub prim: String,
-    pub attr: Attr,
+    pub param: Param<ParamValue>,
     pub loc: Loc,
     pub input: Port,
     pub output: Port,
-}
-
-impl Default for Attr {
-    fn default() -> Self {
-        Attr {
-            ty: CarryType::Single,
-        }
-    }
 }
 
 impl DefaultPort for Carry {
@@ -72,7 +115,7 @@ impl Default for Carry {
             name: String::new(),
             prim: "CARRY8".to_string(),
             loc,
-            attr: Attr::default(),
+            param: Param::<ParamValue>::default(),
             input: Carry::default_input_port(),
             output: Carry::default_output_port(),
         }
@@ -88,9 +131,9 @@ impl Carry {
 impl ToInstance for Carry {
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
-        match self.attr.ty {
-            CarryType::Single => inst.add_param("CARRY_TYPE", vl::Expr::new_str("SINGLE_CY8")),
-            CarryType::Dual => inst.add_param("CARRY_TYPE", vl::Expr::new_str("DUAL_CY4")),
+        for (k, v) in self.param.param() {
+            let expr: vl::Expr = v.clone().to_expr();
+            inst.add_param(k, expr);
         }
         for (k, v) in self.input.connection.iter() {
             inst.connect(&k, v.clone());
