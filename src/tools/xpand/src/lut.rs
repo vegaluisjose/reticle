@@ -10,7 +10,7 @@ use verilog::ast as vl;
 use xir::ast as xir;
 
 macro_rules! lut {
-    ($ty:tt, $val:tt, $width:expr) => {
+    ($fn:ident, $ty:tt, $val:tt, $prim:expr, $width:expr, $inputs:expr) => {
         #[derive(Clone, Debug)]
         pub enum $val {
             Init(u64),
@@ -58,27 +58,10 @@ macro_rules! lut {
             }
         }
 
-        impl $ty {
-            pub fn set_loc(&mut self, loc: Loc) {
-                self.loc = loc;
-            }
-            pub fn set_param<P>(&mut self, name: &str, value: P) -> Result<(), Error>
-            where
-                P: Into<$val>,
-            {
-                self.param.set_param(name, value.into())?;
-                Ok(())
-            }
-        }
-    };
-}
-
-macro_rules! lut_impl_default_port {
-    ($ty:tt, $input:expr) => {
         impl DefaultPort for $ty {
             fn default_input_port() -> Port {
                 let mut width = WidthMap::new();
-                for i in $input.iter() {
+                for i in $inputs.iter() {
                     width.insert(i.to_string(), 1);
                 }
                 let mut connection = ConnectionMap::new();
@@ -97,11 +80,7 @@ macro_rules! lut_impl_default_port {
                 Port { width, connection }
             }
         }
-    };
-}
 
-macro_rules! lut_impl_default {
-    ($ty:tt, $prim:tt, $val:tt) => {
         impl Default for $ty {
             fn default() -> Self {
                 let loc = Loc {
@@ -119,11 +98,7 @@ macro_rules! lut_impl_default {
                 }
             }
         }
-    };
-}
 
-macro_rules! lut_impl_instance {
-    ($ty:tt) => {
         impl ToInstance for $ty {
             fn to_instance(&self) -> vl::Instance {
                 let mut inst = vl::Instance::new(&self.name, &self.prim);
@@ -168,11 +143,20 @@ macro_rules! lut_impl_instance {
                 }
             }
         }
-    };
-}
 
-macro_rules! fn_lut_from_mach {
-    ($fn:ident, $ty:tt, $input:expr) => {
+        impl $ty {
+            pub fn set_loc(&mut self, loc: Loc) {
+                self.loc = loc;
+            }
+            pub fn set_param<P>(&mut self, name: &str, value: P) -> Result<(), Error>
+            where
+                P: Into<$val>,
+            {
+                self.param.set_param(name, value.into())?;
+                Ok(())
+            }
+        }
+
         pub fn $fn(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
             let mut lut = $ty::default();
             let name = inst_name_try_from_instr(instr)?;
@@ -183,7 +167,7 @@ macro_rules! fn_lut_from_mach {
             let init = instr.attr().get_val(0)?;
             lut.set_param("INIT", init as u64)?;
             let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
-            for (i, e) in $input.iter().zip(arg) {
+            for (i, e) in $inputs.iter().zip(arg) {
                 lut.set_input(i, e)?;
             }
             let output = ["O"];
@@ -196,37 +180,37 @@ macro_rules! fn_lut_from_mach {
     };
 }
 
-lut!(Lut1, Lut1ParamVal, 1);
-lut!(Lut2, Lut2ParamVal, 4);
-lut!(Lut3, Lut3ParamVal, 8);
-lut!(Lut4, Lut4ParamVal, 16);
-lut!(Lut5, Lut5ParamVal, 32);
-lut!(Lut6, Lut6ParamVal, 64);
-
-lut_impl_default_port!(Lut1, ["I0"]);
-lut_impl_default_port!(Lut2, ["I0", "I1"]);
-lut_impl_default_port!(Lut3, ["I0", "I1", "I2"]);
-lut_impl_default_port!(Lut4, ["I0", "I1", "I2", "I3"]);
-lut_impl_default_port!(Lut5, ["I0", "I1", "I2", "I3", "I4"]);
-lut_impl_default_port!(Lut6, ["I0", "I1", "I2", "I3", "I4", "I5"]);
-
-lut_impl_default!(Lut1, "LUT1", Lut1ParamVal);
-lut_impl_default!(Lut2, "LUT2", Lut2ParamVal);
-lut_impl_default!(Lut3, "LUT3", Lut3ParamVal);
-lut_impl_default!(Lut4, "LUT4", Lut4ParamVal);
-lut_impl_default!(Lut5, "LUT5", Lut5ParamVal);
-lut_impl_default!(Lut6, "LUT6", Lut6ParamVal);
-
-lut_impl_instance!(Lut1);
-lut_impl_instance!(Lut2);
-lut_impl_instance!(Lut3);
-lut_impl_instance!(Lut4);
-lut_impl_instance!(Lut5);
-lut_impl_instance!(Lut6);
-
-fn_lut_from_mach!(lut1_from_mach, Lut1, ["I0"]);
-fn_lut_from_mach!(lut2_from_mach, Lut2, ["I0", "I1"]);
-fn_lut_from_mach!(lut3_from_mach, Lut3, ["I0", "I1", "I2"]);
-fn_lut_from_mach!(lut4_from_mach, Lut4, ["I0", "I1", "I2", "I3"]);
-fn_lut_from_mach!(lut5_from_mach, Lut5, ["I0", "I1", "I2", "I3", "I4"]);
-fn_lut_from_mach!(lut6_from_mach, Lut6, ["I0", "I1", "I2", "I3", "I4", "I5"]);
+lut!(lut1_from_mach, Lut1, Lut1ParamVal, "LUT1", 1, ["I0"]);
+lut!(lut2_from_mach, Lut2, Lut2ParamVal, "LUT2", 4, ["I0", "I1"]);
+lut!(
+    lut3_from_mach,
+    Lut3,
+    Lut3ParamVal,
+    "LUT3",
+    8,
+    ["I0", "I1", "I2"]
+);
+lut!(
+    lut4_from_mach,
+    Lut4,
+    Lut4ParamVal,
+    "LUT4",
+    16,
+    ["I0", "I1", "I2", "I3"]
+);
+lut!(
+    lut5_from_mach,
+    Lut5,
+    Lut5ParamVal,
+    "LUT5",
+    32,
+    ["I0", "I1", "I2", "I3", "I4"]
+);
+lut!(
+    lut6_from_mach,
+    Lut6,
+    Lut6ParamVal,
+    "LUT6",
+    64,
+    ["I0", "I1", "I2", "I3", "I4", "I5"]
+);
