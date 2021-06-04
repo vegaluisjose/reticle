@@ -37,7 +37,7 @@ macro_rules! lut {
             fn to_expr(&self) -> vl::Expr {
                 match self {
                     $val::Init(v) => {
-                        let s = format!("{:X}", *v);
+                        let s = format!("{:x}", *v);
                         vl::Expr::new_ulit_hex($width, &s)
                     }
                 }

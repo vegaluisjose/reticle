@@ -115,7 +115,7 @@ module main (
     assign t11 = t1[3];
     assign t12 = t2[3];
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t13 (
         .I0(t5),
         .I1(t6),
@@ -123,7 +123,7 @@ module main (
         .O(t13)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t14 (
         .I0(t7),
         .I1(t8),
@@ -131,7 +131,7 @@ module main (
         .O(t14)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t15 (
         .I0(t9),
         .I1(t10),
@@ -139,7 +139,7 @@ module main (
         .O(t15)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t16 (
         .I0(t11),
         .I1(t12),
@@ -217,7 +217,7 @@ module main (
     assign t35 = t27[3];
     assign t36 = t28[3];
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t37 (
         .I0(t29),
         .I1(t30),
@@ -225,7 +225,7 @@ module main (
         .O(t37)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t38 (
         .I0(t31),
         .I1(t32),
@@ -233,7 +233,7 @@ module main (
         .O(t38)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t39 (
         .I0(t33),
         .I1(t34),
@@ -241,7 +241,7 @@ module main (
         .O(t39)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t40 (
         .I0(t35),
         .I1(t36),
@@ -297,7 +297,7 @@ module main (
     assign t63 = t56[3];
     assign t64 = t4[3];
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t65 (
         .I0(t57),
         .I1(t58),
@@ -305,7 +305,7 @@ module main (
         .O(t65)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t66 (
         .I0(t59),
         .I1(t60),
@@ -313,7 +313,7 @@ module main (
         .O(t66)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t67 (
         .I0(t61),
         .I1(t62),
@@ -321,7 +321,7 @@ module main (
         .O(t67)
     );
     LUT3 # (
-        .INIT(8'hAC)
+        .INIT(8'hac)
     ) __t68 (
         .I0(t63),
         .I1(t64),
