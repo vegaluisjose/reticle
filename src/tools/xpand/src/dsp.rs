@@ -116,9 +116,8 @@ pub enum ParamValue {
     SelMask(SelMask),
     SelPattern(SelPattern),
     UsePatternDetect(UsePatternDetect),
-    // NumRegAB(NumRegAB),
-    // NumReg(NumReg),
-    // Bool(bool),
+    NumRegAB(NumRegAB),
+    NumReg(NumReg),
 }
 
 #[derive(Clone, Debug)]
@@ -134,6 +133,13 @@ pub struct Dsp {
 impl Dsp {
     pub fn set_loc(&mut self, loc: Loc) {
         self.loc = loc;
+    }
+    pub fn set_param<P>(&mut self, name: &str, value: P) -> Result<(), Error>
+    where
+        P: Into<ParamValue>,
+    {
+        self.param.set_param(name, value.into())?;
+        Ok(())
     }
 }
 
@@ -306,6 +312,8 @@ impl PartialEq for ParamValue {
             (ParamValue::SelMask(_), ParamValue::SelMask(_)) => true,
             (ParamValue::SelPattern(_), ParamValue::SelPattern(_)) => true,
             (ParamValue::UsePatternDetect(_), ParamValue::UsePatternDetect(_)) => true,
+            (ParamValue::NumRegAB(_), ParamValue::NumRegAB(_)) => true,
+            (ParamValue::NumReg(_), ParamValue::NumReg(_)) => true,
             (ParamValue::Val(_, _), ParamValue::Val(_, _)) => true,
             (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
             (_, _) => false,
@@ -391,6 +399,18 @@ impl From<bool> for ParamValue {
     }
 }
 
+impl From<NumRegAB> for ParamValue {
+    fn from(input: NumRegAB) -> Self {
+        ParamValue::NumRegAB(input)
+    }
+}
+
+impl From<NumReg> for ParamValue {
+    fn from(input: NumReg) -> Self {
+        ParamValue::NumReg(input)
+    }
+}
+
 impl ToExpr for ParamValue {
     fn to_expr(&self) -> vl::Expr {
         match self {
@@ -410,6 +430,8 @@ impl ToExpr for ParamValue {
             ParamValue::SelMask(v) => v.to_expr(),
             ParamValue::SelPattern(v) => v.to_expr(),
             ParamValue::UsePatternDetect(v) => v.to_expr(),
+            ParamValue::NumRegAB(v) => v.to_expr(),
+            ParamValue::NumReg(v) => v.to_expr(),
             ParamValue::Val(w, v) => {
                 let s = format!("{:x}", v);
                 vl::Expr::new_ulit_hex(*w, &s)
@@ -421,53 +443,6 @@ impl ToExpr for ParamValue {
         }
     }
 }
-
-//  a_input: InputTy::default(),
-//  b_input: InputTy::default(),
-//  a_multsel: AMultSel::default(),
-//  b_multsel: BMultSel::default(),
-//  preaddinsel: PreAddInSel::default(),
-//  rnd: 0,
-//  use_mult: UseMult::default(),
-//  use_simd: UseSimd::default(),
-//  use_widexor: false,
-//  xorsimd: XorSimd::default(),
-//  autoreset_patdet: AutoResetPatDet::default(),
-//  autoreset_priority: AutoResetPriority::default(),
-//  mask: u64::from_str_radix("3fffffffffff", 16).unwrap(),
-//  pattern: 0,
-//  sel_mask: SelMask::default(),
-//  sel_pattern: SelPattern::default(),
-//  use_pattern_detect: UsePatternDetect::default(),
-//  is_alumode_inverted: 0,
-//  is_carryin_inverted: false,
-//  is_clk_inverted: false,
-//  is_inmode_inverted: 0,
-//  is_opmode_inverted: 0,
-//  is_rstallcarryin_inverted: false,
-//  is_rstalumode_inverted: false,
-//  is_rsta_inverted: false,
-//  is_rstb_inverted: false,
-//  is_rstctrl_inverted: false,
-//  is_rstc_inverted: false,
-//  is_rstd_inverted: false,
-//  is_rstinmode_inverted: false,
-//  is_rstm_inverted: false,
-//  is_rstp_inverted: false,
-//  acascreg: NumRegAB::Zero,
-//  adreg: NumReg::Zero,
-//  alumodereg: NumReg::Zero,
-//  areg: NumRegAB::Zero,
-//  bcascreg: NumRegAB::Zero,
-//  breg: NumRegAB::Zero,
-//  carryinreg: NumReg::Zero,
-//  carryinselreg: NumReg::Zero,
-//  creg: NumReg::Zero,
-//  dreg: NumReg::Zero,
-//  inmodereg: NumReg::Zero,
-//  mreg: NumReg::Zero,
-//  opmodereg: NumReg::Zero,
-//  preg: NumReg::Zero,
 
 impl Default for Param<ParamValue> {
     fn default() -> Self {
@@ -509,10 +484,56 @@ impl Default for Param<ParamValue> {
             "SEL_PATTERN".to_string(),
             ParamValue::from(SelPattern::default()),
         );
+        map.insert("IS_ALUMODE_INVERTED".to_string(), ParamValue::Val(4, 0));
+        map.insert("IS_CARRYIN_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_CLK_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_INMODE_INVERTED".to_string(), ParamValue::Val(5, 0));
+        map.insert("IS_OPMODE_INVERTED".to_string(), ParamValue::Val(9, 0));
         map.insert(
-            "USE_PATTERN_DETECT".to_string(),
-            ParamValue::from(UsePatternDetect::default()),
+            "IS_RSTALLCARRYIN_INVERTED".to_string(),
+            ParamValue::Bool(false),
         );
+        map.insert(
+            "IS_RSTALUMODE_INVERTED".to_string(),
+            ParamValue::Bool(false),
+        );
+        map.insert("IS_RSTA_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTB_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTCTRL_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTC_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTD_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTINMODE_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTM_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert("IS_RSTP_INVERTED".to_string(), ParamValue::Bool(false));
+        map.insert(
+            "ACASCREG".to_string(),
+            ParamValue::from(NumRegAB::default()),
+        );
+        map.insert("ADREG".to_string(), ParamValue::from(NumReg::default()));
+        map.insert(
+            "ALUMODEREG".to_string(),
+            ParamValue::from(NumReg::default()),
+        );
+        map.insert("AREG".to_string(), ParamValue::from(NumRegAB::default()));
+        map.insert(
+            "BCASCREG".to_string(),
+            ParamValue::from(NumRegAB::default()),
+        );
+        map.insert("BREG".to_string(), ParamValue::from(NumRegAB::default()));
+        map.insert(
+            "CARRYINREG".to_string(),
+            ParamValue::from(NumReg::default()),
+        );
+        map.insert(
+            "CARRYINSELREG".to_string(),
+            ParamValue::from(NumReg::default()),
+        );
+        map.insert("CREG".to_string(), ParamValue::from(NumReg::default()));
+        map.insert("DREG".to_string(), ParamValue::from(NumReg::default()));
+        map.insert("INMODEREG".to_string(), ParamValue::from(NumReg::default()));
+        map.insert("MREG".to_string(), ParamValue::from(NumReg::default()));
+        map.insert("OPMODEREG".to_string(), ParamValue::from(NumReg::default()));
+        map.insert("PREG".to_string(), ParamValue::from(NumReg::default()));
         Param { map }
     }
 }
@@ -674,89 +695,6 @@ impl ToInstance for Dsp {
             let expr: vl::Expr = v.clone().to_expr();
             inst.add_param(k, expr);
         }
-        // inst.add_param(
-        //     "IS_ALUMODE_INVERTED",
-        //     vl::Expr::new_ulit_hex(4, &format!("{:x}", self.attr.is_alumode_inverted)),
-        // );
-        // inst.add_param(
-        //     "IS_CARRYIN_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_carryin_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_CLK_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_clk_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_INMODE_INVERTED",
-        //     vl::Expr::new_ulit_hex(5, &format!("{:x}", self.attr.is_inmode_inverted)),
-        // );
-        // inst.add_param(
-        //     "IS_OPMODE_INVERTED",
-        //     vl::Expr::new_ulit_hex(9, &format!("{:x}", self.attr.is_opmode_inverted)),
-        // );
-        // inst.add_param(
-        //     "IS_RSTALLCARRYIN_INVERTED",
-        //     vl::Expr::new_ulit_bin(
-        //         1,
-        //         &format!("{}", u64::from(self.attr.is_rstallcarryin_inverted)),
-        //     ),
-        // );
-        // inst.add_param(
-        //     "IS_RSTALUMODE_INVERTED",
-        //     vl::Expr::new_ulit_bin(
-        //         1,
-        //         &format!("{}", u64::from(self.attr.is_rstalumode_inverted)),
-        //     ),
-        // );
-        // inst.add_param(
-        //     "IS_RSTA_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rsta_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_RSTB_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstb_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_RSTCTRL_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstctrl_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_RSTC_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstc_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_RSTD_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstd_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_RSTINMODE_INVERTED",
-        //     vl::Expr::new_ulit_bin(
-        //         1,
-        //         &format!("{}", u64::from(self.attr.is_rstinmode_inverted)),
-        //     ),
-        // );
-        // inst.add_param(
-        //     "IS_RSTM_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstm_inverted))),
-        // );
-        // inst.add_param(
-        //     "IS_RSTP_INVERTED",
-        //     vl::Expr::new_ulit_bin(1, &format!("{}", u64::from(self.attr.is_rstp_inverted))),
-        // );
-        // inst.add_param("ACASCREG", self.attr.acascreg.to_expr());
-        // inst.add_param("ADREG", self.attr.adreg.to_expr());
-        // inst.add_param("ALUMODEREG", self.attr.alumodereg.to_expr());
-        // inst.add_param("AREG", self.attr.areg.to_expr());
-        // inst.add_param("BCASCREG", self.attr.bcascreg.to_expr());
-        // inst.add_param("BREG", self.attr.breg.to_expr());
-        // inst.add_param("CARRYINREG", self.attr.carryinreg.to_expr());
-        // inst.add_param("CARRYINSELREG", self.attr.carryinselreg.to_expr());
-        // inst.add_param("CREG", self.attr.creg.to_expr());
-        // inst.add_param("DREG", self.attr.dreg.to_expr());
-        // inst.add_param("INMODEREG", self.attr.inmodereg.to_expr());
-        // inst.add_param("MREG", self.attr.mreg.to_expr());
-        // inst.add_param("OPMODEREG", self.attr.opmodereg.to_expr());
-        // inst.add_param("PREG", self.attr.preg.to_expr());
         for (k, v) in self.input.connection.iter() {
             inst.connect(&k, v.clone());
         }
