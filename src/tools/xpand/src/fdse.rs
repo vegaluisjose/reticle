@@ -15,6 +15,16 @@ pub enum ParamValue {
     Bool(bool),
 }
 
+#[derive(Clone, Debug)]
+pub struct Fdse {
+    pub name: String,
+    pub prim: String,
+    pub param: Param<ParamValue>,
+    pub loc: Loc,
+    pub input: Port,
+    pub output: Port,
+}
+
 // always true because there is only one value type
 impl PartialEq for ParamValue {
     fn eq(&self, _: &Self) -> bool {
@@ -48,16 +58,6 @@ impl Default for Param<ParamValue> {
         map.insert("IS_S_INVERTED".to_string(), ParamValue::from(false));
         Param { map }
     }
-}
-
-#[derive(Clone, Debug)]
-pub struct Fdse {
-    pub name: String,
-    pub prim: String,
-    pub param: Param<ParamValue>,
-    pub loc: Loc,
-    pub input: Port,
-    pub output: Port,
 }
 
 impl DefaultPort for Fdse {
