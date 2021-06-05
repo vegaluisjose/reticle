@@ -4,7 +4,7 @@ use asm::parser::Parser as AsmParser;
 use bler::try_from_asm_prog as asm_try_into_xir;
 use bline::try_from_ir_prog as ir_try_into_behav;
 use io::file::write_to_file;
-use ir::parser::Parser as IRParser;
+use ir::parser::Parser as IrParser;
 use isel::try_from_ir_prog as ir_try_into_asm;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -42,27 +42,27 @@ impl Driver {
         let input = self.opts().input();
         let output = self.opts().output();
         match (self.opts().from(), self.opts().to()) {
-            (Lang::IR, Lang::Asm) => {
-                let ir_prog = IRParser::parse_from_file(input)?;
+            (Lang::Ir, Lang::Asm) => {
+                let ir_prog = IrParser::parse_from_file(input)?;
                 let asm_prog = ir_try_into_asm(&ir_prog)?;
                 write_output(output, &asm_prog.to_string());
                 Ok(())
             }
-            (Lang::IR, Lang::Xir) => {
-                let ir_prog = IRParser::parse_from_file(input)?;
+            (Lang::Ir, Lang::Xir) => {
+                let ir_prog = IrParser::parse_from_file(input)?;
                 let asm_prog = ir_try_into_asm(&ir_prog)?;
                 let xir_prog = asm_try_into_xir(&asm_prog)?;
                 write_output(output, &xir_prog.to_string());
                 Ok(())
             }
-            (Lang::IR, Lang::Behav) => {
-                let ir_prog = IRParser::parse_from_file(input)?;
+            (Lang::Ir, Lang::Behav) => {
+                let ir_prog = IrParser::parse_from_file(input)?;
                 let behav_prog = ir_try_into_behav(&ir_prog)?;
                 write_output(output, &behav_prog.to_string());
                 Ok(())
             }
-            (Lang::IR, Lang::Struct) => {
-                let ir_prog = IRParser::parse_from_file(input)?;
+            (Lang::Ir, Lang::Struct) => {
+                let ir_prog = IrParser::parse_from_file(input)?;
                 let asm_prog = ir_try_into_asm(&ir_prog)?;
                 let xir_prog = asm_try_into_xir(&asm_prog)?;
                 let struct_prog = xir_try_into_struct(&xir_prog)?;

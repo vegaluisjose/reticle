@@ -1,11 +1,11 @@
 use asm::errors::Error as AsmError;
-use ir::errors::Error as IRError;
+use ir::errors::Error as IrError;
 use std::fmt;
 use xir::errors::Error as XirError;
 
 #[derive(Debug)]
 pub enum Error {
-    IR(IRError),
+    Ir(IrError),
     Asm(AsmError),
     Xir(XirError),
     Bler(String),
@@ -29,16 +29,16 @@ impl From<XirError> for Error {
     }
 }
 
-impl From<IRError> for Error {
-    fn from(e: IRError) -> Self {
-        Error::IR(e)
+impl From<IrError> for Error {
+    fn from(e: IrError) -> Self {
+        Error::Ir(e)
     }
 }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::IR(msg) => write!(f, "{}", msg),
+            Error::Ir(msg) => write!(f, "{}", msg),
             Error::Asm(msg) => write!(f, "{}", msg),
             Error::Xir(msg) => write!(f, "{}", msg),
             Error::Bler(msg) => write!(f, "{}", msg),

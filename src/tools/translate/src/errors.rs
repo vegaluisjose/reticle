@@ -1,7 +1,7 @@
 use asm::errors::Error as AsmError;
 use bler::errors::Error as BlerError;
 use bline::errors::Error as BlineError;
-use ir::errors::Error as IRError;
+use ir::errors::Error as IrError;
 use isel::errors::Error as ISelError;
 use std::fmt;
 use xir::errors::Error as XirError;
@@ -11,7 +11,7 @@ use xpand::errors::Error as XpandError;
 pub enum Error {
     Opt(String),
     Driver(String),
-    IR(IRError),
+    Ir(IrError),
     Asm(AsmError),
     Xir(XirError),
     ISel(ISelError),
@@ -29,9 +29,9 @@ impl Error {
     }
 }
 
-impl From<IRError> for Error {
-    fn from(e: IRError) -> Self {
-        Error::IR(e)
+impl From<IrError> for Error {
+    fn from(e: IrError) -> Self {
+        Error::Ir(e)
     }
 }
 
@@ -74,7 +74,7 @@ impl From<XpandError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Error::IR(msg) => write!(f, "{}", msg),
+            Error::Ir(msg) => write!(f, "{}", msg),
             Error::Asm(msg) => write!(f, "{}", msg),
             Error::Xir(msg) => write!(f, "{}", msg),
             Error::ISel(msg) => write!(f, "{}", msg),

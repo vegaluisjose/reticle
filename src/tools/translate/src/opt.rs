@@ -45,7 +45,7 @@ impl Opt {
 
 #[derive(Clone, Debug)]
 pub enum Lang {
-    IR,
+    Ir,
     Asm,
     Xir,
     Behav,
@@ -55,7 +55,7 @@ pub enum Lang {
 impl fmt::Display for Lang {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let backend = match self {
-            Lang::IR => "ir",
+            Lang::Ir => "ir",
             Lang::Asm => "asm",
             Lang::Xir => "xir",
             Lang::Behav => "behav",
@@ -69,7 +69,7 @@ impl FromStr for Lang {
     type Err = Error;
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         match input {
-            "ir" => Ok(Lang::IR),
+            "ir" => Ok(Lang::Ir),
             "asm" => Ok(Lang::Asm),
             "xir" => Ok(Lang::Xir),
             "behav" => Ok(Lang::Behav),

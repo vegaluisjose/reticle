@@ -1,5 +1,5 @@
 use asm::parser::Parser as AsmParser;
-use ir::parser::Parser as IRParser;
+use ir::parser::Parser as IrParser;
 use isel::errors::Error;
 use isel::try_from_ir_prog;
 use std::path::Path;
@@ -9,7 +9,7 @@ fn test(name: &str) -> Result<(), Error> {
     let mut o = Path::new("../../../examples/asm").join(name);
     i.set_extension("ir");
     o.set_extension("asm");
-    let p = IRParser::parse_from_file(i)?;
+    let p = IrParser::parse_from_file(i)?;
     let e = AsmParser::parse_from_file(o)?;
     let r = try_from_ir_prog(&p)?;
     assert_eq!(r, e);
