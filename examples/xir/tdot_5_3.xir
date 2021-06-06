@@ -1,0 +1,17 @@
+def main(a0:i8, c0:i8, e0:i8, g0:i8, i0:i8, a1:i8, c1:i8, e1:i8, g1:i8, i1:i8, a2:i8, c2:i8, e2:i8, g2:i8, i2:i8, b0:i8, d0:i8, f0:i8, h0:i8, j0:i8, b1:i8, d1:i8, f1:i8, h1:i8, j1:i8, b2:i8, d2:i8, f2:i8, h2:i8, j2:i8, m:i8, n:i8, o:i8, p:i8, q:i8, en:bool) -> (v:i8, w:i8, x:i8, y:i8, z:i8) {
+    v:i8 = muladdrega(a2, b2, t0, en, en, en, en) @alu(??, ??);
+    t0:i8 = muladdrega(a1, b1, t1, en, en, en, en) @alu(??, ??);
+    t1:i8 = muladdrega(a0, b0, m, en, en, en, en) @alu(??, ??);
+    w:i8 = muladdrega(c2, d2, t2, en, en, en, en) @alu(??, ??);
+    t2:i8 = muladdrega(c1, d1, t3, en, en, en, en) @alu(??, ??);
+    t3:i8 = muladdrega(c0, d0, n, en, en, en, en) @alu(??, ??);
+    x:i8 = muladdrega(e2, f2, t4, en, en, en, en) @alu(??, ??);
+    t4:i8 = muladdrega(e1, f1, t5, en, en, en, en) @alu(??, ??);
+    t5:i8 = muladdrega(e0, f0, o, en, en, en, en) @alu(??, ??);
+    y:i8 = muladdrega(g2, h2, t6, en, en, en, en) @alu(??, ??);
+    t6:i8 = muladdrega(g1, h1, t7, en, en, en, en) @alu(??, ??);
+    t7:i8 = muladdrega(g0, h0, p, en, en, en, en) @alu(??, ??);
+    z:i8 = muladdrega(i2, j2, t8, en, en, en, en) @alu(??, ??);
+    t8:i8 = muladdrega(i1, j1, t9, en, en, en, en) @alu(??, ??);
+    t9:i8 = muladdrega(i0, j0, q, en, en, en, en) @alu(??, ??);
+}

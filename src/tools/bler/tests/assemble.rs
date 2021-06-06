@@ -70,3 +70,28 @@ fn tadd_256() -> Result<(), Error> {
 fn tadd_512() -> Result<(), Error> {
     test("tadd_512")
 }
+
+#[test]
+fn tdot() -> Result<(), Error> {
+    test("tdot")
+}
+
+#[test]
+fn tdot_5_3() -> Result<(), Error> {
+    test("tdot_5_3")
+}
+
+#[test]
+fn tdot_5_9() -> Result<(), Error> {
+    test("tdot_5_9")
+}
+
+#[test]
+fn tdot_5_18() -> Result<(), Error> {
+    test("tdot_5_18")
+}
+
+#[test]
+fn tdot_5_36() -> Result<(), Error> {
+    test("tdot_5_36")
+}
