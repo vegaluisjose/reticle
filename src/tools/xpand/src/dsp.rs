@@ -885,6 +885,54 @@ pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error
     }
     Ok(stmt)
 }
+
+pub fn muladdrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
+    let mut dsp = Dsp::default();
+    let mut stmt: Vec<vl::Stmt> = Vec::new();
+    let name = inst_name_try_from_instr(instr)?;
+    dsp.set_name(&name);
+    // loc
+    if let Some(loc) = instr.loc() {
+        dsp.set_loc(loc.clone());
+    }
+    // multiply
+    dsp.set_param("USE_MULT", ParamValue::from(UseMult::Multiply))?;
+    // registers
+    dsp.set_param("AREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("BREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("ACASCREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("BCASCREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("MREG", ParamValue::from(NumReg::One))?;
+    dsp.set_param("PREG", ParamValue::from(NumReg::One))?;
+    // opcode
+    dsp.set_input("OPMODE", create_literal(9, 53))?;
+    // input
+    let a_term = instr.arg().get_term(0)?;
+    let a_width = *dsp.get_input_width("A").unwrap();
+    let a_expr = vl_expr_try_from_term(a_term, 0, (a_width - 1) as usize)?;
+    dsp.set_input("A", a_expr)?;
+    let b_term = instr.arg().get_term(1)?;
+    let b_width = *dsp.get_input_width("B").unwrap();
+    let b_expr = vl_expr_try_from_term(b_term, 0, (b_width - 1) as usize)?;
+    dsp.set_input("B", b_expr)?;
+    let c_term = instr.arg().get_term(2)?;
+    let c_width = *dsp.get_input_width("C").unwrap();
+    let c_expr = vl_expr_try_from_term(c_term, 0, (c_width - 1) as usize)?;
+    dsp.set_input("C", c_expr)?;
+    let ena_term = instr.arg().get_term(3)?;
+    let enb_term = instr.arg().get_term(4)?;
+    let enm_term = instr.arg().get_term(5)?;
+    let enp_term = instr.arg().get_term(6)?;
+    let ena_name = String::try_from(ena_term.clone())?;
+    let enb_name = String::try_from(enb_term.clone())?;
+    let enm_name = String::try_from(enm_term.clone())?;
+    let enp_name = String::try_from(enp_term.clone())?;
+    dsp.set_input("CEA1", vl::Expr::new_ref(&ena_name))?;
+    dsp.set_input("CEA2", vl::Expr::new_ref(&ena_name))?;
+    dsp.set_input("CEB1", vl::Expr::new_ref(&enb_name))?;
+    dsp.set_input("CEB2", vl::Expr::new_ref(&enb_name))?;
+    dsp.set_input("CEM", vl::Expr::new_ref(&enm_name))?;
+    dsp.set_input("CEP", vl::Expr::new_ref(&enp_name))?;
     // output
     let dst_term = instr.dst().get_term(0)?;
     let output = tmp_name_try_from_term(dst_term)?;
