@@ -1,11 +1,14 @@
 use crate::errors::Error;
 use crate::expr::ToExpr;
-use crate::inst_name_try_from_instr;
+use crate::gnd::GND;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
 use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
+use crate::vcc::VCC;
+use crate::{inst_name_try_from_instr, tmp_name_try_from_term, vec_expr_try_from_expr};
+use std::convert::TryFrom;
 use verilog::ast as vl;
 use xir::ast as xir;
 
@@ -169,7 +172,7 @@ impl Default for PreAddInSel {
 
 impl Default for UseMult {
     fn default() -> Self {
-        UseMult::Multiply
+        UseMult::None
     }
 }
 
@@ -733,27 +736,101 @@ impl ToInstance for Dsp {
     }
 }
 
+fn simd_opt_try_from_term(term: &xir::ExprTerm) -> Result<ParamValue, Error> {
+    if let Some(length) = term.length() {
+        match length {
+            4 => Ok(ParamValue::from(UseSimd::Four)),
+            3 => Ok(ParamValue::from(UseSimd::Four)),
+            2 => Ok(ParamValue::from(UseSimd::Two)),
+            1 => Ok(ParamValue::from(UseSimd::One)),
+            _ => Err(Error::new_xpand_error("unsupported length")),
+        }
+    } else {
+        Err(Error::new_xpand_error("it must be a vector type"))
+    }
+}
+
+fn vec_word_width_try_from_term(term: &xir::ExprTerm) -> Result<i32, Error> {
+    if let Some(length) = term.length() {
+        match length {
+            4 => Ok(12),
+            3 => Ok(12),
+            2 => Ok(24),
+            1 => Ok(48),
+            _ => Err(Error::new_xpand_error("unsupported length")),
+        }
+    } else {
+        Ok(48)
+    }
+}
+
+fn create_literal(width: i64, value: i64) -> vl::Expr {
+    if width == 1 {
+        let mask = value & 1;
+        let is_one = mask == 1;
+        if is_one {
+            vl::Expr::new_ref(VCC)
+        } else {
+            vl::Expr::new_ref(GND)
+        }
+    } else {
+        let mut concat = vl::ExprConcat::default();
+        for i in 0..width {
+            let shift = value >> i;
+            let mask = shift & 1;
+            let is_one = mask == 1;
+            if is_one {
+                concat.add_expr(vl::Expr::new_ref(VCC));
+            } else {
+                concat.add_expr(vl::Expr::new_ref(GND));
+            }
+        }
+        vl::Expr::from(concat)
+    }
+}
+
 pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut dsp = Dsp::default();
+    let mut stmt: Vec<vl::Stmt> = Vec::new();
     let name = inst_name_try_from_instr(instr)?;
     dsp.set_name(&name);
+    // loc
     if let Some(loc) = instr.loc() {
         dsp.set_loc(loc.clone());
     }
-    // let input = ["DI", "S"];
-    // let arg: Vec<vl::Expr> = vec_expr_try_from_expr(instr.arg())?;
-    // for (i, e) in input.iter().zip(arg) {
-    //     carry.set_input(i, e)?;
-    // }
-    // let input = ["CI", "CI_TOP"];
-    // for i in &input {
-    //     let zero = vl::Expr::new_ulit_bin(1, "0");
-    //     carry.set_input(i, zero.clone())?;
-    // }
-    // let output = ["O"];
-    // let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
-    // for (o, e) in output.iter().zip(dst) {
-    //     carry.set_output(o, e)?;
-    // }
-    Ok(vec![dsp.to_stmt()])
+    // simd
+    if let Some(t) = instr.dst().term() {
+        dsp.set_param("USE_SIMD", simd_opt_try_from_term(t)?)?;
+    }
+    // registers
+    dsp.set_param("CREG", ParamValue::from(NumReg::One))?;
+    dsp.set_param("AREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("BREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("ACASCREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("BCASCREG", ParamValue::from(NumRegAB::One))?;
+    dsp.set_param("PREG", ParamValue::from(NumReg::One))?;
+    // opcode
+    dsp.set_input("OPMODE", create_literal(9, 51))?;
+    // output
+    let dst_term = instr.dst().get_term(0)?;
+    let output = tmp_name_try_from_term(dst_term)?;
+    dsp.set_output("P", vl::Expr::new_ref(&output))?;
+    stmt.push(dsp.to_stmt());
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    let wbits = vec_word_width_try_from_term(dst_term)?;
+    if let Some(width) = dst_term.width() {
+        if let Ok(ebits) = i32::try_from(width) {
+            for (i, e) in dst.iter().enumerate() {
+                let i = i as i32;
+                let hi = i * wbits + (ebits - 1);
+                let lo = i * wbits;
+                let assign = vl::Parallel::Assign(
+                    e.clone(),
+                    vl::Expr::new_slice(&output, vl::Expr::new_int(hi), vl::Expr::new_int(lo)),
+                );
+                stmt.push(vl::Stmt::from(assign));
+            }
+        }
+    }
+    Ok(stmt)
 }
