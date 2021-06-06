@@ -134,6 +134,12 @@ pub struct Dsp {
 }
 
 impl Dsp {
+    pub fn get_input_width(&self, input: &str) -> Option<&u32> {
+        self.input.get_width(input)
+    }
+    pub fn get_output_width(&self, output: &str) -> Option<&u32> {
+        self.output.get_width(output)
+    }
     pub fn set_loc(&mut self, loc: Loc) {
         self.loc = loc;
     }
