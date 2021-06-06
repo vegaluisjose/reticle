@@ -45,3 +45,8 @@ fn fsm_7() -> Result<(), Error> {
 fn fsm_9() -> Result<(), Error> {
     test("fsm_9")
 }
+
+#[test]
+fn tadd() -> Result<(), Error> {
+    test("tadd")
+}
