@@ -50,3 +50,23 @@ fn fsm_9() -> Result<(), Error> {
 fn tadd() -> Result<(), Error> {
     test("tadd")
 }
+
+#[test]
+fn tadd_64() -> Result<(), Error> {
+    test("tadd_64")
+}
+
+#[test]
+fn tadd_128() -> Result<(), Error> {
+    test("tadd_128")
+}
+
+#[test]
+fn tadd_256() -> Result<(), Error> {
+    test("tadd_256")
+}
+
+#[test]
+fn tadd_512() -> Result<(), Error> {
+    test("tadd_512")
+}

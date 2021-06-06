@@ -47,6 +47,26 @@ fn tadd() -> Result<(), Error> {
 }
 
 #[test]
+fn tadd_64() -> Result<(), Error> {
+    test("tadd_64")
+}
+
+#[test]
+fn tadd_128() -> Result<(), Error> {
+    test("tadd_128")
+}
+
+#[test]
+fn tadd_256() -> Result<(), Error> {
+    test("tadd_256")
+}
+
+#[test]
+fn tadd_512() -> Result<(), Error> {
+    test("tadd_512")
+}
+
+#[test]
 fn tdot() -> Result<(), Error> {
     test("tdot")
 }
