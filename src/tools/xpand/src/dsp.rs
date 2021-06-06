@@ -850,18 +850,41 @@ pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error
         (b_width + a_width - 1) as usize,
     )?;
     dsp.set_input("A", a_expr)?;
-    let left_en_term = instr.arg().get_term(2)?;
-    let right_en_term = instr.arg().get_term(2)?;
-    let out_en_term = instr.arg().get_term(2)?;
-    let l_en_term = String::try_from(left_en_term.clone())?;
-    let r_en_term = String::try_from(right_en_term.clone())?;
-    let o_en_term = String::try_from(out_en_term.clone())?;
-    dsp.set_input("CEC", vl::Expr::new_ref(&l_en_term))?;
-    dsp.set_input("CEA1", vl::Expr::new_ref(&r_en_term))?;
-    dsp.set_input("CEA2", vl::Expr::new_ref(&r_en_term))?;
-    dsp.set_input("CEB1", vl::Expr::new_ref(&r_en_term))?;
-    dsp.set_input("CEB2", vl::Expr::new_ref(&r_en_term))?;
-    dsp.set_input("CEP", vl::Expr::new_ref(&o_en_term))?;
+    let l_en_term = instr.arg().get_term(2)?;
+    let r_en_term = instr.arg().get_term(3)?;
+    let o_en_term = instr.arg().get_term(4)?;
+    let l_en_name = String::try_from(l_en_term.clone())?;
+    let r_en_name = String::try_from(r_en_term.clone())?;
+    let o_en_name = String::try_from(o_en_term.clone())?;
+    dsp.set_input("CEC", vl::Expr::new_ref(&l_en_name))?;
+    dsp.set_input("CEA1", vl::Expr::new_ref(&r_en_name))?;
+    dsp.set_input("CEA2", vl::Expr::new_ref(&r_en_name))?;
+    dsp.set_input("CEB1", vl::Expr::new_ref(&r_en_name))?;
+    dsp.set_input("CEB2", vl::Expr::new_ref(&r_en_name))?;
+    dsp.set_input("CEP", vl::Expr::new_ref(&o_en_name))?;
+    // output
+    let dst_term = instr.dst().get_term(0)?;
+    let output = tmp_name_try_from_term(dst_term)?;
+    dsp.set_output("P", vl::Expr::new_ref(&output))?;
+    stmt.push(dsp.to_stmt());
+    let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
+    let wbits = vec_word_width_try_from_term(dst_term)?;
+    if let Some(width) = dst_term.width() {
+        if let Ok(ebits) = i32::try_from(width) {
+            for (i, e) in dst.iter().enumerate() {
+                let i = i as i32;
+                let hi = i * wbits + (ebits - 1);
+                let lo = i * wbits;
+                let assign = vl::Parallel::Assign(
+                    e.clone(),
+                    vl::Expr::new_slice(&output, vl::Expr::new_int(hi), vl::Expr::new_int(lo)),
+                );
+                stmt.push(vl::Stmt::from(assign));
+            }
+        }
+    }
+    Ok(stmt)
+}
     // output
     let dst_term = instr.dst().get_term(0)?;
     let output = tmp_name_try_from_term(dst_term)?;
