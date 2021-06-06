@@ -138,8 +138,7 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
         }
     }
     let output: Vec<vl::Decl> = wire_try_from_expr(prog.sig().output())?;
-    let output_set: HashSet<vl::Decl> = output.into_iter().collect();
-    for o in output_set.iter() {
+    for o in output.iter() {
         module.add_port(vl::Port::Output(o.clone()));
     }
     let gnd = Gnd::default();
@@ -147,6 +146,7 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     module.add_decl(gnd.to_decl());
     module.add_decl(vcc.to_decl());
     // only add declarations that are not output
+    let output_set: HashSet<vl::Decl> = output.into_iter().collect();
     for d in decl.iter() {
         if !output_set.contains(d) {
             module.add_decl(d.clone());
