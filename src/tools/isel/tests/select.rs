@@ -67,6 +67,6 @@ fn tadd_512() -> Result<(), Error> {
 }
 
 #[test]
-fn tdot() -> Result<(), Error> {
-    test("tdot")
+fn tdot_5_3() -> Result<(), Error> {
+    test("tdot_5_3")
 }
