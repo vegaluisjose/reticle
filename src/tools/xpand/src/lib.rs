@@ -22,7 +22,9 @@ use crate::gnd::Gnd;
 use crate::instance::ToInstance;
 use crate::port::DefaultPort;
 use crate::vcc::Vcc;
-use bline::{input_try_from_sig, vec_expr_try_from_expr, wire_try_from_expr};
+use bline::{
+    input_try_from_sig, vec_expr_try_from_expr, vec_expr_try_from_term, wire_try_from_expr,
+};
 use std::collections::HashSet;
 use std::convert::TryInto;
 use verilog::ast as vl;

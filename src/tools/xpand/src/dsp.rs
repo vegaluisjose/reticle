@@ -7,7 +7,10 @@ use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
 use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::vcc::VCC;
-use crate::{inst_name_try_from_instr, tmp_name_try_from_term, vec_expr_try_from_expr};
+use crate::{
+    inst_name_try_from_instr, tmp_name_try_from_term, vec_expr_try_from_expr,
+    vec_expr_try_from_term,
+};
 use std::convert::TryFrom;
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -795,6 +798,34 @@ fn create_literal(width: i64, value: i64) -> vl::Expr {
     }
 }
 
+fn vl_expr_try_from_term(term: &xir::ExprTerm, lsb: usize, msb: usize) -> Result<vl::Expr, Error> {
+    let word_width = vec_word_width_try_from_term(term)?;
+    let expr: Vec<vl::Expr> = vec_expr_try_from_term(term)?;
+    let mut bits: Vec<vl::Expr> = Vec::new();
+    if let Some(width) = term.width() {
+        for e in expr {
+            if let Ok(wbits) = i32::try_from(width) {
+                let width = i32::try_from(width).unwrap(); // FIXME: use better errors
+                if let Ok(pbits) = i32::try_from(word_width - width) {
+                    for i in 0..wbits {
+                        bits.push(vl::Expr::new_index_bit(&e.id(), i));
+                    }
+                    for _ in 0..pbits {
+                        bits.push(vl::Expr::new_ref(GND));
+                    }
+                }
+            }
+        }
+        let mut cat = vl::ExprConcat::default();
+        for i in bits.iter().take(msb + 1).skip(lsb) {
+            cat.add_expr(i.clone());
+        }
+        Ok(vl::Expr::from(cat))
+    } else {
+        Err(Error::new_xpand_error("term must be var"))
+    }
+}
+
 pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     let mut dsp = Dsp::default();
     let mut stmt: Vec<vl::Stmt> = Vec::new();
@@ -817,6 +848,34 @@ pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error
     dsp.set_param("PREG", ParamValue::from(NumReg::One))?;
     // opcode
     dsp.set_input("OPMODE", create_literal(9, 51))?;
+    // input
+    let left_term = instr.arg().get_term(0)?;
+    let c_msb = dsp.get_input_width("C").unwrap() - 1;
+    let c_expr = vl_expr_try_from_term(left_term, 0, c_msb as usize)?;
+    dsp.set_input("C", c_expr)?;
+    let right_term = instr.arg().get_term(1)?;
+    let b_width = dsp.get_input_width("B").unwrap().clone();
+    let b_expr = vl_expr_try_from_term(right_term, 0, (b_width - 1) as usize)?;
+    dsp.set_input("B", b_expr)?;
+    let a_width = dsp.get_input_width("A").unwrap();
+    let a_expr = vl_expr_try_from_term(
+        right_term,
+        b_width as usize,
+        (b_width + a_width - 1) as usize,
+    )?;
+    dsp.set_input("A", a_expr)?;
+    let left_en_term = instr.arg().get_term(2)?;
+    let right_en_term = instr.arg().get_term(2)?;
+    let out_en_term = instr.arg().get_term(2)?;
+    let l_en_term = String::try_from(left_en_term.clone())?;
+    let r_en_term = String::try_from(right_en_term.clone())?;
+    let o_en_term = String::try_from(out_en_term.clone())?;
+    dsp.set_input("CEC", vl::Expr::new_ref(&l_en_term))?;
+    dsp.set_input("CEA1", vl::Expr::new_ref(&r_en_term))?;
+    dsp.set_input("CEA2", vl::Expr::new_ref(&r_en_term))?;
+    dsp.set_input("CEB1", vl::Expr::new_ref(&r_en_term))?;
+    dsp.set_input("CEB2", vl::Expr::new_ref(&r_en_term))?;
+    dsp.set_input("CEP", vl::Expr::new_ref(&o_en_term))?;
     // output
     let dst_term = instr.dst().get_term(0)?;
     let output = tmp_name_try_from_term(dst_term)?;
