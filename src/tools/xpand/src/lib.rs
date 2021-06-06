@@ -33,6 +33,32 @@ use xir::ast as xir;
 pub const CLOCK: &str = "clock";
 pub const RESET: &str = "reset";
 
+pub fn create_literal(width: u64, value: i64) -> vl::Expr {
+    if width == 1 {
+        let mask = value & 1;
+        let is_one = mask == 1;
+        if is_one {
+            vl::Expr::new_ref(vcc::VCC)
+        } else {
+            vl::Expr::new_ref(gnd::GND)
+        }
+    } else {
+        let mut concat = vl::ExprConcat::default();
+        for i in 0..width {
+            let i = i as i64;
+            let shift = value >> i;
+            let mask = shift & 1;
+            let is_one = mask == 1;
+            if is_one {
+                concat.add_expr(vl::Expr::new_ref(vcc::VCC));
+            } else {
+                concat.add_expr(vl::Expr::new_ref(gnd::GND));
+            }
+        }
+        vl::Expr::from(concat)
+    }
+}
+
 fn vec_decl_try_from_instr_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Decl>, Error> {
     Ok(wire_try_from_expr(instr.dst())?)
 }

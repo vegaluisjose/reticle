@@ -6,11 +6,12 @@ use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
 use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
-use crate::vcc::VCC;
 use crate::{
-    inst_name_try_from_instr, tmp_name_try_from_term, vec_expr_try_from_expr,
+    create_literal, inst_name_try_from_instr, tmp_name_try_from_term, vec_expr_try_from_expr,
     vec_expr_try_from_term,
 };
+use crate::{CLOCK, RESET};
+use std::collections::HashSet;
 use std::convert::TryFrom;
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -241,6 +242,17 @@ impl Default for NumRegAB {
 
 impl DefaultPort for Dsp {
     fn default_input_port() -> Port {
+        let mut reset: HashSet<String> = HashSet::new();
+        reset.insert("RSTA".to_string());
+        reset.insert("RSTALLCARRYIN".to_string());
+        reset.insert("RSTALUMODE".to_string());
+        reset.insert("RSTB".to_string());
+        reset.insert("RSTC".to_string());
+        reset.insert("RSTCTRL".to_string());
+        reset.insert("RSTD".to_string());
+        reset.insert("RSTINMODE".to_string());
+        reset.insert("RSTM".to_string());
+        reset.insert("RSTP".to_string());
         let mut width = WidthMap::new();
         width.insert("ACIN".to_string(), 30);
         width.insert("BCIN".to_string(), 18);
@@ -270,19 +282,19 @@ impl DefaultPort for Dsp {
         width.insert("CEINMODE".to_string(), 1);
         width.insert("CEM".to_string(), 1);
         width.insert("CEP".to_string(), 1);
-        width.insert("RSTA".to_string(), 1);
-        width.insert("RSTALLCARRYIN".to_string(), 1);
-        width.insert("RSTALUMODE".to_string(), 1);
-        width.insert("RSTB".to_string(), 1);
-        width.insert("RSTC".to_string(), 1);
-        width.insert("RSTCTRL".to_string(), 1);
-        width.insert("RSTD".to_string(), 1);
-        width.insert("RSTINMODE".to_string(), 1);
-        width.insert("RSTM".to_string(), 1);
-        width.insert("RSTP".to_string(), 1);
+        for r in reset.iter() {
+            width.insert(r.to_string(), 1);
+        }
         let mut connection = ConnectionMap::new();
         for (k, v) in width.iter() {
-            connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+            let expr = if k == "CLK" {
+                vl::Expr::new_ref(CLOCK)
+            } else if reset.contains(k) {
+                vl::Expr::new_ref(RESET)
+            } else {
+                create_literal(*v as u64, 0)
+            };
+            connection.insert(k.clone(), expr);
         }
         Port { width, connection }
     }
@@ -770,31 +782,6 @@ fn vec_word_width_try_from_term(term: &xir::ExprTerm) -> Result<i32, Error> {
         }
     } else {
         Ok(48)
-    }
-}
-
-fn create_literal(width: i64, value: i64) -> vl::Expr {
-    if width == 1 {
-        let mask = value & 1;
-        let is_one = mask == 1;
-        if is_one {
-            vl::Expr::new_ref(VCC)
-        } else {
-            vl::Expr::new_ref(GND)
-        }
-    } else {
-        let mut concat = vl::ExprConcat::default();
-        for i in 0..width {
-            let shift = value >> i;
-            let mask = shift & 1;
-            let is_one = mask == 1;
-            if is_one {
-                concat.add_expr(vl::Expr::new_ref(VCC));
-            } else {
-                concat.add_expr(vl::Expr::new_ref(GND));
-            }
-        }
-        vl::Expr::from(concat)
     }
 }
 
