@@ -806,13 +806,12 @@ fn vl_expr_try_from_term(term: &xir::ExprTerm, lsb: usize, msb: usize) -> Result
         for e in expr {
             if let Ok(wbits) = i32::try_from(width) {
                 let width = i32::try_from(width).unwrap(); // FIXME: use better errors
-                if let Ok(pbits) = i32::try_from(word_width - width) {
-                    for i in 0..wbits {
-                        bits.push(vl::Expr::new_index_bit(&e.id(), i));
-                    }
-                    for _ in 0..pbits {
-                        bits.push(vl::Expr::new_ref(GND));
-                    }
+                for i in 0..wbits {
+                    bits.push(vl::Expr::new_index_bit(&e.id(), i));
+                }
+                let pbits = word_width - width;
+                for _ in 0..pbits {
+                    bits.push(vl::Expr::new_ref(GND));
                 }
             }
         }
@@ -854,7 +853,7 @@ pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error
     let c_expr = vl_expr_try_from_term(left_term, 0, c_msb as usize)?;
     dsp.set_input("C", c_expr)?;
     let right_term = instr.arg().get_term(1)?;
-    let b_width = dsp.get_input_width("B").unwrap().clone();
+    let b_width = *dsp.get_input_width("B").unwrap();
     let b_expr = vl_expr_try_from_term(right_term, 0, (b_width - 1) as usize)?;
     dsp.set_input("B", b_expr)?;
     let a_width = dsp.get_input_width("A").unwrap();
