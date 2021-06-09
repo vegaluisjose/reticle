@@ -5,7 +5,7 @@ use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
 use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
-use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
+use crate::{create_literal, inst_name_try_from_instr, vec_expr_try_from_expr};
 use crate::{CLOCK, RESET};
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -70,8 +70,8 @@ impl DefaultPort for Fdse {
         let mut connection = ConnectionMap::new();
         connection.insert("C".to_string(), vl::Expr::new_ref(CLOCK));
         connection.insert("S".to_string(), vl::Expr::new_ref(RESET));
-        connection.insert("CE".to_string(), vl::Expr::new_ulit_hex(1, "0"));
-        connection.insert("D".to_string(), vl::Expr::new_ulit_hex(1, "0"));
+        connection.insert("CE".to_string(), create_literal(1, 0));
+        connection.insert("D".to_string(), create_literal(1, 0));
         Port { width, connection }
     }
     fn default_output_port() -> Port {

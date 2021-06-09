@@ -5,7 +5,7 @@ use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
 use crate::param::{Param, ParamMap};
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
-use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
+use crate::{create_literal, inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
 use xir::ast as xir;
 
@@ -66,7 +66,7 @@ macro_rules! lut {
                 }
                 let mut connection = ConnectionMap::new();
                 for (k, v) in width.iter() {
-                    connection.insert(k.clone(), vl::Expr::new_ulit_hex(*v, "0"));
+                    connection.insert(k.clone(), create_literal(*v as u64, 0));
                 }
                 Port { width, connection }
             }
