@@ -1,6 +1,7 @@
 pub mod carry;
 pub mod cat;
 pub mod decl;
+pub mod display;
 pub mod dsp;
 pub mod errors;
 pub mod expr;
