@@ -1,7 +1,9 @@
-use xpand::instance::ToInstance;
 use xpand::errors::Error;
 use xpand::fdre::Fdre;
 use xpand::fdse::Fdse;
+use xpand::gnd::Gnd;
+use xpand::instance::ToInstance;
+use xpand::vcc::Vcc;
 
 fn test<S: AsRef<str>>(res: impl ToInstance, exp: S) -> Result<(), Error> {
     let r = res.to_instance().to_string();
@@ -42,4 +44,20 @@ fn test_fdse() -> Result<(), Error> {
     .S(reset)
 );"#;
     test(Fdse::default(), exp)
+}
+
+#[test]
+fn test_gnd() -> Result<(), Error> {
+    let exp = r#"GND _gnd (
+    .G(gnd)
+);"#;
+    test(Gnd::default(), exp)
+}
+
+#[test]
+fn test_vcc() -> Result<(), Error> {
+    let exp = r#"VCC _vcc (
+    .P(vcc)
+);"#;
+    test(Vcc::default(), exp)
 }
