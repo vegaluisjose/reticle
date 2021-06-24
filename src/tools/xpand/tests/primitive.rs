@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use xpand::errors::Error;
 use xpand::fdre::Fdre;
+use xpand::fdse::Fdse;
 
 fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
     let r = res.to_string();
@@ -10,7 +11,7 @@ fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
 }
 
 #[test]
-fn fdre() -> Result<(), Error> {
+fn test_fdre() -> Result<(), Error> {
     let exp = r#"FDRE # (
     .INIT(1'b0),
     .IS_C_INVERTED(1'b0),
@@ -24,4 +25,21 @@ fn fdre() -> Result<(), Error> {
     .R(reset)
 );"#;
     test(Fdre::default(), exp)
+}
+
+#[test]
+fn test_fdse() -> Result<(), Error> {
+    let exp = r#"FDSE # (
+    .INIT(1'b0),
+    .IS_C_INVERTED(1'b0),
+    .IS_D_INVERTED(1'b0),
+    .IS_S_INVERTED(1'b0)
+)  (
+    .C(clock),
+    .CE(gnd),
+    .D(gnd),
+    .Q(),
+    .S(reset)
+);"#;
+    test(Fdse::default(), exp)
 }
