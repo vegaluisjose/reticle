@@ -3,7 +3,7 @@ use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
-use crate::param::{Param, ParamMap};
+use crate::param::Param;
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{create_literal, inst_name_try_from_instr, vec_expr_try_from_expr};
 use crate::{CLOCK, RESET};
@@ -51,12 +51,12 @@ impl From<bool> for ParamValue {
 
 impl Default for Param<ParamValue> {
     fn default() -> Self {
-        let mut map = ParamMap::new();
-        map.insert("INIT".to_string(), ParamValue::from(false));
-        map.insert("IS_C_INVERTED".to_string(), ParamValue::from(false));
-        map.insert("IS_D_INVERTED".to_string(), ParamValue::from(false));
-        map.insert("IS_S_INVERTED".to_string(), ParamValue::from(false));
-        Param { map }
+        let mut param = Param::<ParamValue>::new();
+        param.insert("INIT".to_string(), ParamValue::from(false));
+        param.insert("IS_C_INVERTED".to_string(), ParamValue::from(false));
+        param.insert("IS_D_INVERTED".to_string(), ParamValue::from(false));
+        param.insert("IS_S_INVERTED".to_string(), ParamValue::from(false));
+        param
     }
 }
 

@@ -1,10 +1,10 @@
+use crate::create_literal;
 use crate::errors::Error;
 use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
-use crate::create_literal;
 use crate::loc::{Bel, BelReg, ExprCoord, Loc};
-use crate::param::{Param, ParamMap};
+use crate::param::Param;
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use derive_more::From;
 use verilog::ast as vl;
@@ -80,20 +80,20 @@ impl ToExpr for ParamValue {
 
 impl Default for Param<ParamValue> {
     fn default() -> Self {
-        let mut map = ParamMap::new();
-        map.insert(
+        let mut param = Param::<ParamValue>::new();
+        param.insert(
             "CASCADE_ORDER_A".to_string(),
             ParamValue::from(CascadeOrder::None),
         );
-        map.insert(
+        param.insert(
             "CASCADE_ORDER_B".to_string(),
             ParamValue::from(CascadeOrder::None),
         );
-        map.insert(
+        param.insert(
             "CLOCK_DOMAINS".to_string(),
             ParamValue::from(ClockDomains::Independent),
         );
-        Param { map }
+        param
     }
 }
 

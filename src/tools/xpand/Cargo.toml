@@ -12,4 +12,4 @@ xir = { path = "../../langs/xir" }
 verilog = { path = "../../langs/verilog" }
 io = { path = "../io" }
 bline = { path = "../bline" }
-derive_more = { version = "0.99.0", features = ["from"] }
+derive_more = { version = "0.99.0", features = ["from", "deref", "deref_mut"] }

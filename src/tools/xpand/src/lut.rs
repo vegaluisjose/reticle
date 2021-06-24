@@ -3,7 +3,7 @@ use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelLut, ExprCoord, Loc};
-use crate::param::{Param, ParamMap};
+use crate::param::Param;
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{create_literal, inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
@@ -52,9 +52,9 @@ macro_rules! lut {
 
         impl Default for Param<$val> {
             fn default() -> Self {
-                let mut map = ParamMap::new();
-                map.insert("INIT".to_string(), $val::from(0));
-                Param { map }
+                let mut param = Param::<$val>::new();
+                param.insert("INIT".to_string(), $val::from(0));
+                param
             }
         }
 

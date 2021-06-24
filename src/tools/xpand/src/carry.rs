@@ -3,7 +3,7 @@ use crate::expr::ToExpr;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelCarry, ExprCoord, Loc};
-use crate::param::{Param, ParamMap};
+use crate::param::Param;
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{create_literal, inst_name_try_from_instr, vec_expr_try_from_expr};
 use verilog::ast as vl;
@@ -62,12 +62,12 @@ impl From<CarryType> for ParamValue {
 
 impl Default for Param<ParamValue> {
     fn default() -> Self {
-        let mut map = ParamMap::new();
-        map.insert(
+        let mut param = Param::<ParamValue>::new();
+        param.insert(
             "CARRY_TYPE".to_string(),
             ParamValue::from(CarryType::Single),
         );
-        Param { map }
+        param
     }
 }
 

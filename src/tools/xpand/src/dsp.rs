@@ -4,7 +4,7 @@ use crate::gnd::GND;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
-use crate::param::{Param, ParamMap};
+use crate::param::Param;
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::{
     create_literal, inst_name_try_from_instr, tmp_name_try_from_term, vec_expr_try_from_expr,
@@ -470,95 +470,95 @@ impl ToExpr for ParamValue {
 
 impl Default for Param<ParamValue> {
     fn default() -> Self {
-        let mut map = ParamMap::new();
-        map.insert("A_INPUT".to_string(), ParamValue::from(InputTy::default()));
-        map.insert("B_INPUT".to_string(), ParamValue::from(InputTy::default()));
-        map.insert(
+        let mut param = Param::<ParamValue>::new();
+        param.insert("A_INPUT".to_string(), ParamValue::from(InputTy::default()));
+        param.insert("B_INPUT".to_string(), ParamValue::from(InputTy::default()));
+        param.insert(
             "AMULTSEL".to_string(),
             ParamValue::from(AMultSel::default()),
         );
-        map.insert(
+        param.insert(
             "BMULTSEL".to_string(),
             ParamValue::from(BMultSel::default()),
         );
-        map.insert(
+        param.insert(
             "PREADDINSEL".to_string(),
             ParamValue::from(PreAddInSel::default()),
         );
-        map.insert("RND".to_string(), ParamValue::Val(48, 0));
-        map.insert("USE_MULT".to_string(), ParamValue::from(UseMult::default()));
-        map.insert("USE_SIMD".to_string(), ParamValue::from(UseSimd::default()));
-        map.insert("USE_WIDEXOR".to_string(), ParamValue::UseWideXor(false));
-        map.insert("XORSIMD".to_string(), ParamValue::from(XorSimd::default()));
-        map.insert(
+        param.insert("RND".to_string(), ParamValue::Val(48, 0));
+        param.insert("USE_MULT".to_string(), ParamValue::from(UseMult::default()));
+        param.insert("USE_SIMD".to_string(), ParamValue::from(UseSimd::default()));
+        param.insert("USE_WIDEXOR".to_string(), ParamValue::UseWideXor(false));
+        param.insert("XORSIMD".to_string(), ParamValue::from(XorSimd::default()));
+        param.insert(
             "AUTORESET_PATDET".to_string(),
             ParamValue::from(AutoResetPatDet::default()),
         );
-        map.insert(
+        param.insert(
             "AUTORESET_PRIORITY".to_string(),
             ParamValue::from(AutoResetPriority::default()),
         );
-        map.insert(
+        param.insert(
             "MASK".to_string(),
             ParamValue::Val(48, u64::from_str_radix("3fffffffffff", 16).unwrap()),
         );
-        map.insert("PATTERN".to_string(), ParamValue::Val(48, 0));
-        map.insert("SEL_MASK".to_string(), ParamValue::from(SelMask::default()));
-        map.insert(
+        param.insert("PATTERN".to_string(), ParamValue::Val(48, 0));
+        param.insert("SEL_MASK".to_string(), ParamValue::from(SelMask::default()));
+        param.insert(
             "SEL_PATTERN".to_string(),
             ParamValue::from(SelPattern::default()),
         );
-        map.insert("IS_ALUMODE_INVERTED".to_string(), ParamValue::Val(4, 0));
-        map.insert("IS_CARRYIN_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_CLK_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_INMODE_INVERTED".to_string(), ParamValue::Val(5, 0));
-        map.insert("IS_OPMODE_INVERTED".to_string(), ParamValue::Val(9, 0));
-        map.insert(
+        param.insert("IS_ALUMODE_INVERTED".to_string(), ParamValue::Val(4, 0));
+        param.insert("IS_CARRYIN_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_CLK_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_INMODE_INVERTED".to_string(), ParamValue::Val(5, 0));
+        param.insert("IS_OPMODE_INVERTED".to_string(), ParamValue::Val(9, 0));
+        param.insert(
             "IS_RSTALLCARRYIN_INVERTED".to_string(),
             ParamValue::Bool(false),
         );
-        map.insert(
+        param.insert(
             "IS_RSTALUMODE_INVERTED".to_string(),
             ParamValue::Bool(false),
         );
-        map.insert("IS_RSTA_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTB_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTCTRL_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTC_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTD_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTINMODE_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTM_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert("IS_RSTP_INVERTED".to_string(), ParamValue::Bool(false));
-        map.insert(
+        param.insert("IS_RSTA_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTB_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTCTRL_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTC_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTD_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTINMODE_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTM_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert("IS_RSTP_INVERTED".to_string(), ParamValue::Bool(false));
+        param.insert(
             "ACASCREG".to_string(),
             ParamValue::from(NumRegAB::default()),
         );
-        map.insert("ADREG".to_string(), ParamValue::from(NumReg::default()));
-        map.insert(
+        param.insert("ADREG".to_string(), ParamValue::from(NumReg::default()));
+        param.insert(
             "ALUMODEREG".to_string(),
             ParamValue::from(NumReg::default()),
         );
-        map.insert("AREG".to_string(), ParamValue::from(NumRegAB::default()));
-        map.insert(
+        param.insert("AREG".to_string(), ParamValue::from(NumRegAB::default()));
+        param.insert(
             "BCASCREG".to_string(),
             ParamValue::from(NumRegAB::default()),
         );
-        map.insert("BREG".to_string(), ParamValue::from(NumRegAB::default()));
-        map.insert(
+        param.insert("BREG".to_string(), ParamValue::from(NumRegAB::default()));
+        param.insert(
             "CARRYINREG".to_string(),
             ParamValue::from(NumReg::default()),
         );
-        map.insert(
+        param.insert(
             "CARRYINSELREG".to_string(),
             ParamValue::from(NumReg::default()),
         );
-        map.insert("CREG".to_string(), ParamValue::from(NumReg::default()));
-        map.insert("DREG".to_string(), ParamValue::from(NumReg::default()));
-        map.insert("INMODEREG".to_string(), ParamValue::from(NumReg::default()));
-        map.insert("MREG".to_string(), ParamValue::from(NumReg::default()));
-        map.insert("OPMODEREG".to_string(), ParamValue::from(NumReg::default()));
-        map.insert("PREG".to_string(), ParamValue::from(NumReg::default()));
-        Param { map }
+        param.insert("CREG".to_string(), ParamValue::from(NumReg::default()));
+        param.insert("DREG".to_string(), ParamValue::from(NumReg::default()));
+        param.insert("INMODEREG".to_string(), ParamValue::from(NumReg::default()));
+        param.insert("MREG".to_string(), ParamValue::from(NumReg::default()));
+        param.insert("OPMODEREG".to_string(), ParamValue::from(NumReg::default()));
+        param.insert("PREG".to_string(), ParamValue::from(NumReg::default()));
+        param
     }
 }
 
