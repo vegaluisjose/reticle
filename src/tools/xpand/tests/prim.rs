@@ -66,7 +66,7 @@ fn test_vcc() -> Result<(), Error> {
 #[test]
 fn test_lut1() -> Result<(), Error> {
     let exp = r#"LUT1 # (
-    .INIT(1'h0)
+    .INIT(2'h0)
 )  (
     .I0(gnd),
     .O()

@@ -180,7 +180,7 @@ macro_rules! lut {
     };
 }
 
-lut!(lut1_from_mach, Lut1, Lut1ParamVal, "LUT1", 1, ["I0"]);
+lut!(lut1_from_mach, Lut1, Lut1ParamVal, "LUT1", 2, ["I0"]);
 lut!(lut2_from_mach, Lut2, Lut2ParamVal, "LUT2", 4, ["I0", "I1"]);
 lut!(
     lut3_from_mach,
