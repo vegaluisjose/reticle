@@ -5,6 +5,7 @@ use crate::fdse::Fdse;
 use crate::gnd::Gnd;
 use crate::instance::ToInstance;
 use crate::lut::{Lut1, Lut2, Lut3, Lut4, Lut5, Lut6};
+use crate::ramb::Ramb18;
 use crate::vcc::Vcc;
 use std::fmt;
 
@@ -30,3 +31,4 @@ display!(Lut6);
 display!(Gnd);
 display!(Vcc);
 display!(Dsp);
+display!(Ramb18);

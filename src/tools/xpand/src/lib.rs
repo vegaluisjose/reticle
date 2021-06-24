@@ -15,6 +15,7 @@ pub mod loc;
 pub mod lut;
 pub mod param;
 pub mod port;
+pub mod ramb;
 pub mod vcc;
 
 use crate::decl::ToDecl;
