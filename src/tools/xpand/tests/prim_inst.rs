@@ -1,10 +1,10 @@
-use std::fmt::Display;
+use xpand::instance::ToInstance;
 use xpand::errors::Error;
 use xpand::fdre::Fdre;
 use xpand::fdse::Fdse;
 
-fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
-    let r = res.to_string();
+fn test<S: AsRef<str>>(res: impl ToInstance, exp: S) -> Result<(), Error> {
+    let r = res.to_instance().to_string();
     let e = exp.as_ref();
     assert_eq!(r, e, "\n\nresult:\n{}\n\nexpected:\n{}", r, e);
     Ok(())
