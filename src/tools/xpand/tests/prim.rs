@@ -1,3 +1,4 @@
+use xpand::carry::Carry;
 use xpand::errors::Error;
 use xpand::fdre::Fdre;
 use xpand::fdse::Fdse;
@@ -142,4 +143,19 @@ fn test_lut6() -> Result<(), Error> {
     .O()
 );"#;
     test(Lut6::default(), exp)
+}
+
+#[test]
+fn test_carry() -> Result<(), Error> {
+    let exp = r#"CARRY8 # (
+    .CARRY_TYPE("SINGLE_CY8")
+)  (
+    .CI(gnd),
+    .CI_TOP(gnd),
+    .CO(),
+    .DI({gnd, gnd, gnd, gnd, gnd, gnd, gnd, gnd}),
+    .O(),
+    .S({gnd, gnd, gnd, gnd, gnd, gnd, gnd, gnd})
+);"#;
+    test(Carry::default(), exp)
 }
