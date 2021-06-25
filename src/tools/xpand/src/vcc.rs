@@ -1,6 +1,7 @@
 use crate::decl::ToDecl;
 use crate::errors::Error;
 use crate::instance::ToInstance;
+use crate::param::Param;
 use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
 use crate::vec_expr_try_from_expr;
 use verilog::ast as vl;
@@ -8,10 +9,14 @@ use xir::ast as xir;
 
 pub const VCC: &str = "vcc";
 
+#[derive(Clone, Debug, PartialEq)]
+pub struct ParamValue;
+
 #[derive(Clone, Debug)]
 pub struct Vcc {
     pub name: String,
     pub prim: String,
+    pub param: Param<ParamValue>,
     pub output: Port,
 }
 
@@ -30,12 +35,19 @@ impl DefaultPort for Vcc {
     }
 }
 
+impl Default for Param<ParamValue> {
+    fn default() -> Self {
+        Param::<ParamValue>::new()
+    }
+}
+
 impl Default for Vcc {
     fn default() -> Self {
         let name = format!("_{}", VCC);
         Vcc {
             name,
             prim: "VCC".to_string(),
+            param: Param::<ParamValue>::default(),
             output: Vcc::default_output_port(),
         }
     }
@@ -47,7 +59,10 @@ impl ToDecl for Vcc {
     }
 }
 
-impl ToInstance for Vcc {
+impl ToInstance<ParamValue> for Vcc {
+    fn param(&self) -> &Param<ParamValue> {
+        &self.param
+    }
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         for (k, v) in self.output.connection.iter() {

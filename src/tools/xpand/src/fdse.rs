@@ -107,7 +107,10 @@ impl Fdse {
     }
 }
 
-impl ToInstance for Fdse {
+impl ToInstance<ParamValue> for Fdse {
+    fn param(&self) -> &Param<ParamValue> {
+        &self.param
+    }
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         for (k, v) in self.param.param() {

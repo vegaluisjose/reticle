@@ -7,9 +7,10 @@ use xpand::gnd::Gnd;
 use xpand::instance::ToInstance;
 use xpand::lut::{Lut1, Lut2, Lut3, Lut4, Lut5, Lut6};
 use xpand::vcc::Vcc;
+use std::fmt::Display;
 
-fn test<S: AsRef<str>>(res: impl ToInstance, exp: S) -> Result<(), Error> {
-    let r = res.to_instance().to_string();
+fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
+    let r = res.to_string();
     let e = exp.as_ref();
     assert_eq!(r, e, "\n\nresult:\n{}\n\nexpected:\n{}", r, e);
     Ok(())
@@ -17,6 +18,7 @@ fn test<S: AsRef<str>>(res: impl ToInstance, exp: S) -> Result<(), Error> {
 
 #[test]
 fn test_fdre() -> Result<(), Error> {
+    let res = Fdre::default();
     let exp = r#"FDRE # (
     .INIT(1'b0),
     .IS_C_INVERTED(1'b0),
@@ -29,11 +31,12 @@ fn test_fdre() -> Result<(), Error> {
     .Q(),
     .R(reset)
 );"#;
-    test(Fdre::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_fdse() -> Result<(), Error> {
+    let res = Fdse::default();
     let exp = r#"FDSE # (
     .INIT(1'b0),
     .IS_C_INVERTED(1'b0),
@@ -46,38 +49,42 @@ fn test_fdse() -> Result<(), Error> {
     .Q(),
     .S(reset)
 );"#;
-    test(Fdse::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_gnd() -> Result<(), Error> {
+    let res = Gnd::default();
     let exp = r#"GND _gnd (
     .G(gnd)
 );"#;
-    test(Gnd::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_vcc() -> Result<(), Error> {
+    let res = Vcc::default();
     let exp = r#"VCC _vcc (
     .P(vcc)
 );"#;
-    test(Vcc::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_lut1() -> Result<(), Error> {
+    let res = Lut1::default();
     let exp = r#"LUT1 # (
     .INIT(2'h0)
 )  (
     .I0(gnd),
     .O()
 );"#;
-    test(Lut1::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_lut2() -> Result<(), Error> {
+    let res = Lut2::default();
     let exp = r#"LUT2 # (
     .INIT(4'h0)
 )  (
@@ -85,11 +92,12 @@ fn test_lut2() -> Result<(), Error> {
     .I1(gnd),
     .O()
 );"#;
-    test(Lut2::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_lut3() -> Result<(), Error> {
+    let res = Lut3::default();
     let exp = r#"LUT3 # (
     .INIT(8'h0)
 )  (
@@ -98,11 +106,12 @@ fn test_lut3() -> Result<(), Error> {
     .I2(gnd),
     .O()
 );"#;
-    test(Lut3::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_lut4() -> Result<(), Error> {
+    let res = Lut4::default();
     let exp = r#"LUT4 # (
     .INIT(16'h0)
 )  (
@@ -112,11 +121,12 @@ fn test_lut4() -> Result<(), Error> {
     .I3(gnd),
     .O()
 );"#;
-    test(Lut4::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_lut5() -> Result<(), Error> {
+    let res = Lut5::default();
     let exp = r#"LUT5 # (
     .INIT(32'h0)
 )  (
@@ -127,11 +137,12 @@ fn test_lut5() -> Result<(), Error> {
     .I4(gnd),
     .O()
 );"#;
-    test(Lut5::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_lut6() -> Result<(), Error> {
+    let res = Lut6::default();
     let exp = r#"LUT6 # (
     .INIT(64'h0)
 )  (
@@ -143,11 +154,12 @@ fn test_lut6() -> Result<(), Error> {
     .I5(gnd),
     .O()
 );"#;
-    test(Lut6::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_carry() -> Result<(), Error> {
+    let res = Carry::default();
     let exp = r#"CARRY8 # (
     .CARRY_TYPE("SINGLE_CY8")
 )  (
@@ -158,11 +170,12 @@ fn test_carry() -> Result<(), Error> {
     .O(),
     .S({gnd, gnd, gnd, gnd, gnd, gnd, gnd, gnd})
 );"#;
-    test(Carry::default(), exp)
+    test(res.to_instance(), exp)
 }
 
 #[test]
 fn test_dsp() -> Result<(), Error> {
+    let res = Dsp::default();
     let exp = r#"DSP48E2 # (
     .ACASCREG(0),
     .ADREG(0),
@@ -261,5 +274,5 @@ fn test_dsp() -> Result<(), Error> {
     .UNDERFLOW(),
     .XOROUT()
 );"#;
-    test(Dsp::default(), exp)
+    test(res.to_instance(), exp)
 }

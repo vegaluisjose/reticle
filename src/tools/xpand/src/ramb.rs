@@ -138,7 +138,10 @@ impl Ramb18 {
     }
 }
 
-impl ToInstance for Ramb18 {
+impl ToInstance<ParamValue> for Ramb18 {
+    fn param(&self) -> &Param<ParamValue> {
+        &self.param
+    }
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         for (k, v) in self.param.param() {

@@ -120,7 +120,10 @@ impl Carry {
     }
 }
 
-impl ToInstance for Carry {
+impl ToInstance<ParamValue> for Carry {
+    fn param(&self) -> &Param<ParamValue> {
+        &self.param
+    }
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.name, &self.prim);
         for (k, v) in self.param.param() {

@@ -99,7 +99,10 @@ macro_rules! lut {
             }
         }
 
-        impl ToInstance for $ty {
+        impl ToInstance<$val> for $ty {
+            fn param(&self) -> &Param<$val> {
+                &self.param
+            }
             fn to_instance(&self) -> vl::Instance {
                 let mut inst = vl::Instance::new(&self.name, &self.prim);
                 for (k, v) in self.param.param() {
