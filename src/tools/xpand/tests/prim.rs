@@ -1,3 +1,4 @@
+use std::fmt::Display;
 use xpand::carry::Carry;
 use xpand::dsp::Dsp;
 use xpand::errors::Error;
@@ -7,7 +8,6 @@ use xpand::gnd::Gnd;
 use xpand::instance::ToInstance;
 use xpand::lut::{Lut1, Lut2, Lut3, Lut4, Lut5, Lut6};
 use xpand::vcc::Vcc;
-use std::fmt::Display;
 
 fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
     let r = res.to_string();
