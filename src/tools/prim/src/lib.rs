@@ -27,6 +27,21 @@ pub struct Prim<T> {
     pub output: PortSet,
 }
 
+pub trait ToPrim<T> {
+    fn to_name(&self) -> String;
+    fn to_param(&self) -> ParamSet<T>;
+    fn to_input(&self) -> PortSet;
+    fn to_output(&self) -> PortSet;
+    fn to_prim(&self) -> Prim<T> {
+        Prim {
+            name: self.to_name(),
+            param: self.to_param(),
+            input: self.to_input(),
+            output: self.to_output(),
+        }
+    }
+}
+
 impl<T> PartialEq for Param<T> {
     fn eq(&self, other: &Param<T>) -> bool {
         self.name == other.name
@@ -82,28 +97,13 @@ impl<T: Eq + Default> Prim<T> {
     pub fn name(&self) -> String {
         self.name.to_string()
     }
-    pub fn param_set(&self) -> &ParamSet<T> {
+    pub fn param(&self) -> &ParamSet<T> {
         &self.param
     }
-    pub fn input_set(&self) -> &PortSet {
+    pub fn input(&self) -> &PortSet {
         &self.input
     }
-    pub fn output_set(&self) -> &PortSet {
+    pub fn output(&self) -> &PortSet {
         &self.output
-    }
-    pub fn set_name<S>(&mut self, name: S)
-    where
-        S: AsRef<str>,
-    {
-        self.name = name.as_ref().to_string();
-    }
-    pub fn set_param(&mut self, param: Param<T>) -> bool {
-        self.param.insert(param)
-    }
-    pub fn set_input<S>(&mut self, input: Port) -> bool {
-        self.input.insert(input)
-    }
-    pub fn set_output<S>(&mut self, output: Port) -> bool {
-        self.output.insert(output)
     }
 }
