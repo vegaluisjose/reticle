@@ -1,8 +1,11 @@
 pub mod ultrascale;
 
+use anyhow::Result;
 use std::borrow::Borrow;
 use std::collections::HashSet;
 use std::hash::{Hash, Hasher};
+use thiserror::Error;
+// use std::fmt::Display;
 
 #[derive(Clone, Debug, Default, Eq)]
 pub struct Param<T> {
@@ -27,6 +30,14 @@ pub struct Prim<T> {
     pub param: ParamSet<T>,
     pub input: PortSet,
     pub output: PortSet,
+}
+
+#[derive(Error, Debug)]
+pub enum PrimError {
+    #[error("Invalid Value: {0}")]
+    InvalidValue(String),
+    #[error("Missing parameter: {0}")]
+    MissingParam(String),
 }
 
 pub trait ToPrim<T> {
@@ -92,7 +103,22 @@ impl Borrow<str> for Port {
     }
 }
 
-impl<T: Eq + Default> Prim<T> {
+impl<T> Param<T> {
+    pub fn name(&self) -> String {
+        self.name.to_string()
+    }
+    pub fn width(&self) -> Option<u32> {
+        self.width
+    }
+    pub fn value(&self) -> &T {
+        &self.value
+    }
+    pub fn set_value(&mut self, value: T) {
+        self.value = value;
+    }
+}
+
+impl<T: Eq + Default + std::fmt::Debug> Prim<T> {
     pub fn new() -> Self {
         Prim::default()
     }
@@ -107,5 +133,26 @@ impl<T: Eq + Default> Prim<T> {
     }
     pub fn output(&self) -> &PortSet {
         &self.output
+    }
+    pub fn set_param<U>(&mut self, name: &str, value: U) -> Result<()>
+    where
+        U: Into<T>,
+    {
+        if let Some(old) = self.param.get(name) {
+            let value: T = value.into();
+            if old.value() == &value {
+                let param = Param {
+                    name: old.name(),
+                    width: old.width(),
+                    value,
+                };
+                self.param.replace(param);
+                Ok(())
+            } else {
+                Err(PrimError::InvalidValue(String::from("error")).into())
+            }
+        } else {
+            Err(PrimError::MissingParam(name.into()).into())
+        }
     }
 }
