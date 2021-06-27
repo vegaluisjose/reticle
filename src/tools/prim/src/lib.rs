@@ -3,9 +3,9 @@ pub mod ultrascale;
 use anyhow::Result;
 use std::borrow::Borrow;
 use std::collections::HashSet;
+use std::fmt;
 use std::hash::{Hash, Hasher};
 use thiserror::Error;
-// use std::fmt::Display;
 
 #[derive(Clone, Debug, Default, Eq)]
 pub struct Param<T> {
@@ -34,8 +34,8 @@ pub struct Prim<T> {
 
 #[derive(Error, Debug)]
 pub enum PrimError {
-    #[error("Invalid Value: {0}")]
-    InvalidValue(String),
+    #[error("Invalid parameter value: {0}")]
+    InvalidParamValue(String),
     #[error("Missing parameter: {0}")]
     MissingParam(String),
 }
@@ -118,7 +118,7 @@ impl<T> Param<T> {
     }
 }
 
-impl<T: Eq + Default + std::fmt::Debug> Prim<T> {
+impl<T: Eq + Default + fmt::Debug + fmt::Display> Prim<T> {
     pub fn new() -> Self {
         Prim::default()
     }
@@ -149,7 +149,7 @@ impl<T: Eq + Default + std::fmt::Debug> Prim<T> {
                 self.param.replace(param);
                 Ok(())
             } else {
-                Err(PrimError::InvalidValue(String::from("error")).into())
+                Err(PrimError::InvalidParamValue(value.to_string()).into())
             }
         } else {
             Err(PrimError::MissingParam(name.into()).into())
