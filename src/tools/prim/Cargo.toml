@@ -9,3 +9,4 @@ edition = "2018"
 anyhow = "1.0"
 thiserror = "1.0"
 derive_more = { version = "0.99.0", features = ["from", "deref", "deref_mut", "display"] }
+itertools = "0.10.0"

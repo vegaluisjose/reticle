@@ -1,6 +1,7 @@
 pub mod ultrascale;
 
 use anyhow::Result;
+use derive_more::{Deref, DerefMut};
 use std::borrow::Borrow;
 use std::collections::HashSet;
 use std::fmt;
@@ -20,8 +21,11 @@ pub struct Port {
     pub width: u32,
 }
 
-pub type ParamSet<T> = HashSet<Param<T>>;
-pub type PortSet = HashSet<Port>;
+#[derive(Clone, Debug, Default, Deref, DerefMut)]
+pub struct ParamSet<T>(HashSet<Param<T>>);
+
+#[derive(Clone, Debug, Default, PartialEq, Deref, DerefMut)]
+pub struct PortSet(HashSet<Port>);
 
 // T ~> Param value type
 #[derive(Clone, Debug, Default)]
@@ -52,6 +56,18 @@ pub trait ToPrim<T> {
             input: self.to_input(),
             output: self.to_output(),
         }
+    }
+}
+
+impl<T> ParamSet<T> {
+    fn new() -> Self {
+        ParamSet(HashSet::new())
+    }
+}
+
+impl PortSet {
+    fn new() -> Self {
+        PortSet(HashSet::new())
     }
 }
 
@@ -188,5 +204,33 @@ impl<T: Eq + Default + fmt::Debug + fmt::Display> Prim<T> {
         } else {
             Err(PrimError::MissingParam(name.into()).into())
         }
+    }
+}
+
+impl From<&(&str, u32)> for Port {
+    fn from(input: &(&str, u32)) -> Self {
+        Port {
+            name: input.0.into(),
+            width: input.1,
+        }
+    }
+}
+
+impl From<(&str, u32)> for Port {
+    fn from(input: (&str, u32)) -> Self {
+        Port {
+            name: input.0.into(),
+            width: input.1,
+        }
+    }
+}
+
+impl From<&[(&str, u32)]> for PortSet {
+    fn from(input: &[(&str, u32)]) -> Self {
+        let mut set = PortSet::new();
+        for t in input {
+            set.insert(t.into());
+        }
+        set
     }
 }
