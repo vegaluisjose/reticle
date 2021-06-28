@@ -1,3 +1,4 @@
+use anyhow::Result;
 use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
 use prim::{Param, ParamSet, PortSet, ToPrim};
 use std::iter::FromIterator;
@@ -56,4 +57,12 @@ fn test_carry_output() {
     let carry = Carry::default();
     let output = [("O", 8), ("CO", 8)];
     test_output(&carry, &output);
+}
+
+#[test]
+fn test_carry_set_param() -> Result<()> {
+    let carry = Carry::default();
+    let mut prim = carry.to_prim();
+    prim.set_param("CARRY_TYPE", CarryType::Dual)?;
+    Ok(())
 }
