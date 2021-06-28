@@ -60,13 +60,13 @@ pub trait ToPrim<T> {
 }
 
 impl<T> ParamSet<T> {
-    fn new() -> Self {
+    pub fn new() -> Self {
         ParamSet(HashSet::new())
     }
 }
 
 impl PortSet {
-    fn new() -> Self {
+    pub fn new() -> Self {
         PortSet(HashSet::new())
     }
 }
@@ -76,6 +76,17 @@ impl<T> PartialEq for Param<T> {
         self.name == other.name
     }
 }
+
+impl<T> PartialEq for ParamSet<T>
+where
+    T: Eq + Hash,
+{
+    fn eq(&self, other: &ParamSet<T>) -> bool {
+        self.0 == other.0
+    }
+}
+
+impl<T> Eq for ParamSet<T> where T: Eq + Hash {}
 
 impl<T> Hash for Param<T> {
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -252,35 +263,5 @@ impl<T> From<(&str, T)> for Param<T> {
             value: input.1,
             width: None,
         }
-    }
-}
-
-impl<T: Clone> From<&(&str, T, u32)> for Param<T> {
-    fn from(input: &(&str, T, u32)) -> Self {
-        Param {
-            name: input.0.into(),
-            value: input.1.clone(),
-            width: Some(input.2),
-        }
-    }
-}
-
-impl<T> From<(&str, T, u32)> for Param<T> {
-    fn from(input: (&str, T, u32)) -> Self {
-        Param {
-            name: input.0.into(),
-            value: input.1,
-            width: Some(input.2),
-        }
-    }
-}
-
-impl<T: Clone + Eq> From<&[(&str, T)]> for ParamSet<T> {
-    fn from(input: &[(&str, T)]) -> Self {
-        let mut set = ParamSet::new();
-        for t in input {
-            set.insert(t.into());
-        }
-        set
     }
 }
