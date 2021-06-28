@@ -1,4 +1,4 @@
-use crate::{Param, ParamSet, PortSet, ToPrim};
+use crate::{Param, ParamSet, Port, PortSet, ToPrim};
 use derive_more::{Display, From};
 
 #[derive(Clone, Debug, PartialEq, Eq, Display)]
@@ -44,9 +44,17 @@ impl ToPrim<CarryParam> for Carry {
         param
     }
     fn to_input(&self) -> PortSet {
-        PortSet::new()
+        let mut port = PortSet::new();
+        port.insert(Port::new("DI", 8));
+        port.insert(Port::new("S", 8));
+        port.insert(Port::new("CI", 1));
+        port.insert(Port::new("CI_TOP", 1));
+        port
     }
     fn to_output(&self) -> PortSet {
-        PortSet::new()
+        let mut port = PortSet::new();
+        port.insert(Port::new("O", 8));
+        port.insert(Port::new("CO", 8));
+        port
     }
 }

@@ -103,7 +103,35 @@ impl Borrow<str> for Port {
     }
 }
 
+impl Port {
+    pub fn new(name: &str, width: u32) -> Self {
+        Port {
+            name: name.into(),
+            width,
+        }
+    }
+    pub fn name(&self) -> String {
+        self.name.to_string()
+    }
+    pub fn width(&self) -> u32 {
+        self.width
+    }
+    pub fn set_name(&mut self, name: &str) {
+        self.name = name.into();
+    }
+    pub fn set_width(&mut self, width: u32) {
+        self.width = width;
+    }
+}
+
 impl<T> Param<T> {
+    pub fn new(name: &str, value: T) -> Self {
+        Param {
+            name: name.into(),
+            width: None,
+            value,
+        }
+    }
     pub fn name(&self) -> String {
         self.name.to_string()
     }
@@ -112,6 +140,12 @@ impl<T> Param<T> {
     }
     pub fn value(&self) -> &T {
         &self.value
+    }
+    pub fn set_name(&mut self, name: &str) {
+        self.name = name.into();
+    }
+    pub fn set_width(&mut self, width: u32) {
+        self.width = Some(width);
     }
     pub fn set_value(&mut self, value: T) {
         self.value = value;
