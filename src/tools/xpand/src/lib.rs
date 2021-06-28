@@ -16,6 +16,7 @@ pub mod lut;
 pub mod param;
 pub mod port;
 pub mod ramb;
+pub mod to_verilog;
 pub mod vcc;
 
 use crate::decl::ToDecl;
