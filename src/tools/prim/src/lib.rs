@@ -11,8 +11,8 @@ use thiserror::Error;
 #[derive(Clone, Debug, Default, Eq)]
 pub struct Param<T> {
     pub name: String,
-    pub width: Option<u32>,
     pub value: T,
+    pub width: Option<u32>,
 }
 
 #[derive(Clone, Debug, Default, Eq)]
@@ -228,6 +228,56 @@ impl From<(&str, u32)> for Port {
 impl From<&[(&str, u32)]> for PortSet {
     fn from(input: &[(&str, u32)]) -> Self {
         let mut set = PortSet::new();
+        for t in input {
+            set.insert(t.into());
+        }
+        set
+    }
+}
+
+impl<T: Clone> From<&(&str, T)> for Param<T> {
+    fn from(input: &(&str, T)) -> Self {
+        Param {
+            name: input.0.into(),
+            value: input.1.clone(),
+            width: None,
+        }
+    }
+}
+
+impl<T> From<(&str, T)> for Param<T> {
+    fn from(input: (&str, T)) -> Self {
+        Param {
+            name: input.0.into(),
+            value: input.1,
+            width: None,
+        }
+    }
+}
+
+impl<T: Clone> From<&(&str, T, u32)> for Param<T> {
+    fn from(input: &(&str, T, u32)) -> Self {
+        Param {
+            name: input.0.into(),
+            value: input.1.clone(),
+            width: Some(input.2),
+        }
+    }
+}
+
+impl<T> From<(&str, T, u32)> for Param<T> {
+    fn from(input: (&str, T, u32)) -> Self {
+        Param {
+            name: input.0.into(),
+            value: input.1,
+            width: Some(input.2),
+        }
+    }
+}
+
+impl<T: Clone + Eq> From<&[(&str, T)]> for ParamSet<T> {
+    fn from(input: &[(&str, T)]) -> Self {
+        let mut set = ParamSet::new();
         for t in input {
             set.insert(t.into());
         }
