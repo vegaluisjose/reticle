@@ -11,11 +11,17 @@ pub trait ToVerilogExpr {
     fn to_expr(&self) -> vl::Expr;
 }
 
+/// TODO: ToVerilogDecl trait should replace ToDecl trait
+pub trait ToVerilogDecl {
+    /// emit Verilog expr
+    fn to_decl(&self) -> vl::Decl;
+}
+
 /// TODO: ToVerilogInstance trait should replace Instance trait
 ///
-/// ToVerilogInstance trait contains the function required to
-/// produce block of Verilog code, containing at most
-/// one instance and multiple statements.
+/// ToVerilogInstance trait contains methods required to
+/// produce block of Verilog code, including at most one
+/// instance and multiple statements.
 pub trait ToVerilogInstance<T: ToVerilogExpr> {
     /// name of the instance
     fn to_name(&self) -> String;
