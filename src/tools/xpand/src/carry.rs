@@ -192,3 +192,57 @@ pub fn carryadd_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error
     }
     Ok(vec![carry.to_stmt()])
 }
+
+pub mod next {
+    use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance};
+    use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
+    use prim::{ParamSet, PortSet};
+    use verilog::ast as vl;
+
+    impl ToVerilogExpr for CarryType {
+        fn to_expr(&self) -> vl::Expr {
+            vl::Expr::new_str(&self.to_string())
+        }
+    }
+
+    impl ToVerilogExpr for CarryParam {
+        fn to_expr(&self) -> vl::Expr {
+            match self {
+                CarryParam::CarryType(c) => c.to_expr(),
+            }
+        }
+    }
+
+    impl ToVerilogInstance<CarryParam> for Carry {
+        fn to_name(&self) -> String {
+            String::new()
+        }
+        fn to_prim(&self) -> String {
+            self.name()
+        }
+        fn to_param_set(&self) -> ParamSet<CarryParam> {
+            self.param().clone()
+        }
+        fn to_input_set(&self) -> PortSet {
+            self.input().clone()
+        }
+        fn to_output_set(&self) -> PortSet {
+            self.output().clone()
+        }
+    }
+
+    fn t0() {
+        let carry = crate::carry::Carry::default();
+        println!("{}", carry);
+    }
+
+    fn t1() {
+        let carry = Carry::default();
+        println!("{}", carry.to_instance());
+    }
+
+    pub fn run() {
+        t0();
+        t1();
+    }
+}
