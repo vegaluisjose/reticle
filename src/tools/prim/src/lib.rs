@@ -180,14 +180,6 @@ impl<T> Param<T> {
 }
 
 impl<T: Eq + Default + fmt::Debug + fmt::Display> Prim<T> {
-    pub fn new() -> Self {
-        Prim {
-            name: String::new(),
-            param: ParamSet::new(),
-            input: PortSet::new(),
-            output: PortSet::new(),
-        }
-    }
     pub fn name(&self) -> String {
         self.name.to_string()
     }
