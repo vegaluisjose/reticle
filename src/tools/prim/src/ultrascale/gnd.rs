@@ -1,9 +1,9 @@
-use derive_more::{Deref, DerefMut};
 use crate::{Port, PortSet, Prim, ToPrim};
+use derive_more::{Deref, DerefMut, Display};
 
 pub const GND: &str = "gnd";
 
-#[derive(Clone, Debug, Default, PartialEq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Display)]
 pub struct GndParam;
 
 #[derive(Clone, Debug, Deref, DerefMut)]
@@ -18,7 +18,13 @@ impl ToPrim<GndParam> for GndPrim {
     }
     fn to_output(&self) -> PortSet {
         let mut port = PortSet::new();
-        port.insert(Port::new("G", 8));
+        port.insert(Port::new("G", 1));
         port
+    }
+}
+
+impl Default for Gnd {
+    fn default() -> Gnd {
+        Gnd(GndPrim::default().to_prim())
     }
 }

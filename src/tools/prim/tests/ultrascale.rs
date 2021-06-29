@@ -1,5 +1,6 @@
 use anyhow::Result;
 use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
+use prim::ultrascale::gnd::Gnd;
 use prim::{Param, ParamSet, PortSet, Prim};
 use std::fmt;
 use std::iter::FromIterator;
@@ -30,39 +31,66 @@ fn test_output<T: Eq + Default + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp:
 
 #[test]
 fn test_carry_name() {
-    let carry = Carry::default();
-    test_name(&carry, "CARRY8");
+    let prim = Carry::default();
+    test_name(&prim, "CARRY8");
 }
 
 #[test]
 fn test_carry_param() {
-    let carry = Carry::default();
+    let prim = Carry::default();
     let mut param: ParamSet<CarryParam> = ParamSet::new();
     param.insert(Param {
         name: "CARRY_TYPE".to_string(),
         width: None,
         value: CarryType::Single.into(),
     });
-    test_param(&carry, &param);
+    test_param(&prim, &param);
 }
 
 #[test]
 fn test_carry_input() {
-    let carry = Carry::default();
+    let prim = Carry::default();
     let input = [("DI", 8), ("S", 8), ("CI", 1), ("CI_TOP", 1)];
-    test_input(&carry, &input);
+    test_input(&prim, &input);
 }
 
 #[test]
 fn test_carry_output() {
-    let carry = Carry::default();
+    let prim = Carry::default();
     let output = [("O", 8), ("CO", 8)];
-    test_output(&carry, &output);
+    test_output(&prim, &output);
 }
 
 #[test]
 fn test_carry_set_param() -> Result<()> {
-    let mut carry = Carry::default();
-    carry.set_param("CARRY_TYPE", CarryType::Dual)?;
+    let mut prim = Carry::default();
+    prim.set_param("CARRY_TYPE", CarryType::Dual)?;
     Ok(())
+}
+
+#[test]
+fn test_gnd_name() {
+    let prim = Gnd::default();
+    test_name(&prim, "GND");
+}
+
+#[test]
+fn test_gnd_param() {
+    let prim = Gnd::default();
+    let param: ParamSet<_> = ParamSet::new();
+    test_param(&prim, &param);
+}
+
+#[test]
+fn test_gnd_input() {
+    let prim = Gnd::default();
+    let input = [];
+    test_input(&prim, &input);
+}
+
+#[test]
+fn test_gnd_output() {
+    let prim = Gnd::default();
+    let output = [("G", 1)];
+    test_output(&prim, &output);
 }
