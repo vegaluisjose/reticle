@@ -24,7 +24,7 @@ function docker_rust {
         $1
 }
 
-docker_rust "cargo fmt -- --check"
+docker_rust "cargo fmt --all -- --check"
 docker_rust "cargo clippy --all-targets --all-features -- -D warnings"
 docker_rust "cargo test -p ir"
 docker_rust "cargo test -p asm"
