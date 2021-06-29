@@ -1,5 +1,5 @@
-use crate::{Param, ParamSet, Port, PortSet, ToPrim};
-use derive_more::{Display, From};
+use crate::{Param, ParamSet, Port, PortSet, Prim, ToPrim};
+use derive_more::{Display, From, Deref, DerefMut};
 
 #[derive(Clone, Debug, PartialEq, Eq, Display)]
 pub enum CarryType {
@@ -14,8 +14,11 @@ pub enum CarryParam {
     CarryType(CarryType),
 }
 
+#[derive(Clone, Debug, Deref, DerefMut)]
+pub struct Carry(Prim<CarryParam>);
+
 #[derive(Clone, Debug, Default)]
-pub struct Carry;
+struct CarryPrim;
 
 impl PartialEq for CarryParam {
     fn eq(&self, _: &Self) -> bool {
@@ -29,7 +32,7 @@ impl Default for CarryParam {
     }
 }
 
-impl ToPrim<CarryParam> for Carry {
+impl ToPrim<CarryParam> for CarryPrim {
     fn to_name(&self) -> String {
         String::from("CARRY8")
     }
@@ -56,5 +59,11 @@ impl ToPrim<CarryParam> for Carry {
         port.insert(Port::new("O", 8));
         port.insert(Port::new("CO", 8));
         port
+    }
+}
+
+impl Default for Carry {
+    fn default() -> Carry {
+        Carry(CarryPrim::default().to_prim())
     }
 }

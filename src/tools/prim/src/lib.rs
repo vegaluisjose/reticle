@@ -28,7 +28,7 @@ pub struct ParamSet<T>(HashSet<Param<T>>);
 pub struct PortSet(HashSet<Port>);
 
 // T ~> Param value type
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct Prim<T> {
     pub name: String,
     pub param: ParamSet<T>,
@@ -181,7 +181,12 @@ impl<T> Param<T> {
 
 impl<T: Eq + Default + fmt::Debug + fmt::Display> Prim<T> {
     pub fn new() -> Self {
-        Prim::default()
+        Prim {
+            name: String::new(),
+            param: ParamSet::new(),
+            input: PortSet::new(),
+            output: PortSet::new(),
+        }
     }
     pub fn name(&self) -> String {
         self.name.to_string()
