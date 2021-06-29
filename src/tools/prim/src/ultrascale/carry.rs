@@ -1,11 +1,11 @@
 use crate::{Param, ParamSet, Port, PortSet, Prim, ToPrim};
-use derive_more::{Display, From, Deref, DerefMut};
+use derive_more::{Deref, DerefMut, Display, From};
 
 #[derive(Clone, Debug, PartialEq, Eq, Display)]
 pub enum CarryType {
-    #[display(fmt = "SINGLE_CY8")]
-    Dual,
     #[display(fmt = "DUAL_CY4")]
+    Dual,
+    #[display(fmt = "SINGLE_CY8")]
     Single,
 }
 
@@ -28,7 +28,7 @@ impl PartialEq for CarryParam {
 
 impl Default for CarryParam {
     fn default() -> Self {
-        CarryParam::from(CarryType::Dual)
+        CarryParam::from(CarryType::Single)
     }
 }
 
