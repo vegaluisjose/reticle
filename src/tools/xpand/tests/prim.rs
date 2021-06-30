@@ -1,6 +1,6 @@
+use prim::ultrascale::carry::Carry;
 use prim::ultrascale::gnd::Gnd;
 use std::fmt::Display;
-use xpand::carry::Carry;
 use xpand::dsp::Dsp;
 use xpand::errors::Error;
 use xpand::fdre::Fdre;

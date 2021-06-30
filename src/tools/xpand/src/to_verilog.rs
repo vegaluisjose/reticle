@@ -9,7 +9,9 @@ pub type ExprMap = HashMap<String, vl::Expr>;
 /// TODO: ToVerilogExpr trait should replace ToExpr trait
 pub trait ToVerilogExpr {
     /// emit Verilog expr
-    fn to_expr(&self) -> vl::Expr;
+    fn to_expr(&self) -> vl::Expr {
+        vl::Expr::new_ref("")
+    }
 }
 
 /// TODO: ToVerilogDecl trait should replace ToDecl trait
@@ -36,7 +38,7 @@ pub trait ToVerilogInstance<T: ToVerilogExpr> {
     fn to_output_set(&self) -> PortSet;
     /// primitive location. Optional, because some primitives
     /// do not require location e.g., VCC or GND
-    fn to_loc(&self) -> Option<Loc> {
+    fn to_loc(&self) -> Option<&Loc> {
         None
     }
     /// parameter map
