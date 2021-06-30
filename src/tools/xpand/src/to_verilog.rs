@@ -33,17 +33,44 @@ pub trait ToVerilogInstance<T: ToVerilogExpr> {
     fn to_input_set(&self) -> PortSet;
     /// primitive output set
     fn to_output_set(&self) -> PortSet;
+    /// parameter map
+    fn to_param_map(&self) -> ExprMap {
+        let mut map = ExprMap::new();
+        for p in self.to_param_set().iter() {
+            map.insert(p.name(), p.value().to_expr());
+        }
+        map
+    }
+    /// input map
+    fn to_input_map(&self) -> ExprMap {
+        let mut map = ExprMap::new();
+        for i in self.to_input_set().iter() {
+            map.insert(i.name(), create_literal(i.width() as u64, 0));
+        }
+        map
+    }
+    /// output map
+    fn to_output_map(&self) -> ExprMap {
+        let mut map = ExprMap::new();
+        for o in self.to_output_set().iter() {
+            map.insert(o.name(), vl::Expr::new_ref(""));
+        }
+        map
+    }
     /// emit Verilog instance
     fn to_instance(&self) -> vl::Instance {
         let mut inst = vl::Instance::new(&self.to_name(), &self.to_prim());
-        for p in self.to_param_set().iter() {
-            inst.add_param(&p.name(), p.value().to_expr());
+        let param = self.to_param_map();
+        for (p, v) in param {
+            inst.add_param(&p, v);
         }
-        for i in self.to_input_set().iter() {
-            inst.connect(&i.name, create_literal(i.width() as u64, 0));
+        let input = self.to_input_map();
+        for (i, v) in input {
+            inst.connect(&i, v);
         }
-        for o in self.to_output_set().iter() {
-            inst.connect(&o.name(), vl::Expr::new_ref(""));
+        let output = self.to_output_map();
+        for (o, v) in output {
+            inst.connect(&o, v);
         }
         inst
     }

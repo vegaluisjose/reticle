@@ -1,92 +1,49 @@
-use crate::decl::ToDecl;
 use crate::errors::Error;
-use crate::instance::ToInstance;
-use crate::param::Param;
-use crate::port::{ConnectionMap, DefaultPort, Port, WidthMap};
+use crate::to_verilog::{ExprMap, ToVerilogDecl, ToVerilogExpr, ToVerilogInstance};
 use crate::vec_expr_try_from_expr;
+use prim::ultrascale::gnd::{Gnd, GndParam, GND};
+use prim::{ParamSet, PortSet};
 use verilog::ast as vl;
 use xir::ast as xir;
 
-pub const GND: &str = "gnd";
-
-#[derive(Clone, Debug, PartialEq)]
-pub struct ParamValue;
-
-#[derive(Clone, Debug)]
-pub struct Gnd {
-    pub name: String,
-    pub prim: String,
-    pub param: Param<ParamValue>,
-    pub output: Port,
-}
-
-impl DefaultPort for Gnd {
-    fn default_input_port() -> Port {
-        Port::default()
-    }
-    fn default_output_port() -> Port {
-        let mut width = WidthMap::new();
-        width.insert("G".to_string(), 1);
-        let mut connection = ConnectionMap::new();
-        for k in width.keys() {
-            connection.insert(k.clone(), vl::Expr::new_ref(GND));
-        }
-        Port { width, connection }
-    }
-}
-
-impl Default for Param<ParamValue> {
-    fn default() -> Self {
-        Param::<ParamValue>::new()
-    }
-}
-
-impl Default for Gnd {
-    fn default() -> Self {
-        let name = format!("_{}", GND);
-        Gnd {
-            name,
-            prim: "GND".to_string(),
-            param: Param::<ParamValue>::default(),
-            output: Gnd::default_output_port(),
-        }
-    }
-}
-
-impl ToDecl for Gnd {
+impl ToVerilogDecl for Gnd {
     fn to_decl(&self) -> vl::Decl {
         vl::Decl::new_wire(GND, 1)
     }
 }
 
-impl ToInstance<ParamValue> for Gnd {
-    fn param(&self) -> &Param<ParamValue> {
-        &self.param
+impl ToVerilogExpr for GndParam {
+    fn to_expr(&self) -> vl::Expr {
+        vl::Expr::new_ref("")
     }
-    fn to_instance(&self) -> vl::Instance {
-        let mut inst = vl::Instance::new(&self.name, &self.prim);
-        for (k, v) in self.output.connection.iter() {
-            inst.connect(&k, v.clone());
+}
+
+impl ToVerilogInstance<GndParam> for Gnd {
+    fn to_name(&self) -> String {
+        format!("_{}", GND)
+    }
+    fn to_prim(&self) -> String {
+        self.name()
+    }
+    fn to_param_set(&self) -> ParamSet<GndParam> {
+        self.param().clone()
+    }
+    fn to_input_set(&self) -> PortSet {
+        self.input().clone()
+    }
+    fn to_output_set(&self) -> PortSet {
+        self.output().clone()
+    }
+    fn to_output_map(&self) -> ExprMap {
+        let mut map = ExprMap::new();
+        for o in self.to_output_set().iter() {
+            if o.name().as_str() == "G" {
+                map.insert(o.name(), vl::Expr::new_ref(GND));
+            } else {
+                map.insert(o.name(), vl::Expr::new_ref(""));
+            }
         }
-        inst
-    }
-    fn to_stmt(&self) -> vl::Stmt {
-        vl::Stmt::from(self.to_instance())
-    }
-    fn set_name(&mut self, name: &str) {
-        self.name = name.to_string();
-    }
-    fn set_input(&mut self, _: &str, _: vl::Expr) -> Result<(), Error> {
-        Err(Error::new_xpand_error("GND does not support inputs"))
-    }
-    fn set_output(&mut self, port: &str, expr: vl::Expr) -> Result<(), Error> {
-        if let Some(p) = self.output.connection.get_mut(port) {
-            *p = expr;
-            Ok(())
-        } else {
-            let err = format!("output {} do not exist", port);
-            Err(Error::new_xpand_error(&err))
-        }
+        map
     }
 }
 

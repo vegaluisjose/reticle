@@ -1,12 +1,13 @@
+use prim::ultrascale::gnd::Gnd;
 use std::fmt::Display;
 use xpand::carry::Carry;
 use xpand::dsp::Dsp;
 use xpand::errors::Error;
 use xpand::fdre::Fdre;
 use xpand::fdse::Fdse;
-use xpand::gnd::Gnd;
 use xpand::instance::ToInstance;
 use xpand::lut::{Lut1, Lut2, Lut3, Lut4, Lut5, Lut6};
+use xpand::to_verilog::ToVerilogInstance;
 use xpand::vcc::Vcc;
 
 fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {

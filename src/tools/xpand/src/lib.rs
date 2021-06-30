@@ -21,13 +21,14 @@ pub mod vcc;
 
 use crate::decl::ToDecl;
 use crate::errors::Error;
-use crate::gnd::Gnd;
 use crate::instance::ToInstance;
 use crate::port::DefaultPort;
+use crate::to_verilog::{ToVerilogDecl, ToVerilogInstance};
 use crate::vcc::Vcc;
 use bline::{
     input_try_from_sig, vec_expr_try_from_expr, vec_expr_try_from_term, wire_try_from_expr,
 };
+use prim::ultrascale::gnd::Gnd;
 use std::collections::HashSet;
 use std::convert::TryInto;
 use verilog::ast as vl;
@@ -37,13 +38,14 @@ pub const CLOCK: &str = "clock";
 pub const RESET: &str = "reset";
 
 pub fn create_literal(width: u64, value: i64) -> vl::Expr {
+    use prim::ultrascale::gnd::GND;
     if width == 1 {
         let mask = value & 1;
         let is_one = mask == 1;
         if is_one {
             vl::Expr::new_ref(vcc::VCC)
         } else {
-            vl::Expr::new_ref(gnd::GND)
+            vl::Expr::new_ref(GND)
         }
     } else {
         let mut concat = vl::ExprConcat::default();
@@ -55,7 +57,7 @@ pub fn create_literal(width: u64, value: i64) -> vl::Expr {
             if is_one {
                 concat.add_expr(vl::Expr::new_ref(vcc::VCC));
             } else {
-                concat.add_expr(vl::Expr::new_ref(gnd::GND));
+                concat.add_expr(vl::Expr::new_ref(GND));
             }
         }
         vl::Expr::from(concat)

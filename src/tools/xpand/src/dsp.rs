@@ -1,6 +1,5 @@
 use crate::errors::Error;
 use crate::expr::ToExpr;
-use crate::gnd::GND;
 use crate::instance::ToInstance;
 use crate::loc::attr_from_loc;
 use crate::loc::{Bel, BelDsp, ExprCoord, Loc};
@@ -11,6 +10,7 @@ use crate::{
     vec_expr_try_from_term,
 };
 use crate::{CLOCK, RESET};
+use prim::ultrascale::gnd::GND;
 use std::collections::HashSet;
 use std::convert::TryFrom;
 use verilog::ast as vl;
