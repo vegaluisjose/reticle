@@ -31,6 +31,4 @@ jobs:
         uses: Swatinem/rust-cache@v1
 
       - name: Format
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt --all -- --check
+        run: cargo fmt --all -- --check
