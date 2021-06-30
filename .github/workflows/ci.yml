@@ -32,3 +32,18 @@ jobs:
 
       - name: Format
         run: cargo fmt --all -- --check
+
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Test IR
+        run: cargo test -p ir
+
+      - name: Test Asm
+        run: cargo test -p asm
+
+      - name: Test Xir
+        run: cargo test -p xir
