@@ -11,17 +11,24 @@ env:
 
 jobs:
   check:
-    name: Reticle ci
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Install 1.5.0
+      - name: Checkout the repository.
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:
-            toolchain: 1.5.0
-            override: true
-            components: rustfmt, clippy
-      - name: Check format
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt --all -- --check
+          profile: minimal
+          toolchain: 1.5.0
+          override: true
+	  components: rustfmt, clippy
+
+      - name: Setup the Rust dependency cache.
+        uses: Swatinem/rust-cache@v1
+
+      - name: Format
+        run: cargo fmt --all -- --check
+      
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings

@@ -1,6 +1,6 @@
 use crate::errors::Error;
-use crate::to_verilog::{ExprMap, ToVerilogExpr, ToVerilogInstance};
 use crate::loc::Loc;
+use crate::to_verilog::{ExprMap, ToVerilogExpr, ToVerilogInstance};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
 use prim::{ParamSet, PortSet};
