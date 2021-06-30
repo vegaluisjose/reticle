@@ -31,11 +31,11 @@ pub trait ToVerilogInstance<T: ToVerilogExpr> {
     /// name of the primitive
     fn to_prim(&self) -> String;
     /// primitive parameter set
-    fn to_param_set(&self) -> ParamSet<T>;
+    fn to_param_set(&self) -> &ParamSet<T>;
     /// primitive input set
-    fn to_input_set(&self) -> PortSet;
+    fn to_input_set(&self) -> &PortSet;
     /// primitive output set
-    fn to_output_set(&self) -> PortSet;
+    fn to_output_set(&self) -> &PortSet;
     /// primitive location. Optional, because some primitives
     /// do not require location e.g., VCC or GND
     fn to_loc(&self) -> Option<&Loc> {

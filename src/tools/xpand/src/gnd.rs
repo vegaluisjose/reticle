@@ -25,14 +25,14 @@ impl ToVerilogInstance<GndParam> for Gnd {
     fn to_prim(&self) -> String {
         self.name()
     }
-    fn to_param_set(&self) -> ParamSet<GndParam> {
-        self.param().clone()
+    fn to_param_set(&self) -> &ParamSet<GndParam> {
+        self.param()
     }
-    fn to_input_set(&self) -> PortSet {
-        self.input().clone()
+    fn to_input_set(&self) -> &PortSet {
+        self.input()
     }
-    fn to_output_set(&self) -> PortSet {
-        self.output().clone()
+    fn to_output_set(&self) -> &PortSet {
+        self.output()
     }
     fn to_output_map(&self) -> ExprMap {
         let mut map = ExprMap::new();

@@ -28,14 +28,14 @@ impl ToVerilogInstance<CarryParam> for Carry {
     fn to_prim(&self) -> String {
         self.name()
     }
-    fn to_param_set(&self) -> ParamSet<CarryParam> {
-        self.param().clone()
+    fn to_param_set(&self) -> &ParamSet<CarryParam> {
+        self.param()
     }
-    fn to_input_set(&self) -> PortSet {
-        self.input().clone()
+    fn to_input_set(&self) -> &PortSet {
+        self.input()
     }
-    fn to_output_set(&self) -> PortSet {
-        self.output().clone()
+    fn to_output_set(&self) -> &PortSet {
+        self.output()
     }
 }
 
@@ -61,14 +61,14 @@ impl ToVerilogInstance<CarryParam> for CarryAdd {
     fn to_prim(&self) -> String {
         self.prim.name()
     }
-    fn to_param_set(&self) -> ParamSet<CarryParam> {
-        self.prim.param().clone()
+    fn to_param_set(&self) -> &ParamSet<CarryParam> {
+        self.prim.param()
     }
-    fn to_input_set(&self) -> PortSet {
-        self.prim.input().clone()
+    fn to_input_set(&self) -> &PortSet {
+        self.prim.input()
     }
-    fn to_output_set(&self) -> PortSet {
-        self.prim.output().clone()
+    fn to_output_set(&self) -> &PortSet {
+        self.prim.output()
     }
     fn to_loc(&self) -> Option<&Loc> {
         self.instr.loc()
