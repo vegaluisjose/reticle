@@ -1,6 +1,0 @@
-steps:
-  - label: "ci"
-    command: |
-      # run ci
-      source ci/run.sh
-    timeout_in_minutes: 60
