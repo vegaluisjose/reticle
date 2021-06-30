@@ -47,3 +47,27 @@ jobs:
 
       - name: Test Xir
         run: cargo test -p xir
+
+      - name: Test Pat
+        run: cargo test -p pat
+
+      - name: Test Xim
+        run: cargo test -p xim
+
+      - name: Test Isel
+        run: cargo test -p isel
+
+      - name: Test Optimizer
+        run: cargo test -p optimizer
+
+      - name: Test Bler
+        run: cargo test -p bler
+
+      - name: Test Bline
+        run: cargo test -p bline
+
+      - name: Test Prim
+        run: cargo test -p prim
+
+      - name: Test Xpand
+        run: cargo test -p xpand
