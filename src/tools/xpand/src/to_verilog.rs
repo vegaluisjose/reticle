@@ -1,4 +1,5 @@
 use crate::create_literal;
+use crate::loc::{attr_from_loc, Loc};
 use prim::{ParamSet, PortSet};
 use std::collections::HashMap;
 use verilog::ast as vl;
@@ -33,6 +34,11 @@ pub trait ToVerilogInstance<T: ToVerilogExpr> {
     fn to_input_set(&self) -> PortSet;
     /// primitive output set
     fn to_output_set(&self) -> PortSet;
+    /// primitive location. Optional, because some primitives
+    /// do not require location e.g., VCC or GND
+    fn to_loc(&self) -> Option<Loc> {
+        None
+    }
     /// parameter map
     fn to_param_map(&self) -> ExprMap {
         let mut map = ExprMap::new();
@@ -71,6 +77,12 @@ pub trait ToVerilogInstance<T: ToVerilogExpr> {
         let output = self.to_output_map();
         for (o, v) in output {
             inst.connect(&o, v);
+        }
+        if let Some(loc) = self.to_loc() {
+            if loc.is_placed() {
+                let attr = attr_from_loc(&loc);
+                inst.set_attr(attr);
+            }
         }
         inst
     }
