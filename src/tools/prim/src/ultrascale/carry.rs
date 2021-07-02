@@ -26,12 +26,6 @@ impl PartialEq for CarryParam {
     }
 }
 
-impl Default for CarryParam {
-    fn default() -> Self {
-        CarryParam::from(CarryType::Single)
-    }
-}
-
 impl ToPrim<CarryParam> for CarryPrim {
     fn to_name(&self) -> String {
         String::from("CARRY8")
@@ -64,6 +58,7 @@ impl ToPrim<CarryParam> for CarryPrim {
 
 impl Default for Carry {
     fn default() -> Carry {
-        Carry(CarryPrim::default().to_prim())
+        let carry = CarryPrim;
+        Carry(carry.to_prim())
     }
 }

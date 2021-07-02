@@ -5,25 +5,25 @@ use prim::{Param, ParamSet, PortSet, Prim};
 use std::fmt;
 use std::iter::FromIterator;
 
-fn test_name<T: Eq + Default + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &str) {
+fn test_name<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &str) {
     let res = prim.name();
     assert_eq!(res, exp);
 }
 
-fn test_param<T: Eq + Default + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &ParamSet<T>) {
+fn test_param<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &ParamSet<T>) {
     let res = prim.param();
     let res = Vec::from_iter(res.iter());
     let exp = Vec::from_iter(exp.iter());
     assert_eq!(res, exp);
 }
 
-fn test_input<T: Eq + Default + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, u32)]) {
+fn test_input<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, u32)]) {
     let res = prim.input();
     let exp = PortSet::from(exp);
     assert_eq!(*res, exp);
 }
 
-fn test_output<T: Eq + Default + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, u32)]) {
+fn test_output<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, u32)]) {
     let res = prim.output();
     let exp = PortSet::from(exp);
     assert_eq!(*res, exp);

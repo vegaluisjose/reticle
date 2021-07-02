@@ -64,7 +64,7 @@ impl PortSet {
     }
 }
 
-impl<T: Eq + Default + fmt::Debug + fmt::Display> Prim<T> {
+impl<T: Eq + fmt::Debug + fmt::Display> Prim<T> {
     pub fn name(&self) -> String {
         self.name.to_string()
     }
