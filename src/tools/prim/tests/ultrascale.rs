@@ -1,6 +1,4 @@
 use anyhow::Result;
-use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
-use prim::ultrascale::gnd::Gnd;
 use prim::{Param, ParamSet, PortSet, Prim};
 use std::fmt;
 use std::iter::FromIterator;
@@ -29,68 +27,78 @@ fn test_output<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, 
     assert_eq!(*res, exp);
 }
 
-#[test]
-fn test_carry_name() {
-    let prim = Carry::default();
-    test_name(&prim, "CARRY8");
+mod test_carry {
+    use super::*;
+    use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
+
+    #[test]
+    fn name() {
+        let prim = Carry::default();
+        test_name(&prim, "CARRY8");
+    }
+
+    #[test]
+    fn param() {
+        let prim = Carry::default();
+        let mut param: ParamSet<CarryParam> = ParamSet::new();
+        param.insert(Param {
+            name: "CARRY_TYPE".to_string(),
+            width: None,
+            value: CarryType::Single.into(),
+        });
+        test_param(&prim, &param);
+    }
+
+    #[test]
+    fn input() {
+        let prim = Carry::default();
+        let input = [("DI", 8), ("S", 8), ("CI", 1), ("CI_TOP", 1)];
+        test_input(&prim, &input);
+    }
+
+    #[test]
+    fn output() {
+        let prim = Carry::default();
+        let output = [("O", 8), ("CO", 8)];
+        test_output(&prim, &output);
+    }
+
+    #[test]
+    fn set_param() -> Result<()> {
+        let mut prim = Carry::default();
+        prim.set_param("CARRY_TYPE", CarryType::Dual)?;
+        Ok(())
+    }
 }
 
-#[test]
-fn test_carry_param() {
-    let prim = Carry::default();
-    let mut param: ParamSet<CarryParam> = ParamSet::new();
-    param.insert(Param {
-        name: "CARRY_TYPE".to_string(),
-        width: None,
-        value: CarryType::Single.into(),
-    });
-    test_param(&prim, &param);
-}
+mod test_gnd {
+    use super::*;
+    use prim::ultrascale::gnd::Gnd;
 
-#[test]
-fn test_carry_input() {
-    let prim = Carry::default();
-    let input = [("DI", 8), ("S", 8), ("CI", 1), ("CI_TOP", 1)];
-    test_input(&prim, &input);
-}
+    #[test]
+    fn name() {
+        let prim = Gnd::default();
+        test_name(&prim, "GND");
+    }
 
-#[test]
-fn test_carry_output() {
-    let prim = Carry::default();
-    let output = [("O", 8), ("CO", 8)];
-    test_output(&prim, &output);
-}
+    #[test]
+    fn param() {
+        let prim = Gnd::default();
+        let param: ParamSet<_> = ParamSet::new();
+        test_param(&prim, &param);
+    }
 
-#[test]
-fn test_carry_set_param() -> Result<()> {
-    let mut prim = Carry::default();
-    prim.set_param("CARRY_TYPE", CarryType::Dual)?;
-    Ok(())
-}
+    #[test]
+    fn input() {
+        let prim = Gnd::default();
+        let input = [];
+        test_input(&prim, &input);
+    }
 
-#[test]
-fn test_gnd_name() {
-    let prim = Gnd::default();
-    test_name(&prim, "GND");
-}
-
-#[test]
-fn test_gnd_param() {
-    let prim = Gnd::default();
-    let param: ParamSet<_> = ParamSet::new();
-    test_param(&prim, &param);
-}
-
-#[test]
-fn test_gnd_input() {
-    let prim = Gnd::default();
-    let input = [];
-    test_input(&prim, &input);
-}
-
-#[test]
-fn test_gnd_output() {
-    let prim = Gnd::default();
-    let output = [("G", 1)];
-    test_output(&prim, &output);
+    #[test]
+    fn output() {
+        let prim = Gnd::default();
+        let output = [("G", 1)];
+        test_output(&prim, &output);
+    }
 }
