@@ -1,120 +1,116 @@
-use anyhow::Result;
-use prim::{Param, ParamSet, PortSet, Prim};
+use crate::{Param, ParamSet, Port, PortSet, Prim, ToPrim};
+use derive_more::{Deref, DerefMut, Display, From};
 use std::fmt;
 
-fn test_name<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &str) {
-    let res = prim.name();
-    assert_eq!(res, exp);
+#[derive(Clone, Debug, PartialEq, Eq, Display)]
+pub enum CascadeOrder {
+    #[display(fmt = "FIRST")]
+    First,
+    #[display(fmt = "MIDDLE")]
+    Middle,
+    #[display(fmt = "LAST")]
+    Last,
+    #[display(fmt = "NONE")]
+    None,
 }
 
-fn test_param<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &ParamSet<T>) {
-    let res = prim.param();
-    let inter = res.symmetric_difference(exp);
-    assert_eq!(inter.count(), 0);
+#[derive(Clone, Debug, PartialEq, Eq, Display)]
+pub enum ClockDomains {
+    #[display(fmt = "COMMON")]
+    Common,
+    #[display(fmt = "INDEPENDENT")]
+    Independent,
 }
 
-fn test_input<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, u32)]) {
-    let res = prim.input();
-    let exp = PortSet::from(exp);
-    assert_eq!(*res, exp);
+#[derive(Clone, Debug, PartialEq, Eq, Display)]
+pub enum CollisionCheck {
+    #[display(fmt = "ALL")]
+    All,
+    #[display(fmt = "GENERATE_X_ONLY")]
+    GenX,
+    #[display(fmt = "NONE")]
+    None,
+    #[display(fmt = "WARNING_ONLY")]
+    Warning,
 }
 
-fn test_output<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, u32)]) {
-    let res = prim.output();
-    let exp = PortSet::from(exp);
-    assert_eq!(*res, exp);
+#[derive(Clone, Debug, PartialEq, Eq, Display)]
+pub enum FilePath {
+    #[display(fmt = "{}", _0)]
+    Some(String),
+    #[display(fmt = "NONE")]
+    None,
 }
 
-mod test_carry {
-    use super::*;
-    use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
-
-    #[test]
-    fn name() {
-        let prim = Carry::default();
-        test_name(&prim, "CARRY8");
-    }
-
-    #[test]
-    fn param() {
-        let prim = Carry::default();
-        let mut param = ParamSet::<CarryParam>::new();
-        param.insert(Param {
-            name: "CARRY_TYPE".to_string(),
-            width: None,
-            value: CarryType::Single.into(),
-        });
-        test_param(&prim, &param);
-    }
-
-    #[test]
-    fn input() {
-        let prim = Carry::default();
-        let input = [("DI", 8), ("S", 8), ("CI", 1), ("CI_TOP", 1)];
-        test_input(&prim, &input);
-    }
-
-    #[test]
-    fn output() {
-        let prim = Carry::default();
-        let output = [("O", 8), ("CO", 8)];
-        test_output(&prim, &output);
-    }
-
-    #[test]
-    fn set_param() -> Result<()> {
-        let mut prim = Carry::default();
-        prim.set_param("CARRY_TYPE", CarryType::Dual)?;
-        Ok(())
-    }
+#[derive(Clone, Debug, PartialEq, Eq, Display)]
+pub enum RstRegPriority {
+    #[display(fmt = "RSTREG")]
+    RstReg,
+    #[display(fmt = "REGCE")]
+    RegCe,
 }
 
-mod test_gnd {
-    use super::*;
-    use prim::ultrascale::gnd::Gnd;
+#[derive(Clone, Debug, PartialEq, Eq, Display)]
+pub enum WriteMode {
+    #[display(fmt = "WRITE_FIRST")]
+    WriteFirst,
+    #[display(fmt = "NO_CHANGE")]
+    NoChange,
+    #[display(fmt = "READ_FIRST")]
+    ReadFirst,
+}
 
-    #[test]
-    fn name() {
-        let prim = Gnd::default();
-        test_name(&prim, "GND");
-    }
+#[derive(Clone, Debug, From, Eq)]
+pub enum BramParam {
+    CascadeOrder(CascadeOrder),
+    ClockDomains(ClockDomains),
+    CollisionCheck(CollisionCheck),
+    Bool(bool),
+    Bytes(Vec<u8>),
+    I64(i64),
+    FilePath(FilePath),
+    RstRegPriority(RstRegPriority),
+    WriteMode(WriteMode),
+}
 
-    #[test]
-    fn param() {
-        let prim = Gnd::default();
-        let param: ParamSet<_> = ParamSet::new();
-        test_param(&prim, &param);
-    }
+#[derive(Clone, Debug, Deref, DerefMut)]
+pub struct Bram18(Prim<BramParam>);
 
-    #[test]
-    fn input() {
-        let prim = Gnd::default();
-        let input = [];
-        test_input(&prim, &input);
-    }
+#[derive(Clone, Debug, Default)]
+struct Bram18Prim;
 
-    #[test]
-    fn output() {
-        let prim = Gnd::default();
-        let output = [("G", 1)];
-        test_output(&prim, &output);
+impl PartialEq for BramParam {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (BramParam::CascadeOrder(_), BramParam::CascadeOrder(_)) => true,
+            (BramParam::ClockDomains(_), BramParam::ClockDomains(_)) => true,
+            (BramParam::CollisionCheck(_), BramParam::CollisionCheck(_)) => true,
+            (BramParam::Bool(_), BramParam::Bool(_)) => true,
+            (BramParam::Bytes(_), BramParam::Bytes(_)) => true,
+            (BramParam::I64(_), BramParam::I64(_)) => true,
+            (BramParam::FilePath(_), BramParam::FilePath(_)) => true,
+            (BramParam::RstRegPriority(_), BramParam::RstRegPriority(_)) => true,
+            (BramParam::WriteMode(_), BramParam::WriteMode(_)) => true,
+            (_, _) => false,
+        }
     }
 }
 
-mod test_bram18 {
-    use super::*;
-    use prim::ultrascale::bram::*;
-
-    #[test]
-    fn name() {
-        let prim = Bram18::default();
-        test_name(&prim, "RAMB18E2");
+impl fmt::Display for BramParam {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            BramParam::Bytes(v) => write!(f, "{:?}", v),
+            _ => write!(f, "{}", self.to_string()),
+        }
     }
+}
 
-    #[test]
-    fn param() {
-        let prim = Bram18::default();
-        let mut param = ParamSet::<BramParam>::new();
+impl ToPrim<BramParam> for Bram18Prim {
+    fn to_name(&self) -> String {
+        String::from("RAMB18E2")
+    }
+    fn to_param(&self) -> ParamSet<BramParam> {
+        let mut param = ParamSet::new();
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),
             width: None,
@@ -291,6 +287,24 @@ mod test_bram18 {
             width: None,
             value: WriteMode::NoChange.into(),
         });
-        test_param(&prim, &param);
+        param
+    }
+    fn to_input(&self) -> PortSet {
+        let mut port = PortSet::new();
+        port.insert(Port::new("CASDIMUXA", 1));
+        port
+    }
+    fn to_output(&self) -> PortSet {
+        let mut port = PortSet::new();
+        port.insert(Port::new("CASDOUTA", 16));
+        port.insert(Port::new("CASDOUTB", 16));
+        port
+    }
+}
+
+impl Default for Bram18 {
+    fn default() -> Self {
+        let ramb = Bram18Prim;
+        Bram18(ramb.to_prim())
     }
 }
