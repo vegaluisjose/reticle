@@ -74,10 +74,10 @@ pub enum BramParam {
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
-pub struct Bram18(Prim<BramParam>);
+pub struct Bram(Prim<BramParam>);
 
 #[derive(Clone, Debug, Default)]
-struct Bram18Prim;
+struct BramPrim;
 
 impl PartialEq for BramParam {
     fn eq(&self, other: &Self) -> bool {
@@ -105,7 +105,7 @@ impl fmt::Display for BramParam {
     }
 }
 
-impl ToPrim<BramParam> for Bram18Prim {
+impl ToPrim<BramParam> for BramPrim {
     fn to_name(&self) -> String {
         String::from("RAMB18E2")
     }
@@ -342,9 +342,9 @@ impl ToPrim<BramParam> for Bram18Prim {
     }
 }
 
-impl Default for Bram18 {
+impl Default for Bram {
     fn default() -> Self {
-        let ramb = Bram18Prim;
-        Bram18(ramb.to_prim())
+        let ramb = BramPrim;
+        Bram(ramb.to_prim())
     }
 }

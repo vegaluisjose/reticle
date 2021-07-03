@@ -107,13 +107,13 @@ mod test_bram18 {
 
     #[test]
     fn name() {
-        let prim = Bram18::default();
+        let prim = Bram::default();
         test_name(&prim, "RAMB18E2");
     }
 
     #[test]
     fn param() {
-        let prim = Bram18::default();
+        let prim = Bram::default();
         let mut param = ParamSet::<BramParam>::new();
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),
@@ -296,7 +296,7 @@ mod test_bram18 {
 
     #[test]
     fn input() {
-        let prim = Bram18::default();
+        let prim = Bram::default();
         let input = [
             ("CASDIMUXA", 1),
             ("CASDIMUXB", 1),
@@ -339,7 +339,7 @@ mod test_bram18 {
 
     #[test]
     fn output() {
-        let prim = Bram18::default();
+        let prim = Bram::default();
         let output = [
             ("CASDOUTA", 16),
             ("CASDOUTB", 16),
