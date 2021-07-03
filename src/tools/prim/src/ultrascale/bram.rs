@@ -344,7 +344,7 @@ impl ToPrim<BramParam> for BramPrim {
 
 impl Default for Bram {
     fn default() -> Self {
-        let ramb = BramPrim;
-        Bram(ramb.to_prim())
+        let ram = BramPrim;
+        Bram(ram.to_prim())
     }
 }
