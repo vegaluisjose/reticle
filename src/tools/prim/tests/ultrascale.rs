@@ -293,4 +293,63 @@ mod test_bram18 {
         });
         test_param(&prim, &param);
     }
+
+    #[test]
+    fn input() {
+        let prim = Bram18::default();
+        let input = [
+            ("CASDIMUXA", 1),
+            ("CASDIMUXB", 1),
+            ("CASDINA", 16),
+            ("CASDINB", 16),
+            ("CASDINPA", 2),
+            ("CASDINPB", 2),
+            ("CASDOMUXA", 1),
+            ("CASDOMUXB", 1),
+            ("CASDOMUXEN_A", 1),
+            ("CASDOMUXEN_B", 1),
+            ("CASOREGIMUXA", 1),
+            ("CASOREGIMUXB", 1),
+            ("CASOREGIMUXEN_A", 1),
+            ("CASOREGIMUXEN_B", 1),
+            ("ADDRARDADDR", 14),
+            ("ADDRENA", 1),
+            ("CLKARDCLK", 1),
+            ("ENARDEN", 1),
+            ("REGCEAREGCE", 1),
+            ("RSTRAMARSTRAM", 1),
+            ("RSTREGARSTREG", 1),
+            ("WEA", 2),
+            ("DINADIN", 16),
+            ("DINPADINP", 2),
+            ("ADDRBWRADDR", 14),
+            ("ADDRENB", 1),
+            ("CLKBWRCLK", 1),
+            ("ENBWREN", 1),
+            ("REGCEB", 1),
+            ("RSTRAMB", 1),
+            ("RSTREGB", 1),
+            ("SLEEP", 1),
+            ("WEBWE", 4),
+            ("DINBDIN", 16),
+            ("DINPBDINP", 2),
+        ];
+        test_input(&prim, &input);
+    }
+
+    #[test]
+    fn output() {
+        let prim = Bram18::default();
+        let output = [
+            ("CASDOUTA", 16),
+            ("CASDOUTB", 16),
+            ("CASDOUTPA", 2),
+            ("CASDOUTPB", 2),
+            ("DOUTADOUT", 16),
+            ("DOUTPADOUTP", 2),
+            ("DOUTBDOUT", 16),
+            ("DOUTPBDOUTP", 2),
+        ];
+        test_output(&prim, &output);
+    }
 }

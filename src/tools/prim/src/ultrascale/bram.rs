@@ -100,7 +100,7 @@ impl fmt::Display for BramParam {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             BramParam::Bytes(v) => write!(f, "{:?}", v),
-            _ => write!(f, "{}", self.to_string()),
+            _ => write!(f, "{}", self),
         }
     }
 }
@@ -292,12 +292,52 @@ impl ToPrim<BramParam> for Bram18Prim {
     fn to_input(&self) -> PortSet {
         let mut port = PortSet::new();
         port.insert(Port::new("CASDIMUXA", 1));
+        port.insert(Port::new("CASDIMUXB", 1));
+        port.insert(Port::new("CASDINA", 16));
+        port.insert(Port::new("CASDINB", 16));
+        port.insert(Port::new("CASDINPA", 2));
+        port.insert(Port::new("CASDINPB", 2));
+        port.insert(Port::new("CASDOMUXA", 1));
+        port.insert(Port::new("CASDOMUXB", 1));
+        port.insert(Port::new("CASDOMUXEN_A", 1));
+        port.insert(Port::new("CASDOMUXEN_B", 1));
+        port.insert(Port::new("CASOREGIMUXA", 1));
+        port.insert(Port::new("CASOREGIMUXB", 1));
+        port.insert(Port::new("CASOREGIMUXEN_A", 1));
+        port.insert(Port::new("CASOREGIMUXEN_B", 1));
+        port.insert(Port::new("ADDRARDADDR", 14));
+        port.insert(Port::new("ADDRENA", 1));
+        port.insert(Port::new("CLKARDCLK", 1));
+        port.insert(Port::new("ENARDEN", 1));
+        port.insert(Port::new("REGCEAREGCE", 1));
+        port.insert(Port::new("RSTRAMARSTRAM", 1));
+        port.insert(Port::new("RSTREGARSTREG", 1));
+        port.insert(Port::new("WEA", 2));
+        port.insert(Port::new("DINADIN", 16));
+        port.insert(Port::new("DINPADINP", 2));
+        port.insert(Port::new("ADDRBWRADDR", 14));
+        port.insert(Port::new("ADDRENB", 1));
+        port.insert(Port::new("CLKBWRCLK", 1));
+        port.insert(Port::new("ENBWREN", 1));
+        port.insert(Port::new("REGCEB", 1));
+        port.insert(Port::new("RSTRAMB", 1));
+        port.insert(Port::new("RSTREGB", 1));
+        port.insert(Port::new("SLEEP", 1));
+        port.insert(Port::new("WEBWE", 4));
+        port.insert(Port::new("DINBDIN", 16));
+        port.insert(Port::new("DINPBDINP", 2));
         port
     }
     fn to_output(&self) -> PortSet {
         let mut port = PortSet::new();
         port.insert(Port::new("CASDOUTA", 16));
         port.insert(Port::new("CASDOUTB", 16));
+        port.insert(Port::new("CASDOUTPA", 2));
+        port.insert(Port::new("CASDOUTPB", 2));
+        port.insert(Port::new("DOUTADOUT", 16));
+        port.insert(Port::new("DOUTPADOUTP", 2));
+        port.insert(Port::new("DOUTBDOUT", 16));
+        port.insert(Port::new("DOUTPBDOUTP", 2));
         port
     }
 }
