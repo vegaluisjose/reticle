@@ -358,7 +358,7 @@ mod test_lram {
     use super::*;
     use prim::ultrascale::lram::*;
 
-    const LUT: [&'static str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
+    const LUT: [&str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
     #[test]
     fn name() {

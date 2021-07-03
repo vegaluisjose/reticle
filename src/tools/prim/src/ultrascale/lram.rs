@@ -33,7 +33,7 @@ impl fmt::Display for LramParam {
     }
 }
 
-const LUT: [&'static str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
+const LUT: [&str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
 impl ToPrim<LramParam> for LramPrim {
     fn to_name(&self) -> String {
