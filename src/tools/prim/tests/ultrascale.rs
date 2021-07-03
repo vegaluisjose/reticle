@@ -101,7 +101,7 @@ mod test_gnd {
     }
 }
 
-mod test_bram18 {
+mod test_bram {
     use super::*;
     use prim::ultrascale::bram::*;
 
@@ -349,6 +349,81 @@ mod test_bram18 {
             ("DOUTPADOUTP", 2),
             ("DOUTBDOUT", 16),
             ("DOUTPBDOUTP", 2),
+        ];
+        test_output(&prim, &output);
+    }
+}
+
+mod test_lram {
+    use super::*;
+    use prim::ultrascale::lram::*;
+
+    const LUT: [&'static str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+    #[test]
+    fn name() {
+        let prim = Lram::default();
+        test_name(&prim, "RAM64M8");
+    }
+
+    #[test]
+    fn param() {
+        let prim = Lram::default();
+        let mut param = ParamSet::<LramParam>::new();
+        for l in LUT.iter() {
+            let name = format!("INIT_{}", l);
+            param.insert(Param {
+                name,
+                width: Some(64),
+                value: vec![0; 8].into(),
+            });
+        }
+        param.insert(Param {
+            name: "IS_WCLK_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        test_param(&prim, &param);
+    }
+
+    #[test]
+    fn input() {
+        let prim = Lram::default();
+        let input = [
+            ("DIA", 1),
+            ("DIB", 1),
+            ("DIC", 1),
+            ("DID", 1),
+            ("DIE", 1),
+            ("DIF", 1),
+            ("DIG", 1),
+            ("DIH", 1),
+            ("ADDRA", 6),
+            ("ADDRB", 6),
+            ("ADDRC", 6),
+            ("ADDRD", 6),
+            ("ADDRE", 6),
+            ("ADDRF", 6),
+            ("ADDRG", 6),
+            ("ADDRH", 6),
+            ("WE", 1),
+            ("WCLK", 1),
+        ];
+        test_input(&prim, &input);
+    }
+
+    #[test]
+    fn output() {
+        let prim = Lram::default();
+        let output = [
+            ("DOA", 1),
+            ("DOB", 1),
+            ("DOC", 1),
+            ("DOD", 1),
+            ("DOE", 1),
+            ("DOF", 1),
+            ("DOG", 1),
+            ("DOH", 1),
         ];
         test_output(&prim, &output);
     }
