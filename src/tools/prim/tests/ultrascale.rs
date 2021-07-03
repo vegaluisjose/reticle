@@ -428,3 +428,273 @@ mod test_lram {
         test_output(&prim, &output);
     }
 }
+
+mod test_uram {
+    use super::*;
+    use prim::ultrascale::uram::*;
+
+    #[test]
+    fn name() {
+        let prim = Uram::default();
+        test_name(&prim, "URAM288");
+    }
+
+    #[test]
+    fn param() {
+        let prim = Uram::default();
+        let mut param = ParamSet::new();
+        param.insert(Param {
+            name: "AUTO_SLEEP_LATENCY".into(),
+            width: None,
+            value: 8i64.into(),
+        });
+        param.insert(Param {
+            name: "AVG_CONS_INACTIVE_CYCLES".into(),
+            width: None,
+            value: 10i64.into(),
+        });
+        param.insert(Param {
+            name: "BWE_MODE_A".into(),
+            width: None,
+            value: BwMode::Interleaved.into(),
+        });
+        param.insert(Param {
+            name: "BWE_MODE_B".into(),
+            width: None,
+            value: BwMode::Interleaved.into(),
+        });
+        param.insert(Param {
+            name: "CASCADE_ORDER_A".into(),
+            width: None,
+            value: CascadeOrder::None.into(),
+        });
+        param.insert(Param {
+            name: "CASCADE_ORDER_B".into(),
+            width: None,
+            value: CascadeOrder::None.into(),
+        });
+        param.insert(Param {
+            name: "EN_AUTO_SLEEP_MODE".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "EN_ECC_RD_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "EN_ECC_RD_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "EN_ECC_WR_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "EN_ECC_WR_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IREG_PRE_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IREG_PRE_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_CLK_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_EN_A_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_EN_B_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_RDB_WR_A_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_RDB_WR_B_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_RST_A_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "IS_RST_B_INVERTED".into(),
+            width: Some(1),
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "OREG_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "OREG_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "OREG_ECC_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "OREG_ECC_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "REG_CAS_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "REG_CAS_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "RST_MODE_A".into(),
+            width: None,
+            value: RstMode::Sync.into(),
+        });
+        param.insert(Param {
+            name: "RST_MODE_B".into(),
+            width: None,
+            value: RstMode::Sync.into(),
+        });
+        param.insert(Param {
+            name: "SELF_ADDR_A".into(),
+            width: Some(11),
+            value: 0i64.into(),
+        });
+        param.insert(Param {
+            name: "SELF_ADDR_B".into(),
+            width: Some(11),
+            value: 0i64.into(),
+        });
+        param.insert(Param {
+            name: "SELF_MASK_A".into(),
+            width: Some(11),
+            value: 2047i64.into(),
+        });
+        param.insert(Param {
+            name: "SELF_MASK_B".into(),
+            width: Some(11),
+            value: 2047i64.into(),
+        });
+        param.insert(Param {
+            name: "USE_EXT_CE_A".into(),
+            width: None,
+            value: false.into(),
+        });
+        param.insert(Param {
+            name: "USE_EXT_CE_B".into(),
+            width: None,
+            value: false.into(),
+        });
+        test_param(&prim, &param);
+    }
+
+    #[test]
+    fn input() {
+        let prim = Uram::default();
+        let input = [
+            ("ADDR_A", 23),
+            ("ADDR_B", 23),
+            ("BWE_A", 9),
+            ("BWE_B", 9),
+            ("CAS_IN_ADDR_A", 23),
+            ("CAS_IN_ADDR_B", 23),
+            ("CAS_IN_BWE_A", 9),
+            ("CAS_IN_BWE_B", 9),
+            ("CAS_IN_DBITERR_A", 1),
+            ("CAS_IN_DBITERR_B", 1),
+            ("CAS_IN_DIN_A", 72),
+            ("CAS_IN_DIN_B", 72),
+            ("CAS_IN_DOUT_A", 72),
+            ("CAS_IN_DOUT_B", 72),
+            ("CAS_IN_EN_A", 1),
+            ("CAS_IN_EN_B", 1),
+            ("CAS_IN_RDACCESS_A", 1),
+            ("CAS_IN_RDACCESS_B", 1),
+            ("CAS_IN_RDB_WR_A", 1),
+            ("CAS_IN_RDB_WR_B", 1),
+            ("CAS_IN_SBITERR_A", 1),
+            ("CAS_IN_SBITERR_B", 1),
+            ("CLK", 1),
+            ("DIN_A", 72),
+            ("DIN_B", 72),
+            ("EN_A", 1),
+            ("EN_B", 1),
+            ("INJECT_DBITERR_A", 1),
+            ("INJECT_DBITERR_B", 1),
+            ("INJECT_SBITERR_A", 1),
+            ("INJECT_SBITERR_B", 1),
+            ("OREG_CE_A", 1),
+            ("OREG_CE_B", 1),
+            ("OREG_ECC_CE_A", 1),
+            ("OREG_ECC_CE_B", 1),
+            ("RDB_WR_A", 1),
+            ("RDB_WR_B", 1),
+            ("RST_A", 1),
+            ("RST_B", 1),
+            ("SLEEP", 1),
+        ];
+        test_input(&prim, &input);
+    }
+
+    #[test]
+    fn output() {
+        let prim = Uram::default();
+        let output = [
+            ("CAS_OUT_ADDR_A", 23),
+            ("CAS_OUT_ADDR_B", 23),
+            ("CAS_OUT_BWE_A", 9),
+            ("CAS_OUT_BWE_B", 9),
+            ("CAS_OUT_DBITERR_A", 1),
+            ("CAS_OUT_DBITERR_B", 1),
+            ("CAS_OUT_DIN_A", 72),
+            ("CAS_OUT_DIN_B", 72),
+            ("CAS_OUT_DOUT_A", 72),
+            ("CAS_OUT_DOUT_B", 72),
+            ("CAS_OUT_EN_A", 1),
+            ("CAS_OUT_EN_B", 1),
+            ("CAS_OUT_RDACCESS_A", 1),
+            ("CAS_OUT_RDACCESS_B", 1),
+            ("CAS_OUT_RDB_WR_A", 1),
+            ("CAS_OUT_RDB_WR_B", 1),
+            ("CAS_OUT_SBITERR_A", 1),
+            ("CAS_OUT_SBITERR_B", 1),
+            ("DBITERR_A", 1),
+            ("DBITERR_B", 1),
+            ("DOUT_A", 72),
+            ("DOUT_B", 72),
+            ("RDACCESS_A", 1),
+            ("RDACCESS_B", 1),
+            ("SBITERR_A", 1),
+            ("SBITERR_B", 1),
+        ];
+        test_output(&prim, &output);
+    }
+}
