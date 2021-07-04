@@ -61,7 +61,7 @@ pub enum WriteMode {
 }
 
 #[derive(Clone, Debug, From, Eq)]
-pub enum BramParam {
+pub enum ParamValue {
     CascadeOrder(CascadeOrder),
     ClockDomains(ClockDomains),
     CollisionCheck(CollisionCheck),
@@ -74,42 +74,42 @@ pub enum BramParam {
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
-pub struct Bram(Prim<BramParam>);
+pub struct Bram(Prim<ParamValue>);
 
 #[derive(Clone, Debug, Default)]
 struct BramPrim;
 
-impl PartialEq for BramParam {
+impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (BramParam::CascadeOrder(_), BramParam::CascadeOrder(_)) => true,
-            (BramParam::ClockDomains(_), BramParam::ClockDomains(_)) => true,
-            (BramParam::CollisionCheck(_), BramParam::CollisionCheck(_)) => true,
-            (BramParam::Bool(_), BramParam::Bool(_)) => true,
-            (BramParam::Bytes(_), BramParam::Bytes(_)) => true,
-            (BramParam::I64(_), BramParam::I64(_)) => true,
-            (BramParam::FilePath(_), BramParam::FilePath(_)) => true,
-            (BramParam::RstRegPriority(_), BramParam::RstRegPriority(_)) => true,
-            (BramParam::WriteMode(_), BramParam::WriteMode(_)) => true,
+            (ParamValue::CascadeOrder(_), ParamValue::CascadeOrder(_)) => true,
+            (ParamValue::ClockDomains(_), ParamValue::ClockDomains(_)) => true,
+            (ParamValue::CollisionCheck(_), ParamValue::CollisionCheck(_)) => true,
+            (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
+            (ParamValue::Bytes(_), ParamValue::Bytes(_)) => true,
+            (ParamValue::I64(_), ParamValue::I64(_)) => true,
+            (ParamValue::FilePath(_), ParamValue::FilePath(_)) => true,
+            (ParamValue::RstRegPriority(_), ParamValue::RstRegPriority(_)) => true,
+            (ParamValue::WriteMode(_), ParamValue::WriteMode(_)) => true,
             (_, _) => false,
         }
     }
 }
 
-impl fmt::Display for BramParam {
+impl fmt::Display for ParamValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            BramParam::Bytes(v) => write!(f, "{:?}", v),
+            ParamValue::Bytes(v) => write!(f, "{:?}", v),
             _ => write!(f, "{}", self),
         }
     }
 }
 
-impl ToPrim<BramParam> for BramPrim {
+impl ToPrim<ParamValue> for BramPrim {
     fn to_name(&self) -> String {
         String::from("RAMB18E2")
     }
-    fn to_param(&self) -> ParamSet<BramParam> {
+    fn to_param(&self) -> ParamSet<ParamValue> {
         let mut param = ParamSet::new();
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),

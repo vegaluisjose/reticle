@@ -114,7 +114,7 @@ mod test_bram {
     #[test]
     fn param() {
         let prim = Bram::default();
-        let mut param = ParamSet::<BramParam>::new();
+        let mut param = ParamSet::<ParamValue>::new();
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),
             width: None,
