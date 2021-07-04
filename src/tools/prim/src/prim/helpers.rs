@@ -1,4 +1,4 @@
-use crate::prim::{Param, ParamSet, Port, PortSet, Prim, Error};
+use crate::prim::{Error, Param, ParamSet, Port, PortSet, Prim};
 use anyhow::Result;
 use std::collections::HashSet;
 use std::fmt;
