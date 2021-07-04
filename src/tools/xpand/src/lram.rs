@@ -12,18 +12,17 @@ use verilog::ast as vl;
 impl ToVerilogExpr for ParamValue {
     fn to_expr(&self) -> vl::Expr {
         match self {
-            ParamValue::Bool(b) => {
-                let v = format!("{}", *b as u32);
-                vl::Expr::new_ulit_bin(1, &v)
+            ParamValue::Bool(value) => {
+                let num = format!("{}", *value as u32);
+                vl::Expr::new_ulit_bin(1, &num)
             }
-            ParamValue::Bytes(bytes) => {
-                let mut v = String::new();
-                for b in bytes.iter() {
-                    let fmt = format!("{:02X}", b);
-                    v.push_str(&fmt);
+            ParamValue::Bytes(width, values) => {
+                let mut num = String::new();
+                for v in values.iter() {
+                    let val = format!("{:02X}", v);
+                    num.push_str(&val);
                 }
-                let width = (bytes.len() as u32) * 8;
-                vl::Expr::new_ulit_hex(width, &v)
+                vl::Expr::new_ulit_hex(*width, &num)
             }
         }
     }

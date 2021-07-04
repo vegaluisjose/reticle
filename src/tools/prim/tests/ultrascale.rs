@@ -375,7 +375,7 @@ mod test_lram {
             param.insert(Param {
                 name,
                 width: Some(64),
-                value: vec![0; 8].into(),
+                value: (64, vec![0; 8]).into(),
             });
         }
         param.insert(Param {

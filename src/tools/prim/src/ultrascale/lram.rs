@@ -5,7 +5,7 @@ use std::fmt;
 #[derive(Clone, Debug, From, Eq)]
 pub enum ParamValue {
     Bool(bool),
-    Bytes(Vec<u8>),
+    Bytes(u32, Vec<u8>),
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
@@ -18,7 +18,7 @@ impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
-            (ParamValue::Bytes(_), ParamValue::Bytes(_)) => true,
+            (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _)) => true,
             (_, _) => false,
         }
     }
@@ -27,7 +27,7 @@ impl PartialEq for ParamValue {
 impl fmt::Display for ParamValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ParamValue::Bytes(v) => write!(f, "{:?}", v),
+            ParamValue::Bytes(w, v) => write!(f, "width:{} values:{:?}", w, v),
             _ => write!(f, "{}", self),
         }
     }
@@ -46,7 +46,7 @@ impl ToPrim<ParamValue> for LramPrim {
             param.insert(Param {
                 name,
                 width: Some(64),
-                value: vec![0; 8].into(),
+                value: (64, vec![0; 8]).into(),
             });
         }
         param.insert(Param {
