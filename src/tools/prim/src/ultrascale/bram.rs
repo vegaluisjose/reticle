@@ -66,8 +66,12 @@ pub enum ParamValue {
     ClockDomains(ClockDomains),
     CollisionCheck(CollisionCheck),
     Bool(bool),
-    Bytes(Vec<u8>),
-    I64(i64),
+    #[from(ignore)]
+    BoolNum(bool),
+    #[from(ignore)]
+    BoolStr(bool),
+    Bytes(u32, Vec<u8>),
+    Num(i64),
     FilePath(FilePath),
     RstRegPriority(RstRegPriority),
     WriteMode(WriteMode),
@@ -86,8 +90,9 @@ impl PartialEq for ParamValue {
             (ParamValue::ClockDomains(_), ParamValue::ClockDomains(_)) => true,
             (ParamValue::CollisionCheck(_), ParamValue::CollisionCheck(_)) => true,
             (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
-            (ParamValue::Bytes(_), ParamValue::Bytes(_)) => true,
-            (ParamValue::I64(_), ParamValue::I64(_)) => true,
+            (ParamValue::BoolStr(_), ParamValue::BoolStr(_)) => true,
+            (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _)) => true,
+            (ParamValue::Num(_), ParamValue::Num(_)) => true,
             (ParamValue::FilePath(_), ParamValue::FilePath(_)) => true,
             (ParamValue::RstRegPriority(_), ParamValue::RstRegPriority(_)) => true,
             (ParamValue::WriteMode(_), ParamValue::WriteMode(_)) => true,
@@ -99,7 +104,7 @@ impl PartialEq for ParamValue {
 impl fmt::Display for ParamValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            ParamValue::Bytes(v) => write!(f, "{:?}", v),
+            ParamValue::Bytes(w, v) => write!(f, "width:{} values:{:?}", w, v),
             _ => write!(f, "{}", self),
         }
     }
@@ -134,29 +139,29 @@ impl ToPrim<ParamValue> for BramPrim {
         param.insert(Param {
             name: "DOA_REG".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolNum(false),
         });
         param.insert(Param {
             name: "DOB_REG".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolNum(false),
         });
         param.insert(Param {
             name: "ENADDRENA".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "ENADDRENB".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         for i in 0..8 {
             let name = format!("INITP_{:02X}", i);
             param.insert(Param {
                 name,
                 width: Some(256),
-                value: vec![0; 32].into(),
+                value: (256, vec![0; 32]).into(),
             });
         }
         for i in 0..64 {
@@ -164,18 +169,18 @@ impl ToPrim<ParamValue> for BramPrim {
             param.insert(Param {
                 name,
                 width: Some(256),
-                value: vec![0; 32].into(),
+                value: (256, vec![0; 32]).into(),
             });
         }
         param.insert(Param {
             name: "INIT_A".into(),
             width: Some(18),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "INIT_B".into(),
             width: Some(18),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "INIT_FILE".into(),
@@ -185,72 +190,72 @@ impl ToPrim<ParamValue> for BramPrim {
         param.insert(Param {
             name: "IS_CLKARDCLK_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_CLKBWRCLK_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_ENARDEN_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_ENBWREN_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTRAMARSTRAM_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTRAMB_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTREGARSTREG_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTREGB_INVERTED".into(),
             width: Some(1),
-            value: false.into(),
+            value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "RDADDRCHANGEA".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "RDADDRCHANGEB".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "READ_WIDTH_A".into(),
             width: None,
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "READ_WIDTH_B".into(),
             width: None,
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "WRITE_WIDTH_A".into(),
             width: None,
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "WRITE_WIDTH_B".into(),
             width: None,
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "RSTREG_PRIORITY_A".into(),
@@ -265,17 +270,17 @@ impl ToPrim<ParamValue> for BramPrim {
         param.insert(Param {
             name: "SRVAL_A".into(),
             width: Some(18),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SRVAL_B".into(),
             width: Some(18),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SLEEP_ASYNC".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "WRITE_MODE_A".into(),
