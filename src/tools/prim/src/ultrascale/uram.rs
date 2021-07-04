@@ -30,7 +30,7 @@ pub enum RstMode {
 }
 
 #[derive(Clone, Debug, From, Eq, Display)]
-pub enum UramParam {
+pub enum ParamValue {
     CascadeOrder(CascadeOrder),
     BwMode(BwMode),
     RstMode(RstMode),
@@ -39,29 +39,29 @@ pub enum UramParam {
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
-pub struct Uram(Prim<UramParam>);
+pub struct Uram(Prim<ParamValue>);
 
 #[derive(Clone, Debug, Default)]
 struct UramPrim;
 
-impl PartialEq for UramParam {
+impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (UramParam::CascadeOrder(_), UramParam::CascadeOrder(_)) => true,
-            (UramParam::BwMode(_), UramParam::BwMode(_)) => true,
-            (UramParam::RstMode(_), UramParam::RstMode(_)) => true,
-            (UramParam::Bool(_), UramParam::Bool(_)) => true,
-            (UramParam::I64(_), UramParam::I64(_)) => true,
+            (ParamValue::CascadeOrder(_), ParamValue::CascadeOrder(_)) => true,
+            (ParamValue::BwMode(_), ParamValue::BwMode(_)) => true,
+            (ParamValue::RstMode(_), ParamValue::RstMode(_)) => true,
+            (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
+            (ParamValue::I64(_), ParamValue::I64(_)) => true,
             (_, _) => false,
         }
     }
 }
 
-impl ToPrim<UramParam> for UramPrim {
+impl ToPrim<ParamValue> for UramPrim {
     fn to_name(&self) -> String {
         String::from("URAM288")
     }
-    fn to_param(&self) -> ParamSet<UramParam> {
+    fn to_param(&self) -> ParamSet<ParamValue> {
         let mut param = ParamSet::new();
         // TODO: range for this param is 3-15
         // but there is no special types for this
