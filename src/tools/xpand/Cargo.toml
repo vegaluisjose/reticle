@@ -14,3 +14,4 @@ io = { path = "../io" }
 bline = { path = "../bline" }
 prim = { path = "../prim" }
 derive_more = { version = "0.99.0", features = ["from", "deref", "deref_mut"] }
+pretty_assertions = "0.7.2"

@@ -9,11 +9,12 @@ use xpand::instance::ToInstance;
 use xpand::lut::{Lut1, Lut2, Lut3, Lut4, Lut5, Lut6};
 use xpand::to_verilog::ToVerilogInstance;
 use xpand::vcc::Vcc;
+use pretty_assertions::assert_eq;
 
 fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
     let r = res.to_string();
     let e = exp.as_ref();
-    assert_eq!(r, e, "\n\nresult:\n{}\n\nexpected:\n{}", r, e);
+    assert_eq!(r, e);
     Ok(())
 }
 
