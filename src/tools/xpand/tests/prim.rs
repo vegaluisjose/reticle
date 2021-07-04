@@ -1,5 +1,7 @@
+use pretty_assertions::assert_eq;
 use prim::ultrascale::carry::Carry;
 use prim::ultrascale::gnd::Gnd;
+use prim::ultrascale::lram::Lram;
 use std::fmt::Display;
 use xpand::dsp::Dsp;
 use xpand::errors::Error;
@@ -9,7 +11,6 @@ use xpand::instance::ToInstance;
 use xpand::lut::{Lut1, Lut2, Lut3, Lut4, Lut5, Lut6};
 use xpand::to_verilog::ToVerilogInstance;
 use xpand::vcc::Vcc;
-use pretty_assertions::assert_eq;
 
 fn test<S: AsRef<str>>(res: impl Display, exp: S) -> Result<(), Error> {
     let r = res.to_string();
@@ -275,6 +276,50 @@ fn test_dsp() -> Result<(), Error> {
     .RSTP(reset),
     .UNDERFLOW(),
     .XOROUT()
+);"#;
+    test(res.to_instance(), exp)
+}
+
+#[test]
+fn test_lram() -> Result<(), Error> {
+    let res = Lram::default();
+    let exp = r#"RAM64M8 # (
+    .INIT_A(64'h0000000000000000),
+    .INIT_B(64'h0000000000000000),
+    .INIT_C(64'h0000000000000000),
+    .INIT_D(64'h0000000000000000),
+    .INIT_E(64'h0000000000000000),
+    .INIT_F(64'h0000000000000000),
+    .INIT_G(64'h0000000000000000),
+    .INIT_H(64'h0000000000000000),
+    .IS_WCLK_INVERTED(1'b0)
+)  (
+    .ADDRA({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRB({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRC({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRD({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRE({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRF({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRG({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .ADDRH({gnd, gnd, gnd, gnd, gnd, gnd}),
+    .DIA(gnd),
+    .DIB(gnd),
+    .DIC(gnd),
+    .DID(gnd),
+    .DIE(gnd),
+    .DIF(gnd),
+    .DIG(gnd),
+    .DIH(gnd),
+    .DOA(),
+    .DOB(),
+    .DOC(),
+    .DOD(),
+    .DOE(),
+    .DOF(),
+    .DOG(),
+    .DOH(),
+    .WCLK(gnd),
+    .WE(gnd)
 );"#;
     test(res.to_instance(), exp)
 }

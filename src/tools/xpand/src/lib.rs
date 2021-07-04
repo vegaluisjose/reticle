@@ -12,6 +12,7 @@ pub mod gnd;
 pub mod id;
 pub mod instance;
 pub mod loc;
+pub mod lram;
 pub mod lut;
 pub mod param;
 pub mod port;
