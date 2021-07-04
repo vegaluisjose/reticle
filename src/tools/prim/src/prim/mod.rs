@@ -10,7 +10,6 @@ pub use crate::prim::to_prim::ToPrim;
 
 use derive_more::{Deref, DerefMut};
 use std::collections::HashSet;
-use thiserror::Error;
 
 #[derive(Clone, Debug, Default, Eq)]
 pub struct Port {
@@ -40,7 +39,7 @@ pub struct Prim<T> {
     pub output: PortSet,
 }
 
-#[derive(Error, Debug)]
+#[derive(thiserror::Error, Debug)]
 pub enum PrimError {
     #[error("Invalid parameter value: {0}")]
     InvalidParamValue(String),
