@@ -40,7 +40,6 @@ pub struct Prim<T> {
     pub output: PortSet,
 }
 
-#[allow(clippy:: unknown_clippy_lints)]
 #[derive(Error, Debug)]
 pub enum PrimError {
     #[error("Invalid parameter value: {0}")]
