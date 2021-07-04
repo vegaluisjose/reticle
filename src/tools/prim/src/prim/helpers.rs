@@ -1,4 +1,4 @@
-use crate::prim::{Param, ParamSet, Port, PortSet, Prim, PrimError};
+use crate::prim::{Param, ParamSet, Port, PortSet, Prim, Error};
 use anyhow::Result;
 use std::collections::HashSet;
 use std::fmt;
@@ -92,10 +92,10 @@ impl<T: Eq + fmt::Debug + fmt::Display> Prim<T> {
                 self.param.replace(param);
                 Ok(())
             } else {
-                Err(PrimError::InvalidParamValue(value.to_string()).into())
+                Err(Error::InvalidParamValue(value.to_string()).into())
             }
         } else {
-            Err(PrimError::MissingParam(name.into()).into())
+            Err(Error::MissingParam(name.into()).into())
         }
     }
 }

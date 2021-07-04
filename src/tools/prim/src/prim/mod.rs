@@ -41,7 +41,7 @@ pub struct Prim<T> {
 }
 
 #[derive(Error, Debug)]
-pub enum PrimError {
+pub enum Error {
     #[error("Invalid parameter value: {0}")]
     InvalidParamValue(String),
     #[error("Missing parameter: {0}")]
