@@ -33,7 +33,6 @@ impl<T: Clone> From<&(&str, T)> for Param<T> {
         Param {
             name: input.0.into(),
             value: input.1.clone(),
-            width: None,
         }
     }
 }
@@ -43,7 +42,6 @@ impl<T> From<(&str, T)> for Param<T> {
         Param {
             name: input.0.into(),
             value: input.1,
-            width: None,
         }
     }
 }

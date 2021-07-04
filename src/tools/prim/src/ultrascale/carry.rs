@@ -34,7 +34,6 @@ impl ToPrim<ParamValue> for CarryPrim {
         let mut param = ParamSet::new();
         let ty = Param {
             name: "CARRY_TYPE".to_string(),
-            width: None,
             value: Ty::Single.into(),
         };
         param.insert(ty);

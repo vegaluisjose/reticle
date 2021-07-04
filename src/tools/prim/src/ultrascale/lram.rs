@@ -45,13 +45,11 @@ impl ToPrim<ParamValue> for LramPrim {
             let name = format!("INIT_{}", l);
             param.insert(Param {
                 name,
-                width: Some(64),
                 value: (64, vec![0; 8]).into(),
             });
         }
         param.insert(Param {
             name: "IS_WCLK_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param

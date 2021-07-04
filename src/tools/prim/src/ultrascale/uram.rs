@@ -82,174 +82,140 @@ impl ToPrim<ParamValue> for UramPrim {
         // but there is no special types for this
         param.insert(Param {
             name: "AUTO_SLEEP_LATENCY".into(),
-            width: None,
             value: 8_i64.into(),
         });
         // TODO: range for this param is 10-10000
         // but there is no special types for this
         param.insert(Param {
             name: "AVG_CONS_INACTIVE_CYCLES".into(),
-            width: None,
             value: 10_i64.into(),
         });
         param.insert(Param {
             name: "BWE_MODE_A".into(),
-            width: None,
             value: BwMode::Interleaved.into(),
         });
         param.insert(Param {
             name: "BWE_MODE_B".into(),
-            width: None,
             value: BwMode::Interleaved.into(),
         });
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),
-            width: None,
             value: CascadeOrder::None.into(),
         });
         param.insert(Param {
             name: "CASCADE_ORDER_B".into(),
-            width: None,
             value: CascadeOrder::None.into(),
         });
         param.insert(Param {
             name: "EN_AUTO_SLEEP_MODE".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_RD_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_RD_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_WR_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_WR_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "IREG_PRE_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "IREG_PRE_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "IS_CLK_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_EN_A_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_EN_B_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RDB_WR_A_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RDB_WR_B_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RST_A_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RST_B_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "OREG_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "OREG_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "OREG_ECC_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "OREG_ECC_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "REG_CAS_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "REG_CAS_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "RST_MODE_A".into(),
-            width: None,
             value: RstMode::Sync.into(),
         });
         param.insert(Param {
             name: "RST_MODE_B".into(),
-            width: None,
             value: RstMode::Sync.into(),
         });
         param.insert(Param {
             name: "SELF_ADDR_A".into(),
-            width: Some(11),
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SELF_ADDR_B".into(),
-            width: Some(11),
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SELF_MASK_A".into(),
-            width: Some(11),
             value: (11, vec![0x7, 0xff]).into(),
         });
         param.insert(Param {
             name: "SELF_MASK_B".into(),
-            width: Some(11),
             value: (11, vec![0x7, 0xff]).into(),
         });
         param.insert(Param {
             name: "USE_EXT_CE_A".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "USE_EXT_CE_B".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param

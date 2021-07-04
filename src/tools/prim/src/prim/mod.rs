@@ -22,7 +22,6 @@ pub struct Port {
 pub struct Param<T> {
     pub name: String,
     pub value: T,
-    pub width: Option<u32>,
 }
 
 #[derive(Clone, Debug, Default, Deref, DerefMut)]

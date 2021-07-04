@@ -41,7 +41,6 @@ mod test_carry {
         let mut param = ParamSet::<ParamValue>::new();
         param.insert(Param {
             name: "CARRY_TYPE".to_string(),
-            width: None,
             value: Ty::Single.into(),
         });
         test_param(&prim, &param);
@@ -117,49 +116,40 @@ mod test_bram {
         let mut param = ParamSet::<ParamValue>::new();
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),
-            width: None,
             value: CascadeOrder::None.into(),
         });
         param.insert(Param {
             name: "CASCADE_ORDER_B".into(),
-            width: None,
             value: CascadeOrder::None.into(),
         });
         param.insert(Param {
             name: "CLOCK_DOMAINS".into(),
-            width: None,
             value: ClockDomains::Independent.into(),
         });
         param.insert(Param {
             name: "SIM_COLLISION_CHECK".into(),
-            width: None,
             value: CollisionCheck::All.into(),
         });
         param.insert(Param {
             name: "DOA_REG".into(),
-            width: None,
             value: ParamValue::BoolNum(false),
         });
         param.insert(Param {
             name: "DOB_REG".into(),
-            width: None,
             value: ParamValue::BoolNum(false),
         });
         param.insert(Param {
             name: "ENADDRENA".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "ENADDRENB".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         for i in 0..8 {
             let name = format!("INITP_{:02X}", i);
             param.insert(Param {
                 name,
-                width: Some(256),
                 value: (256, vec![0; 32]).into(),
             });
         }
@@ -167,128 +157,103 @@ mod test_bram {
             let name = format!("INIT_{:02X}", i);
             param.insert(Param {
                 name,
-                width: Some(256),
                 value: (256, vec![0; 32]).into(),
             });
         }
         param.insert(Param {
             name: "INIT_A".into(),
-            width: Some(18),
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "INIT_B".into(),
-            width: Some(18),
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "INIT_FILE".into(),
-            width: None,
             value: FilePath::None.into(),
         });
         param.insert(Param {
             name: "IS_CLKARDCLK_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_CLKBWRCLK_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_ENARDEN_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_ENBWREN_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTRAMARSTRAM_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTRAMB_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTREGARSTREG_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "IS_RSTREGB_INVERTED".into(),
-            width: Some(1),
             value: ParamValue::Bool(false),
         });
         param.insert(Param {
             name: "RDADDRCHANGEA".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "RDADDRCHANGEB".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "READ_WIDTH_A".into(),
-            width: None,
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "READ_WIDTH_B".into(),
-            width: None,
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "WRITE_WIDTH_A".into(),
-            width: None,
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "WRITE_WIDTH_B".into(),
-            width: None,
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "RSTREG_PRIORITY_A".into(),
-            width: None,
             value: RstRegPriority::RstReg.into(),
         });
         param.insert(Param {
             name: "RSTREG_PRIORITY_B".into(),
-            width: None,
             value: RstRegPriority::RstReg.into(),
         });
         param.insert(Param {
             name: "SRVAL_A".into(),
-            width: Some(18),
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SRVAL_B".into(),
-            width: Some(18),
             value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SLEEP_ASYNC".into(),
-            width: None,
             value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "WRITE_MODE_A".into(),
-            width: None,
             value: WriteMode::NoChange.into(),
         });
         param.insert(Param {
             name: "WRITE_MODE_B".into(),
-            width: None,
             value: WriteMode::NoChange.into(),
         });
         test_param(&prim, &param);
@@ -374,13 +339,11 @@ mod test_lram {
             let name = format!("INIT_{}", l);
             param.insert(Param {
                 name,
-                width: Some(64),
                 value: (64, vec![0; 8]).into(),
             });
         }
         param.insert(Param {
             name: "IS_WCLK_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         test_param(&prim, &param);
@@ -445,172 +408,138 @@ mod test_uram {
         let mut param = ParamSet::new();
         param.insert(Param {
             name: "AUTO_SLEEP_LATENCY".into(),
-            width: None,
             value: 8i64.into(),
         });
         param.insert(Param {
             name: "AVG_CONS_INACTIVE_CYCLES".into(),
-            width: None,
             value: 10i64.into(),
         });
         param.insert(Param {
             name: "BWE_MODE_A".into(),
-            width: None,
             value: BwMode::Interleaved.into(),
         });
         param.insert(Param {
             name: "BWE_MODE_B".into(),
-            width: None,
             value: BwMode::Interleaved.into(),
         });
         param.insert(Param {
             name: "CASCADE_ORDER_A".into(),
-            width: None,
             value: CascadeOrder::None.into(),
         });
         param.insert(Param {
             name: "CASCADE_ORDER_B".into(),
-            width: None,
             value: CascadeOrder::None.into(),
         });
         param.insert(Param {
             name: "EN_AUTO_SLEEP_MODE".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "EN_ECC_RD_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "EN_ECC_RD_B".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "EN_ECC_WR_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "EN_ECC_WR_B".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "IREG_PRE_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "IREG_PRE_B".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_CLK_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_EN_A_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_EN_B_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RDB_WR_A_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RDB_WR_B_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RST_A_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "IS_RST_B_INVERTED".into(),
-            width: Some(1),
             value: false.into(),
         });
         param.insert(Param {
             name: "OREG_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "OREG_B".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "OREG_ECC_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "OREG_ECC_B".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "REG_CAS_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "REG_CAS_B".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "RST_MODE_A".into(),
-            width: None,
             value: RstMode::Sync.into(),
         });
         param.insert(Param {
             name: "RST_MODE_B".into(),
-            width: None,
             value: RstMode::Sync.into(),
         });
         param.insert(Param {
             name: "SELF_ADDR_A".into(),
-            width: Some(11),
             value: 0i64.into(),
         });
         param.insert(Param {
             name: "SELF_ADDR_B".into(),
-            width: Some(11),
             value: 0i64.into(),
         });
         param.insert(Param {
             name: "SELF_MASK_A".into(),
-            width: Some(11),
             value: 2047i64.into(),
         });
         param.insert(Param {
             name: "SELF_MASK_B".into(),
-            width: Some(11),
             value: 2047i64.into(),
         });
         param.insert(Param {
             name: "USE_EXT_CE_A".into(),
-            width: None,
             value: false.into(),
         });
         param.insert(Param {
             name: "USE_EXT_CE_B".into(),
-            width: None,
             value: false.into(),
         });
         test_param(&prim, &param);
