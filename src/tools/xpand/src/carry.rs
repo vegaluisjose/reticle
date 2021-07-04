@@ -2,33 +2,33 @@ use crate::errors::Error;
 use crate::loc::Loc;
 use crate::to_verilog::{ExprMap, ToVerilogExpr, ToVerilogInstance};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
-use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
+use prim::ultrascale::carry::{Carry, ParamValue, Ty};
 use prim::{ParamSet, PortSet};
 use verilog::ast as vl;
 use xir::ast as xir;
 
-impl ToVerilogExpr for CarryType {
+impl ToVerilogExpr for Ty {
     fn to_expr(&self) -> vl::Expr {
         vl::Expr::new_str(&self.to_string())
     }
 }
 
-impl ToVerilogExpr for CarryParam {
+impl ToVerilogExpr for ParamValue {
     fn to_expr(&self) -> vl::Expr {
         match self {
-            CarryParam::CarryType(c) => c.to_expr(),
+            ParamValue::Ty(c) => c.to_expr(),
         }
     }
 }
 
-impl ToVerilogInstance<CarryParam> for Carry {
+impl ToVerilogInstance<ParamValue> for Carry {
     fn to_name(&self) -> String {
         String::new()
     }
     fn to_prim(&self) -> String {
         self.name()
     }
-    fn to_param_set(&self) -> &ParamSet<CarryParam> {
+    fn to_param_set(&self) -> &ParamSet<ParamValue> {
         self.param()
     }
     fn to_input_set(&self) -> &PortSet {
@@ -54,14 +54,14 @@ impl CarryAdd {
     }
 }
 
-impl ToVerilogInstance<CarryParam> for CarryAdd {
+impl ToVerilogInstance<ParamValue> for CarryAdd {
     fn to_name(&self) -> String {
         inst_name_try_from_instr(&self.instr).unwrap()
     }
     fn to_prim(&self) -> String {
         self.prim.name()
     }
-    fn to_param_set(&self) -> &ParamSet<CarryParam> {
+    fn to_param_set(&self) -> &ParamSet<ParamValue> {
         self.prim.param()
     }
     fn to_input_set(&self) -> &PortSet {

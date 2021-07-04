@@ -1,7 +1,7 @@
 //use crate::errors::Error;
 //use crate::loc::Loc;
 //use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
-//use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
+//use prim::ultrascale::carry::{Carry, ParamValue, Ty};
 //use xir::ast as xir;
 
 use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance};
@@ -62,14 +62,14 @@ impl ToVerilogInstance<LramParam> for Lram {
 //    }
 //}
 //
-//impl ToVerilogInstance<CarryParam> for CarryAdd {
+//impl ToVerilogInstance<ParamValue> for CarryAdd {
 //    fn to_name(&self) -> String {
 //        inst_name_try_from_instr(&self.instr).unwrap()
 //    }
 //    fn to_prim(&self) -> String {
 //        self.prim.name()
 //    }
-//    fn to_param_set(&self) -> &ParamSet<CarryParam> {
+//    fn to_param_set(&self) -> &ParamSet<ParamValue> {
 //        self.prim.param()
 //    }
 //    fn to_input_set(&self) -> &PortSet {

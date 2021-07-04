@@ -27,7 +27,7 @@ fn test_output<T: Eq + fmt::Debug + fmt::Display>(prim: &Prim<T>, exp: &[(&str, 
 
 mod test_carry {
     use super::*;
-    use prim::ultrascale::carry::{Carry, CarryParam, CarryType};
+    use prim::ultrascale::carry::{Carry, ParamValue, Ty};
 
     #[test]
     fn name() {
@@ -38,11 +38,11 @@ mod test_carry {
     #[test]
     fn param() {
         let prim = Carry::default();
-        let mut param = ParamSet::<CarryParam>::new();
+        let mut param = ParamSet::<ParamValue>::new();
         param.insert(Param {
             name: "CARRY_TYPE".to_string(),
             width: None,
-            value: CarryType::Single.into(),
+            value: Ty::Single.into(),
         });
         test_param(&prim, &param);
     }
@@ -64,7 +64,7 @@ mod test_carry {
     #[test]
     fn set_param() -> Result<()> {
         let mut prim = Carry::default();
-        prim.set_param("CARRY_TYPE", CarryType::Dual)?;
+        prim.set_param("CARRY_TYPE", Ty::Dual)?;
         Ok(())
     }
 }

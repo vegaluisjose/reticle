@@ -2,7 +2,7 @@ use crate::{Param, ParamSet, Port, PortSet, Prim, ToPrim};
 use derive_more::{Deref, DerefMut, Display, From};
 
 #[derive(Clone, Debug, PartialEq, Eq, Display)]
-pub enum CarryType {
+pub enum Ty {
     #[display(fmt = "DUAL_CY4")]
     Dual,
     #[display(fmt = "SINGLE_CY8")]
@@ -10,32 +10,32 @@ pub enum CarryType {
 }
 
 #[derive(Clone, Debug, From, Eq, Display)]
-pub enum CarryParam {
-    CarryType(CarryType),
+pub enum ParamValue {
+    Ty(Ty),
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
-pub struct Carry(Prim<CarryParam>);
+pub struct Carry(Prim<ParamValue>);
 
 #[derive(Clone, Debug, Default)]
 struct CarryPrim;
 
-impl PartialEq for CarryParam {
+impl PartialEq for ParamValue {
     fn eq(&self, _: &Self) -> bool {
         true
     }
 }
 
-impl ToPrim<CarryParam> for CarryPrim {
+impl ToPrim<ParamValue> for CarryPrim {
     fn to_name(&self) -> String {
         String::from("CARRY8")
     }
-    fn to_param(&self) -> ParamSet<CarryParam> {
+    fn to_param(&self) -> ParamSet<ParamValue> {
         let mut param = ParamSet::new();
         let ty = Param {
             name: "CARRY_TYPE".to_string(),
             width: None,
-            value: CarryType::Single.into(),
+            value: Ty::Single.into(),
         };
         param.insert(ty);
         param
