@@ -17,9 +17,9 @@ struct LramPrim;
 impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
-            (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _)) => true,
-            (_, _) => false,
+            (ParamValue::Bool(_), ParamValue::Bool(_))
+            | (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _))
+            | (_, _) => false,
         }
     }
 }
@@ -56,7 +56,7 @@ impl ToPrim<ParamValue> for LramPrim {
     }
     fn to_input(&self) -> PortSet {
         let mut port = PortSet::new();
-        for l in LUT.iter() {
+        for l in &LUT {
             let din = format!("DI{}", l);
             let addr = format!("ADDR{}", l);
             port.insert(Port::new(&din, 1));
@@ -68,7 +68,7 @@ impl ToPrim<ParamValue> for LramPrim {
     }
     fn to_output(&self) -> PortSet {
         let mut port = PortSet::new();
-        for l in LUT.iter() {
+        for l in &LUT {
             let dout = format!("DO{}", l);
             port.insert(Port::new(&dout, 1));
         }

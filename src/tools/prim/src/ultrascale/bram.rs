@@ -86,16 +86,16 @@ struct BramPrim;
 impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (ParamValue::CascadeOrder(_), ParamValue::CascadeOrder(_)) => true,
-            (ParamValue::ClockDomains(_), ParamValue::ClockDomains(_)) => true,
-            (ParamValue::CollisionCheck(_), ParamValue::CollisionCheck(_)) => true,
-            (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
-            (ParamValue::BoolStr(_), ParamValue::BoolStr(_)) => true,
-            (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _)) => true,
-            (ParamValue::Num(_), ParamValue::Num(_)) => true,
-            (ParamValue::FilePath(_), ParamValue::FilePath(_)) => true,
-            (ParamValue::RstRegPriority(_), ParamValue::RstRegPriority(_)) => true,
-            (ParamValue::WriteMode(_), ParamValue::WriteMode(_)) => true,
+            (ParamValue::CascadeOrder(_), ParamValue::CascadeOrder(_))
+            | (ParamValue::ClockDomains(_), ParamValue::ClockDomains(_))
+            | (ParamValue::CollisionCheck(_), ParamValue::CollisionCheck(_))
+            | (ParamValue::Bool(_), ParamValue::Bool(_))
+            | (ParamValue::BoolStr(_), ParamValue::BoolStr(_))
+            | (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _))
+            | (ParamValue::Num(_), ParamValue::Num(_))
+            | (ParamValue::FilePath(_), ParamValue::FilePath(_))
+            | (ParamValue::RstRegPriority(_), ParamValue::RstRegPriority(_))
+            | (ParamValue::WriteMode(_), ParamValue::WriteMode(_)) => true,
             (_, _) => false,
         }
     }

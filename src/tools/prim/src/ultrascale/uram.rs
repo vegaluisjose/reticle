@@ -51,14 +51,14 @@ struct UramPrim;
 impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (ParamValue::CascadeOrder(_), ParamValue::CascadeOrder(_)) => true,
-            (ParamValue::BwMode(_), ParamValue::BwMode(_)) => true,
-            (ParamValue::RstMode(_), ParamValue::RstMode(_)) => true,
-            (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
-            (ParamValue::BoolStr(_), ParamValue::BoolStr(_)) => true,
-            (ParamValue::Num(_), ParamValue::Num(_)) => true,
-            (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _)) => true,
-            (_, _) => false,
+            (ParamValue::CascadeOrder(_), ParamValue::CascadeOrder(_))
+            | (ParamValue::BwMode(_), ParamValue::BwMode(_))
+            | (ParamValue::RstMode(_), ParamValue::RstMode(_))
+            | (ParamValue::Bool(_), ParamValue::Bool(_))
+            | (ParamValue::BoolStr(_), ParamValue::BoolStr(_))
+            | (ParamValue::Num(_), ParamValue::Num(_))
+            | (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _))
+            | (_, _) => false,
         }
     }
 }
