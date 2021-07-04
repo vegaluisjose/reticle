@@ -110,42 +110,69 @@ mod test_bram {
         test_name(&prim, "RAMB18E2");
     }
 
+    const PARAM: [(&str, ParamValue); 32] = [
+        (
+            "CASCADE_ORDER_A",
+            ParamValue::CascadeOrder(CascadeOrder::None),
+        ),
+        (
+            "CASCADE_ORDER_B",
+            ParamValue::CascadeOrder(CascadeOrder::None),
+        ),
+        (
+            "CLOCK_DOMAINS",
+            ParamValue::ClockDomains(ClockDomains::Independent),
+        ),
+        (
+            "SIM_COLLISION_CHECK",
+            ParamValue::CollisionCheck(CollisionCheck::All),
+        ),
+        ("DOA_REG", ParamValue::BoolNum(false)),
+        ("DOB_REG", ParamValue::BoolNum(false)),
+        ("ENADDRENA", ParamValue::BoolStr(false)),
+        ("ENADDRENB", ParamValue::BoolStr(false)),
+        ("INIT_A", ParamValue::Num(0)),
+        ("INIT_B", ParamValue::Num(0)),
+        ("INIT_FILE", ParamValue::FilePath(FilePath::None)),
+        ("IS_CLKARDCLK_INVERTED", ParamValue::Bool(false)),
+        ("IS_CLKBWRCLK_INVERTED", ParamValue::Bool(false)),
+        ("IS_ENARDEN_INVERTED", ParamValue::Bool(false)),
+        ("IS_ENBWREN_INVERTED", ParamValue::Bool(false)),
+        ("IS_RSTRAMARSTRAM_INVERTED", ParamValue::Bool(false)),
+        ("IS_RSTRAMB_INVERTED", ParamValue::Bool(false)),
+        ("IS_RSTREGARSTREG_INVERTED", ParamValue::Bool(false)),
+        ("IS_RSTREGB_INVERTED", ParamValue::Bool(false)),
+        ("RDADDRCHANGEA", ParamValue::BoolStr(false)),
+        ("RDADDRCHANGEB", ParamValue::BoolStr(false)),
+        ("READ_WIDTH_A", ParamValue::Num(0)),
+        ("READ_WIDTH_B", ParamValue::Num(0)),
+        ("WRITE_WIDTH_A", ParamValue::Num(0)),
+        ("WRITE_WIDTH_B", ParamValue::Num(0)),
+        (
+            "RSTREG_PRIORITY_A",
+            ParamValue::RstRegPriority(RstRegPriority::RstReg),
+        ),
+        (
+            "RSTREG_PRIORITY_B",
+            ParamValue::RstRegPriority(RstRegPriority::RstReg),
+        ),
+        ("SRVAL_A", ParamValue::Num(0)),
+        ("SRVAL_B", ParamValue::Num(0)),
+        ("SLEEP_ASYNC", ParamValue::BoolStr(false)),
+        ("WRITE_MODE_A", ParamValue::WriteMode(WriteMode::NoChange)),
+        ("WRITE_MODE_B", ParamValue::WriteMode(WriteMode::NoChange)),
+    ];
+
     #[test]
     fn param() {
         let prim = Bram::default();
         let mut param = ParamSet::<ParamValue>::new();
-        param.insert(Param {
-            name: "CASCADE_ORDER_A".into(),
-            value: CascadeOrder::None.into(),
-        });
-        param.insert(Param {
-            name: "CASCADE_ORDER_B".into(),
-            value: CascadeOrder::None.into(),
-        });
-        param.insert(Param {
-            name: "CLOCK_DOMAINS".into(),
-            value: ClockDomains::Independent.into(),
-        });
-        param.insert(Param {
-            name: "SIM_COLLISION_CHECK".into(),
-            value: CollisionCheck::All.into(),
-        });
-        param.insert(Param {
-            name: "DOA_REG".into(),
-            value: ParamValue::BoolNum(false),
-        });
-        param.insert(Param {
-            name: "DOB_REG".into(),
-            value: ParamValue::BoolNum(false),
-        });
-        param.insert(Param {
-            name: "ENADDRENA".into(),
-            value: ParamValue::BoolStr(false),
-        });
-        param.insert(Param {
-            name: "ENADDRENB".into(),
-            value: ParamValue::BoolStr(false),
-        });
+        for p in &PARAM {
+            param.insert(Param {
+                name: p.0.into(),
+                value: p.1.clone(),
+            });
+        }
         for i in 0..8 {
             let name = format!("INITP_{:02X}", i);
             param.insert(Param {
@@ -160,162 +187,67 @@ mod test_bram {
                 value: (256, vec![0; 32]).into(),
             });
         }
-        param.insert(Param {
-            name: "INIT_A".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "INIT_B".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "INIT_FILE".into(),
-            value: FilePath::None.into(),
-        });
-        param.insert(Param {
-            name: "IS_CLKARDCLK_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_CLKBWRCLK_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_ENARDEN_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_ENBWREN_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_RSTRAMARSTRAM_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_RSTRAMB_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_RSTREGARSTREG_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "IS_RSTREGB_INVERTED".into(),
-            value: ParamValue::Bool(false),
-        });
-        param.insert(Param {
-            name: "RDADDRCHANGEA".into(),
-            value: ParamValue::BoolStr(false),
-        });
-        param.insert(Param {
-            name: "RDADDRCHANGEB".into(),
-            value: ParamValue::BoolStr(false),
-        });
-        param.insert(Param {
-            name: "READ_WIDTH_A".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "READ_WIDTH_B".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "WRITE_WIDTH_A".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "WRITE_WIDTH_B".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "RSTREG_PRIORITY_A".into(),
-            value: RstRegPriority::RstReg.into(),
-        });
-        param.insert(Param {
-            name: "RSTREG_PRIORITY_B".into(),
-            value: RstRegPriority::RstReg.into(),
-        });
-        param.insert(Param {
-            name: "SRVAL_A".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "SRVAL_B".into(),
-            value: 0_i64.into(),
-        });
-        param.insert(Param {
-            name: "SLEEP_ASYNC".into(),
-            value: ParamValue::BoolStr(false),
-        });
-        param.insert(Param {
-            name: "WRITE_MODE_A".into(),
-            value: WriteMode::NoChange.into(),
-        });
-        param.insert(Param {
-            name: "WRITE_MODE_B".into(),
-            value: WriteMode::NoChange.into(),
-        });
         test_param(&prim, &param);
     }
+    const INPUT: [(&str, u32); 35] = [
+        ("CASDIMUXA", 1),
+        ("CASDIMUXB", 1),
+        ("CASDINA", 16),
+        ("CASDINB", 16),
+        ("CASDINPA", 2),
+        ("CASDINPB", 2),
+        ("CASDOMUXA", 1),
+        ("CASDOMUXB", 1),
+        ("CASDOMUXEN_A", 1),
+        ("CASDOMUXEN_B", 1),
+        ("CASOREGIMUXA", 1),
+        ("CASOREGIMUXB", 1),
+        ("CASOREGIMUXEN_A", 1),
+        ("CASOREGIMUXEN_B", 1),
+        ("ADDRARDADDR", 14),
+        ("ADDRENA", 1),
+        ("CLKARDCLK", 1),
+        ("ENARDEN", 1),
+        ("REGCEAREGCE", 1),
+        ("RSTRAMARSTRAM", 1),
+        ("RSTREGARSTREG", 1),
+        ("WEA", 2),
+        ("DINADIN", 16),
+        ("DINPADINP", 2),
+        ("ADDRBWRADDR", 14),
+        ("ADDRENB", 1),
+        ("CLKBWRCLK", 1),
+        ("ENBWREN", 1),
+        ("REGCEB", 1),
+        ("RSTRAMB", 1),
+        ("RSTREGB", 1),
+        ("SLEEP", 1),
+        ("WEBWE", 4),
+        ("DINBDIN", 16),
+        ("DINPBDINP", 2),
+    ];
 
     #[test]
     fn input() {
         let prim = Bram::default();
-        let input = [
-            ("CASDIMUXA", 1),
-            ("CASDIMUXB", 1),
-            ("CASDINA", 16),
-            ("CASDINB", 16),
-            ("CASDINPA", 2),
-            ("CASDINPB", 2),
-            ("CASDOMUXA", 1),
-            ("CASDOMUXB", 1),
-            ("CASDOMUXEN_A", 1),
-            ("CASDOMUXEN_B", 1),
-            ("CASOREGIMUXA", 1),
-            ("CASOREGIMUXB", 1),
-            ("CASOREGIMUXEN_A", 1),
-            ("CASOREGIMUXEN_B", 1),
-            ("ADDRARDADDR", 14),
-            ("ADDRENA", 1),
-            ("CLKARDCLK", 1),
-            ("ENARDEN", 1),
-            ("REGCEAREGCE", 1),
-            ("RSTRAMARSTRAM", 1),
-            ("RSTREGARSTREG", 1),
-            ("WEA", 2),
-            ("DINADIN", 16),
-            ("DINPADINP", 2),
-            ("ADDRBWRADDR", 14),
-            ("ADDRENB", 1),
-            ("CLKBWRCLK", 1),
-            ("ENBWREN", 1),
-            ("REGCEB", 1),
-            ("RSTRAMB", 1),
-            ("RSTREGB", 1),
-            ("SLEEP", 1),
-            ("WEBWE", 4),
-            ("DINBDIN", 16),
-            ("DINPBDINP", 2),
-        ];
-        test_input(&prim, &input);
+        test_input(&prim, &INPUT);
     }
+
+    const OUTPUT: [(&str, u32); 8] = [
+        ("CASDOUTA", 16),
+        ("CASDOUTB", 16),
+        ("CASDOUTPA", 2),
+        ("CASDOUTPB", 2),
+        ("DOUTADOUT", 16),
+        ("DOUTPADOUTP", 2),
+        ("DOUTBDOUT", 16),
+        ("DOUTPBDOUTP", 2),
+    ];
 
     #[test]
     fn output() {
         let prim = Bram::default();
-        let output = [
-            ("CASDOUTA", 16),
-            ("CASDOUTB", 16),
-            ("CASDOUTPA", 2),
-            ("CASDOUTPB", 2),
-            ("DOUTADOUT", 16),
-            ("DOUTPADOUTP", 2),
-            ("DOUTBDOUT", 16),
-            ("DOUTPBDOUTP", 2),
-        ];
-        test_output(&prim, &output);
+        test_output(&prim, &OUTPUT);
     }
 }
 
@@ -520,11 +452,11 @@ mod test_uram {
         });
         param.insert(Param {
             name: "SELF_ADDR_A".into(),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SELF_ADDR_B".into(),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SELF_MASK_A".into(),

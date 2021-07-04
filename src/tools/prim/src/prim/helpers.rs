@@ -57,6 +57,9 @@ impl PortSet {
     }
 }
 
+/// # Errors
+///
+/// Will return `Err` if ParamValue is invalid or Param is missing
 impl<T: Eq + fmt::Debug + fmt::Display> Prim<T> {
     pub fn name(&self) -> String {
         self.name.to_string()

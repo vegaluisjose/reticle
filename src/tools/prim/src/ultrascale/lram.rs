@@ -41,7 +41,7 @@ impl ToPrim<ParamValue> for LramPrim {
     }
     fn to_param(&self) -> ParamSet<ParamValue> {
         let mut param = ParamSet::new();
-        for l in LUT.iter() {
+        for l in &LUT {
             let name = format!("INIT_{}", l);
             param.insert(Param {
                 name,
