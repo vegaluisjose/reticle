@@ -225,12 +225,12 @@ impl ToPrim<ParamValue> for UramPrim {
         param.insert(Param {
             name: "SELF_ADDR_A".into(),
             width: Some(11),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SELF_ADDR_B".into(),
             width: Some(11),
-            value: 0i64.into(),
+            value: 0_i64.into(),
         });
         param.insert(Param {
             name: "SELF_MASK_A".into(),
