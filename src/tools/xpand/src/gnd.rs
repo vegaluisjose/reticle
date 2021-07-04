@@ -1,7 +1,7 @@
 use crate::errors::Error;
 use crate::to_verilog::{ExprMap, ToVerilogDecl, ToVerilogExpr, ToVerilogInstance};
 use crate::vec_expr_try_from_expr;
-use prim::ultrascale::gnd::{Gnd, GndParam, GND};
+use prim::ultrascale::gnd::{Gnd, ParamValue, GND};
 use prim::{ParamSet, PortSet};
 use verilog::ast as vl;
 use xir::ast as xir;
@@ -12,20 +12,20 @@ impl ToVerilogDecl for Gnd {
     }
 }
 
-impl ToVerilogExpr for GndParam {
+impl ToVerilogExpr for ParamValue {
     fn to_expr(&self) -> vl::Expr {
         vl::Expr::new_ref("")
     }
 }
 
-impl ToVerilogInstance<GndParam> for Gnd {
+impl ToVerilogInstance<ParamValue> for Gnd {
     fn to_name(&self) -> String {
         format!("_{}", GND)
     }
     fn to_prim(&self) -> String {
         self.name()
     }
-    fn to_param_set(&self) -> &ParamSet<GndParam> {
+    fn to_param_set(&self) -> &ParamSet<ParamValue> {
         self.param()
     }
     fn to_input_set(&self) -> &PortSet {

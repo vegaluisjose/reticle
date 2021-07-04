@@ -4,15 +4,15 @@ use derive_more::{Deref, DerefMut, Display};
 pub const GND: &str = "gnd";
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Display)]
-pub struct GndParam;
+pub struct ParamValue;
 
 #[derive(Clone, Debug, Deref, DerefMut)]
-pub struct Gnd(Prim<GndParam>);
+pub struct Gnd(Prim<ParamValue>);
 
 #[derive(Clone, Debug, Default)]
 struct GndPrim;
 
-impl ToPrim<GndParam> for GndPrim {
+impl ToPrim<ParamValue> for GndPrim {
     fn to_name(&self) -> String {
         String::from("GND")
     }
