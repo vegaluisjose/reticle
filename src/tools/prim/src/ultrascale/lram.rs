@@ -3,31 +3,31 @@ use derive_more::{Deref, DerefMut, From};
 use std::fmt;
 
 #[derive(Clone, Debug, From, Eq)]
-pub enum LramParam {
+pub enum ParamValue {
     Bool(bool),
     Bytes(Vec<u8>),
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
-pub struct Lram(Prim<LramParam>);
+pub struct Lram(Prim<ParamValue>);
 
 #[derive(Clone, Debug, Default)]
 struct LramPrim;
 
-impl PartialEq for LramParam {
+impl PartialEq for ParamValue {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
-            (LramParam::Bool(_), LramParam::Bool(_)) => true,
-            (LramParam::Bytes(_), LramParam::Bytes(_)) => true,
+            (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
+            (ParamValue::Bytes(_), ParamValue::Bytes(_)) => true,
             (_, _) => false,
         }
     }
 }
 
-impl fmt::Display for LramParam {
+impl fmt::Display for ParamValue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            LramParam::Bytes(v) => write!(f, "{:?}", v),
+            ParamValue::Bytes(v) => write!(f, "{:?}", v),
             _ => write!(f, "{}", self),
         }
     }
@@ -35,11 +35,11 @@ impl fmt::Display for LramParam {
 
 const LUT: [&str; 8] = ["A", "B", "C", "D", "E", "F", "G", "H"];
 
-impl ToPrim<LramParam> for LramPrim {
+impl ToPrim<ParamValue> for LramPrim {
     fn to_name(&self) -> String {
         String::from("RAM64M8")
     }
-    fn to_param(&self) -> ParamSet<LramParam> {
+    fn to_param(&self) -> ParamSet<ParamValue> {
         let mut param = ParamSet::new();
         for l in LUT.iter() {
             let name = format!("INIT_{}", l);

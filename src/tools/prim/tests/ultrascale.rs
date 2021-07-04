@@ -369,7 +369,7 @@ mod test_lram {
     #[test]
     fn param() {
         let prim = Lram::default();
-        let mut param = ParamSet::<LramParam>::new();
+        let mut param = ParamSet::<ParamValue>::new();
         for l in LUT.iter() {
             let name = format!("INIT_{}", l);
             param.insert(Param {

@@ -5,18 +5,18 @@
 //use xir::ast as xir;
 
 use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance};
-use prim::ultrascale::lram::{Lram, LramParam};
+use prim::ultrascale::lram::{Lram, ParamValue};
 use prim::{ParamSet, PortSet};
 use verilog::ast as vl;
 
-impl ToVerilogExpr for LramParam {
+impl ToVerilogExpr for ParamValue {
     fn to_expr(&self) -> vl::Expr {
         match self {
-            LramParam::Bool(b) => {
+            ParamValue::Bool(b) => {
                 let v = format!("{}", *b as u32);
                 vl::Expr::new_ulit_bin(1, &v)
             }
-            LramParam::Bytes(bytes) => {
+            ParamValue::Bytes(bytes) => {
                 let mut v = String::new();
                 for b in bytes.iter() {
                     let fmt = format!("{:02X}", b);
@@ -29,14 +29,14 @@ impl ToVerilogExpr for LramParam {
     }
 }
 
-impl ToVerilogInstance<LramParam> for Lram {
+impl ToVerilogInstance<ParamValue> for Lram {
     fn to_name(&self) -> String {
         String::new()
     }
     fn to_prim(&self) -> String {
         self.name()
     }
-    fn to_param_set(&self) -> &ParamSet<LramParam> {
+    fn to_param_set(&self) -> &ParamSet<ParamValue> {
         self.param()
     }
     fn to_input_set(&self) -> &PortSet {
