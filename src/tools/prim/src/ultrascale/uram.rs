@@ -1,5 +1,6 @@
 use crate::{Param, ParamSet, Port, PortSet, Prim, ToPrim};
 use derive_more::{Deref, DerefMut, Display, From};
+use std::fmt;
 
 #[derive(Clone, Debug, PartialEq, Eq, Display)]
 pub enum CascadeOrder {
@@ -29,13 +30,16 @@ pub enum RstMode {
     Async,
 }
 
-#[derive(Clone, Debug, From, Eq, Display)]
+#[derive(Clone, Debug, From, Eq)]
 pub enum ParamValue {
     CascadeOrder(CascadeOrder),
     BwMode(BwMode),
     RstMode(RstMode),
     Bool(bool),
-    I64(i64),
+    #[from(ignore)]
+    BoolStr(bool),
+    Num(i64),
+    Bytes(u32, Vec<u8>),
 }
 
 #[derive(Clone, Debug, Deref, DerefMut)]
@@ -51,8 +55,19 @@ impl PartialEq for ParamValue {
             (ParamValue::BwMode(_), ParamValue::BwMode(_)) => true,
             (ParamValue::RstMode(_), ParamValue::RstMode(_)) => true,
             (ParamValue::Bool(_), ParamValue::Bool(_)) => true,
-            (ParamValue::I64(_), ParamValue::I64(_)) => true,
+            (ParamValue::BoolStr(_), ParamValue::BoolStr(_)) => true,
+            (ParamValue::Num(_), ParamValue::Num(_)) => true,
+            (ParamValue::Bytes(_, _), ParamValue::Bytes(_, _)) => true,
             (_, _) => false,
+        }
+    }
+}
+
+impl fmt::Display for ParamValue {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ParamValue::Bytes(w, v) => write!(f, "width:{} values:{:?}", w, v),
+            _ => write!(f, "{}", self),
         }
     }
 }
@@ -68,14 +83,14 @@ impl ToPrim<ParamValue> for UramPrim {
         param.insert(Param {
             name: "AUTO_SLEEP_LATENCY".into(),
             width: None,
-            value: 8i64.into(),
+            value: 8_i64.into(),
         });
         // TODO: range for this param is 10-10000
         // but there is no special types for this
         param.insert(Param {
             name: "AVG_CONS_INACTIVE_CYCLES".into(),
             width: None,
-            value: 10i64.into(),
+            value: 10_i64.into(),
         });
         param.insert(Param {
             name: "BWE_MODE_A".into(),
@@ -100,37 +115,37 @@ impl ToPrim<ParamValue> for UramPrim {
         param.insert(Param {
             name: "EN_AUTO_SLEEP_MODE".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_RD_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_RD_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_WR_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "EN_ECC_WR_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "IREG_PRE_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "IREG_PRE_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "IS_CLK_INVERTED".into(),
@@ -170,32 +185,32 @@ impl ToPrim<ParamValue> for UramPrim {
         param.insert(Param {
             name: "OREG_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "OREG_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "OREG_ECC_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "OREG_ECC_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "REG_CAS_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "REG_CAS_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "RST_MODE_A".into(),
@@ -220,22 +235,22 @@ impl ToPrim<ParamValue> for UramPrim {
         param.insert(Param {
             name: "SELF_MASK_A".into(),
             width: Some(11),
-            value: 2047i64.into(),
+            value: (11, vec![0x7, 0xff]).into(),
         });
         param.insert(Param {
             name: "SELF_MASK_B".into(),
             width: Some(11),
-            value: 2047i64.into(),
+            value: (11, vec![0x7, 0xff]).into(),
         });
         param.insert(Param {
             name: "USE_EXT_CE_A".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param.insert(Param {
             name: "USE_EXT_CE_B".into(),
             width: None,
-            value: false.into(),
+            value: ParamValue::BoolStr(false),
         });
         param
     }
