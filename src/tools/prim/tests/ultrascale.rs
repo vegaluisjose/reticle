@@ -340,11 +340,11 @@ mod test_uram {
         let mut param = ParamSet::new();
         param.insert(Param {
             name: "AUTO_SLEEP_LATENCY".into(),
-            value: 8i64.into(),
+            value: 8_i64.into(),
         });
         param.insert(Param {
             name: "AVG_CONS_INACTIVE_CYCLES".into(),
-            value: 10i64.into(),
+            value: 10_i64.into(),
         });
         param.insert(Param {
             name: "BWE_MODE_A".into(),
@@ -460,11 +460,11 @@ mod test_uram {
         });
         param.insert(Param {
             name: "SELF_MASK_A".into(),
-            value: 2047i64.into(),
+            value: 2047_i64.into(),
         });
         param.insert(Param {
             name: "SELF_MASK_B".into(),
-            value: 2047i64.into(),
+            value: 2047_i64.into(),
         });
         param.insert(Param {
             name: "USE_EXT_CE_A".into(),
