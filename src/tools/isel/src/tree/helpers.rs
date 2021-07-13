@@ -363,16 +363,16 @@ pub fn treelist_try_from_prog(prog: &Prog) -> Result<Vec<Tree>, Error> {
 }
 
 pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
-    let mut pstack = pat.bfs(0);
-    pstack.reverse();
-    let mut bstack: VecDeque<u64> = VecDeque::new();
-    bstack.push_back(start);
-    let mut next = bstack.pop_front();
+    let mut p_stack = pat.bfs(0);
+    p_stack.reverse();
+    let mut b_stack: VecDeque<u64> = VecDeque::new();
+    b_stack.push_back(start);
+    let mut next = b_stack.pop_front();
     let mut bcost: u64 = 0;
     if let Some(proot) = pat.node(0) {
-        let pcost = proot.cost();
+        let p_cost = proot.cost();
         while let Some(bindex) = next {
-            if let Some(pindex) = pstack.pop() {
+            if let Some(pindex) = p_stack.pop() {
                 if let Some(bnode) = block.node(bindex) {
                     if let Some(pnode) = pat.node(pindex) {
                         if pnode.ty() != bnode.ty()
@@ -392,12 +392,12 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                             }
                             if let Some(edge) = block.edge(bindex) {
                                 for e in edge {
-                                    bstack.push_back(*e);
+                                    b_stack.push_back(*e);
                                 }
                             }
-                            next = bstack.pop_front();
+                            next = b_stack.pop_front();
                         } else {
-                            next = bstack.pop_front();
+                            next = b_stack.pop_front();
                         }
                     }
                 }
@@ -405,7 +405,7 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                 next = None;
             }
         }
-        (pstack.is_empty() & (pcost < bcost), pcost)
+        (p_stack.is_empty() & (p_cost < bcost), p_cost)
     } else {
         (false, u64::MAX)
     }
@@ -413,12 +413,12 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
 
 pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_cost: u64) -> Tree {
     let mut btree = block.clone();
-    let mut pstack = pat.bfs(0);
-    pstack.reverse();
-    let mut bstack: VecDeque<u64> = VecDeque::new();
-    bstack.push_back(target);
-    while let Some(bindex) = bstack.pop_front() {
-        if let Some(pindex) = pstack.pop() {
+    let mut p_stack = pat.bfs(0);
+    p_stack.reverse();
+    let mut b_stack: VecDeque<u64> = VecDeque::new();
+    b_stack.push_back(target);
+    while let Some(bindex) = b_stack.pop_front() {
+        if let Some(pindex) = p_stack.pop() {
             if let Some(pnode) = pat.node(pindex) {
                 if !pnode.is_inp_op() {
                     if let Some(bnode) = btree.node_mut(bindex) {
@@ -431,7 +431,7 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
                     }
                     if let Some(edge) = block.edge(bindex) {
                         for e in edge {
-                            bstack.push_back(*e);
+                            b_stack.push_back(*e);
                         }
                     }
                 }
@@ -447,12 +447,12 @@ pub fn tree_update(block: &Tree, pat: &Tree, target: u64, pat_name: &str, pat_co
 
 pub fn input_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, String> {
     let mut map: HashMap<String, String> = HashMap::new();
-    let mut pstack = pat.bfs(0);
-    pstack.reverse();
-    let mut bstack: VecDeque<u64> = VecDeque::new();
-    bstack.push_back(target);
-    while let Some(bindex) = bstack.pop_front() {
-        if let Some(pindex) = pstack.pop() {
+    let mut p_stack = pat.bfs(0);
+    p_stack.reverse();
+    let mut b_stack: VecDeque<u64> = VecDeque::new();
+    b_stack.push_back(target);
+    while let Some(bindex) = b_stack.pop_front() {
+        if let Some(pindex) = p_stack.pop() {
             if let Some(pnode) = pat.node(pindex) {
                 if pnode.is_inp_op() {
                     if let Some(bnode) = block.node(bindex) {
@@ -460,7 +460,7 @@ pub fn input_map(block: &Tree, pat: &Tree, target: u64) -> HashMap<String, Strin
                     }
                 } else if let Some(edge) = block.edge(bindex) {
                     for e in edge {
-                        bstack.push_back(*e);
+                        b_stack.push_back(*e);
                     }
                 }
             }
