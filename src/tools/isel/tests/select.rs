@@ -5,14 +5,14 @@ use isel::try_from_ir_prog;
 use std::path::Path;
 
 fn test(name: &str) -> Result<(), Error> {
-    let mut i = Path::new("../../../examples/ir").join(name);
-    let mut o = Path::new("../../../examples/asm").join(name);
-    i.set_extension("ir");
-    o.set_extension("asm");
-    let p = IrParser::parse_from_file(i)?;
-    let e = AsmParser::parse_from_file(o)?;
-    let r = try_from_ir_prog(&p)?;
-    assert_eq!(r, e);
+    let mut input = Path::new("../../../examples/ir").join(name);
+    let mut output = Path::new("../../../examples/asm").join(name);
+    input.set_extension("ir");
+    output.set_extension("asm");
+    let parsed = IrParser::parse_from_file(input)?;
+    let exp = AsmParser::parse_from_file(output)?;
+    let res = try_from_ir_prog(&parsed)?;
+    assert_eq!(res, exp);
     Ok(())
 }
 
