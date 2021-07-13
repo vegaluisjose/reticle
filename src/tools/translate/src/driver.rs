@@ -43,43 +43,43 @@ impl Driver {
         let output = self.opts().output();
         match (self.opts().from(), self.opts().to()) {
             (Lang::Ir, Lang::Asm) => {
-                let ir_prog = IrParser::parse_from_file(input)?;
-                let asm_prog = ir_try_into_asm(&ir_prog)?;
-                write_output(output, &asm_prog.to_string());
+                let ir = IrParser::parse_from_file(input)?;
+                let asm = ir_try_into_asm(&ir)?;
+                write_output(output, &asm.to_string());
                 Ok(())
             }
             (Lang::Ir, Lang::Xir) => {
-                let ir_prog = IrParser::parse_from_file(input)?;
-                let asm_prog = ir_try_into_asm(&ir_prog)?;
-                let xir_prog = asm_try_into_xir(&asm_prog)?;
-                write_output(output, &xir_prog.to_string());
+                let ir = IrParser::parse_from_file(input)?;
+                let asm = ir_try_into_asm(&ir)?;
+                let xir = asm_try_into_xir(&asm)?;
+                write_output(output, &xir.to_string());
                 Ok(())
             }
             (Lang::Ir, Lang::Behav) => {
-                let ir_prog = IrParser::parse_from_file(input)?;
-                let behav_prog = ir_try_into_behav(&ir_prog)?;
+                let ir = IrParser::parse_from_file(input)?;
+                let behav_prog = ir_try_into_behav(&ir)?;
                 write_output(output, &behav_prog.to_string());
                 Ok(())
             }
             (Lang::Ir, Lang::Struct) => {
-                let ir_prog = IrParser::parse_from_file(input)?;
-                let asm_prog = ir_try_into_asm(&ir_prog)?;
-                let xir_prog = asm_try_into_xir(&asm_prog)?;
-                let struct_prog = xir_try_into_struct(&xir_prog)?;
-                write_output(output, &struct_prog.to_string());
+                let ir = IrParser::parse_from_file(input)?;
+                let asm = ir_try_into_asm(&ir)?;
+                let xir = asm_try_into_xir(&asm)?;
+                let sct = xir_try_into_struct(&xir)?;
+                write_output(output, &sct.to_string());
                 Ok(())
             }
             (Lang::Asm, Lang::Xir) => {
                 let prog = AsmParser::parse_from_file(input)?;
-                let xir_prog = asm_try_into_xir(&prog)?;
-                write_output(output, &xir_prog.to_string());
+                let xir = asm_try_into_xir(&prog)?;
+                write_output(output, &xir.to_string());
                 Ok(())
             }
             (Lang::Asm, Lang::Struct) => {
                 let prog = AsmParser::parse_from_file(input)?;
-                let xir_prog = asm_try_into_xir(&prog)?;
-                let struct_prog = xir_try_into_struct(&xir_prog)?;
-                write_output(output, &struct_prog.to_string());
+                let xir = asm_try_into_xir(&prog)?;
+                let sct = xir_try_into_struct(&xir)?;
+                write_output(output, &sct.to_string());
                 Ok(())
             }
             (_, _) => Err(Error::new_driver_error("Unsupported conversion")),
