@@ -46,6 +46,7 @@ pub fn intersperse<'a>(iter: impl Iterator<Item = RcDoc<'a>>, separator: RcDoc<'
     RcDoc::intersperse(iter, separator)
 }
 
+#[must_use]
 pub fn block(body: RcDoc<()>) -> RcDoc<()> {
     RcDoc::nil()
         .append(RcDoc::hardline())
@@ -54,10 +55,12 @@ pub fn block(body: RcDoc<()>) -> RcDoc<()> {
         .append(RcDoc::hardline())
 }
 
+#[must_use]
 pub fn block_with_braces<'a>(name: RcDoc<'a>, body: RcDoc<'a>) -> RcDoc<'a> {
     name.append(RcDoc::space()).append(block(body).braces())
 }
 
+#[must_use]
 pub fn block_with_parens<'a>(name: RcDoc<'a>, body: RcDoc<'a>) -> RcDoc<'a> {
     name.append(RcDoc::space()).append(block(body).parens())
 }
