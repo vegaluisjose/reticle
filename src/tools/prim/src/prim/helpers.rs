@@ -85,6 +85,7 @@ impl<T: Eq + fmt::Debug + fmt::Display> Prim<T> {
     /// # Errors
     ///
     /// Will return `Err` if value U is invalid or missing
+    #[allow(clippy::option_if_let_else)]
     pub fn set_param<U>(&mut self, name: &str, value: U) -> Result<()>
     where
         U: Into<T>,
