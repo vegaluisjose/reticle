@@ -412,9 +412,8 @@ impl Def {
             if q.len() == t.len() {
                 pass = false;
                 break;
-            } else {
-                q = t;
             }
+            q = t;
         }
         if pass {
             self.body = p;
