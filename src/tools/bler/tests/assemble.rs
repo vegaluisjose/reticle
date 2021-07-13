@@ -5,14 +5,14 @@ use std::path::Path;
 use xir::parser::Parser as XirParser;
 
 fn test(name: &str) -> Result<(), Error> {
-    let mut i = Path::new("../../../examples/asm").join(name);
-    let mut o = Path::new("../../../examples/xir").join(name);
-    i.set_extension("asm");
-    o.set_extension("xir");
-    let p = AsmParser::parse_from_file(i)?;
-    let e = XirParser::parse_from_file(o)?;
-    let r = try_from_asm_prog(&p)?;
-    assert_eq!(r, e);
+    let mut input = Path::new("../../../examples/asm").join(name);
+    let mut output = Path::new("../../../examples/xir").join(name);
+    input.set_extension("asm");
+    output.set_extension("xir");
+    let parsed = AsmParser::parse_from_file(input)?;
+    let exp = XirParser::parse_from_file(output)?;
+    let res = try_from_asm_prog(&parsed)?;
+    assert_eq!(res, exp);
     Ok(())
 }
 
