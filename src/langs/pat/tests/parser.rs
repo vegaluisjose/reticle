@@ -1,4 +1,4 @@
-use pat::ast::*;
+use pat::ast::{Pat, Sig, Target};
 use pat::parser::Parser;
 
 #[test]
