@@ -107,11 +107,11 @@ fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
 
 fn stmt_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
-        xir::OpBasc::Ext => ext::ext_from_basc(instr),
-        xir::OpBasc::Cat => cat::cat_from_basc(instr),
-        xir::OpBasc::Gnd => gnd::gnd_from_basc(instr),
-        xir::OpBasc::Vcc => vcc::vcc_from_basc(instr),
-        xir::OpBasc::Id => id::id_from_basc(instr),
+        xir::OpBasc::Ext => ext::from_basc(instr),
+        xir::OpBasc::Cat => cat::from_basc(instr),
+        xir::OpBasc::Gnd => gnd::from_basc(instr),
+        xir::OpBasc::Vcc => vcc::from_basc(instr),
+        xir::OpBasc::Id => id::from_basc(instr),
     }
 }
 

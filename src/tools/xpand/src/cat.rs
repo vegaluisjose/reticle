@@ -4,7 +4,7 @@ use verilog::ast as vl;
 use xir::ast as xir;
 
 // TODO: add vector type support
-pub fn cat_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
+pub fn from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
     let term = instr.dst().get_term(0)?;
     if term.is_vector() {
         Err(Error::new_xpand_error("vector ext not supported yet"))
