@@ -1,4 +1,4 @@
-use xim::ast::*;
+use xim::ast::{Imp, Sig, Target};
 use xim::parser::Parser;
 
 #[test]
