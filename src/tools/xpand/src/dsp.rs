@@ -788,7 +788,7 @@ fn vec_word_width_try_from_term(term: &xir::ExprTerm) -> Result<i32, Error> {
     }
 }
 
-fn vl_expr_try_from_term(term: &xir::ExprTerm, lsb: usize, msb: usize) -> Result<vl::Expr, Error> {
+fn vl_expr_try_from_term(term: &xir::ExprTerm, start: usize, end: usize) -> Result<vl::Expr, Error> {
     let word_width = vec_word_width_try_from_term(term)?;
     let expr: Vec<vl::Expr> = vec_expr_try_from_term(term)?;
     let mut bits: Vec<vl::Expr> = Vec::new();
@@ -806,7 +806,7 @@ fn vl_expr_try_from_term(term: &xir::ExprTerm, lsb: usize, msb: usize) -> Result
             }
         }
         let mut cat = vl::ExprConcat::default();
-        for i in bits.iter().take(msb + 1).skip(lsb) {
+        for i in bits.iter().take(end + 1).skip(start) {
             cat.add_expr(i.clone());
         }
         Ok(vl::Expr::from(cat))
