@@ -48,7 +48,7 @@ fn infer_type_try_from_def(def: &Def) -> Def {
     def
 }
 
-pub fn infer_type_try_from_prog(prog: &Prog) -> Prog {
+pub fn type_try_from_prog(prog: &Prog) -> Prog {
     let mut res = Prog::default();
     for (name, def) in prog.def() {
         res.insert(name, infer_type_try_from_def(def));
