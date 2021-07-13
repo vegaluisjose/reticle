@@ -788,25 +788,29 @@ fn vec_word_width_try_from_term(term: &xir::ExprTerm) -> Result<i32, Error> {
     }
 }
 
-fn vl_expr_try_from_term(term: &xir::ExprTerm, start: usize, end: usize) -> Result<vl::Expr, Error> {
+fn vl_expr_try_from_term(
+    term: &xir::ExprTerm,
+    start: usize,
+    end: usize,
+) -> Result<vl::Expr, Error> {
     let word_width = vec_word_width_try_from_term(term)?;
     let expr: Vec<vl::Expr> = vec_expr_try_from_term(term)?;
-    let mut bits: Vec<vl::Expr> = Vec::new();
+    let mut bitvec: Vec<vl::Expr> = Vec::new();
     if let Some(width) = term.width() {
         for e in expr {
             if let Ok(wbits) = i32::try_from(width) {
                 let width = i32::try_from(width).unwrap(); // FIXME: use better errors
                 for i in 0..wbits {
-                    bits.push(vl::Expr::new_index_bit(&e.id(), i));
+                    bitvec.push(vl::Expr::new_index_bit(&e.id(), i));
                 }
                 let pbits = word_width - width;
                 for _ in 0..pbits {
-                    bits.push(vl::Expr::new_ref(GND));
+                    bitvec.push(vl::Expr::new_ref(GND));
                 }
             }
         }
         let mut cat = vl::ExprConcat::default();
-        for i in bits.iter().take(end + 1).skip(start) {
+        for i in bitvec.iter().take(end + 1).skip(start) {
             cat.add_expr(i.clone());
         }
         Ok(vl::Expr::from(cat))
@@ -816,60 +820,60 @@ fn vl_expr_try_from_term(term: &xir::ExprTerm, start: usize, end: usize) -> Resu
 }
 
 pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
-    let mut dsp = Dsp::default();
+    let mut prim = Dsp::default();
     let mut stmt: Vec<vl::Stmt> = Vec::new();
     let name = inst_name_try_from_instr(instr)?;
-    dsp.set_name(&name);
+    prim.set_name(&name);
     // loc
     if let Some(loc) = instr.loc() {
-        dsp.set_loc(loc.clone());
+        prim.set_loc(loc.clone());
     }
     // simd
     if let Some(t) = instr.dst().term() {
-        dsp.set_param("USE_SIMD", simd_opt_try_from_term(t)?)?;
+        prim.set_param("USE_SIMD", simd_opt_try_from_term(t)?)?;
     }
     // registers
-    dsp.set_param("CREG", ParamValue::from(NumReg::One))?;
-    dsp.set_param("AREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("BREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("ACASCREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("BCASCREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("PREG", ParamValue::from(NumReg::One))?;
+    prim.set_param("CREG", ParamValue::from(NumReg::One))?;
+    prim.set_param("AREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("BREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("ACASCREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("BCASCREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("PREG", ParamValue::from(NumReg::One))?;
     // opcode
-    dsp.set_input("OPMODE", create_literal(9, 51))?;
+    prim.set_input("OPMODE", create_literal(9, 51))?;
     // input
     let left_term = instr.arg().get_term(0)?;
-    let c_msb = dsp.get_input_width("C").unwrap() - 1;
+    let c_msb = prim.get_input_width("C").unwrap() - 1;
     let c_expr = vl_expr_try_from_term(left_term, 0, c_msb as usize)?;
-    dsp.set_input("C", c_expr)?;
+    prim.set_input("C", c_expr)?;
     let right_term = instr.arg().get_term(1)?;
-    let b_width = *dsp.get_input_width("B").unwrap();
+    let b_width = *prim.get_input_width("B").unwrap();
     let b_expr = vl_expr_try_from_term(right_term, 0, (b_width - 1) as usize)?;
-    dsp.set_input("B", b_expr)?;
-    let a_width = dsp.get_input_width("A").unwrap();
+    prim.set_input("B", b_expr)?;
+    let a_width = prim.get_input_width("A").unwrap();
     let a_expr = vl_expr_try_from_term(
         right_term,
         b_width as usize,
         (b_width + a_width - 1) as usize,
     )?;
-    dsp.set_input("A", a_expr)?;
+    prim.set_input("A", a_expr)?;
     let l_en_term = instr.arg().get_term(2)?;
     let r_en_term = instr.arg().get_term(3)?;
     let o_en_term = instr.arg().get_term(4)?;
     let l_en_name = String::try_from(l_en_term.clone())?;
     let r_en_name = String::try_from(r_en_term.clone())?;
     let o_en_name = String::try_from(o_en_term.clone())?;
-    dsp.set_input("CEC", vl::Expr::new_ref(&l_en_name))?;
-    dsp.set_input("CEA1", vl::Expr::new_ref(&r_en_name))?;
-    dsp.set_input("CEA2", vl::Expr::new_ref(&r_en_name))?;
-    dsp.set_input("CEB1", vl::Expr::new_ref(&r_en_name))?;
-    dsp.set_input("CEB2", vl::Expr::new_ref(&r_en_name))?;
-    dsp.set_input("CEP", vl::Expr::new_ref(&o_en_name))?;
+    prim.set_input("CEC", vl::Expr::new_ref(&l_en_name))?;
+    prim.set_input("CEA1", vl::Expr::new_ref(&r_en_name))?;
+    prim.set_input("CEA2", vl::Expr::new_ref(&r_en_name))?;
+    prim.set_input("CEB1", vl::Expr::new_ref(&r_en_name))?;
+    prim.set_input("CEB2", vl::Expr::new_ref(&r_en_name))?;
+    prim.set_input("CEP", vl::Expr::new_ref(&o_en_name))?;
     // output
     let dst_term = instr.dst().get_term(0)?;
     let output = tmp_name_try_from_term(dst_term)?;
-    dsp.set_output("P", vl::Expr::new_ref(&output))?;
-    stmt.push(dsp.to_stmt());
+    prim.set_output("P", vl::Expr::new_ref(&output))?;
+    stmt.push(prim.to_stmt());
     let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
     let wbits = vec_word_width_try_from_term(dst_term)?;
     if let Some(width) = dst_term.width() {
@@ -890,57 +894,57 @@ pub fn vaddrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error
 }
 
 pub fn muladdrega_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
-    let mut dsp = Dsp::default();
+    let mut prim = Dsp::default();
     let mut stmt: Vec<vl::Stmt> = Vec::new();
     let name = inst_name_try_from_instr(instr)?;
-    dsp.set_name(&name);
+    prim.set_name(&name);
     // loc
     if let Some(loc) = instr.loc() {
-        dsp.set_loc(loc.clone());
+        prim.set_loc(loc.clone());
     }
     // multiply
-    dsp.set_param("USE_MULT", ParamValue::from(UseMult::Multiply))?;
+    prim.set_param("USE_MULT", ParamValue::from(UseMult::Multiply))?;
     // registers
-    dsp.set_param("AREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("BREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("ACASCREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("BCASCREG", ParamValue::from(NumRegAB::One))?;
-    dsp.set_param("MREG", ParamValue::from(NumReg::One))?;
-    dsp.set_param("PREG", ParamValue::from(NumReg::One))?;
+    prim.set_param("AREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("BREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("ACASCREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("BCASCREG", ParamValue::from(NumRegAB::One))?;
+    prim.set_param("MREG", ParamValue::from(NumReg::One))?;
+    prim.set_param("PREG", ParamValue::from(NumReg::One))?;
     // opcode
-    dsp.set_input("OPMODE", create_literal(9, 53))?;
+    prim.set_input("OPMODE", create_literal(9, 53))?;
     // input
     let a_term = instr.arg().get_term(0)?;
-    let a_width = *dsp.get_input_width("A").unwrap();
+    let a_width = *prim.get_input_width("A").unwrap();
     let a_expr = vl_expr_try_from_term(a_term, 0, (a_width - 1) as usize)?;
-    dsp.set_input("A", a_expr)?;
+    prim.set_input("A", a_expr)?;
     let b_term = instr.arg().get_term(1)?;
-    let b_width = *dsp.get_input_width("B").unwrap();
+    let b_width = *prim.get_input_width("B").unwrap();
     let b_expr = vl_expr_try_from_term(b_term, 0, (b_width - 1) as usize)?;
-    dsp.set_input("B", b_expr)?;
+    prim.set_input("B", b_expr)?;
     let c_term = instr.arg().get_term(2)?;
-    let c_width = *dsp.get_input_width("C").unwrap();
+    let c_width = *prim.get_input_width("C").unwrap();
     let c_expr = vl_expr_try_from_term(c_term, 0, (c_width - 1) as usize)?;
-    dsp.set_input("C", c_expr)?;
-    let ena_term = instr.arg().get_term(3)?;
-    let enb_term = instr.arg().get_term(4)?;
-    let enm_term = instr.arg().get_term(5)?;
-    let enp_term = instr.arg().get_term(6)?;
-    let ena_name = String::try_from(ena_term.clone())?;
-    let enb_name = String::try_from(enb_term.clone())?;
-    let enm_name = String::try_from(enm_term.clone())?;
-    let enp_name = String::try_from(enp_term.clone())?;
-    dsp.set_input("CEA1", vl::Expr::new_ref(&ena_name))?;
-    dsp.set_input("CEA2", vl::Expr::new_ref(&ena_name))?;
-    dsp.set_input("CEB1", vl::Expr::new_ref(&enb_name))?;
-    dsp.set_input("CEB2", vl::Expr::new_ref(&enb_name))?;
-    dsp.set_input("CEM", vl::Expr::new_ref(&enm_name))?;
-    dsp.set_input("CEP", vl::Expr::new_ref(&enp_name))?;
+    prim.set_input("C", c_expr)?;
+    let a_en_term = instr.arg().get_term(3)?;
+    let b_en_term = instr.arg().get_term(4)?;
+    let m_en_term = instr.arg().get_term(5)?;
+    let p_en_term = instr.arg().get_term(6)?;
+    let a_en_name = String::try_from(a_en_term.clone())?;
+    let b_en_name = String::try_from(b_en_term.clone())?;
+    let m_en_name = String::try_from(m_en_term.clone())?;
+    let p_en_name = String::try_from(p_en_term.clone())?;
+    prim.set_input("CEA1", vl::Expr::new_ref(&a_en_name))?;
+    prim.set_input("CEA2", vl::Expr::new_ref(&a_en_name))?;
+    prim.set_input("CEB1", vl::Expr::new_ref(&b_en_name))?;
+    prim.set_input("CEB2", vl::Expr::new_ref(&b_en_name))?;
+    prim.set_input("CEM", vl::Expr::new_ref(&m_en_name))?;
+    prim.set_input("CEP", vl::Expr::new_ref(&p_en_name))?;
     // output
     let dst_term = instr.dst().get_term(0)?;
     let output = tmp_name_try_from_term(dst_term)?;
-    dsp.set_output("P", vl::Expr::new_ref(&output))?;
-    stmt.push(dsp.to_stmt());
+    prim.set_output("P", vl::Expr::new_ref(&output))?;
+    stmt.push(prim.to_stmt());
     let dst: Vec<vl::Expr> = vec_expr_try_from_expr(instr.dst())?;
     let wbits = vec_word_width_try_from_term(dst_term)?;
     if let Some(width) = dst_term.width() {
