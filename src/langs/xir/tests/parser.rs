@@ -1,4 +1,4 @@
-use xir::ast::*;
+use xir::ast::Prog;
 use xir::parser::Parser;
 
 #[test]
