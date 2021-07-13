@@ -1,4 +1,4 @@
-use asm::ast::*;
+use asm::ast::Prog;
 use asm::parser::Parser;
 
 #[test]
