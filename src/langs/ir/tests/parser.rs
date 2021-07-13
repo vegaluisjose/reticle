@@ -1,4 +1,4 @@
-use ir::ast::*;
+use ir::ast::{Def, Prog};
 use ir::parser::Parser;
 
 #[test]
