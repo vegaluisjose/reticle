@@ -1,4 +1,4 @@
-use io::file::read_to_string;
+use io::read_to_string;
 use std::path::Path;
 use xir::parser::Parser;
 use xpand::errors::Error;

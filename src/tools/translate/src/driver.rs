@@ -3,7 +3,7 @@ use crate::opt::{Lang, Opt};
 use asm::parser::Parser as AsmParser;
 use bler::try_from_asm_prog as asm_try_into_xir;
 use bline::try_from_ir_prog as ir_try_into_behav;
-use io::file::write_to_file;
+use io::write_to_file;
 use ir::parser::Parser as IrParser;
 use isel::try_from_ir_prog as ir_try_into_asm;
 use std::path::PathBuf;

@@ -1,7 +1,7 @@
 use crate::ast::*;
 use crate::errors::Error;
 use crate::infer::infer_type_try_from_target;
-use io::file::read_to_string;
+use io::read_to_string;
 use pest_consume::match_nodes;
 use pest_consume::Error as PestError;
 use pest_consume::Parser as PestParser;

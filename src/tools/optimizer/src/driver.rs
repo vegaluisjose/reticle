@@ -2,7 +2,7 @@ use crate::cascader::cascader;
 use crate::errors::Error;
 use crate::opt::{Opt, Optimization};
 use asm::parser::Parser as AsmParser;
-use io::file::write_to_file;
+use io::write_to_file;
 use std::path::PathBuf;
 use structopt::StructOpt;
 

@@ -1,5 +1,5 @@
 use bline::try_from_ir_prog;
-use io::file::read_to_string;
+use io::read_to_string;
 use ir::parser::Parser as IrParser;
 
 #[test]
