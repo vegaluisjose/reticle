@@ -40,6 +40,7 @@ members = [
   "src/tools/bline",
   "src/tools/xpand",
   "src/tools/prim",
+  "src/tools/mmap",
 ]
 
 exclude = ["ci", "dev", "docker"]

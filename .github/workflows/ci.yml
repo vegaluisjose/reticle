@@ -71,3 +71,6 @@ jobs:
 
       - name: Test Xpand
         run: cargo test -p xpand
+
+      - name: Test Mmap
+        run: cargo test -p mmap
