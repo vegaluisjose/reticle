@@ -10,15 +10,18 @@ pub struct Mem {
 pub type Mmap = HashMap<String, Mem>;
 
 impl Mem {
+    #[must_use]
     pub fn new(offset: u32) -> Self {
         Mem {
             offset,
             values: Vec::new(),
         }
     }
+    #[must_use]
     pub fn offset(&self) -> u32 {
         self.offset
     }
+    #[must_use]
     pub fn values(&self) -> &Vec<u8> {
         &self.values
     }
