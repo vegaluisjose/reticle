@@ -37,6 +37,10 @@ impl PrettyPrint for OpMach {
             OpMach::MulAddRegACi => RcDoc::text("muladdregaci"),
             OpMach::MulAddRegACo => RcDoc::text("muladdregaco"),
             OpMach::MulAddRegACio => RcDoc::text("muladdregacio"),
+            OpMach::Lram => RcDoc::text("lram"),
+            OpMach::Bram => RcDoc::text("bram"),
+            OpMach::Lrom => RcDoc::text("lrom"),
+            OpMach::Brom => RcDoc::text("brom"),
         }
     }
 }
@@ -104,6 +108,15 @@ impl PrettyPrint for BelDsp {
     }
 }
 
+impl PrettyPrint for BelRamb {
+    fn to_doc(&self) -> RcDoc<()> {
+        match self {
+            BelRamb::U => RcDoc::text("rambl"),
+            BelRamb::L => RcDoc::text("rambu"),
+        }
+    }
+}
+
 impl PrettyPrint for Bel {
     fn to_doc(&self) -> RcDoc<()> {
         match self {
@@ -111,6 +124,7 @@ impl PrettyPrint for Bel {
             Bel::Reg(reg) => reg.to_doc(),
             Bel::Carry(carry) => carry.to_doc(),
             Bel::Dsp(dsp) => dsp.to_doc(),
+            Bel::Ramb(ramb) => ramb.to_doc(),
         }
     }
 }

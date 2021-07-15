@@ -42,6 +42,10 @@ impl FromStr for OpMach {
             "muladdregaci" => Ok(OpMach::MulAddRegACi),
             "muladdregaco" => Ok(OpMach::MulAddRegACo),
             "muladdregacio" => Ok(OpMach::MulAddRegACio),
+            "lram" => Ok(OpMach::Lram),
+            "bram" => Ok(OpMach::Bram),
+            "lrom" => Ok(OpMach::Lrom),
+            "brom" => Ok(OpMach::Brom),
             _ => Err(Error::new_conv_error(&err)),
         }
     }

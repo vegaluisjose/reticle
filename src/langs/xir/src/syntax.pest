@@ -66,7 +66,11 @@ op_mach = {
     "muladdregaci" |
     "muladdrega" |
     "muladd" |
-    "mul" }
+    "mul" |
+    "lram" |
+    "bram" |
+    "lrom" |
+    "brom"}
 
 op = _{ op_basc | op_mach }
 

@@ -5,6 +5,7 @@ pub type BelCarry = xir::BelCarry;
 pub type BelDsp = xir::BelDsp;
 pub type BelLut = xir::BelLut;
 pub type BelReg = xir::BelReg;
+pub type BelRamb = xir::BelRamb;
 pub type Bel = xir::Bel;
 pub type ExprCoord = xir::ExprCoord;
 pub type Loc = xir::Loc;
@@ -64,12 +65,20 @@ fn string_from_bel_dsp(bel: &BelDsp) -> String {
     }
 }
 
+fn string_from_bel_ramb(bel: &BelRamb) -> String {
+    match bel {
+        BelRamb::L => "RAMB18E2_L".to_string(),
+        BelRamb::U => "RAMB18E2_U".to_string(),
+    }
+}
+
 fn string_from_bel(bel: &Bel) -> String {
     match bel {
         Bel::Lut(lut) => string_from_bel_lut(lut),
         Bel::Reg(reg) => string_from_bel_reg(reg),
         Bel::Carry(carry) => string_from_bel_carry(carry),
         Bel::Dsp(dsp) => string_from_bel_dsp(dsp),
+        Bel::Ramb(ramb) => string_from_bel_ramb(ramb),
     }
 }
 

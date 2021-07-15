@@ -43,6 +43,10 @@ pub enum OpMach {
     MulAddRegACi,
     MulAddRegACo,
     MulAddRegACio,
+    Lram,
+    Bram,
+    Lrom,
+    Brom,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
@@ -97,11 +101,18 @@ pub enum BelDsp {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
+pub enum BelRamb {
+    L,
+    U,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum Bel {
     Lut(BelLut),
     Reg(BelReg),
     Carry(BelCarry),
     Dsp(BelDsp),
+    Ramb(BelRamb),
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
