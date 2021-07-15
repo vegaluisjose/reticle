@@ -4,7 +4,7 @@ use prim::{ParamSet, PortSet};
 use std::collections::HashMap;
 use verilog::ast as vl;
 
-pub type ExprMap = HashMap<String, vl::Expr>;
+pub type VerilogExprMap = HashMap<String, vl::Expr>;
 
 /// TODO: ToVerilogExpr trait should replace ToExpr trait
 pub trait ToVerilogExpr {
@@ -42,24 +42,24 @@ pub trait ToVerilogInstance<T: ToVerilogExpr> {
         None
     }
     /// parameter map
-    fn to_param_map(&self) -> ExprMap {
-        let mut map = ExprMap::new();
+    fn to_param_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
         for p in self.to_param_set().iter() {
             map.insert(p.name(), p.value().to_expr());
         }
         map
     }
     /// input map
-    fn to_input_map(&self) -> ExprMap {
-        let mut map = ExprMap::new();
+    fn to_input_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
         for i in self.to_input_set().iter() {
             map.insert(i.name(), create_literal(i.width() as u64, 0));
         }
         map
     }
     /// output map
-    fn to_output_map(&self) -> ExprMap {
-        let mut map = ExprMap::new();
+    fn to_output_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
         for o in self.to_output_set().iter() {
             map.insert(o.name(), vl::Expr::new_ref(""));
         }

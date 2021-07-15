@@ -1,5 +1,5 @@
 use crate::errors::Error;
-use crate::to_verilog::{ExprMap, ToVerilogDecl, ToVerilogExpr, ToVerilogInstance};
+use crate::to_verilog::{ToVerilogDecl, ToVerilogExpr, ToVerilogInstance, VerilogExprMap};
 use crate::vec_expr_try_from_expr;
 use prim::ultrascale::gnd::{Gnd, ParamValue, GND};
 use prim::{ParamSet, PortSet};
@@ -34,8 +34,8 @@ impl ToVerilogInstance<ParamValue> for Gnd {
     fn to_output_set(&self) -> &PortSet {
         self.output()
     }
-    fn to_output_map(&self) -> ExprMap {
-        let mut map = ExprMap::new();
+    fn to_output_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
         for o in self.to_output_set().iter() {
             if o.name().as_str() == "G" {
                 map.insert(o.name(), vl::Expr::new_ref(GND));

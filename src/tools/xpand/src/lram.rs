@@ -80,8 +80,8 @@ impl ToVerilogInstance<ParamValue> for Lram {
 //    fn to_loc(&self) -> Option<&Loc> {
 //        self.instr.loc()
 //    }
-//    fn to_input_map(&self) -> ExprMap {
-//        let mut map = ExprMap::new();
+//    fn to_input_map(&self) -> VerilogExprMap {
+//        let mut map = VerilogExprMap::new();
 //        let arg: Vec<vl::Expr> = vec_expr_try_from_expr(self.instr.arg()).unwrap();
 //        for p in self.prim.input().iter() {
 //            let name = p.name();
@@ -95,8 +95,8 @@ impl ToVerilogInstance<ParamValue> for Lram {
 //        }
 //        map
 //    }
-//    fn to_output_map(&self) -> ExprMap {
-//        let mut map = ExprMap::new();
+//    fn to_output_map(&self) -> VerilogExprMap {
+//        let mut map = VerilogExprMap::new();
 //        let dst: Vec<vl::Expr> = vec_expr_try_from_expr(self.instr.dst()).unwrap();
 //        for p in self.prim.output().iter() {
 //            let name = p.name();

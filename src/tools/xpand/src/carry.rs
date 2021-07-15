@@ -1,6 +1,6 @@
 use crate::errors::Error;
 use crate::loc::Loc;
-use crate::to_verilog::{ExprMap, ToVerilogExpr, ToVerilogInstance};
+use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance, VerilogExprMap};
 use crate::{inst_name_try_from_instr, vec_expr_try_from_expr};
 use prim::ultrascale::carry::{Carry, ParamValue, Ty};
 use prim::{ParamSet, PortSet};
@@ -73,8 +73,8 @@ impl ToVerilogInstance<ParamValue> for CarryAdd {
     fn to_loc(&self) -> Option<&Loc> {
         self.instr.loc()
     }
-    fn to_input_map(&self) -> ExprMap {
-        let mut map = ExprMap::new();
+    fn to_input_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
         let arg: Vec<vl::Expr> = vec_expr_try_from_expr(self.instr.arg()).unwrap();
         for p in self.prim.input().iter() {
             let name = p.name();
@@ -88,8 +88,8 @@ impl ToVerilogInstance<ParamValue> for CarryAdd {
         }
         map
     }
-    fn to_output_map(&self) -> ExprMap {
-        let mut map = ExprMap::new();
+    fn to_output_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
         let dst: Vec<vl::Expr> = vec_expr_try_from_expr(self.instr.dst()).unwrap();
         for p in self.prim.output().iter() {
             let name = p.name();
