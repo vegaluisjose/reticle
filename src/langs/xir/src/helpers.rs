@@ -79,6 +79,9 @@ impl InstrMach {
     pub fn loc(&self) -> Option<&Loc> {
         self.loc.as_ref()
     }
+    pub fn mem(&self) -> Option<&Mem> {
+        self.mem.as_ref()
+    }
     pub fn set_loc(&mut self, loc: Loc) {
         self.loc = Some(loc);
     }
@@ -87,6 +90,9 @@ impl InstrMach {
     }
     pub fn set_arg(&mut self, arg: Expr) {
         self.arg = arg;
+    }
+    pub fn set_mem(&mut self, mem: Mem) {
+        self.mem = Some(mem);
     }
 }
 

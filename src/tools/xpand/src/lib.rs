@@ -29,14 +29,13 @@ use crate::vcc::Vcc;
 use bline::{
     input_try_from_sig, vec_expr_try_from_expr, vec_expr_try_from_term, wire_try_from_expr,
 };
+use prim::ultrascale::clock::CLOCK;
 use prim::ultrascale::gnd::Gnd;
+use prim::ultrascale::reset::RESET;
 use std::collections::HashSet;
 use std::convert::TryInto;
 use verilog::ast as vl;
 use xir::ast as xir;
-
-pub const CLOCK: &str = "clock";
-pub const RESET: &str = "reset";
 
 pub fn create_literal(width: u64, value: i64) -> vl::Expr {
     use prim::ultrascale::gnd::GND;
@@ -101,6 +100,7 @@ fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
         xir::OpMach::CarryAdd => carry::carryadd_from_mach(instr),
         xir::OpMach::VecAddRegA => dsp::vaddrega_from_mach(instr),
         xir::OpMach::MulAddRegA => dsp::muladdrega_from_mach(instr),
+        xir::OpMach::Lrom => lram::rom_from_mach(instr),
         _ => Err(Error::new_xpand_error("unsupported machine instruction")),
     }
 }
@@ -115,14 +115,7 @@ fn stmt_from_basc(instr: &xir::InstrBasc) -> Result<Vec<vl::Stmt>, Error> {
     }
 }
 
-fn stmt_from_instr(instr: &xir::Instr) -> Result<Vec<vl::Stmt>, Error> {
-    match instr {
-        xir::Instr::Basc(basc) => Ok(stmt_from_basc(basc)?),
-        xir::Instr::Mach(mach) => Ok(stmt_from_mach(mach)?),
-    }
-}
-
-pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
+pub fn try_from_xir_prog(prog: &xir::Prog, mmap: Option<&mmap::Mmap>) -> Result<vl::Module, Error> {
     let id = prog.sig().id();
     let mut module = vl::Module::new(&id);
     let input = input_try_from_sig(prog.sig())?;
@@ -161,8 +154,25 @@ pub fn try_from_xir_prog(prog: &xir::Prog) -> Result<vl::Module, Error> {
     }
     module.add_stmt(gnd.to_stmt());
     module.add_stmt(vcc.to_stmt());
-    for i in prog.body() {
-        let stmt: Vec<vl::Stmt> = stmt_from_instr(i)?;
+    for instr in prog.body() {
+        let stmt = match instr {
+            xir::Instr::Basc(basc) => stmt_from_basc(basc)?,
+            xir::Instr::Mach(mach) => {
+                let id = mach.dst().get_id(0)?;
+                match mmap {
+                    Some(m) => {
+                        if let Some(mem) = m.get(&id) {
+                            let mut instr_mach = mach.clone();
+                            instr_mach.set_mem(mem.clone());
+                            stmt_from_mach(&instr_mach)?
+                        } else {
+                            stmt_from_mach(mach)?
+                        }
+                    }
+                    _ => stmt_from_mach(mach)?,
+                }
+            }
+        };
         for s in stmt {
             module.add_stmt(s);
         }

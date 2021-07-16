@@ -168,6 +168,7 @@ impl Parser {
                 dst,
                 arg,
                 loc: None,
+                mem: None,
             }),
             [io(dst), op_mach(op), io(arg), loc(loc)] => Instr::from(InstrMach {
                 op,
@@ -175,6 +176,7 @@ impl Parser {
                 dst,
                 arg,
                 loc: Some(loc),
+                mem: None,
             }),
             [io(dst), op_mach(op), tup_val(attr), io(arg)] => Instr::from(InstrMach {
                 op,
@@ -182,6 +184,7 @@ impl Parser {
                 dst,
                 arg,
                 loc: None,
+                mem: None,
             }),
             [io(dst), op_mach(op), tup_val(attr), io(arg), loc(loc)] => Instr::from(InstrMach {
                 op,
@@ -189,6 +192,7 @@ impl Parser {
                 dst,
                 arg,
                 loc: Some(loc),
+                mem: None,
             }),
             [io(dst), op_basc(op), tup_val(attr)] => Instr::from(InstrBasc {
                 op,

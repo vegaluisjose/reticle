@@ -8,6 +8,7 @@ use ir::parser::Parser as IrParser;
 use isel::try_from_ir_prog as ir_try_into_asm;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use xir::parser::Parser as XirParser;
 use xpand::try_from_xir_prog as xir_try_into_struct;
 
 #[derive(Clone, Debug)]
@@ -65,7 +66,7 @@ impl Driver {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
                 let xir = asm_try_into_xir(&asm)?;
-                let sct = xir_try_into_struct(&xir)?;
+                let sct = xir_try_into_struct(&xir, None)?;
                 write_output(output, &sct.to_string());
                 Ok(())
             }
@@ -78,7 +79,18 @@ impl Driver {
             (Lang::Asm, Lang::Struct) => {
                 let prog = AsmParser::parse_from_file(input)?;
                 let xir = asm_try_into_xir(&prog)?;
-                let sct = xir_try_into_struct(&xir)?;
+                let sct = xir_try_into_struct(&xir, None)?;
+                write_output(output, &sct.to_string());
+                Ok(())
+            }
+            (Lang::Xir, Lang::Struct) => {
+                let prog = XirParser::parse_from_file(input)?;
+                let mmap = if let Some(path) = self.opts().mmap() {
+                    Some(mmap::Mmap::from_file(path))
+                } else {
+                    None
+                };
+                let sct = xir_try_into_struct(&prog, mmap.as_ref())?;
                 write_output(output, &sct.to_string());
                 Ok(())
             }

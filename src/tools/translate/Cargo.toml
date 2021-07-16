@@ -15,3 +15,4 @@ bler = { path = "../bler" }
 bline = { path = "../bline" }
 xpand = { path = "../xpand" }
 io = { path = "../io" }
+mmap = { path = "../mmap" }

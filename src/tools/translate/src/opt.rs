@@ -15,6 +15,10 @@ pub struct Opt {
     #[structopt(parse(from_os_str))]
     pub input: PathBuf,
 
+    // Mmap file
+    #[structopt(long = "mmap", parse(from_os_str))]
+    pub mmap: Option<PathBuf>,
+
     // Output file
     #[structopt(short = "o", long = "output", parse(from_os_str))]
     pub output: Option<PathBuf>,
@@ -31,6 +35,9 @@ pub struct Opt {
 impl Opt {
     pub fn input(&self) -> &Path {
         &self.input
+    }
+    pub fn mmap(&self) -> Option<&PathBuf> {
+        self.mmap.as_ref()
     }
     pub fn output(&self) -> Option<&PathBuf> {
         self.output.as_ref()

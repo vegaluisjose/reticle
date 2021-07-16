@@ -11,6 +11,7 @@ ir = { path = "../../langs/ir" }
 xir = { path = "../../langs/xir" }
 verilog = { path = "../../langs/verilog" }
 io = { path = "../io" }
+mmap = { path = "../mmap" }
 bline = { path = "../bline" }
 prim = { path = "../prim" }
 derive_more = { version = "0.99.0", features = ["from", "deref", "deref_mut"] }

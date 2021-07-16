@@ -11,6 +11,8 @@ pub type ExprTup = ir::ExprTup;
 pub type Expr = ir::Expr;
 pub type ExprCoord = asm::ExprCoord;
 pub type Sig = ir::Sig;
+pub type Mem = mmap::Mem;
+// pub type Mmap = mmap::Mmap;
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum OpBasc {
@@ -137,6 +139,7 @@ pub struct InstrMach {
     pub dst: Expr,
     pub arg: Expr,
     pub loc: Option<Loc>,
+    pub mem: Option<Mem>,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
