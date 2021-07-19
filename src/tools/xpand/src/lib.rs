@@ -1,3 +1,4 @@
+pub mod bram;
 pub mod carry;
 pub mod cat;
 pub mod decl;
@@ -16,7 +17,6 @@ pub mod lram;
 pub mod lut;
 pub mod param;
 pub mod port;
-pub mod ramb;
 pub mod to_verilog;
 pub mod vcc;
 
