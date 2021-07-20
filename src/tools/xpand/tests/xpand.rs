@@ -1,4 +1,5 @@
 use io::read_to_string;
+use pretty_assertions::assert_eq;
 use std::path::Path;
 use xir::parser::Parser;
 use xpand::errors::Error;
@@ -118,6 +119,16 @@ fn lrom_8x8() -> Result<(), Error> {
 }
 
 #[test]
+fn brom_8x256() -> Result<(), Error> {
+    test("brom_8x256")
+}
+
+#[test]
 fn lrom_8x8_mmap() -> Result<(), Error> {
     test_with_mmap("lrom_8x8")
+}
+
+#[test]
+fn brom_8x256_mmap() -> Result<(), Error> {
+    test_with_mmap("brom_8x256")
 }

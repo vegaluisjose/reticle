@@ -136,7 +136,12 @@ impl ToVerilogInstance<ParamValue> for Rom {
             }
         } else {
             for p in self.to_param_set().iter() {
-                map.insert(p.name(), p.value().to_expr());
+                if p.name().as_str() == "READ_WIDTH_A" {
+                    let param = ParamValue::Num(9);
+                    map.insert(p.name(), param.to_expr());
+                } else {
+                    map.insert(p.name(), p.value().to_expr());
+                }
             }
         }
         map
