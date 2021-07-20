@@ -17,8 +17,9 @@ fn test(name: &str) -> Result<(), Error> {
 }
 
 fn test_with_mmap(name: &str) -> Result<(), Error> {
-    let mut input = Path::new("../../../examples/xir").join(name);
-    let mut output = Path::new("../../../examples/struct").join(name);
+    let filename = format!("{}_mmap", name);
+    let mut input = Path::new("../../../examples/xir").join(&filename);
+    let mut output = Path::new("../../../examples/struct").join(&filename);
     let mut mem = Path::new("../../../examples/mmap").join(name);
     input.set_extension("xir");
     output.set_extension("v");
