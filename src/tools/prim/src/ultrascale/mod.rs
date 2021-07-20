@@ -6,3 +6,4 @@ pub mod gnd;
 pub mod lram;
 pub mod reset;
 pub mod uram;
+pub mod vcc;

@@ -100,6 +100,38 @@ mod test_gnd {
     }
 }
 
+mod test_vcc {
+    use super::*;
+    use prim::ultrascale::vcc::Vcc;
+
+    #[test]
+    fn name() {
+        let prim = Vcc::default();
+        test_name(&prim, "VCC");
+    }
+
+    #[test]
+    fn param() {
+        let prim = Vcc::default();
+        let param: ParamSet<_> = ParamSet::new();
+        test_param(&prim, &param);
+    }
+
+    #[test]
+    fn input() {
+        let prim = Vcc::default();
+        let input = [];
+        test_input(&prim, &input);
+    }
+
+    #[test]
+    fn output() {
+        let prim = Vcc::default();
+        let output = [("P", 1)];
+        test_output(&prim, &output);
+    }
+}
+
 mod test_bram {
     use super::*;
     use prim::ultrascale::bram::*;
