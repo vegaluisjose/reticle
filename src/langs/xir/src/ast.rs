@@ -110,7 +110,7 @@ pub enum BelBlock {
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
 pub enum BelLum {
-    H6
+    H6,
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
