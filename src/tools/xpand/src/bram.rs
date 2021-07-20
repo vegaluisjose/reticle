@@ -1,7 +1,7 @@
 use crate::errors::Error;
 use crate::inst_name_try_from_instr;
 use crate::loc::Loc;
-use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance};
+use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance, VerilogExprMap};
 use prim::ultrascale::bram::{Bram, ParamValue};
 use prim::{ParamSet, PortSet};
 use verilog::ast as vl;
@@ -63,9 +63,34 @@ impl Rom {
             instr,
         }
     }
-    // pub fn instr(&self) -> &InstrMach {
-    //     &self.instr
-    // }
+    pub fn instr(&self) -> &InstrMach {
+        &self.instr
+    }
+}
+
+fn init_mem(values: &[u8]) -> VerilogExprMap {
+    let width = 32;
+    let depth = 64;
+    let bits = (width * 8) as u32;
+    let mut map = VerilogExprMap::new();
+    let mut values = values.to_vec();
+    for i in 0..depth {
+        let name = format!("INIT_{:02X}", i);
+        let bytes = if values.len() >= width {
+            let bytes: Vec<_> = values.drain(0..width).collect();
+            bytes
+        } else if !values.is_empty() {
+            let pad = width - values.len();
+            let mut bytes: Vec<_> = values.drain(..).collect();
+            bytes.extend(vec![0; pad]);
+            bytes
+        } else {
+            vec![0; width]
+        };
+        let param = ParamValue::Bytes(bits, bytes);
+        map.insert(name, param.to_expr());
+    }
+    map
 }
 
 impl ToVerilogInstance<ParamValue> for Rom {
@@ -86,6 +111,24 @@ impl ToVerilogInstance<ParamValue> for Rom {
     }
     fn to_loc(&self) -> Option<&Loc> {
         self.instr.loc()
+    }
+    fn to_param_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
+        if let Some(mem) = self.instr().mem() {
+            let init_map = init_mem(mem.values());
+            for p in self.to_param_set().iter() {
+                if let Some(value) = init_map.get(&p.name()) {
+                    map.insert(p.name(), value.clone());
+                } else {
+                    map.insert(p.name(), p.value().to_expr());
+                }
+            }
+        } else {
+            for p in self.to_param_set().iter() {
+                map.insert(p.name(), p.value().to_expr());
+            }
+        }
+        map
     }
 }
 
