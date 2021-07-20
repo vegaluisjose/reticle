@@ -103,9 +103,14 @@ pub enum BelDsp {
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
-pub enum BelRamb {
+pub enum BelBlock {
     L,
     U,
+}
+
+#[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
+pub enum BelLum {
+    H6
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]
@@ -114,7 +119,8 @@ pub enum Bel {
     Reg(BelReg),
     Carry(BelCarry),
     Dsp(BelDsp),
-    Ramb(BelRamb),
+    Block(BelBlock),
+    Lum(BelLum),
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Clone, Debug, Eq, Hash)]

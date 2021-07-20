@@ -101,6 +101,7 @@ fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
         xir::OpMach::VecAddRegA => dsp::vaddrega_from_mach(instr),
         xir::OpMach::MulAddRegA => dsp::muladdrega_from_mach(instr),
         xir::OpMach::Lrom => lram::rom_from_mach(instr),
+        xir::OpMach::Brom => bram::rom_from_mach(instr),
         _ => Err(Error::new_xpand_error("unsupported machine instruction")),
     }
 }

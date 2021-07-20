@@ -24,6 +24,18 @@ impl From<BelDsp> for Bel {
     }
 }
 
+impl From<BelBlock> for Bel {
+    fn from(bel: BelBlock) -> Self {
+        Bel::Block(bel)
+    }
+}
+
+impl From<BelLum> for Bel {
+    fn from(bel: BelLum) -> Self {
+        Bel::Lum(bel)
+    }
+}
+
 impl From<InstrBasc> for Instr {
     fn from(instr: InstrBasc) -> Self {
         Instr::Basc(instr)

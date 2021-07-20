@@ -5,7 +5,8 @@ pub type BelCarry = xir::BelCarry;
 pub type BelDsp = xir::BelDsp;
 pub type BelLut = xir::BelLut;
 pub type BelReg = xir::BelReg;
-pub type BelRamb = xir::BelRamb;
+pub type BelBlock = xir::BelBlock;
+pub type BelLum = xir::BelLum;
 pub type Bel = xir::Bel;
 pub type ExprCoord = xir::ExprCoord;
 pub type Loc = xir::Loc;
@@ -52,6 +53,12 @@ fn string_from_bel_lut(bel: &BelLut) -> String {
     }
 }
 
+fn string_from_bel_lum(bel: &BelLum) -> String {
+    match bel {
+        BelLum::H6 => "H6LUT".to_string(),
+    }
+}
+
 fn string_from_bel_carry(bel: &BelCarry) -> String {
     match bel {
         BelCarry::Carry4 => "CARRY4".to_string(),
@@ -65,20 +72,21 @@ fn string_from_bel_dsp(bel: &BelDsp) -> String {
     }
 }
 
-fn string_from_bel_ramb(bel: &BelRamb) -> String {
+fn string_from_bel_block(bel: &BelBlock) -> String {
     match bel {
-        BelRamb::L => "RAMB18E2_L".to_string(),
-        BelRamb::U => "RAMB18E2_U".to_string(),
+        BelBlock::L => "RAMB18E2_L".to_string(),
+        BelBlock::U => "RAMB18E2_U".to_string(),
     }
 }
 
 fn string_from_bel(bel: &Bel) -> String {
     match bel {
-        Bel::Lut(lut) => string_from_bel_lut(lut),
-        Bel::Reg(reg) => string_from_bel_reg(reg),
-        Bel::Carry(carry) => string_from_bel_carry(carry),
-        Bel::Dsp(dsp) => string_from_bel_dsp(dsp),
-        Bel::Ramb(ramb) => string_from_bel_ramb(ramb),
+        Bel::Lut(b) => string_from_bel_lut(b),
+        Bel::Reg(b) => string_from_bel_reg(b),
+        Bel::Carry(b) => string_from_bel_carry(b),
+        Bel::Dsp(b) => string_from_bel_dsp(b),
+        Bel::Block(b) => string_from_bel_block(b),
+        Bel::Lum(b) => string_from_bel_lum(b),
     }
 }
 
