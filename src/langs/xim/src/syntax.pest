@@ -34,7 +34,49 @@ io = { var | "(" ~ tup_var ~ ")" }
 
 attr = _{ "[" ~ tup_val ~ "]" }
 
-bel = { id }
+bel_block = { "u" | "l" }
+
+bel_dsp = { "alu" }
+
+bel_reg = {
+    "a" |
+    "b" |
+    "c" |
+    "d" |
+    "e" |
+    "f" |
+    "g" |
+    "h" |
+    "a2" |
+    "b2" |
+    "c2" |
+    "d2" |
+    "e2" |
+    "f2" |
+    "g2" |
+    "h2"}
+
+bel_lut = {
+    "a5" |
+    "b5" |
+    "c5" |
+    "d5" |
+    "e5" |
+    "f5" |
+    "g5" |
+    "h5" |
+    "a6" |
+    "b6" |
+    "c6" |
+    "d6" |
+    "e6" |
+    "f6" |
+    "g6" |
+    "h6"}
+
+bel_carry = { "c8" | "c4" }
+
+bel_lum = { "h6" }
 
 coord = { "??" | id | ASCII_DIGIT+ }
 
@@ -44,21 +86,41 @@ expr_coord = { coord ~ (op_coord ~ coord)? }
 
 xy = _{ "(" ~ expr_coord ~ "," ~ expr_coord ~ ")" }
 
-loc = { "@" ~ bel ~ xy? }
+loc_block = { "@" ~ bel_block ~ xy }
+
+loc_dsp = { "@" ~ bel_dsp ~ xy }
+
+loc_reg = { "@" ~ bel_reg ~ xy }
+
+loc_carry = { "@" ~ bel_carry ~ xy }
+
+loc_lut = { "@" ~ bel_lut ~ xy }
+
+loc_lum = { "@" ~ bel_lum ~ xy }
 
 op_basc = { "id" | "gnd" | "vcc" | "ext" | "cat" }
 
-op_mach = {
+op_lut = {
     "lut1" |
     "lut2" |
     "lut3" |
     "lut4" |
     "lut5" |
-    "lut6" |
-    "fdre" |
-    "fdse" |
-    "carryadd" |
+    "lut6" }
+
+op_lum = { "lram" | "lrom"}
+
+op_carry = { "carryadd" | "carrysub" }
+
+op_reg = { "fdre" | "fdse" }
+
+op_block = { "bram" | "brom" }
+
+op_dsp = {
     "vaddrega" |
+    "vadd" |
+    "vsub" |
+    "vmul" |
     "muladdregacio" |
     "muladdregaco" |
     "muladdregaci" |
@@ -66,9 +128,28 @@ op_mach = {
     "muladd" |
     "mul" }
 
-op = _{ op_basc | op_mach }
+instr_reg = { io ~ "=" ~ op_reg ~ attr? ~ io? ~ loc_reg? ~ ";" }
 
-instr = { io ~ "=" ~ op ~ attr? ~ io? ~ loc? ~ ";" }
+instr_block = { io ~ "=" ~ op_block ~ attr? ~ io? ~ loc_block? ~ ";" }
+
+instr_dsp = { io ~ "=" ~ op_dsp ~ attr? ~ io? ~ loc_dsp? ~ ";" }
+
+instr_carry = { io ~ "=" ~ op_carry ~ attr? ~ io? ~ loc_carry? ~ ";" }
+
+instr_lut = { io ~ "=" ~ op_lut ~ attr? ~ io? ~ loc_lut? ~ ";" }
+
+instr_lum = { io ~ "=" ~ op_lum ~ attr? ~ io? ~ loc_lum? ~ ";" }
+
+instr_basc = { io ~ "=" ~ op_basc ~ attr? ~ io? ~ ";" }
+
+instr = {
+    instr_basc |
+    instr_reg |
+    instr_carry |
+    instr_dsp |
+    instr_lut |
+    instr_lum |
+    instr_block }
 
 body = { instr+ }
 

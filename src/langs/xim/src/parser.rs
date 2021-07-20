@@ -101,18 +101,113 @@ impl Parser {
         ))
     }
 
-    fn bel(input: Node) -> ParseResult<Bel> {
-        let bel = Bel::from_str(input.as_str());
+    fn bel_block(input: Node) -> ParseResult<Bel> {
+        let bel = BelBlock::from_str(input.as_str());
         match bel {
-            Ok(t) => Ok(t),
+            Ok(t) => Ok(t.into()),
             Err(m) => panic!("{}", m),
         }
     }
 
-    fn loc(input: Node) -> ParseResult<Loc> {
+    fn bel_dsp(input: Node) -> ParseResult<Bel> {
+        let bel = BelDsp::from_str(input.as_str());
+        match bel {
+            Ok(t) => Ok(t.into()),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn bel_reg(input: Node) -> ParseResult<Bel> {
+        let bel = BelReg::from_str(input.as_str());
+        match bel {
+            Ok(t) => Ok(t.into()),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn bel_carry(input: Node) -> ParseResult<Bel> {
+        let bel = BelCarry::from_str(input.as_str());
+        match bel {
+            Ok(t) => Ok(t.into()),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn bel_lut(input: Node) -> ParseResult<Bel> {
+        let bel = BelLut::from_str(input.as_str());
+        match bel {
+            Ok(t) => Ok(t.into()),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn bel_lum(input: Node) -> ParseResult<Bel> {
+        let bel = BelLum::from_str(input.as_str());
+        match bel {
+            Ok(t) => Ok(t.into()),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn loc_lut(input: Node) -> ParseResult<Loc> {
         Ok(match_nodes!(
             input.into_children();
-            [bel(bel), expr_coord(x), expr_coord(y)] => Loc {
+            [bel_lut(bel), expr_coord(x), expr_coord(y)] => Loc {
+                bel,
+                x,
+                y,
+            },
+        ))
+    }
+
+    fn loc_lum(input: Node) -> ParseResult<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [bel_lum(bel), expr_coord(x), expr_coord(y)] => Loc {
+                bel,
+                x,
+                y,
+            },
+        ))
+    }
+
+    fn loc_block(input: Node) -> ParseResult<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [bel_block(bel), expr_coord(x), expr_coord(y)] => Loc {
+                bel,
+                x,
+                y,
+            },
+        ))
+    }
+
+    fn loc_dsp(input: Node) -> ParseResult<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [bel_dsp(bel), expr_coord(x), expr_coord(y)] => Loc {
+                bel,
+                x,
+                y,
+            },
+        ))
+    }
+
+    fn loc_reg(input: Node) -> ParseResult<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [bel_reg(bel), expr_coord(x), expr_coord(y)] => Loc {
+                bel,
+                x,
+                y,
+            },
+        ))
+    }
+
+    fn loc_carry(input: Node) -> ParseResult<Loc> {
+        Ok(match_nodes!(
+            input.into_children();
+            [bel_carry(bel), expr_coord(x), expr_coord(y)] => Loc {
                 bel,
                 x,
                 y,
@@ -151,7 +246,47 @@ impl Parser {
         ))
     }
 
-    fn op_mach(input: Node) -> ParseResult<OpMach> {
+    fn op_block(input: Node) -> ParseResult<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_dsp(input: Node) -> ParseResult<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_reg(input: Node) -> ParseResult<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_carry(input: Node) -> ParseResult<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_lut(input: Node) -> ParseResult<OpMach> {
+        let op = OpMach::from_str(input.as_str());
+        match op {
+            Ok(t) => Ok(t),
+            Err(m) => panic!("{}", m),
+        }
+    }
+
+    fn op_lum(input: Node) -> ParseResult<OpMach> {
         let op = OpMach::from_str(input.as_str());
         match op {
             Ok(t) => Ok(t),
@@ -167,10 +302,10 @@ impl Parser {
         }
     }
 
-    fn instr(input: Node) -> ParseResult<Instr> {
+    fn instr_block(input: Node) -> ParseResult<Instr> {
         Ok(match_nodes!(
             input.into_children();
-            [io(dst), op_mach(op), io(arg)] => Instr::from(InstrMach {
+            [io(dst), op_block(op), io(arg)] => Instr::from(InstrMach {
                 op,
                 attr: Expr::default(),
                 dst,
@@ -178,7 +313,95 @@ impl Parser {
                 loc: None,
                 mem: None,
             }),
-            [io(dst), op_mach(op), io(arg), loc(loc)] => Instr::from(InstrMach {
+            [io(dst), op_block(op), io(arg), loc_block(loc)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: Some(loc),
+                mem: None,
+            })
+        ))
+    }
+
+    fn instr_dsp(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_dsp(op), io(arg)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: None,
+                mem: None,
+            }),
+            [io(dst), op_dsp(op), io(arg), loc_dsp(loc)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: Some(loc),
+                mem: None,
+            })
+        ))
+    }
+
+    fn instr_reg(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_reg(op), io(arg)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: None,
+                mem: None,
+            }),
+            [io(dst), op_reg(op), io(arg), loc_reg(loc)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: Some(loc),
+                mem: None,
+            })
+        ))
+    }
+
+    fn instr_carry(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_carry(op), io(arg)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: None,
+                mem: None,
+            }),
+            [io(dst), op_carry(op), io(arg), loc_carry(loc)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: Some(loc),
+                mem: None,
+            })
+        ))
+    }
+
+    fn instr_lut(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_lut(op), io(arg)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: None,
+                mem: None,
+            }),
+            [io(dst), op_lut(op), io(arg), loc_lut(loc)] => Instr::from(InstrMach {
                 op,
                 attr: Expr::default(),
                 dst,
@@ -186,7 +409,7 @@ impl Parser {
                 loc: Some(loc),
                 mem: None,
             }),
-            [io(dst), op_mach(op), tup_val(attr), io(arg)] => Instr::from(InstrMach {
+            [io(dst), op_lut(op), tup_val(attr), io(arg)] => Instr::from(InstrMach {
                 op,
                 attr: Expr::from(attr),
                 dst,
@@ -194,14 +417,42 @@ impl Parser {
                 loc: None,
                 mem: None,
             }),
-            [io(dst), op_mach(op), tup_val(attr), io(arg), loc(loc)] => Instr::from(InstrMach {
+            [io(dst), op_lut(op), tup_val(attr), io(arg), loc_lut(loc)] => Instr::from(InstrMach {
                 op,
                 attr: Expr::from(attr),
                 dst,
                 arg,
                 loc: Some(loc),
                 mem: None,
+            })
+        ))
+    }
+
+    fn instr_lum(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [io(dst), op_lum(op), io(arg)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: None,
+                mem: None,
             }),
+            [io(dst), op_lum(op), io(arg), loc_lum(loc)] => Instr::from(InstrMach {
+                op,
+                attr: Expr::default(),
+                dst,
+                arg,
+                loc: Some(loc),
+                mem: None,
+            })
+        ))
+    }
+
+    fn instr_basc(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
             [io(dst), op_basc(op), tup_val(attr)] => Instr::from(InstrBasc {
                 op,
                 dst,
@@ -220,6 +471,19 @@ impl Parser {
                 attr: Expr::from(attr),
                 arg,
             })
+        ))
+    }
+
+    fn instr(input: Node) -> ParseResult<Instr> {
+        Ok(match_nodes!(
+            input.into_children();
+            [instr_basc(instr)] => instr,
+            [instr_reg(instr)] => instr,
+            [instr_carry(instr)] => instr,
+            [instr_dsp(instr)] => instr,
+            [instr_block(instr)] => instr,
+            [instr_lut(instr)] => instr,
+            [instr_lum(instr)] => instr,
         ))
     }
 
