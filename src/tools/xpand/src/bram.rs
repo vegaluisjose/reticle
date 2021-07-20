@@ -1,8 +1,13 @@
+use crate::create_literal;
 use crate::errors::Error;
 use crate::inst_name_try_from_instr;
 use crate::loc::Loc;
 use crate::to_verilog::{ToVerilogExpr, ToVerilogInstance, VerilogExprMap};
 use prim::ultrascale::bram::{Bram, ParamValue};
+use prim::ultrascale::clock::CLOCK;
+use prim::ultrascale::gnd::GND;
+use prim::ultrascale::reset::RESET;
+use prim::ultrascale::vcc::VCC;
 use prim::{ParamSet, PortSet};
 use verilog::ast as vl;
 use xir::ast::InstrMach;
@@ -19,6 +24,9 @@ impl ToVerilogExpr for ParamValue {
             ParamValue::Bool(v) => vl::Expr::new_ulit_bin(1, &format!("{}", *v as i32)),
             ParamValue::BoolNum(v) => vl::Expr::new_int(*v as i32),
             ParamValue::BoolStr(v) => vl::Expr::new_str(&format!("{}", v).to_uppercase()),
+            ParamValue::Bytes(width, values) if values.is_empty() => {
+                vl::Expr::new_ulit_hex(*width, "0")
+            }
             ParamValue::Bytes(width, values) => {
                 let mut num = String::new();
                 for v in values.iter().rev() {
@@ -119,6 +127,9 @@ impl ToVerilogInstance<ParamValue> for Rom {
             for p in self.to_param_set().iter() {
                 if let Some(value) = init_map.get(&p.name()) {
                     map.insert(p.name(), value.clone());
+                } else if p.name().as_str() == "READ_WIDTH_A" {
+                    let param = ParamValue::Num(9);
+                    map.insert(p.name(), param.to_expr());
                 } else {
                     map.insert(p.name(), p.value().to_expr());
                 }
@@ -127,6 +138,48 @@ impl ToVerilogInstance<ParamValue> for Rom {
             for p in self.to_param_set().iter() {
                 map.insert(p.name(), p.value().to_expr());
             }
+        }
+        map
+    }
+    fn to_input_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
+        let id = self.instr().arg().get_id(0).unwrap();
+        let ty = self.instr().arg().get_ty(0).unwrap();
+        if let Some(width) = ty.width() {
+            let tail_pad = (width as f32).log(2.0) as u32;
+            let mut concat = vl::ExprConcat::default();
+            for _ in 0..tail_pad {
+                concat.add_expr(vl::Expr::new_ref(GND));
+            }
+            concat.add_expr(vl::Expr::new_ref(&id));
+            let head_pad = 14 - width as u32 - tail_pad;
+            for _ in 0..head_pad {
+                concat.add_expr(vl::Expr::new_ref(GND));
+            }
+            let expr = vl::Expr::from(concat);
+            for p in self.prim.input().iter() {
+                let name = p.name();
+                match name.as_str() {
+                    "ADDRARDADDR" => map.insert(name, expr.clone()),
+                    "CLKARDCLK" => map.insert(name, vl::Expr::new_ref(CLOCK)),
+                    "RSTRAMARSTRAM" => map.insert(name, vl::Expr::new_ref(RESET)),
+                    "RSTREGARSTREG" => map.insert(name, vl::Expr::new_ref(RESET)),
+                    "ENARDEN" => map.insert(name, vl::Expr::new_ref(VCC)),
+                    _ => map.insert(name, create_literal(p.width() as u64, 0)),
+                };
+            }
+        }
+        map
+    }
+    fn to_output_map(&self) -> VerilogExprMap {
+        let mut map = VerilogExprMap::new();
+        let id = self.instr().dst().get_id(0).unwrap();
+        for p in self.to_output_set().iter() {
+            let name = p.name();
+            match name.as_str() {
+                "DOUTADOUT" => map.insert(name, vl::Expr::new_ref(&id)),
+                _ => map.insert(name, vl::Expr::new_ref("")),
+            };
         }
         map
     }
