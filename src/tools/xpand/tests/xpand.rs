@@ -18,7 +18,7 @@ fn test(name: &str) -> Result<(), Error> {
 
 fn test_with_mmap(name: &str) -> Result<(), Error> {
     let filename = format!("{}_mmap", name);
-    let mut input = Path::new("../../../examples/xir").join(&filename);
+    let mut input = Path::new("../../../examples/xir").join(name);
     let mut output = Path::new("../../../examples/struct").join(&filename);
     let mut mem = Path::new("../../../examples/mmap").join(name);
     input.set_extension("xir");
@@ -114,5 +114,10 @@ fn tdot_5_36() -> Result<(), Error> {
 
 #[test]
 fn lrom_8x8() -> Result<(), Error> {
+    test("lrom_8x8")
+}
+
+#[test]
+fn lrom_8x8_mmap() -> Result<(), Error> {
     test_with_mmap("lrom_8x8")
 }
