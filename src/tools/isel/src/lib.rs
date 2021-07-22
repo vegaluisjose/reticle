@@ -38,23 +38,28 @@ pub fn try_from_ir_prog(prog: &ir::Prog) -> Result<asm::Prog, Error> {
     if let Some(main) = prog.get("main") {
         let lpat = deserialize_pat_from_file("lut");
         let dpat = deserialize_pat_from_file("dsp");
+        let mpat = deserialize_pat_from_file("mem");
         let limp = deserialize_imp_from_file("lut");
         let dimp = deserialize_imp_from_file("dsp");
+        let mimp = deserialize_imp_from_file("mem");
         let lmap = treemap_try_from_target_pair(&lpat, &limp)?;
         let dmap = treemap_try_from_target_pair(&dpat, &dimp)?;
+        let mmap = treemap_try_from_target_pair(&mpat, &mimp)?;
         let imap = instrmap_from_prog(prog)?;
         let blks = treelist_try_from_prog(prog)?;
         let blks = tree_select(&blks, &dmap)?;
         let blks = tree_select(&blks, &lmap)?;
+        let blks = tree_select(&blks, &mmap)?;
         let blks = tree_commit(&blks)?;
         let mut body: Vec<asm::Instr> = Vec::new();
         let mut iset: HashSet<ir::Id> = HashSet::new();
-        let tree_map: TreeMap = lmap.into_iter().chain(dmap).collect();
+        let tree_map: TreeMap = lmap.into_iter().chain(dmap).chain(mmap).collect();
         let pat_map: HashMap<String, pat::Pat> = lpat
             .pat()
             .clone()
             .into_iter()
             .chain(dpat.pat().clone())
+            .chain(mpat.pat().clone())
             .collect();
         for blk in blks {
             body.extend(tree_codegen(&mut iset, &imap, &blk, &tree_map, &pat_map)?);
