@@ -59,6 +59,7 @@ pub enum OpWire {
 pub enum OpPrim {
     Reg,
     Ram,
+    Rom,
     Add,
     Sub,
     Mul,

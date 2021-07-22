@@ -117,6 +117,7 @@ impl PrettyPrint for OpPrim {
         match self {
             OpPrim::Reg => RcDoc::text("reg"),
             OpPrim::Ram => RcDoc::text("ram"),
+            OpPrim::Rom => RcDoc::text("rom"),
             OpPrim::Add => RcDoc::text("add"),
             OpPrim::Sub => RcDoc::text("sub"),
             OpPrim::Mul => RcDoc::text("mul"),

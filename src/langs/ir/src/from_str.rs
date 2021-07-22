@@ -108,6 +108,7 @@ impl FromStr for OpPrim {
         match input {
             "reg" => Ok(OpPrim::Reg),
             "ram" => Ok(OpPrim::Ram),
+            "rom" => Ok(OpPrim::Rom),
             "add" => Ok(OpPrim::Add),
             "sub" => Ok(OpPrim::Sub),
             "mul" => Ok(OpPrim::Mul),
