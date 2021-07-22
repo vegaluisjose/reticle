@@ -370,6 +370,7 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
     let mut next = b_stack.pop_front();
     let mut bcost: u64 = 0;
     if let Some(proot) = pat.node(0) {
+        let mut is_match = true;
         let p_cost = proot.cost();
         while let Some(bindex) = next {
             if let Some(pindex) = p_stack.pop() {
@@ -384,6 +385,7 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                             || (!pnode.is_inp_op() && bnode.is_committed())
                         {
                             next = None;
+                            is_match = false;
                         } else if !pnode.is_inp_op() {
                             if bnode.cost() == u64::MAX {
                                 bcost = bnode.cost();
@@ -405,7 +407,7 @@ pub fn is_valid_change(block: &Tree, pat: &Tree, start: u64) -> (bool, u64) {
                 next = None;
             }
         }
-        (p_stack.is_empty() & (p_cost < bcost), p_cost)
+        (is_match & p_stack.is_empty() & (p_cost < bcost), p_cost)
     } else {
         (false, u64::MAX)
     }
