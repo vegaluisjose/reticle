@@ -509,7 +509,10 @@ pub fn tree_commit(blocks: &[Tree]) -> Result<Vec<Tree>, Error> {
     Ok(res)
 }
 
-pub fn rename_expr(map: &HashMap<String, String>, input: &asm::Expr) -> Result<asm::Expr, Error> {
+pub fn rename_expr(
+    map: &HashMap<String, String>,
+    input: &asm::Expr,
+) -> Result<Vec<asm::ExprTerm>, Error> {
     let iterm: Vec<asm::ExprTerm> = input.clone().into();
     let mut oterm: Vec<asm::ExprTerm> = Vec::new();
     for e in iterm {
@@ -518,12 +521,23 @@ pub fn rename_expr(map: &HashMap<String, String>, input: &asm::Expr) -> Result<a
             oterm.push(asm::ExprTerm::Var(id.clone(), ty.clone()));
         }
     }
+    Ok(oterm)
+}
+
+pub fn rename_dst(map: &HashMap<String, String>, input: &asm::Expr) -> Result<asm::Expr, Error> {
+    let oterm = rename_expr(map, input)?;
     if oterm.len() == 1 {
         Ok(asm::Expr::from(oterm[0].clone()))
     } else {
         let tup: asm::ExprTup = oterm.into();
         Ok(asm::Expr::from(tup))
     }
+}
+
+pub fn rename_arg(map: &HashMap<String, String>, input: &asm::Expr) -> Result<asm::Expr, Error> {
+    let oterm = rename_expr(map, input)?;
+    let tup: asm::ExprTup = oterm.into();
+    Ok(asm::Expr::from(tup))
 }
 
 pub fn tree_codegen(
@@ -547,8 +561,8 @@ pub fn tree_codegen(
                         if let Some(pat) = pmap.get(name) {
                             let input = input_map(block, tree, index);
                             let output = output_map(block, tree, index);
-                            let dst = rename_expr(&output, pat.output())?;
-                            let arg = rename_expr(&input, pat.input())?;
+                            let dst = rename_dst(&output, pat.output())?;
+                            let arg = rename_arg(&input, pat.input())?;
                             let op = asm::OpAsm::from(name.clone());
                             let loc = asm::Loc {
                                 prim: node.pat_prim().clone(),
