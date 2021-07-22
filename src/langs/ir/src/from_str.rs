@@ -174,6 +174,9 @@ impl FromStr for Prim {
             "??" => Ok(Prim::Any),
             "lut" => Ok(Prim::Lut),
             "dsp" => Ok(Prim::Dsp),
+            "lram" => Ok(Prim::Lram),
+            "bram" => Ok(Prim::Bram),
+            "uram" => Ok(Prim::Uram),
             _ => Err(Error::new_conv_error(&err)),
         }
     }
