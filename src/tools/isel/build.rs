@@ -21,13 +21,16 @@ fn build_implementation(prim: &str) {
     imp.serialize_to_file(bin_path);
 }
 
+fn build(prim: &str) {
+    println!("cargo:rerun-if-changed=../../../examples/pat/{}.pat", prim);
+    println!("cargo:rerun-if-changed=../../../examples/xim/{}.xim", prim);
+    build_pattern(prim);
+    build_implementation(prim);
+}
+
 fn main() {
-    println!("cargo:rerun-if-changed=../../../examples/pat/lut.pat");
-    println!("cargo:rerun-if-changed=../../../examples/pat/dsp.pat");
-    println!("cargo:rerun-if-changed=../../../examples/xim/lut.xim");
-    println!("cargo:rerun-if-changed=../../../examples/xim/dsp.xim");
-    build_pattern("lut");
-    build_pattern("dsp");
-    build_implementation("lut");
-    build_implementation("dsp");
+    let prim = ["lut", "dsp", "mem"];
+    for p in &prim {
+        build(p);
+    }
 }
