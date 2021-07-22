@@ -267,10 +267,12 @@ pub fn deserialize_target_from_file(prim: &str) -> xim::Target {
 }
 
 pub fn deserialize_target() -> xim::Target {
-    let mut lut = deserialize_target_from_file("lut");
+    let mut tar = deserialize_target_from_file("lut");
     let dsp = deserialize_target_from_file("dsp");
-    lut.extend(dsp);
-    lut
+    let mem = deserialize_target_from_file("mem");
+    tar.extend(dsp);
+    tar.extend(mem);
+    tar
 }
 
 pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
