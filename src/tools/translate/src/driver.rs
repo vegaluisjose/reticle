@@ -42,27 +42,40 @@ impl Driver {
     pub fn run(&self) -> Result<(), Error> {
         let input = self.opts().input();
         let output = self.opts().output();
-        match (self.opts().from(), self.opts().to()) {
-            (Lang::Ir, Lang::Asm) => {
+        match (self.opts().from(), self.opts().to(), self.opts().mmap()) {
+            (Lang::Ir, Lang::Asm, _) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
                 write_output(output, &asm.to_string());
                 Ok(())
             }
-            (Lang::Ir, Lang::Xir) => {
+            (Lang::Ir, Lang::Xir, _) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
                 let xir = asm_try_into_xir(&asm)?;
                 write_output(output, &xir.to_string());
                 Ok(())
             }
-            (Lang::Ir, Lang::Behav) => {
+            (Lang::Ir, Lang::Behav, _) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let behav_prog = ir_try_into_behav(&ir)?;
                 write_output(output, &behav_prog.to_string());
                 Ok(())
             }
-            (Lang::Ir, Lang::Struct) => {
+            (Lang::Asm, Lang::Xir, _) => {
+                let prog = AsmParser::parse_from_file(input)?;
+                let xir = asm_try_into_xir(&prog)?;
+                write_output(output, &xir.to_string());
+                Ok(())
+            }
+            (Lang::Asm, Lang::Struct, _) => {
+                let prog = AsmParser::parse_from_file(input)?;
+                let xir = asm_try_into_xir(&prog)?;
+                let sct = xir_try_into_struct(&xir, None)?;
+                write_output(output, &sct.to_string());
+                Ok(())
+            }
+            (Lang::Ir, Lang::Struct, None) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
                 let xir = asm_try_into_xir(&asm)?;
@@ -70,31 +83,29 @@ impl Driver {
                 write_output(output, &sct.to_string());
                 Ok(())
             }
-            (Lang::Asm, Lang::Xir) => {
-                let prog = AsmParser::parse_from_file(input)?;
-                let xir = asm_try_into_xir(&prog)?;
-                write_output(output, &xir.to_string());
-                Ok(())
-            }
-            (Lang::Asm, Lang::Struct) => {
-                let prog = AsmParser::parse_from_file(input)?;
-                let xir = asm_try_into_xir(&prog)?;
-                let sct = xir_try_into_struct(&xir, None)?;
+            (Lang::Xir, Lang::Struct, None) => {
+                let prog = XirParser::parse_from_file(input)?;
+                let sct = xir_try_into_struct(&prog, None)?;
                 write_output(output, &sct.to_string());
                 Ok(())
             }
-            (Lang::Xir, Lang::Struct) => {
+            (Lang::Ir, Lang::Struct, Some(path)) => {
+                let ir = IrParser::parse_from_file(input)?;
+                let asm = ir_try_into_asm(&ir)?;
+                let xir = asm_try_into_xir(&asm)?;
+                let mmap = Some(mmap::Mmap::from_file(path));
+                let sct = xir_try_into_struct(&xir, mmap.as_ref())?;
+                write_output(output, &sct.to_string());
+                Ok(())
+            }
+            (Lang::Xir, Lang::Struct, Some(path)) => {
                 let prog = XirParser::parse_from_file(input)?;
-                let mmap = if let Some(path) = self.opts().mmap() {
-                    Some(mmap::Mmap::from_file(path))
-                } else {
-                    None
-                };
+                let mmap = Some(mmap::Mmap::from_file(path));
                 let sct = xir_try_into_struct(&prog, mmap.as_ref())?;
                 write_output(output, &sct.to_string());
                 Ok(())
             }
-            (_, _) => Err(Error::new_driver_error("Unsupported conversion")),
+            (_, _, _) => Err(Error::new_driver_error("Unsupported conversion")),
         }
     }
 }
