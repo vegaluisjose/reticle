@@ -79,3 +79,7 @@ pat lmuxrega_i128(sel:bool, a:i128, b:i128, en:bool) -> (y:i128) {
     t0:i128 = mux(sel, a, b) @lut;
     y:i128 = reg[0](t0, en) @lut;
 }
+
+pat lnot_bool(a:bool) -> (y:bool) {
+    y:bool = not(a) @lut;
+}

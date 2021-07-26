@@ -313,3 +313,7 @@ imp lmuxrega_i8[1, 2](sel:bool, a:i4, b:i4, en:bool) -> (y:i8) {
 }
 
 imp lmuxrega_i128[16, 2](sel:bool, a:i128, b:i128, en:bool) -> (y:i128) {}
+
+imp lnot_bool[1, 2](a:bool) -> (y:bool) {
+    y:bool = lut2[1](a) @a6(x, y);
+}
