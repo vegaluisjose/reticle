@@ -171,6 +171,10 @@ imp leq_i4[1, 2](a:i4, b:i4) -> (y:bool) {
     y:bool = lut3[0x90](t6, t7, t8) @b6(??, ??);
 }
 
+imp leq_bool[1, 2](a:bool, b:bool) -> (y:bool) {
+    y:bool = lut2[8](a, b) @a6(x, y);
+}
+
 imp land_bool[1, 2](a:bool, b:bool) -> (y:bool) {
     y:bool = lut2[8](a, b) @a6(x, y);
 }

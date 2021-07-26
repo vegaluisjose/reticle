@@ -36,6 +36,10 @@ pat leq_i4(a:i4, b:i4) -> (y:bool) {
     y:bool = eq(a, b) @lut;
 }
 
+pat leq_bool(a:bool, b:bool) -> (y:bool) {
+    y:bool = eq(a, b) @lut;
+}
+
 pat land_bool(a:bool, b:bool) -> (y:bool) {
     y:bool = and(a, b) @lut;
 }
