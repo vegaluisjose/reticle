@@ -249,7 +249,7 @@ imp lmuxrega_i4[1, 2](sel:bool, a:i4, b:i4, en:bool) -> (y:i4) {
     y:i4 = cat(t12, t13, t14, t15);
 }
 
-imp lmuxreg_i8[1, 2](sel:bool, a:i4, b:i4, en:bool) -> (y:i8) {
+imp lmuxrega_i8[1, 2](sel:bool, a:i4, b:i4, en:bool) -> (y:i8) {
     t0:bool = ext[0](a);
     t1:bool = ext[1](a);
     t2:bool = ext[2](a);
