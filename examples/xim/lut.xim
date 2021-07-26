@@ -136,6 +136,20 @@ imp lrega_i8[1, 2](a:i8, en:bool) -> (y:i8) {
     y:i8 = cat(t8, t9, t10, t11, t12, t13, t14, t15);
 }
 
+imp lrega_i4[1, 2](a:i4, en:bool) -> (y:i4) {
+    t0:bool = ext[0](a);
+    t1:bool = ext[1](a);
+    t2:bool = ext[2](a);
+    t3:bool = ext[3](a);
+    t4:bool = fdre(t0, en) @a(??, ??);
+    t5:bool = fdre(t1, en) @b(??, ??);
+    t6:bool = fdre(t2, en) @c(??, ??);
+    t7:bool = fdre(t3, en) @d(??, ??);
+    y:i8 = cat(t4, t5, t6, t7);
+}
+
+imp lrega_i128[16, 2](a:i128, en:bool) -> (y:i128) {}
+
 imp leq_i2[1, 2](a:i2, b:i2) -> (y:bool) {
     t0:bool = ext[0](a);
     t1:bool = ext[0](b);

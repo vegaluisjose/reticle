@@ -20,6 +20,14 @@ pat lrega_i8(a:i8, en:bool) -> (y:i8) {
     y:i8 = reg[0](a, en) @lut;
 }
 
+pat lrega_i4(a:i4, en:bool) -> (y:i4) {
+    y:i4 = reg[0](a, en) @lut;
+}
+
+pat lrega_i128(a:i128, en:bool) -> (y:i128) {
+    y:i128 = reg[0](a, en) @lut;
+}
+
 pat leq_i2(a:i2, b:i2) -> (y:bool) {
     y:bool = eq(a, b) @lut;
 }
