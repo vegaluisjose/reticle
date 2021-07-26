@@ -83,3 +83,15 @@ pat lmuxrega_i128(sel:bool, a:i128, b:i128, en:bool) -> (y:i128) {
 pat lnot_bool(a:bool) -> (y:bool) {
     y:bool = not(a) @lut;
 }
+
+pat lxor_i8(a:i8, b:i8) -> (y:i8) {
+    y:i8 = xor(a, b) @lut;
+}
+
+pat lxor_i32(a:i32, b:i32) -> (y:i32) {
+    y:i32 = xor(a, b) @lut;
+}
+
+pat lxor_i128(a:i128, b:i128) -> (y:i128) {
+    y:i128 = xor(a, b) @lut;
+}
