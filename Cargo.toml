@@ -41,6 +41,7 @@ members = [
   "src/tools/xpand",
   "src/tools/prim",
   "src/tools/mmap",
+  "src/tools/tile",
 ]
 
 exclude = ["ci", "dev", "docker"]

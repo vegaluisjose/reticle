@@ -67,7 +67,8 @@ pub fn try_from_ir_prog(prog: &ir::Prog) -> Result<asm::Prog, Error> {
         let mut res = asm::Prog::default();
         res.set_sig(main.sig().clone());
         res.set_body(body);
-        Ok(res)
+        // tile operations that can be arranged in multiple slices
+        Ok(tile::tile_from_prog(&res))
     } else {
         Err(Error::new_isel_error("main is not present"))
     }
