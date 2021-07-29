@@ -23,31 +23,35 @@ impl Namer {
     }
 }
 
-fn parse_number(input: &str) -> u64 {
+fn parse_number(input: &str) -> i64 {
     lazy_static::lazy_static! {
         static ref RE: Regex = Regex::new(r"^t(\d+)$").unwrap();
     }
     match RE.captures(input) {
         Some(caps) => {
             if let Some(val) = caps.get(1) {
-                val.as_str().parse::<u64>().unwrap()
+                if let Ok(num) = val.as_str().parse::<i64>() {
+                    num
+                } else {
+                    -1
+                }
             } else {
-                0
+                -1
             }
         }
-        _ => 0,
+        _ => -1,
     }
 }
 
-fn get_max_expr(expr: &Expr) -> u64 {
-    let mut val: Vec<u64> = Vec::new();
+fn get_max_expr(expr: &Expr) -> i64 {
+    let mut val: Vec<i64> = Vec::new();
     let exprs: Vec<ExprTerm> = expr.clone().into();
     for e in exprs {
         if let Some(id) = e.id() {
             val.push(parse_number(&id));
         }
     }
-    let mut max = 0_u64;
+    let mut max = -1;
     for v in val {
         if v > max {
             max = v;
@@ -56,7 +60,7 @@ fn get_max_expr(expr: &Expr) -> u64 {
     max
 }
 
-fn get_max_instr(instr: &Instr) -> u64 {
+fn get_max_instr(instr: &Instr) -> i64 {
     let a = get_max_expr(instr.dst());
     let b = get_max_expr(instr.arg());
     if a > b {
@@ -66,8 +70,8 @@ fn get_max_instr(instr: &Instr) -> u64 {
     }
 }
 
-fn get_max(body: &[Instr]) -> u64 {
-    let mut val = 0_u64;
+fn get_max(body: &[Instr]) -> i64 {
+    let mut val = -1;
     for i in body {
         let cur = get_max_instr(i);
         if cur > val {
@@ -128,7 +132,8 @@ fn emit_op(op: &str, dst: &str, arg: &[String], loc: &Loc) -> Instr {
 
 pub fn tile_from_prog(input: &Prog) -> Prog {
     let mut body: Vec<Instr> = Vec::new();
-    let init = get_max(input.body()) + 1;
+    let max = get_max(input.body());
+    let init = if max < 0 { 0_u64 } else { (max + 1) as u64 };
     let mut namer = Namer::new(init);
     for instr in input.body() {
         match instr {
