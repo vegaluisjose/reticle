@@ -314,14 +314,68 @@ pub fn tree_try_from_map(
     Ok(tree)
 }
 
-// TODO: move this to try_form trait, once refactoring is completed
+pub fn create_tree(
+    visited: &mut HashSet<Id>,
+    instr_map: &InstrMap,
+    input_map: &TermMap,
+    root: &str,
+    cost: u64,
+) -> Result<Tree, Error> {
+    let mut tree = Tree::default();
+    let mut stack: Vec<(Id, u64)> = Vec::new();
+    if let Some(instr) = instr_map.get(root) {
+        let index = tree.add_node_with_cost(instr, cost)?;
+        stack.push((root.to_string(), index));
+    }
+    while let Some((curr, index)) = stack.pop() {
+        if let Some(instr) = instr_map.get(&curr) {
+            let arg: Vec<ExprTerm> = instr.arg().clone().into();
+            for term in arg {
+                let id = term.get_id()?;
+                if let Some(instr) = instr_map.get(&id) {
+                    // add node if was not visited
+                    if instr_map.contains_key(&id) && !visited.contains(&id) {
+                        let to = tree.add_node(instr)?;
+                        tree.add_edge(index, to);
+                        visited.insert(id.clone());
+                        stack.push((id.clone(), to));
+                    // if visited and it is wire, then duplicate
+                    } else if instr.is_wire() {
+                        let to = tree.add_node(instr)?;
+                        tree.add_edge(index, to);
+                    // else make it an input
+                    } else {
+                        let ty = term.get_ty()?;
+                        let to = tree.add_input(&id, ty.clone());
+                        tree.add_edge(index, to);
+                    }
+                } else if let Some(term) = input_map.get(&id) {
+                    let ty = term.get_ty()?;
+                    let to = tree.add_input(&id, ty.clone());
+                    tree.add_edge(index, to);
+                }
+            }
+        }
+    }
+    Ok(tree)
+}
+
 pub fn treelist_try_from_def(def: &Def) -> Result<Vec<Tree>, Error> {
-    let map = InstrMap::from(def.clone());
+    let instr_map = InstrMap::from(def.clone());
     let mut res: Vec<Tree> = Vec::new();
     let roots = tree_roots_from_def(def);
     let mut visited: HashSet<Id> = HashSet::new();
-    for r in roots {
-        let tree = tree_try_from_map(&map, &mut visited, def.input(), &r, u64::MAX)?;
+    // inputs cannot be child nodes
+    let input_map: TermMap = def.input().clone().into();
+    for id in input_map.keys() {
+        visited.insert(id.clone());
+    }
+    // roots cannot be child nodes
+    for r in &roots {
+        visited.insert(r.clone());
+    }
+    for r in &roots {
+        let tree = create_tree(&mut visited, &instr_map, &input_map, &r, u64::MAX)?;
         res.push(tree);
     }
     Ok(res)
