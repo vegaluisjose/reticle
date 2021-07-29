@@ -1,5 +1,5 @@
-use asm::parser::Parser as Parser;
 use asm::errors::Error;
+use asm::parser::Parser;
 use tile::tile_from_prog;
 
 #[test]
