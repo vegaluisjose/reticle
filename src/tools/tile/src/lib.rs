@@ -139,10 +139,11 @@ pub fn tile_from_prog(input: &Prog) -> Prog {
         match instr {
             Instr::Wire(_) => body.push(instr.clone()),
             Instr::Asm(asm) => {
+                let num = (asm.dst().get_ty(0).unwrap().width().unwrap() / 8) as i64;
+                let mut cat: Vec<String> = Vec::new();
                 match asm.op().to_string().as_str() {
-                    "lxor_i128" => {
-                        let mut cat: Vec<String> = Vec::new();
-                        for i in 0..16 {
+                    "lxor_i128" | "lxor_i32" => {
+                        for i in 0..num {
                             let mut arg: Vec<String> = Vec::new();
                             for a in 0..2 {
                                 let name = namer.next_name();
