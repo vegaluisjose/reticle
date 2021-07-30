@@ -10,3 +10,4 @@ io = { path = "../io" }
 asm = { path = "../../langs/asm" }
 regex = "1.3.9"
 lazy_static = "1.4.0"
+pretty_assertions = "0.7.2"
