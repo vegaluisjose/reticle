@@ -139,10 +139,10 @@ fn emit_op_mux(op: &str, dst: &str, arg: &[String], loc: &Loc) -> Instr {
     let dst = emit_expr(dst, 8);
     let mut arg_term: Vec<ExprTerm> = Vec::new();
     for (i, a) in arg.iter().enumerate() {
-        if i == 0 {
-            arg_term.push(emit_term_bool(a));
-        } else {
+        if i == 1 || i == 2 {
             arg_term.push(emit_term(a, 8));
+        } else {
+            arg_term.push(emit_term_bool(a));
         }
     }
     Instr::from(InstrAsm {
@@ -200,6 +200,30 @@ pub fn tile_from_prog(input: &Prog) -> Prog {
                             let name = namer.next_name();
                             cat.push(name.clone());
                             let new = emit_op_mux("lmux_i8", &name, &arg, asm.loc());
+                            body.push(new);
+                        }
+                        let new = emit_cat(asm.dst().clone(), &cat);
+                        body.push(new);
+                    }
+                    "lmuxrega_i128" => {
+                        let num = (asm.dst().get_ty(0).unwrap().width().unwrap() / 8) as i64;
+                        let mut cat: Vec<String> = Vec::new();
+                        for i in 0..num {
+                            let c = asm.arg().get_id(0).unwrap();
+                            let mut arg: Vec<String> = Vec::new();
+                            arg.push(c);
+                            for a in 1..3 {
+                                let name = namer.next_name();
+                                arg.push(name.clone());
+                                let dst = emit_expr(&name, 8);
+                                let new = emit_ext(asm, dst, a, i * 8, (i + 1) * 8 - 1);
+                                body.push(new);
+                            }
+                            let e = asm.arg().get_id(3).unwrap();
+                            arg.push(e);
+                            let name = namer.next_name();
+                            cat.push(name.clone());
+                            let new = emit_op_mux("lmuxrega_i8", &name, &arg, asm.loc());
                             body.push(new);
                         }
                         let new = emit_cat(asm.dst().clone(), &cat);
