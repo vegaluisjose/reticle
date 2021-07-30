@@ -138,6 +138,31 @@ impl Assembler {
         self.add_instr(xir::Instr::from(instr));
         Ok(())
     }
+    pub fn expand_instr_cat(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
+        let arg = self.rename_expr(instr.arg())?;
+        let dst = self.rename_expr(instr.dst())?;
+        let instr = xir::InstrBasc {
+            op: xir::OpBasc::Cat,
+            attr: xir::Expr::default(),
+            dst,
+            arg,
+        };
+        self.add_instr(xir::Instr::from(instr));
+        Ok(())
+    }
+    pub fn expand_instr_ext(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
+        let arg = self.rename_expr(instr.arg())?;
+        let dst = self.rename_expr(instr.dst())?;
+        let attr = instr.attr().clone();
+        let instr = xir::InstrBasc {
+            op: xir::OpBasc::Ext,
+            attr,
+            dst,
+            arg,
+        };
+        self.add_instr(xir::Instr::from(instr));
+        Ok(())
+    }
     pub fn expand_instr_const(&mut self, instr: &asm::InstrWire) -> Result<(), Error> {
         let attr_term = instr.attr().get_term(0)?;
         let value = attr_term.get_val()?;
@@ -287,8 +312,17 @@ pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
             asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Id => {
                 assembler.expand_instr_id(instr)?;
             }
+            asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Cat => {
+                assembler.expand_instr_cat(instr)?;
+            }
+            asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Ext => {
+                assembler.expand_instr_ext(instr)?;
+            }
             asm::Instr::Asm(instr) => assembler.expand_instr_asm(instr)?,
-            _ => (),
+            _ => Err(Error::new_bler_error(&format!(
+                "{} instruction not supported",
+                instr
+            )))?,
         }
     }
     let mut prog = xir::Prog::default();
