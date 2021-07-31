@@ -319,10 +319,12 @@ pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
                 assembler.expand_instr_ext(instr)?;
             }
             asm::Instr::Asm(instr) => assembler.expand_instr_asm(instr)?,
-            _ => Err(Error::new_bler_error(&format!(
-                "{} instruction not supported",
-                instr
-            )))?,
+            _ => {
+                return Err(Error::new_bler_error(&format!(
+                    "{} instruction not supported",
+                    instr
+                )))
+            }
         }
     }
     let mut prog = xir::Prog::default();
