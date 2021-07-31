@@ -1,4 +1,4 @@
-def main (aes_key:i128, aes_plaintext:i128, reset:bool) -> (aes_ciphertext:i128, ready:bool) {
+def main (aes_key:i128, aes_plaintext:i128, aes_reset:bool) -> (aes_ciphertext:i128, ready:bool) {
     t0:bool = const[0];
     t1:bool = const[1];
     t2:i4 = const[0];
@@ -191,7 +191,7 @@ def main (aes_key:i128, aes_plaintext:i128, reset:bool) -> (aes_ciphertext:i128,
     t191:i32 = xor(t190, t168);
     t192:i128 = cat(t188, t189, t190, t191);
     t195:i128 = xor(t193, t194);
-    t196:bool = eq(reset, t1);
+    t196:bool = eq(aes_reset, t1);
     t198:bool = and(t197, t9);
     t200:bool = and(t197, t199);
     t199:bool = not(t9);
