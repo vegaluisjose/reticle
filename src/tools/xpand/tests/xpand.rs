@@ -124,6 +124,11 @@ fn brom_8x256() -> Result<(), Error> {
 }
 
 #[test]
+fn mux128() -> Result<(), Error> {
+    test("mux128")
+}
+
+#[test]
 fn lrom_8x8_mmap() -> Result<(), Error> {
     test_with_mmap("lrom_8x8")
 }
