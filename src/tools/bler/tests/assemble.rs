@@ -95,3 +95,8 @@ fn tdot_5_18() -> Result<(), Error> {
 fn tdot_5_36() -> Result<(), Error> {
     test("tdot_5_36")
 }
+
+#[test]
+fn mux128() -> Result<(), Error> {
+    test("mux128")
+}
