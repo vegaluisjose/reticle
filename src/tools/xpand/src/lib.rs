@@ -91,6 +91,7 @@ fn inst_name_try_from_instr(instr: &xir::InstrMach) -> Result<vl::Id, Error> {
 
 fn stmt_from_mach(instr: &xir::InstrMach) -> Result<Vec<vl::Stmt>, Error> {
     match instr.op() {
+        xir::OpMach::Lut1 => lut::lut1_from_mach(instr),
         xir::OpMach::Lut2 => lut::lut2_from_mach(instr),
         xir::OpMach::Lut3 => lut::lut3_from_mach(instr),
         xir::OpMach::Lut4 => lut::lut4_from_mach(instr),
