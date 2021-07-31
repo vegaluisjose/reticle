@@ -77,17 +77,8 @@ impl Assembler {
     }
     pub fn new_var(&mut self) -> String {
         let tmp = self.count;
-        let mut name = format!("{}{}", self.prefix, tmp);
-        if self.map.contains_key(&name) {
-            while self.map.contains_key(&name) {
-                self.count += 1;
-                name = format!("{}{}", self.prefix, self.count);
-            }
-            name
-        } else {
-            self.count += 1;
-            name
-        }
+        self.count += 1;
+        format!("{}{}", self.prefix, tmp)
     }
     pub fn add_var(&mut self, name: &str) {
         self.map.insert(name.to_string(), name.to_string());
@@ -313,19 +304,6 @@ pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
     let mut assembler = Assembler::new(input.sig().clone());
     let target = deserialize_target();
     assembler.set_target(target);
-    // keep rom identifiers
-    for instr in input.body() {
-        match instr {
-            asm::Instr::Asm(asm)
-                if asm.op().to_string().as_str() == "brom_i8i8"
-                    || asm.op().to_string().as_str() == "lrom_i8i3" =>
-            {
-                let id = asm.dst().get_id(0)?;
-                assembler.add_var(&id);
-            }
-            _ => (),
-        }
-    }
     for instr in input.body() {
         match instr {
             asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
