@@ -2,9 +2,9 @@ use crate::errors::Error;
 use crate::tree::*;
 use asm::ast as asm;
 use pat::ast as pat;
+use std::collections::BTreeMap;
 use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
-use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use xim::ast as xim;
 
