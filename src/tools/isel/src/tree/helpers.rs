@@ -4,6 +4,7 @@ use asm::ast as asm;
 use pat::ast as pat;
 use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
+use std::collections::BTreeMap;
 use std::convert::TryFrom;
 use xim::ast as xim;
 
@@ -224,7 +225,7 @@ impl Tree {
 }
 
 pub fn tree_roots_from_def(def: &Def) -> Vec<Id> {
-    let mut count: HashMap<Id, u64> = HashMap::new();
+    let mut count: BTreeMap<Id, u64> = BTreeMap::new();
     // store compute instructions
     for instr in def.body() {
         if instr.is_prim() {
