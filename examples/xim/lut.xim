@@ -40,8 +40,11 @@ imp ladd_i4[1, 2](a:i4, b:i4) -> (y:i4) {
     t9:bool = lut2[6](t1, t5) @b6(??, ??);
     t10:bool = lut2[6](t2, t6) @c6(??, ??);
     t11:bool = lut2[6](t3, t7) @d6(??, ??);
-    t12:i4 = cat(t8,t9,t10,t11);
-    y:i4 = carryadd(a, t12) @c8(??, ??);
+    t12:bool = gnd();
+    t13:i8 = cat(a, gnd, gnd, gnd, gnd);
+    t14:i8 = cat(t8, t9, t10, t11, gnd, gnd, gnd, gnd);
+    t15:i8 = carryadd(t13, t14) @c8(??, ??);
+    y:i4 = ext[0, 3](t15);
 }
 
 imp laddrega_i8[1, 2](a:i8, b:i8, en:bool) -> (y:i8) {
@@ -103,17 +106,19 @@ imp laddrega_i4[1, 2](a:i4, b:i4, en:bool) -> (y:i4) {
     t9:bool = lut2[6](t1, t5) @b6(??, ??);
     t10:bool = lut2[6](t2, t6) @c6(??, ??);
     t11:bool = lut2[6](t3, t7) @d6(??, ??);
-    t12:i4 = cat(t8,t9,t10,t11);
-    t13:i4 = carryadd(a, t12) @c8(??, ??);
-    t14:bool = ext[0](t13);
-    t15:bool = ext[1](t13);
-    t16:bool = ext[2](t13);
-    t17:bool = ext[3](t13);
-    t18:bool = fdre(t14, en) @a(??, ??);
-    t19:bool = fdre(t15, en) @b(??, ??);
-    t20:bool = fdre(t16, en) @c(??, ??);
-    t21:bool = fdre(t17, en) @d(??, ??);
-    y:i4 = cat(t18, t19, t20, t21);
+    t12:bool = gnd();
+    t13:i8 = cat(a, gnd, gnd, gnd, gnd);
+    t14:i8 = cat(t8, t9, t10, t11, gnd, gnd, gnd, gnd);
+    t15:i8 = carryadd(t13, t14) @c8(??, ??);
+    t16:bool = ext[0](t15);
+    t17:bool = ext[1](t15);
+    t18:bool = ext[2](t15);
+    t19:bool = ext[3](t15);
+    t20:bool = fdre(t16, en) @a(??, ??);
+    t21:bool = fdre(t17, en) @b(??, ??);
+    t22:bool = fdre(t18, en) @c(??, ??);
+    t23:bool = fdre(t19, en) @d(??, ??);
+    y:i4 = cat(t20, t21, t22, t23);
 }
 
 imp lrega_i8[1, 2](a:i8, en:bool) -> (y:i8) {
