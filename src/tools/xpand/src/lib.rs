@@ -38,6 +38,7 @@ use verilog::ast as vl;
 use xir::ast as xir;
 
 pub fn create_literal(width: u64, value: i64) -> vl::Expr {
+    assert!(width != 0);
     use prim::ultrascale::gnd::GND;
     if width == 1 {
         let mask = value & 1;
@@ -47,7 +48,7 @@ pub fn create_literal(width: u64, value: i64) -> vl::Expr {
         } else {
             vl::Expr::new_ref(GND)
         }
-    } else {
+    } else if width <= 64 {
         let mut concat = vl::ExprConcat::default();
         for i in 0..width {
             let i = i as i64;
@@ -59,6 +60,24 @@ pub fn create_literal(width: u64, value: i64) -> vl::Expr {
             } else {
                 concat.add_expr(vl::Expr::new_ref(GND));
             }
+        }
+        vl::Expr::from(concat)
+    } else {
+        let mut concat = vl::ExprConcat::default();
+        for i in 0..64 {
+            let i = i as i64;
+            let shift = value >> i;
+            let mask = shift & 1;
+            let is_one = mask == 1;
+            if is_one {
+                concat.add_expr(vl::Expr::new_ref(vcc::VCC));
+            } else {
+                concat.add_expr(vl::Expr::new_ref(GND));
+            }
+        }
+        let pad = width - 64;
+        for _ in 0..pad {
+            concat.add_expr(vl::Expr::new_ref(GND));
         }
         vl::Expr::from(concat)
     }
