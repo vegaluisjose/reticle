@@ -13,3 +13,4 @@ ir = { path = "../../langs/ir" }
 asm = { path = "../../langs/asm" }
 xim = { path = "../../langs/xim" }
 xir = { path = "../../langs/xir" }
+mmap = { path = "../mmap" }

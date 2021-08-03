@@ -2,6 +2,7 @@ pub mod errors;
 
 use crate::errors::Error;
 use asm::ast as asm;
+use mmap::Mmap;
 use std::collections::HashMap;
 use std::path::Path;
 use xim::ast as xim;
@@ -25,6 +26,7 @@ pub struct Assembler {
     pub prefix: String,
     pub sig: xir::Sig,
     pub body: Vec<xir::Instr>,
+    pub mem: Mmap,
     pub map: HashMap<String, String>,
     pub target: xim::Target,
 }
@@ -37,6 +39,7 @@ impl Default for Assembler {
             sig: xir::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
+            mem: Mmap::default(),
             target: xim::Target::default(),
         }
     }
@@ -66,6 +69,9 @@ impl Assembler {
     pub fn body(&self) -> &Vec<xir::Instr> {
         &self.body
     }
+    pub fn mem(&self) -> &Mmap {
+        &self.mem
+    }
     pub fn get_var(&self, key: &str) -> Option<&String> {
         self.map.get(key)
     }
@@ -74,6 +80,14 @@ impl Assembler {
     }
     pub fn set_target(&mut self, target: xim::Target) {
         self.target = target;
+    }
+    pub fn set_mem(&mut self, mem: Mmap) {
+        self.mem = mem;
+    }
+    pub fn replace_mem(&mut self, old: &str, new: &str) {
+        if let Some(val) = self.mem.remove(old) {
+            self.mem.insert(new.to_string(), val);
+        }
     }
     pub fn new_var(&mut self) -> String {
         let tmp = self.count;
@@ -220,9 +234,10 @@ impl Assembler {
         }
         Ok(())
     }
-    pub fn expand_instr_asm(&mut self, instr: &asm::InstrAsm) -> Result<(), Error> {
-        let instr = self.rename_instr_asm(instr)?;
-        if let Some(imp) = self.get_target_imp(&instr.op().to_string()) {
+    pub fn expand_instr_asm(&mut self, input: &asm::InstrAsm) -> Result<(), Error> {
+        let op = input.op().to_string();
+        let instr = self.rename_instr_asm(input)?;
+        if let Some(imp) = self.get_target_imp(&op) {
             let mut scope = scope_from_expr(&imp.output(), instr.dst());
             scope.extend(scope_from_expr(&imp.input(), instr.arg()));
             for i in imp.clone().body() {
@@ -260,6 +275,11 @@ impl Assembler {
                 match i {
                     xir::Instr::Mach(mach) => {
                         if let Some(loc) = mach.loc() {
+                            if *mach.op() == xir::OpMach::Brom {
+                                let old = input.dst().get_id(0)?;
+                                let new = dst_expr.get_id(0)?;
+                                self.replace_mem(&old, &new);
+                            }
                             let mut loc = loc.clone();
                             let x = instr.loc().x().clone();
                             let y = instr.loc().y().clone();
@@ -300,10 +320,16 @@ pub fn deserialize_target() -> xim::Target {
     tar
 }
 
-pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
+pub fn try_from_asm_prog(
+    input: &asm::Prog,
+    mem: Option<&Mmap>,
+) -> Result<(xir::Prog, Option<Mmap>), Error> {
     let mut assembler = Assembler::new(input.sig().clone());
     let target = deserialize_target();
     assembler.set_target(target);
+    if let Some(m) = mem {
+        assembler.set_mem(m.clone());
+    }
     for instr in input.body() {
         match instr {
             asm::Instr::Wire(instr) if instr.op() == &asm::OpWire::Con => {
@@ -330,5 +356,9 @@ pub fn try_from_asm_prog(input: &asm::Prog) -> Result<xir::Prog, Error> {
     let mut prog = xir::Prog::default();
     prog.set_sig(assembler.sig().clone());
     prog.set_body(assembler.body().clone());
-    Ok(prog)
+    if mem.is_none() {
+        Ok((prog, None))
+    } else {
+        Ok((prog, Some(assembler.mem().clone())))
+    }
 }

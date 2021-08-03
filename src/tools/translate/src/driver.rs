@@ -52,7 +52,7 @@ impl Driver {
             (Lang::Ir, Lang::Xir, _) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
-                let xir = asm_try_into_xir(&asm)?;
+                let (xir, _) = asm_try_into_xir(&asm, None)?;
                 write_output(output, &xir.to_string());
                 Ok(())
             }
@@ -64,13 +64,13 @@ impl Driver {
             }
             (Lang::Asm, Lang::Xir, _) => {
                 let prog = AsmParser::parse_from_file(input)?;
-                let xir = asm_try_into_xir(&prog)?;
+                let (xir, _) = asm_try_into_xir(&prog, None)?;
                 write_output(output, &xir.to_string());
                 Ok(())
             }
             (Lang::Asm, Lang::Struct, _) => {
                 let prog = AsmParser::parse_from_file(input)?;
-                let xir = asm_try_into_xir(&prog)?;
+                let (xir, _) = asm_try_into_xir(&prog, None)?;
                 let sct = xir_try_into_struct(&xir, None)?;
                 write_output(output, &sct.to_string());
                 Ok(())
@@ -78,7 +78,7 @@ impl Driver {
             (Lang::Ir, Lang::Struct, None) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
-                let xir = asm_try_into_xir(&asm)?;
+                let (xir, _) = asm_try_into_xir(&asm, None)?;
                 let sct = xir_try_into_struct(&xir, None)?;
                 write_output(output, &sct.to_string());
                 Ok(())
@@ -92,8 +92,8 @@ impl Driver {
             (Lang::Ir, Lang::Struct, Some(path)) => {
                 let ir = IrParser::parse_from_file(input)?;
                 let asm = ir_try_into_asm(&ir)?;
-                let xir = asm_try_into_xir(&asm)?;
                 let mmap = Some(mmap::Mmap::from_file(path));
+                let (xir, mmap) = asm_try_into_xir(&asm, mmap.as_ref())?;
                 let sct = xir_try_into_struct(&xir, mmap.as_ref())?;
                 write_output(output, &sct.to_string());
                 Ok(())

@@ -11,7 +11,7 @@ fn test(name: &str) -> Result<(), Error> {
     output.set_extension("xir");
     let parsed = AsmParser::parse_from_file(input)?;
     let exp = XirParser::parse_from_file(output)?;
-    let res = try_from_asm_prog(&parsed)?;
+    let (res, _) = try_from_asm_prog(&parsed, None)?;
     assert_eq!(res, exp);
     Ok(())
 }
