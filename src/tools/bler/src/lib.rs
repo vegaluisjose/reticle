@@ -26,7 +26,8 @@ pub struct Assembler {
     pub prefix: String,
     pub sig: xir::Sig,
     pub body: Vec<xir::Instr>,
-    pub mem: Mmap,
+    pub mem_in: Mmap,
+    pub mem_out: Mmap,
     pub map: HashMap<String, String>,
     pub target: xim::Target,
 }
@@ -39,7 +40,8 @@ impl Default for Assembler {
             sig: xir::Sig::default(),
             body: Vec::new(),
             map: HashMap::new(),
-            mem: Mmap::default(),
+            mem_in: Mmap::default(),
+            mem_out: Mmap::default(),
             target: xim::Target::default(),
         }
     }
@@ -70,7 +72,7 @@ impl Assembler {
         &self.body
     }
     pub fn mem(&self) -> &Mmap {
-        &self.mem
+        &self.mem_out
     }
     pub fn get_var(&self, key: &str) -> Option<&String> {
         self.map.get(key)
@@ -82,11 +84,11 @@ impl Assembler {
         self.target = target;
     }
     pub fn set_mem(&mut self, mem: Mmap) {
-        self.mem = mem;
+        self.mem_in = mem;
     }
     pub fn replace_mem(&mut self, old: &str, new: &str) {
-        if let Some(val) = self.mem.remove(old) {
-            self.mem.insert(new.to_string(), val);
+        if let Some(val) = self.mem_in.remove(old) {
+            self.mem_out.insert(new.to_string(), val);
         }
     }
     pub fn new_var(&mut self) -> String {
