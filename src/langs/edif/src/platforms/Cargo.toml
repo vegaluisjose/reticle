@@ -1,0 +1,13 @@
+[package]
+name = "platforms"
+version = "0.1.0"
+authors = ["Pedro Torruella <ptorru14@gmail.com>"]
+license = "Apache-2.0"
+edition = "2018"
+
+[dependencies]
+edifier = { path = "../edifier" }
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_json = "1.0"
+serde_sexpr = "0.1.0"
+expect-test = "1.0.2"
