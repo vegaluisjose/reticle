@@ -16,8 +16,8 @@ limitations under the License.
 
 //use std::process::Command;
 //use Edif;
-use edifier::ast::*;
-use edifier::string_helpers::*;
+use edif::ast::*;
+use edif::string_helpers::*;
 
 /*
 #[test]

@@ -1,7 +1,0 @@
-/target
-**.jou
-**.txt
-**.log
-**xilinx_inverter.edf
-**xilinx_multiplier.edf
-Cargo.lock

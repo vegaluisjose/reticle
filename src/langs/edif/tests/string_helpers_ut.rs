@@ -1,4 +1,4 @@
-use edifier::string_helpers::*;
+use edif::string_helpers::*;
 
 #[test]
 fn simple_new_lines() {

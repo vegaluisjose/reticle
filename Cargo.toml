@@ -25,11 +25,12 @@ path = "src/bin/ro.rs"
 
 [workspace]
 members = [
+  "src/langs/asm",
+  "src/langs/edif",
   "src/langs/ir",
   "src/langs/pat",
-  "src/langs/asm",
-  "src/langs/xir",
   "src/langs/xim",
+  "src/langs/xir",
   "src/langs/verilog",
   "src/tools/io",
   "src/tools/prettyprint",

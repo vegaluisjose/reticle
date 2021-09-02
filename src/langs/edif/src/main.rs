@@ -18,7 +18,7 @@ use std::path::Path;
 use std::fs::File;
 use std::io::Write;
 
-use edifier::ast::*;
+use edif::ast::*;
 
 static DOFILE: bool = false;
 
