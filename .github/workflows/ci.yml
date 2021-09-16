@@ -74,6 +74,6 @@ jobs:
 
       - name: Test Mmap
         run: cargo test -p mmap
-      
+
       - name: Test Tile
         run: cargo test -p tile
