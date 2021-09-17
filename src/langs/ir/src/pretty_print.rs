@@ -118,6 +118,8 @@ impl PrettyPrint for OpPrim {
             OpPrim::Reg => RcDoc::text("reg"),
             OpPrim::Ram => RcDoc::text("ram"),
             OpPrim::Rom => RcDoc::text("rom"),
+            OpPrim::Sram => RcDoc::text("sram"),
+            OpPrim::Srom => RcDoc::text("srom"),
             OpPrim::Add => RcDoc::text("add"),
             OpPrim::Sub => RcDoc::text("sub"),
             OpPrim::Mul => RcDoc::text("mul"),

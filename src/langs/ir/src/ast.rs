@@ -60,6 +60,8 @@ pub enum OpPrim {
     Reg,
     Ram,
     Rom,
+    Sram,
+    Srom,
     Add,
     Sub,
     Mul,
